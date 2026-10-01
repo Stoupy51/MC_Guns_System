@@ -4,8 +4,7 @@
 # @within	mgs:v5.1.0/tick
 #
 
-# The XP bar is the progression HUD, so a stray orb would show a level nobody earned. Zombies and missions
-# already sweep these; progression/tick_player re-asserts the bar every second as the backstop.
+# The XP bar is the progression HUD, so a stray orb would show a level nobody earned; tick_player re-asserts the bar every second.
 kill @e[type=experience_orb]
 
 # Spectate Timer (3s respawn cooldown, real-time via #tick_delta).
@@ -26,31 +25,25 @@ execute as @e[type=minecraft:interaction,tag=mgs.drop_int] run scoreboard player
 kill @e[type=minecraft:item_display,tag=mgs.dropped_gun,scores={mgs.drop_timer=..0}]
 kill @e[type=minecraft:interaction,tag=mgs.drop_int,scores={mgs.drop_timer=..0}]
 
-# Timer (real-time via #tick_delta), unless the gamemode claimed #mp_timer for itself in its setup.
-# Round-based modes drive that score from their own clock so the HUD shows what actually decides something
-# (S&D: the round timer then the bomb fuse — Demolition: a clock that stops on a plant and grows on a
-# destroy), and a match-wide time limit cannot arbitrate a best-of-N format anyway. A claim flag rather
-# than a list of gamemode names here: the list was going to grow once per round-based mode.
+# Real time through #tick_delta, unless the gamemode claimed #mp_timer in its setup: round-based modes drive it from their own clock
+# (S&D round timer then fuse, Demolition plant-aware clock), since a match-wide limit cannot judge a best-of-N format.
 execute if score #mp_mode_owns_timer mgs.data matches 0 run scoreboard players operation #mp_timer mgs.data -= #tick_delta mgs.data
 
-# Timer display every second (20 ticks; keyed to #total_tick — a #mp_timer %20 hit can be
-# skipped entirely when #tick_delta jumps by 2+ under lag)
+# Keyed to #total_tick: under lag #tick_delta can jump past a `#mp_timer % 20` hit.
 execute store result score #tick_mod mgs.data run scoreboard players get #total_tick mgs.data
 scoreboard players operation #tick_mod mgs.data %= #20 mgs.data
 execute if score #tick_mod mgs.data matches 0 run function mgs:v5.1.0/multiplayer/timer_display
 
-# Time's up — never for a mode that owns the score, where reaching 0 is a ROUND event it handles itself
+# Never for a mode that owns the score, where 0 is a round event it handles.
 execute if score #mp_mode_owns_timer mgs.data matches 0 if score #mp_timer mgs.data matches ..0 run function mgs:v5.1.0/multiplayer/time_up
 
-# Which boundary-check phase runs this tick (see multiplayer/enforce_bounds)
+# See multiplayer/enforce_bounds.
 execute store result score #bounds_phase mgs.data run scoreboard players get #total_tick mgs.data
 scoreboard players operation #bounds_phase mgs.data %= #4 mgs.data
 
-# Boundary + out-of-bounds enforcement in ONE pass over the playing-players selector (was two
-# scans over the identical, multi-filter selector). Skips respawn-protected/non-playing players.
+# Bounds and OOB markers in one scan, skipping respawn-protected and non-playing players.
 execute as @e[type=player,scores={mgs.mp.in_game=1,mgs.mp.death_count=0},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.1.0/multiplayer/enforce_bounds
 
-# Gamemode tick dispatch
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.1.0/multiplayer/gamemodes/ffa/tick
 execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5.1.0/multiplayer/gamemodes/tdm/tick
 execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5.1.0/multiplayer/gamemodes/dom/tick
@@ -58,11 +51,10 @@ execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.1.0/multiplayer/gamemodes/snd/tick
 execute if data storage mgs:multiplayer game{gamemode:"demo"} run function mgs:v5.1.0/multiplayer/gamemodes/demo/tick
 
-# Tracker perk: render enemy footprints to perked players (every 6 ticks)
+# Tracker perk: enemy footprints every 6 ticks.
 execute store result score #tick_mod mgs.data run scoreboard players get #total_tick mgs.data
 scoreboard players operation #tick_mod mgs.data %= #6 mgs.data
 execute if score #tick_mod mgs.data matches 0 if entity @a[scores={mgs.mp.in_game=1,mgs.special.tracker=1..}] run function mgs:v5.1.0/multiplayer/perks/tracker_tick
 
-# Call map-defined tick script
 function mgs:v5.1.0/shared/maps/call_script_at_base {script:"tick"}
 

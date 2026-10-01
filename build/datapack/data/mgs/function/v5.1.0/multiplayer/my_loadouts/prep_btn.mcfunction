@@ -8,15 +8,13 @@
 #			mgs:v5.1.0/multiplayer/my_loadouts/check_public_not_fav
 #
 
-# Copy entry data for macro use
 data modify storage mgs:temp _btn_data set from storage mgs:temp _iter[0]
 
-# Compute the manage submenu trigger (TRIG_MANAGE_BASE + id)
+# TRIG_MANAGE_BASE + id.
 execute store result score #trig mgs.data run data get storage mgs:temp _iter[0].id
 scoreboard players add #trig mgs.data 80000
 execute store result storage mgs:temp _btn_data.manage_trig int 1 run scoreboard players get #trig mgs.data
 
-# Normalize and compute perk display
 execute unless data storage mgs:temp _btn_data.perks run data modify storage mgs:temp _btn_data.perks set value []
 execute store result storage mgs:temp _btn_data.perks_count int 1 run data get storage mgs:temp _btn_data.perks
 data modify storage mgs:temp _btn_data.perk0 set value ""
@@ -47,7 +45,7 @@ execute unless data storage mgs:temp _btn_data.equip_slot2_name run data modify 
 execute unless data storage mgs:temp _btn_data.main_gun_display run data modify storage mgs:temp _btn_data.main_gun_display set from storage mgs:temp _btn_data.main_gun
 execute unless data storage mgs:temp _btn_data.secondary_gun_display run data modify storage mgs:temp _btn_data.secondary_gun_display set value "None"
 
-# Route to correct color variant based on public flag (green=public, red=private)
+# Green for public, red for private.
 execute store result score #pub mgs.data run data get storage mgs:temp _iter[0].public
 execute if score #pub mgs.data matches 1 run function mgs:v5.1.0/multiplayer/my_loadouts/add_btn_public with storage mgs:temp _btn_data
 execute if score #pub mgs.data matches 0 run function mgs:v5.1.0/multiplayer/my_loadouts/add_btn_private with storage mgs:temp _btn_data

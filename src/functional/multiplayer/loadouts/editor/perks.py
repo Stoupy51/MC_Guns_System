@@ -21,8 +21,7 @@ def write_editor_perks() -> None:
 
 	fn: str = editor_fn(ns, version)
 
-	## PERKS submenu (toggle, recompute-based budget) Selected perks are shown green with a ✔; unselected are aqua.
-	## Per-perk append lines: a selected variant and an unselected variant
+	## Perks submenu: selected perks show green with a ✔, others aqua; the budget is recomputed.
 	perk_tooltip = '["",{{"text":"{desc}","color":"gray"}},["","\\n",{{"text":"Cost"}},": "],[{{"text":"{cost}","color":"gold"}}]," pt",{{"text":"\\nClick to toggle on/off","color":"dark_gray"}}]'
 	perk_button_lines = ""
 	for perk_idx, p in enumerate(PERKS):
@@ -47,7 +46,6 @@ function {fn}/recompute_points
 execute store result storage {ns}:temp _pts int 1 run scoreboard players get @s {ns}.mp.edit_points
 execute store result storage {ns}:temp _perk_count int 1 run data get storage {ns}:temp editor.perks
 
-# Base dialog (no actions yet), then one button per perk (green+✔ if selected, aqua if not)
 function {fn}/show_perks_dialog_base with storage {ns}:temp
 {perk_button_lines}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
@@ -70,7 +68,7 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 }}
 """)
 
-	## pick_perk - Toggle a perk on/off; re-show perks dialog
+	## Toggle a perk, then show the perks dialog again.
 	pick_perk_dispatch = ""
 	for perk_idx, p in enumerate(PERKS):
 		perk_id = p.perk_id
@@ -81,35 +79,29 @@ exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.pl
 		)
 
 	write_versioned_function("multiplayer/editor/pick_perk", f"""
-# Store which perk was toggled
 {pick_perk_dispatch}
-# Toggle the selected perk (generic macro function)
 function {fn}/toggle_perk with storage {ns}:temp
 
-# Overkill changes what the secondary slot means (pistol vs primary), so toggling it
-# always clears the current secondary to avoid an invalid combination
+# Overkill changes what the secondary slot holds, so toggling it clears the secondary.
 execute if data storage {ns}:temp {{_toggle_perk:"overkill"}} run function {fn}/clear_secondary
 
-# Re-open the perks dialog to reflect updated state
 function {fn}/show_perks_dialog
 """)
 
-	# Generic toggle perk (macro function using _toggle_perk)
 	write_versioned_function("multiplayer/editor/toggle_perk", f"""
-# Already selected → remove it (recompute refunds automatically)
+# Already selected: remove it (the recompute refunds it).
 $execute if data storage {ns}:temp editor{{perks:["$(_toggle_perk)"]}} run return run function {fn}/remove_perk
 
-# Check max perks limit
 execute store result score #perk_count {ns}.data run data get storage {ns}:temp editor.perks
 execute if score #perk_count {ns}.data matches {MAX_PERKS}.. run return run tellraw @s [{MGS_TAG},{{"text":"Max {MAX_PERKS} perks allowed!","color":"red"}}]
 
-# Snapshot, add, commit (reverts on overflow)
+# Snapshot, add, commit (reverts on overflow).
 data modify storage {ns}:temp _ed_bak set from storage {ns}:temp editor
 $data modify storage {ns}:temp editor.perks append value "$(_toggle_perk)"
 execute store success score #ed_ok {ns}.data run function {fn}/commit_check
 """)
 
-	# Generic remove perk (rebuild the list without the toggled perk)
+	# Rebuild the list without the toggled perk.
 	write_versioned_function("multiplayer/editor/remove_perk", f"""
 data modify storage {ns}:temp _remove_iter set from storage {ns}:temp editor.perks
 data modify storage {ns}:temp editor.perks set value []

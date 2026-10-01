@@ -7,18 +7,17 @@
 #			mgs:v5.1.0/missions/enter_death_spectate [ at @s ]
 #
 
-# Only drop a gun held in a weapon slot (hotbar.1 or hotbar.2; hotbar.0 is the knife)
 execute store result score #drop_sel mgs.data run data get entity @s SelectedItemSlot
 execute unless score #drop_sel mgs.data matches 1..2 run scoreboard players set #drop_sel mgs.data 1
 execute if score #drop_sel mgs.data matches 1 unless items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] run return 0
 execute if score #drop_sel mgs.data matches 2 unless items entity @s hotbar.2 *[custom_data~{mgs:{gun:true}}] run return 0
 
-# Capture the held gun item, bare of any inventory Slot tag so it fits an item_display / item entity
+# Without its inventory Slot tag, so it fits an item_display or item entity.
 execute if score #drop_sel mgs.data matches 1 run item replace entity B5-0-0-0-3 contents from entity @s hotbar.1
 execute if score #drop_sel mgs.data matches 2 run item replace entity B5-0-0-0-3 contents from entity @s hotbar.2
 data modify storage mgs:temp _dropw set from entity B5-0-0-0-3 item
 
-# The live bullet count lives on the scoreboard, not in the item (<= 0 makes the drop use half a mag)
+# The bullet count lives in the score; <= 0 makes the drop use half a magazine.
 scoreboard players operation #drop_ammo mgs.data = @s mgs.remaining_bullets
 function mgs:v5.1.0/shared/drops/drop
 

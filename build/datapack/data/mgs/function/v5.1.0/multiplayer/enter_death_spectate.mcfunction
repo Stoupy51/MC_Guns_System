@@ -7,22 +7,20 @@
 #			mgs:v5.1.0/multiplayer/on_respawn
 #
 
-# Drop the held gun on the ground (pickable for 30s) before anything else, while still holding it
+# First, while the gun is still held: it can be picked up for 30 s.
 execute at @s run function mgs:v5.1.0/multiplayer/drop_held_weapon
 
-# S&D: no respawning, mark as dead and go spectator
+# S&D: no respawn.
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run return run function mgs:v5.1.0/multiplayer/gamemodes/snd/on_death
 
-# Set player to spectator mode for 3 seconds (60 ticks)
+# 3 s of spectating.
 gamemode spectator @s
 scoreboard players set @s mgs.mp.spectate_timer 60
 
-# Spectate attacker (if tagged) or random alive player
 spectate @p[tag=mgs.temp_killer,gamemode=!spectator] @s
 execute unless entity @a[tag=mgs.temp_killer] run function mgs:v5.1.0/multiplayer/spectate_random_player
 tag @a[tag=mgs.temp_killer] remove mgs.temp_killer
 
-# Announce death & playsound
 title @s times 0 70 10
 title @s title ["☠"]
 title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]

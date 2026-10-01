@@ -48,11 +48,9 @@ execute if score #xp_sec_tick mgs.data matches 0 as @a run function mgs:v5.1.0/p
 execute if data storage mgs:zombies game{state:"active"} unless score #zb_freeze mgs.data matches 1 run function mgs:v5.1.0/zombies/game_tick
 execute if data storage mgs:zombies game{state:"active"} if score #zb_freeze mgs.data matches 1 run function mgs:v5.1.0/zombies/freeze_tick
 
-# Multiplayer game tick
 execute if data storage mgs:multiplayer game{state:"active"} run function mgs:v5.1.0/multiplayer/game_tick
 execute if data storage mgs:multiplayer game{state:"preparing"} run function mgs:v5.1.0/multiplayer/prep_tick
 
-# Missions game tick
 execute if data storage mgs:missions game{state:"active"} run function mgs:v5.1.0/missions/game_tick
 execute if data storage mgs:missions game{state:"preparing"} run function mgs:v5.1.0/missions/prep_tick
 

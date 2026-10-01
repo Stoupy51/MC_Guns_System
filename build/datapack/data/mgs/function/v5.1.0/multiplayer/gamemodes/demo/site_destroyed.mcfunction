@@ -9,8 +9,7 @@
 scoreboard players set @s mgs.demo_state 2
 scoreboard players set @s mgs.demo_prog 0
 
-# Pay the attacking side BEFORE the blast below: it runs simulate_death on everyone in range, which turns
-# the planter standing over their own bomb into a spectator and would exclude them from their own objective.
+# The attackers are paid before the blast, whose simulate_death would turn the planter into a spectator.
 tag @a remove mgs.xp_earner
 tag @a[tag=mgs.demo_atk,gamemode=!spectator] add mgs.xp_earner
 execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/mp/award_site_destroyed
@@ -20,7 +19,7 @@ playsound minecraft:entity.generic.explode player @a ~ ~ ~ 2 0.8
 execute as @a[distance=..8.0,gamemode=!creative,gamemode=!spectator,scores={mgs.mp.in_game=1..}] run data modify storage mgs:input with set value {}
 execute as @a[distance=..8.0,gamemode=!creative,gamemode=!spectator,scores={mgs.mp.in_game=1..}] run function mgs:v5.1.0/multiplayer/simulate_death
 
-# The site is wrecked: no chest to plant on, rubble and a struck-out label in its place
+# No chest to plant on: rubble and a struck-out label.
 kill @e[tag=mgs.demo_bomb,distance=..2]
 kill @e[tag=mgs.demo_bomb_vis,distance=..2]
 kill @e[tag=mgs.demo_bomb_hud,distance=..2]
@@ -38,10 +37,10 @@ execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=!mgs.xp_earner] [[{
 execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_d_destroyed","color":"red","bold":true},[" ",{"text":"+20 XP","color":"gold"}]]
 tag @a remove mgs.xp_earner
 
-# Destroying a site buys time to reach the other one
+# Time to reach the other site.
 scoreboard players add #demo_timer mgs.data 1200
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⏱ ","color":"white"},[{"text":"+60","color":"gold"}, {"translate":"mgs.s_on_the_clock"}]]
 
-# The attackers only win once nothing is left standing, in the decider as in any other round
+# Attackers win once nothing is left standing, in the decider too.
 execute unless entity @e[tag=mgs.demo_obj,scores={mgs.demo_state=..1}] run function mgs:v5.1.0/multiplayer/gamemodes/demo/attackers_win
 

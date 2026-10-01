@@ -37,9 +37,6 @@ def write_multiplayer_sidebar() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Sidebar HUD.
-
-	# Build sidebar content components for reuse
 	sb_timer = (
 		f'[" ⏱ ",'
 		f'[{{score:{{name:"#timer_min",objective:"{ns}.data"}},"color":"yellow"}},'
@@ -52,25 +49,22 @@ def write_multiplayer_sidebar() -> None:
 	sb_limit = f'[{{text:" First to ",color:"gray"}},{{score:{{name:"#score_limit",objective:"{ns}.data"}},color:"white"}}]'
 	sb_spacer = '" "'
 
-	## Team sidebar (TDM) — takes $(title) macro arg
+	## Team sidebar (TDM), with a $(title) macro argument.
 	write_versioned_function("multiplayer/create_sidebar_team", f"""
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(title)",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_limit}]}}
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	# FFA sidebar refresh: ranks players by kills, builds sidebar with top 10 Doubles as the sidebar's creation path — start calls it directly for the ffa gamemode Called every second from timer_display and on kills
+	# FFA: ranks players by kills (top 10). Also creates the sidebar (start calls it for ffa); runs every second and on kills.
 	ffa_rank_code = f"""
-# Initialize sidebar header in storage
 data modify storage {ns}:temp ffa_sb set value [{sb_timer},{sb_spacer},{sb_limit},{sb_spacer}]
 
-# Reset ranks and tag candidates
 scoreboard players set @a {ns}.mp.ffa_rank 0
 tag @a[scores={{{ns}.mp.in_game=1..}}] add {ns}.ffa_candidate
 """
 	for i in range(1, 11):
 		ffa_rank_code += f"""
-# Rank {i}
 execute unless entity @a[tag={ns}.ffa_candidate] run return run function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 scoreboard players set #ffa_max {ns}.data -1
 execute as @a[tag={ns}.ffa_candidate] run scoreboard players operation #ffa_max {ns}.data > @s {ns}.mp.kills
@@ -82,12 +76,10 @@ execute as @a[scores={{{ns}.mp.ffa_rank={i}}}] run tag @s remove {ns}.ffa_candid
 data modify storage {ns}:temp ffa_sb append value [[{{text:" {i}. ",color:"gold"}},{Text.player(ns, f"@a[scores={{{ns}.mp.ffa_rank={i}}}]", color="yellow")}],{{score:{{name:"@a[scores={{{ns}.mp.ffa_rank={i}}}]",objective:"{ns}.mp.kills"}},color:"white"}}]
 """
 	ffa_rank_code += f"""
-# Build
 function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 """
 	write_versioned_function("multiplayer/refresh_sidebar_ffa", ffa_rank_code)
 
-	## FFA sidebar build (macro function)
 	write_versioned_function("multiplayer/build_sidebar_ffa", f"""
 tag @a remove {ns}.ffa_candidate
 scoreboard players reset * {ns}.sidebar
@@ -95,16 +87,14 @@ $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Fre
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	## Domination sidebar — shows team scores + point ownership per zone Point status display helper (0=⚪, 1=🔴, 2=🔵) — updated each tick via refresh We build DOM point lines that reference #dom_owner_X scores Since sidebar can't do conditionals, we use a helper function to rebuild sidebar each score_tick
+	## Domination: rebuilt on each score tick, since the sidebar cannot express conditionals.
 	write_versioned_function("multiplayer/create_sidebar_dom", f"""
 function {ns}:v{version}/multiplayer/refresh_sidebar_dom
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	# DOM sidebar refresh: rebuilds the sidebar content with current point ownership Called every score_tick (every 5 seconds) and on point captures
-	# Each zone line is two components — the label on the left, the owner on the right. They used to be
-	# four (" ", "A: ", the emoji, the owner name), which bs.sidebar cannot lay out: only the first two
-	# would have had a side, so the zone rows never rendered at all.
+	# Runs every score tick (5 s) and on captures. Each zone line is exactly two components (label left, owner right):
+	# bs.sidebar lays out only two halves.
 	dom_zone_lines: str = "\n".join(
 		f'execute if score #dom_owner_{zone.lower()} {ns}.data matches {s.value} run data modify storage {ns}:temp dom_sb.{zone.lower()} set value '
 		f"'[[\" \",{{\"text\":\"{zone}\",\"color\":\"{s.color}\"}}],[\"{s.emoji}\",{{\"text\":\"{s.name}\",\"color\":\"{s.color}\"}}]]'"
@@ -112,10 +102,8 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 		for s in DOM_ZONE_STATES
 	)
 	write_versioned_function("multiplayer/refresh_sidebar_dom", f"""
-# Build point status strings based on ownership scores
 {dom_zone_lines}
 
-# Build sidebar with dynamic point entries
 function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp dom_sb
 """)
 
@@ -125,15 +113,8 @@ $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Dom
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	## Search & Destroy sidebar — round number, round wins, which side attacks, bomb state.
-	## The ⏱ line is the ROUND clock here (and the bomb fuse once planted): the gamemode writes #mp_timer
-	## itself, because a match time limit cannot arbitrate a first-to-4 format.
-	## Rebuilt rather than refreshed for the same reason as domination: the attacking side and the bomb
-	## state are text, and no score component can express text.
-	##
-	## Every line is EXACTLY two components — `[left, right]`. bs.sidebar renders one entry as a left half
-	## and a right half, so a third top-level component is not laid out anywhere and the line silently
-	## disappears. Anything richer than one component per side has to be wrapped in its own array.
+	## Search & Destroy: the ⏱ line is the round clock, then the fuse once planted. Rebuilt like domination, since the attacking side and bomb state are text.
+	## Every line is exactly [left, right]: bs.sidebar drops a third top-level component, so richer content goes in its own array.
 	sb_snd_round = f'[{{text:" Round ",color:"gray"}},{{score:{{name:"#snd_round",objective:"{ns}.data"}},color:"white"}}]'
 	sb_snd_limit = f'[{{text:" First to ",color:"gray"}},{{score:{{name:"#snd_win_threshold",objective:"{ns}.data"}},color:"white"}}]'
 
@@ -143,11 +124,9 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	write_versioned_function("multiplayer/refresh_sidebar_snd", f"""
-# Which side is attacking
 execute if score #snd_attackers {ns}.data matches 1 run data modify storage {ns}:temp snd_sb.atk set value '[[" ⚔ ",{{"text":"Attack","color":"gray"}}],{{"text":"Red","color":"red"}}]'
 execute if score #snd_attackers {ns}.data matches 2 run data modify storage {ns}:temp snd_sb.atk set value '[[" ⚔ ",{{"text":"Attack","color":"gray"}}],{{"text":"Blue","color":"blue"}}]'
 
-# Bomb state: on the ground, on someone's back, or ticking
 execute if score #snd_bomb_state {ns}.data matches 0 run data modify storage {ns}:temp snd_sb.bomb set value '[[" 💣 ",{{"text":"Bomb","color":"gray"}}],{{"text":"Loose","color":"gray"}}]'
 execute if score #snd_bomb_state {ns}.data matches 0 if entity @a[tag={ns}.snd_carrier] run data modify storage {ns}:temp snd_sb.bomb set value '[[" 💣 ",{{"text":"Bomb","color":"gray"}}],{{"text":"Carried","color":"gold"}}]'
 execute if score #snd_bomb_state {ns}.data matches 2 run data modify storage {ns}:temp snd_sb.bomb set value '[[" 💣 ",{{"text":"Bomb","color":"gray"}}],{{"text":"PLANTED","color":"red","bold":true}}]'
@@ -161,10 +140,8 @@ $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Sea
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	## Demolition sidebar — round wins, which side attacks, and the state of each bomb site.
-	## Site state is read off the site MARKERS (mgs.demo_state), so the rows are built by testing tagged
-	## entities rather than fake-player scores: a site is intact, planted or destroyed independently.
-	## The ⏱ line is the round clock, which this mode freezes while any bomb is down.
+	## Demolition: site rows are read off the site markers (mgs.demo_state), each intact, planted or destroyed on its own.
+	## The ⏱ line is the round clock, frozen while a bomb is down.
 	sb_demo_round = f'[{{text:" Round ",color:"gray"}},{{score:{{name:"#demo_round",objective:"{ns}.data"}},color:"white"}}]'
 	demo_site_lines: str = "\n".join(
 		f'execute if entity @e[tag={ns}.demo_obj,tag={ns}.demo_site_{letter},scores={{{ns}.demo_state={s.value}}}] run data modify storage {ns}:temp demo_sb.{letter.lower()} set value '
@@ -179,15 +156,13 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
 	write_versioned_function("multiplayer/refresh_sidebar_demo", f"""
-# Which side is attacking. Label and team are stored apart so the decider only relabels the left half,
-# instead of needing one row string per round kind and attacking side pair.
+# Label and team are stored apart, so the decider only relabels the left half.
 data modify storage {ns}:temp demo_sb.atk_label set value '[" ⚔ ",{{"text":"Attack","color":"gray"}}]'
 execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run data modify storage {ns}:temp demo_sb.atk_label set value '[" ⚡ ",{{"text":"Decider","color":"gold"}}]'
 data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"—","color":"dark_gray"}}'
 execute if score #demo_attackers {ns}.data matches 1 run data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"Red","color":"red"}}'
 execute if score #demo_attackers {ns}.data matches 2 run data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"Blue","color":"blue"}}'
 
-# One row per site, read off that site's own marker
 data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Site A","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
 data modify storage {ns}:temp demo_sb.b set value '[[" ",{{"text":"Site B","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
 {demo_site_lines}
@@ -201,9 +176,7 @@ $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Dem
 scoreboard objectives setdisplay sidebar {ns}.sidebar
 """)
 
-	## Hardpoint sidebar — shows team scores + controlling team + time to move
-	## The rotation line was three components (label, seconds, "s left"), one too many for a two-sided
-	## entry, so it never rendered: the seconds and the unit now share the right half.
+	## Hardpoint: team scores, controlling team, time to move. The seconds and their unit share the right half (two components per line).
 	sb_hp_rotate = (
 		f'[{{text:" Zone",color:"dark_purple"}},'
 		f'[{{score:{{name:"#hp_rotate_sec",objective:"{ns}.data"}},color:"white"}},{{text:"s left",color:"gray"}}]]'

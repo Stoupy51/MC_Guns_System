@@ -20,9 +20,9 @@
 
 $scoreboard players set @s mgs.mp.class $(class_num)
 
-# If game active: queue for next respawn
+# Applied at the next respawn.
 $execute if data storage mgs:multiplayer game{state:"active"} run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"translate":"mgs.class_set_to"}," "],{"text":"$(class_name)","color":"green","bold":true},[{"text":" - ","color":"yellow"}, {"translate":"mgs.will_apply_on_respawn"}],{"text":" [✔]","color":"gold","hover_event":{"action":"show_text","value":{"translate":"mgs.click_here_to_apply_immediately_op_only","color":"yellow"}},"click_event":{"action":"run_command","command":"/function mgs:v5.1.0/multiplayer/apply_class"}}]
 
-# If game not active: only save choice (no loadout outside multiplayer)
+# Outside a game the choice is only saved.
 $execute unless data storage mgs:multiplayer game{state:"active"} run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"translate":"mgs.class_set_to"}," "],{"text":"$(class_name)","color":"green","bold":true},{"text":" [✔]","color":"gold","hover_event":{"action":"show_text","value":{"translate":"mgs.click_here_to_apply_immediately_op_only","color":"yellow"}},"click_event":{"action":"run_command","command":"/function mgs:v5.1.0/multiplayer/apply_class"}}]
 

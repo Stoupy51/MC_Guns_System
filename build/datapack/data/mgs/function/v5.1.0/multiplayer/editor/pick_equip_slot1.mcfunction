@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/player/config/process
 #
 
-# Snapshot, apply (None clears the slot), commit
+# Snapshot, apply (None clears the slot), commit.
 data modify storage mgs:temp _ed_bak set from storage mgs:temp editor
 execute if score @s mgs.player.config matches 460 run data modify storage mgs:temp editor merge value {equip_slot1:"",equip_slot1_name:"None",equip_slot1_camo:""}
 execute if score @s mgs.player.config matches 461 run data modify storage mgs:temp editor merge value {equip_slot1:"frag_grenade",equip_slot1_name:"Frag Grenade",equip_slot1_camo:""}
@@ -17,7 +17,7 @@ execute if score @s mgs.player.config matches 464 run data modify storage mgs:te
 execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/editor/commit_check
 execute if score #ed_ok mgs.data matches 0 run return run function mgs:v5.1.0/multiplayer/editor/hub
 
-# None → hub, otherwise pick a camo for the grenade (free)
+# None goes back to the hub; otherwise pick a camo (free).
 execute if data storage mgs:temp editor{equip_slot1:""} run return run function mgs:v5.1.0/multiplayer/editor/hub
 function mgs:v5.1.0/multiplayer/editor/show_equip1_camo_dialog
 

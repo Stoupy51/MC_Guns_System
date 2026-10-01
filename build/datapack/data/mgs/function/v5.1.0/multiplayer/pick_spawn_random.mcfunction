@@ -8,7 +8,6 @@
 
 execute as @n[tag=mgs.spawn_candidate,sort=random] run function mgs:v5.1.0/shared/tp_to_spawn {mode:"multiplayer"}
 
-# Clean up
 tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate
 tag @a[tag=mgs.spawn_pending] remove mgs.spawn_pending
 tag @a[tag=mgs.spawn_enemy] remove mgs.spawn_enemy

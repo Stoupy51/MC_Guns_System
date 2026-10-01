@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/player/config/process
 #
 
-# Snapshot, apply the gun (scope/camo reset, 0 magazines), then commit against the budget
+# Scope and camo reset, no magazine.
 data modify storage mgs:temp _ed_bak set from storage mgs:temp editor
 execute if score @s mgs.player.config matches 250 run data modify storage mgs:temp editor merge value {secondary:"m1911",secondary_name:"M1911",secondary_mag:"m1911_mag",secondary_mag_count:0,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:"m1911"}
 execute if score @s mgs.player.config matches 251 run data modify storage mgs:temp editor merge value {secondary:"m9",secondary_name:"M9",secondary_mag:"m9_mag",secondary_mag_count:0,secondary_scope:"",secondary_scope_name:"Iron Sights",secondary_camo:"",secondary_camo_name:"Default",secondary_full:"m9"}
@@ -19,7 +19,7 @@ execute if score @s mgs.player.config matches 256 run data modify storage mgs:te
 execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/editor/commit_check
 execute if score #ed_ok mgs.data matches 0 run return run function mgs:v5.1.0/multiplayer/editor/hub
 
-# Continue: scope dialog for guns with variants, camo otherwise
+# Scope dialog for guns with variants, camo otherwise.
 execute if data storage mgs:temp editor{secondary:"deagle"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_secondary_4only
 
 function mgs:v5.1.0/multiplayer/editor/show_secondary_camo_dialog

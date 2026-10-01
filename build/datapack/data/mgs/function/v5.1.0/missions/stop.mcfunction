@@ -6,7 +6,6 @@
 #			dialog mgs:v5.1.0/missions/setup
 #
 
-# Various cleanup and reset tasks to return to lobby state
 data modify storage mgs:missions game.state set value "lobby"
 schedule clear mgs:v5.1.0/missions/end_prep
 execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:movement_speed base reset
@@ -20,10 +19,8 @@ clear @a[scores={mgs.mi.in_game=1}] compass[custom_data~{mgs:{compass:true}}]
 kill @e[tag=mgs.mission_enemy]
 kill @e[tag=mgs.gm_entity]
 
-# Remove forceload
 execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.1.0/shared/remove_forceload
 
-# Signal mission end
 function #mgs:missions/on_mission_end
 
 # Re-enable natural regeneration, disable custom regen system
@@ -43,7 +40,6 @@ tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translat
 
 execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {script:"leave"}
 
-# Reset in-game state
 scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 0
 scoreboard players set @a mgs.mi.in_game 0
 scoreboard players set #mi_timer mgs.data 0

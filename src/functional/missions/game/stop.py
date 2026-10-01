@@ -11,9 +11,7 @@ def write_missions_stop() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Game Stop
 	write_versioned_function("missions/stop", f"""
-# Various cleanup and reset tasks to return to lobby state
 data modify storage {ns}:missions game.state set value "lobby"
 schedule clear {ns}:v{version}/missions/end_prep
 execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:movement_speed base reset
@@ -27,10 +25,8 @@ clear @a[scores={{{ns}.mi.in_game=1}}] compass[custom_data~{{{ns}:{{compass:true
 kill @e[tag={ns}.mission_enemy]
 kill @e[tag={ns}.gm_entity]
 
-# Remove forceload
 execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/shared/remove_forceload
 
-# Signal mission end
 function #{ns}:missions/on_mission_end
 
 {GameLifecycle.regen_disable_lines(ns)}
@@ -39,7 +35,6 @@ tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
 execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{script:"leave"}}
 
-# Reset in-game state
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 0
 scoreboard players set @a {ns}.mi.in_game 0
 scoreboard players set #mi_timer {ns}.data 0
@@ -50,7 +45,7 @@ scoreboard players set @a {ns}.mi.deaths 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)
 
-	## Join Ongoing Mission (late-joiner support)
+	## Late joiners.
 	write_versioned_function("missions/join_game", GameLifecycle.late_join_flow_lines(
 		ns,
 		"missions",

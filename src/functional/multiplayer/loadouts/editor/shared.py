@@ -4,7 +4,7 @@ from stewbeet import write_versioned_function
 
 
 # Functions
-# Empty editor state (display fields default to readable values so hub rows always render)
+# Display fields default to readable values, so hub rows always render.
 def empty_state() -> str:
 	return (
 		'{primary:"",primary_name:"None",primary_mag:"",primary_mag_count:1,'

@@ -12,7 +12,6 @@ execute if score #entry_id mgs.data = #loadout_id mgs.data if data storage mgs:t
 execute if score #entry_id mgs.data = #loadout_id mgs.data if data storage mgs:temp _find_iter[0].editor_state run scoreboard players set #edit_found mgs.data 1
 execute if score #entry_id mgs.data = #loadout_id mgs.data run return 0
 
-# Not found yet, continue search
 data remove storage mgs:temp _find_iter[0]
 execute if data storage mgs:temp _find_iter[0] run function mgs:v5.1.0/multiplayer/custom/edit_load_iter
 

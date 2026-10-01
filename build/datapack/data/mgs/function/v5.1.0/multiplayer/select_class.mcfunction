@@ -13,20 +13,15 @@
 #			dialog mgs:v5.1.0/missions/setup
 #
 
-# Initialize dialog structure
 data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.select_your_class",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:crossbow"},description:{contents:{translate:"mgs.choose_a_class_for_multiplayer",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:2,after_action:"close",exit_action:{label:"Cancel"}}
 
-# Copy class list for iteration
 data modify storage mgs:temp class_iter set from storage mgs:multiplayer classes_list
 
-# Build dialog actions recursively (passes first class data as macro args)
 execute if data storage mgs:temp class_iter[0] run function mgs:v5.1.0/multiplayer/build_class_btn with storage mgs:temp class_iter[0]
 
-# Append custom loadout buttons
 data modify storage mgs:temp dialog.actions append value {label:[{text:"✚ ",color:"aqua",bold:true},{translate:"mgs.create_loadout"}],tooltip:{translate:"mgs.build_a_custom_loadout_from_scratch"},action:{type:"run_command",command:"/trigger mgs.player.config set 100"}}
 data modify storage mgs:temp dialog.actions append value {label:["","📦 ",{translate:"mgs.my_loadouts",color:"yellow",bold:true}],tooltip:{translate:"mgs.manage_your_custom_loadouts"},action:{type:"run_command",command:"/trigger mgs.player.config set 102"}}
 data modify storage mgs:temp dialog.actions append value {label:["","🌍 ",{translate:"mgs.marketplace",color:"light_purple",bold:true}],tooltip:{translate:"mgs.browse_public_loadouts_from_other_players"},action:{type:"run_command",command:"/trigger mgs.player.config set 101"}}
 
-# Show the completed dialog via macro
 function mgs:v5.1.0/multiplayer/show_dialog with storage mgs:temp
 

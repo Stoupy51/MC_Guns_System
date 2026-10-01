@@ -18,7 +18,6 @@
 function mgs:v5.1.0/multiplayer/editor/recompute_points
 execute if score @s mgs.mp.edit_points matches 0.. run return 1
 
-# Over budget: revert and deny
 data modify storage mgs:temp editor set from storage mgs:temp _ed_bak
 function mgs:v5.1.0/multiplayer/editor/recompute_points
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points_for_that","color":"red"}]

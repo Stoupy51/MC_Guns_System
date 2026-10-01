@@ -6,9 +6,9 @@
 # @within	mgs:v5.1.0/player/config/process
 #
 
-# Guard: the gun must be selected (hub grays this out, but triggers can be sent manually)
+# The hub grays this out, but triggers can be sent by hand.
 execute if data storage mgs:temp editor{secondary:""} run return run function mgs:v5.1.0/multiplayer/editor/hub
-# Snapshot, apply, commit (reverts on overflow), back to hub
+# Snapshot, apply, commit (reverts on overflow), back to the hub.
 data modify storage mgs:temp _ed_bak set from storage mgs:temp editor
 execute if score @s mgs.player.config matches 396 run data modify storage mgs:temp editor.secondary_mag_count set value 0
 execute if score @s mgs.player.config matches 397 run data modify storage mgs:temp editor.secondary_mag_count set value 1

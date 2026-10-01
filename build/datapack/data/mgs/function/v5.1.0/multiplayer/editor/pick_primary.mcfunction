@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/player/config/process
 #
 
-# Snapshot, apply the gun (scope/camo reset, 1 magazine), then commit against the budget
+# Scope and camo reset, 1 magazine.
 data modify storage mgs:temp _ed_bak set from storage mgs:temp editor
 execute if score @s mgs.player.config matches 200 run data modify storage mgs:temp editor merge value {primary:"ak47",primary_name:"AK-47",primary_mag:"ak47_mag",primary_mag_count:1,primary_scope:"",primary_scope_name:"Iron Sights",primary_camo:"",primary_camo_name:"Default",primary_full:"ak47"}
 execute if score @s mgs.player.config matches 201 run data modify storage mgs:temp editor merge value {primary:"m16a4",primary_name:"M16A4",primary_mag:"m16a4_mag",primary_mag_count:1,primary_scope:"",primary_scope_name:"Iron Sights",primary_camo:"",primary_camo_name:"Default",primary_full:"m16a4"}
@@ -35,7 +35,7 @@ execute if score @s mgs.player.config matches 222 run data modify storage mgs:te
 execute store success score #ed_ok mgs.data run function mgs:v5.1.0/multiplayer/editor/commit_check
 execute if score #ed_ok mgs.data matches 0 run return run function mgs:v5.1.0/multiplayer/editor/hub
 
-# Continue: scope dialog for guns with variants, camo otherwise
+# Scope dialog for guns with variants, camo otherwise.
 execute if data storage mgs:temp editor{primary:"ak47"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
 execute if data storage mgs:temp editor{primary:"m16a4"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full
 execute if data storage mgs:temp editor{primary:"famas"} run return run function mgs:v5.1.0/multiplayer/editor/show_scope_primary_full

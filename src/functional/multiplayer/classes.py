@@ -135,8 +135,8 @@ class MultiplayerClasses:
 		equipment: dict[str, int] = class_data.get("equipment", {})
 		make_slot = MultiplayerClasses.make_slot_snbt
 
-		# Primary on hotbar.1 (hotbar.0 is reserved for the knife, given in apply_class_dynamic), secondary on hotbar.2,
-		# grenades from hotbar.8 downwards, then magazines from inventory.0 on
+		# Primary on hotbar.1 (hotbar.0 is the knife, given in apply_class_dynamic), secondary on hotbar.2,
+		# grenades from hotbar.8 downwards, magazines from inventory.0.
 		slots: list[str] = [make_slot(ns, "hotbar.1", main_gun)]
 		if secondary_gun:
 			slots.append(make_slot(ns, "hotbar.2", secondary_gun))
@@ -147,14 +147,14 @@ class MultiplayerClasses:
 			slots += MultiplayerClasses.magazine_slots(ns, class_data["secondary"], first_slot=len(main_mags))
 		slots_snbt: str = ",".join(slots)
 
-		# Equipment display string, ex: "2x Frag, 1x Smoke"
+		# "2x Frag, 1x Smoke"
 		equip_parts: list[str] = [f"{count}x {MultiplayerClasses.EQUIP_LABELS.get(item_id, item_id)}" for item_id, count in equipment.items()]
 		equip_display: str = ", ".join(equip_parts) if equip_parts else "None"
 
 		main_mag_count: int = class_data["main"].get("mag_count", 0)
 		secondary_mag_count: int = class_data.get("secondary", {}).get("mag_count", 0)
 
-		# Perks: stored as a string list (matches custom loadout format) + a display string
+		# A string list, like custom loadouts, plus a display string.
 		perks: list[str] = class_data.get("perks", [])
 		perks_snbt: str = ",".join(f'"{perk_id}"' for perk_id in perks)
 		perks_display: str = ", ".join(MultiplayerClasses.PERK_NAMES.get(perk_id, perk_id) for perk_id in perks) if perks else "None"

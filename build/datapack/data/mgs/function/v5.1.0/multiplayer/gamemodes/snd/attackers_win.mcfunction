@@ -5,8 +5,7 @@
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_explodes
 #
 
-# Close the round exactly once. Several end conditions can come true on the same tick (a defuse that
-# also wipes a side, a timeout landing with the last kill), and each one calls in here.
+# Closes the round once: several end conditions can land on the same tick and each calls here.
 execute unless score #snd_round_active mgs.data matches 1 run return fail
 scoreboard players set #snd_round_active mgs.data 0
 

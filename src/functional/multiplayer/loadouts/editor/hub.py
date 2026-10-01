@@ -31,17 +31,17 @@ def write_editor_hub() -> None:
 
 	fn: str = editor_fn(ns, version)
 
-	## ==================================================================== HUB — the main loadout page (CoD-style).
+	## Hub: the main loadout page (CoD style).
 
-	## editor/start - Create a new loadout: fresh state, then open the hub
+	## Create a new loadout: fresh state, then the hub.
 	write_versioned_function("multiplayer/editor/start", f"""
-# Default to creating a new loadout (custom/edit overrides this after calling start)
+# custom/edit overrides this after calling start.
 scoreboard players set @s {ns}.mp.edit_target 0
 function {fn}/init_state
 function {fn}/hub
 """)
 
-	# Base hub dialog (empty actions, points in body) — actions are appended afterwards
+	# Empty actions and the points in the body; rows are appended afterwards.
 	write_versioned_function("multiplayer/editor/hub_base", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:{{text:"Loadout",color:"gold",bold:true}},\
@@ -59,7 +59,7 @@ exit_action:{{label:"Cancel",action:{{type:"run_command",command:"/trigger {ns}.
 }}
 """)
 
-	# Hub rows whose label depends on the current state (macro append with editor fields)
+	# Rows whose label shows the current selection.
 	def row(trig: int, label_snbt: str, tooltip_snbt: str) -> str:
 		return (
 			f'$data modify storage {ns}:temp dialog.actions append value '
@@ -87,7 +87,7 @@ exit_action:{{label:"Cancel",action:{{type:"run_command",command:"/trigger {ns}.
 		'["",{text:"\\ud83d\\udce6 "},{text:"Secondary Mags: ",color:"white"},{text:"$(secondary_mag_count)x",color:"green"}]',
 		f'{{text:"{COST_SECONDARY_MAG} pt per magazine",color:"gray"}}',
 	))
-	# Knife: camo only, and free — every loadout carries it, so there is nothing else to choose.
+	# Knife: camo only, and free; every loadout carries one.
 	write_versioned_function("multiplayer/editor/hub_row_knife", row(
 		TRIG_HUB_KNIFE,
 		'["",{text:"\\ud83d\\udd2a "},{text:"Knife: ",color:"white"},{text:"$(knife_camo_name)",color:"green"}]',
@@ -109,7 +109,6 @@ exit_action:{{label:"Cancel",action:{{type:"run_command",command:"/trigger {ns}.
 		f'{{text:"{COST_PERK} pt per perk",color:"gray"}}',
 	))
 
-	# Static hub buttons
 	unavailable_mags_primary = (
 		f'{{label:["","\\ud83d\\udce6 ",{{text:"Primary Mags \\u2014 Unavailable",color:"dark_gray"}}],'
 		f'tooltip:{{text:"Pick a primary weapon first",color:"red"}},'
@@ -137,13 +136,11 @@ exit_action:{{label:"Cancel",action:{{type:"run_command",command:"/trigger {ns}.
 	)
 
 	write_versioned_function("multiplayer/editor/hub", f"""
-# Backfill fields added after a state was stored: in-progress states in {ns}:editor and the
-# editor_state embedded in older saved loadouts predate the knife row, and hub_row_knife is a
-# macro — a missing $(knife_camo_name) would fail the whole row.
+# Fields added after a state was stored (in {ns}:editor, or embedded in older loadouts) are filled in:
+# hub_row_knife is a macro, and a missing $(knife_camo_name) would fail the row.
 execute unless data storage {ns}:temp editor.knife_camo run data modify storage {ns}:temp editor.knife_camo set value ""
 execute unless data storage {ns}:temp editor.knife_camo_name run data modify storage {ns}:temp editor.knife_camo_name set value "Default"
 
-# Points summary
 function {fn}/recompute_points
 scoreboard players set #pts_used {ns}.data {PICK10_TOTAL}
 scoreboard players operation #pts_used {ns}.data -= @s {ns}.mp.edit_points
@@ -151,7 +148,6 @@ execute store result storage {ns}:temp _hub.pts int 1 run scoreboard players get
 execute store result storage {ns}:temp _hub.used int 1 run scoreboard players get #pts_used {ns}.data
 execute store result storage {ns}:temp _hub.perks int 1 run data get storage {ns}:temp editor.perks
 
-# Base dialog, then one row per category (labels show the current selection)
 function {fn}/hub_base with storage {ns}:temp _hub
 function {fn}/hub_row_primary with storage {ns}:temp editor
 execute if data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {unavailable_mags_primary}
@@ -164,12 +160,11 @@ function {fn}/hub_row_equip1 with storage {ns}:temp editor
 function {fn}/hub_row_equip2 with storage {ns}:temp editor
 function {fn}/hub_row_perks with storage {ns}:temp _hub
 
-# Save buttons (grayed out until a primary weapon is selected)
+# Grayed out until a primary is picked.
 execute if data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {unavailable_save}
 execute unless data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {save_public_btn}
 execute unless data storage {ns}:temp editor{{primary:""}} run data modify storage {ns}:temp dialog.actions append value {save_private_btn}
 
-# Show
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 

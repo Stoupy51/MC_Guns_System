@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/multiplayer/gamemodes/demo/site_destroyed
 #
 
-# Close the round exactly once: the last site's destruction and a clock expiry can land on the same tick
+# Closes the round once: the last destruction and a clock expiry can land on the same tick.
 execute unless score #demo_round_active mgs.data matches 1 run return fail
 scoreboard players set #demo_round_active mgs.data 0
 

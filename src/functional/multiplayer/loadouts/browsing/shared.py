@@ -17,7 +17,7 @@ def normalize_btn_fields(ns: str) -> str:
 	Returns:
 		str: One command per line, ready to embed in a function body.
 	"""
-	# Perk display lines for tooltips: \\n in SNBT is stored as \n (backslash + n, 2 chars), which macro substitution turns back into a newline
+	# \\n in SNBT is stored as backslash + n, which macro substitution turns back into a newline.
 	perk_disp: str = (
 		"\n".join(f"data modify storage {ns}:temp _btn_data.perk{i} set value \"\"" for i in range(len(PERKS)))
 		+ "\n"
