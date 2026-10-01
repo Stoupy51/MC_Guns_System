@@ -9,31 +9,59 @@ Credits for resources: MGS 4.2 by TheBradqq
 
 ## 🎮 Overview
 
-MC Guns System 26.3 is a full FPS framework for Minecraft.
-
-It includes:
-
-- Data-driven weapons (stats in item NBT/custom_data).
-- Multiplayer game modes.
-- Missions (co-op PvE).
-- Zombies mode.
-- A generic in-game map editor for all modes.
-- A custom loadout and class ecosystem.
-- Shader-based visual effects (zoom, flash, spread feedback).
-
-Quick item commands:
-
-- Give all registered items: `/function mgs:_give_all`
-- Give one specific item: `/loot give @s loot mgs:i/<item>`
-
-Quick config commands:
-
-- Open player config menu: `/trigger mgs.player.config set 1`
-- Open admin/server config menu: `/function mgs:config`
-- After retuning `src/functional/progression/awards.py` or a challenge threshold, rebuild every online player's levels and challenges from their banked XP: `/function mgs:v5.1.0/progression/recompute_all` (the path carries the pack version).
+MC Guns System is an FPS framework for Minecraft 26.3: data-driven weapons, Multiplayer game modes, co-op Missions, a Zombies mode, an in-game map editor shared by the three modes, custom loadouts, and post-effect shaders (zoom, muzzle flash, crosshair spread, low health).
 
 ![Gameplay overview](./assets/img/gameplay_overview.gif)
 ![Config Menu](./assets/img/config_menu.png)
+
+## 📦 Install
+
+1. Download the latest [release](https://github.com/Stoupy51/MC_Guns_System/releases/latest).
+2. Put `MCGunsSystem_datapack_with_libs.zip` in the world's `datapacks` folder.
+   It bundles Bookshelf and Smithed Actionbar; take `MCGunsSystem_datapack.zip` instead if the world already has them.
+3. Enable `MCGunsSystem_resource_pack_with_libs.zip` as a resource pack.
+4. `/reload`, or open the world.
+
+## 🕹️ Use
+
+- Give every item: `/function mgs:_give_all`
+- Give one item: `/loot give @s loot mgs:i/<item>`
+- Admin menu (game setup, map editor, server options): `/function mgs:config`
+- Player options: `/trigger mgs.player.config set 1`
+- After retuning `src/functional/progression/awards.py` or a challenge threshold, rebuild every online player's levels and challenges from their banked XP: `/function mgs:v5.1.0/progression/recompute_all` (the path carries the pack version).
+
+## 🛠️ Build
+
+Needs [uv](https://docs.astral.sh/uv/) 0.9 or newer, which fetches Python 3.14.
+
+```bash
+uv sync
+uv run stewbeet          # writes build/datapack, build/resource_pack and the zips
+```
+
+`beet.yml` copies the zips to the author's Windows paths (`build_copy_destinations`); elsewhere StewBeet only warns.
+
+Checks, with `uv run python scripts/verify.py <command>`:
+
+| Command | What it does |
+|---|---|
+| `baseline` | Snapshot `build/` to compare against |
+| `check [--diff]` | Rebuild and list what changed since the baseline, comments and blank lines ignored |
+| `validate` | Parse every function with mecha and report missing and unreachable resources |
+| `server --java <absolute path to Java 25>` | Load and reload the pack in a real 26.3 server |
+| `lint` | ruff, pyright strict, complexipy |
+
+## 🧱 Architecture
+
+`src/` generates everything; `build/` is the output, tracked in git, and is never edited by hand.
+
+- `src/setup_definitions.py`: registers every item (weapons, magazines, grenades, consumables) from `src/config` and `src/database`, then derives names, lore and components.
+- `src/link.py`: writes every function, in dependency order:
+  `main` (objectives, damage, config menu), `shaders`, `weapon`, `player_config`, `stamina`, `mob_ai`, `core` (bounds, maps, spawning, menus shared by the modes), `progression` (XP and challenges), `zombies`, `multiplayer`, `missions`, `map_editor`.
+- `src/config`: weapon stats, catalogs, keys. `src/database`: item builders, camo blends, Blockbench models.
+- `src/functional/helpers`: text, dialogs, titles and lifecycle helpers shared by the generators.
+- `assets/`: textures, sounds, shaders. `libs/`: bundled library resource pack.
+- `specs/`: one folder per planned feature, plus the inbox.
 
 ## 📊 Feature Matrix By Mode
 
