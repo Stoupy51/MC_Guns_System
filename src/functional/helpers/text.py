@@ -52,18 +52,15 @@ class Text:
 		Returns:
 			str: SNBT text component (single object or list with a neutral head).
 		"""
-		# Check if text has non-alphanumeric content (besides spaces)
 		m = re.match(r'^([^a-zA-Z0-9]*)(.*?)([^a-zA-Z0-9]*)$', text, re.DOTALL)
 		prefix, alpha, suffix = m.groups() if m else ("", text, "")
 
-		# Build attributes string for SNBT
 		attr_str = ",".join(f'{k}:"{v}"' if v not in ("true", "false") else f'{k}:{v}' for k, v in attrs.items())
 
 		if not prefix and not suffix:
-			# Pure alphanumeric - single component
 			return f'{{text:"{alpha}",{attr_str}}}' if attr_str else f'{{text:"{alpha}"}}'
 
-		# Build list: neutral head (so emoji prefix/suffix stay uncolored), styled alpha text
+		# A neutral head, so the emoji prefix and suffix stay uncoloured.
 		parts = ['""']
 		if prefix:
 			parts.append(f'"{prefix}"')
@@ -88,7 +85,6 @@ class Text:
 		m = re.match(r'^([^a-zA-Z0-9]*)(.*?)([^a-zA-Z0-9]*)$', text, re.DOTALL)
 		prefix, alpha, suffix = m.groups() if m else ("", text, "")
 		if not alpha or (not prefix and not suffix):
-			# Pure alphanumeric or pure symbols: keep as a single styled component
 			return {"text": text, **style}
 		parts: list[str | JsonDict] = [""]
 		if prefix:

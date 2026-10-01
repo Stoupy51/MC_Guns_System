@@ -89,7 +89,7 @@ SPEED_MULTIPLY_BASE: str = "speed_multiply_base"
 Uses the attribute operation `add_multiplied_base` on movement_speed.
 Negative values slow the player (e.g. -0.08 = -8% base speed). """
 
-# Projectile constants (for slow-traveling bullets like RPG rockets, grenades, etc.)
+# Projectiles (slow bullets: RPG rockets, grenades)
 PROJECTILE_SPEED: str = "proj_speed"
 """ Speed of the projectile in thousandths of blocks/tick (e.g. 1500 = 1.5 blocks/tick).
 If present in a weapon's stats, the weapon fires a slow projectile instead of an instant raycast. """
@@ -112,7 +112,7 @@ EXPLOSION_DECAY: str = "expl_decay"
 """ Rate at which explosion damage decreases per block of distance from impact center.
 Uses the formula: damage *= pow(decay, distance). Lower values = faster falloff. """
 
-# Grenade constants
+# Grenades
 GRENADE_TYPE: str = "grenade_type"
 """ Type of grenade: 'frag', 'semtex', 'smoke', or 'flash'.
 If present, the weapon is treated as a throwable grenade instead of a gun. """
@@ -123,7 +123,7 @@ GRENADE_DURATION: str = "grenade_duration"
 GRENADE_EFFECT_RADIUS: str = "grenade_effect_radius"
 """ Radius of the grenade effect in blocks (for smoke/flash grenades). """
 
-# Stats field
+# Stat fields
 STATS_FIELDS: tuple[str, ...] = (
 	CAPACITY,
 	REMAINING_BULLETS,

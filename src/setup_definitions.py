@@ -64,7 +64,7 @@ SCOPE_SUFFIXES: tuple[str, ...] = ("_1", "_2", "_3", "_4")
 def beet_default(ctx: Context) -> None:
 	ns: str = ctx.project_id
 
-	# Registration order matters
+	# The order matters.
 	main_items()
 	add_class_menu(ns)
 
@@ -80,20 +80,19 @@ def beet_default(ctx: Context) -> None:
 				[*new_hex("Ammo Remaining ➤ ", START_HEX, END_HEX), str(stats[REMAINING_BULLETS]), {"text": "/", "color": f"#{END_HEX}"}, str(stats[CAPACITY])],
 			]
 
-	# Camo variants per weapon
 	camo_main()
 
-	# Zoom models sort to the end, and stay out of the give_all chests with the empty magazines
+	# Zoom models sort last, and stay out of the give_all chests with the empty magazines.
 	Mem.definitions = dict(sorted(Mem.definitions.items(), key=lambda entry: sort_rank(ns, entry[0])))
 	for item in Mem.definitions:
 		if item.endswith(("_zoom", "_mag_empty")):
 			Item.from_id(item).skip_gives = True
 
-	# Final adjustments, keep them
+	# Final adjustments.
 	add_item_model_component(black_list=["item_ids","you_don't_want","in_that","list"])
 	add_item_name_and_lore_if_missing()
-	add_private_custom_data_for_namespace()		# Add a custom namespace for easy item detection
-	add_smithed_ignore_vanilla_behaviours_convention()	# Smithed items convention
+	add_private_custom_data_for_namespace()  # Add a custom namespace for easy item detection
+	add_smithed_ignore_vanilla_behaviours_convention()  # Smithed items convention
 	set_manual_components(white_list=["item_name", "lore", "custom_name", "damage", "max_damage"]) # Components to include in the manual when hovering items (here is the default list)
 
 
@@ -133,14 +132,13 @@ def setup_gun(ns: str, item: str, obj: Item, gun_stats: JsonDict) -> None:
 		gun_stats[CASING_MODEL] = f"{ns}:{gun_stats[CASING_MODEL]}"
 	gun_stats[MODELS] = {"normal": f"{ns}:{base_name}", "zoom": f"{ns}:{base_name}_zoom"}
 
-	# Start with a full magazine
 	gun_stats[REMAINING_BULLETS] = gun_stats[CAPACITY]
 
-	# _3 variants get x3 zoom, _4 variants x4
+	# _3 variants zoom x3, _4 variants x4.
 	if scope_suffix in ("_3", "_4"):
 		gun_stats["scope_level"] = int(scope_suffix[1])
 
-	# consumable + use_effects give tick-perfect right-click detection
+	# consumable + use_effects give tick-perfect right-click detection.
 	obj.components["consumable"] = {
 		"consume_seconds": 1_000_000,  # Very high value to avoid actual consumption
 		"animation": "spear",   # Not "none" because of "use" animation still present, but "spear" has minimal animation
@@ -154,7 +152,6 @@ def setup_gun(ns: str, item: str, obj: Item, gun_stats: JsonDict) -> None:
 	}
 	obj.components["food"] = {"saturation":0,"nutrition":0,"can_always_eat":True}
 
-	# Held-weapon movement penalty
 	if SPEED_MULTIPLY_BASE in gun_stats:
 		attribute_modifiers: list[JsonDict] = obj.components.setdefault("attribute_modifiers", [])
 		attribute_modifiers.append({
@@ -165,7 +162,7 @@ def setup_gun(ns: str, item: str, obj: Item, gun_stats: JsonDict) -> None:
 			"id": f"{ns}:weapon_weight_speed",
 		})
 
-	# Grenades get their own lore, and stack
+	# Grenades get their own lore, and stack.
 	if GRENADE_TYPE in gun_stats:
 		obj.components["max_stack_size"] = 16
 		obj.components["lore"] = grenade_lore(gun_stats)

@@ -25,7 +25,6 @@ class ItemBuilder:
 	""" The slots of `ALL_SLOTS` as ranges, for `if items` tests that only ask whether any slot matches. """
 
 	# Functions
-	# Utility functions
 	@staticmethod
 	def get_model_path(model_name: str) -> str: return f"{ItemBuilder.ITEM_MODELS_PATH}/{model_name}.json"
 	@staticmethod
@@ -43,9 +42,8 @@ class ItemBuilder:
 			"rarity": "common",
 		}
 		if stats:
-			# Left-click detection (functional/weapon/left_click.py): a zero-reach piercing_weapon makes every swing fire the enchantment's post_piercing_attack effect, even at air.
-			# That effect is what toggles fire mode.
-			# The enchantment is hidden from the tooltip and its glint suppressed, so it stays an implementation detail.
+			# Left-click detection (weapon/left_click): a zero-reach piercing_weapon makes every swing fire the enchantment's post_piercing_attack, even at air,
+			# which reloads. The enchantment is hidden from the tooltip and its glint suppressed.
 			components |= {
 				"piercing_weapon": {"min_reach": 0.0, "max_reach": 0.0, "hitbox_margin": 0.0},
 				"enchantments": {f"{ns}:left_click": 1},

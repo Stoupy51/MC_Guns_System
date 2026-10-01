@@ -9,17 +9,14 @@
 
 tag @s add mgs.spawn_pending
 
-# Tag candidate spawns (exclude used). Capture via command success whether any marker was tagged,
-# so the "all used" fallback can branch on a score instead of a global @e existence scan.
+# Unused spawns; `store success` says whether any was tagged, so the "all used" fallback tests a score instead of scanning @e.
 execute store success score #has_candidate mgs.data run tag @e[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked,tag=!mgs.spawn_used] add mgs.spawn_candidate
 
-# If all used, re-tag them all
+# All used: every spawn is a candidate again.
 execute if score #has_candidate mgs.data matches 0 run tag @e[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked] add mgs.spawn_candidate
 
-# Pick random candidate
 execute as @n[tag=mgs.spawn_candidate,sort=random] run function mgs:v5.1.0/shared/tp_to_spawn {mode:"zombies"}
 
-# Cleanup
 tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate
 tag @a[tag=mgs.spawn_pending] remove mgs.spawn_pending
 

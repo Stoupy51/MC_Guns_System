@@ -25,7 +25,6 @@ scoreboard players set #minus_one {ns}.data -1
 	write_load_file(f"""
 # Survives reloads.
 execute unless data storage {ns}:multiplayer custom_loadouts run data modify storage {ns}:multiplayer custom_loadouts set value []
-# Survives reloads.
 execute unless data storage {ns}:multiplayer player_data run data modify storage {ns}:multiplayer player_data set value []
 execute unless data storage {ns}:multiplayer next_loadout_id run data modify storage {ns}:multiplayer next_loadout_id set value 1
 """)

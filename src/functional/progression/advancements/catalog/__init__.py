@@ -1,9 +1,7 @@
 """ The whole catalog, assembled and checked.
 
-`Catalog.validate` runs at generation time rather than at import time so a bad row fails the build with a
-readable message instead of an import traceback. The checks exist because most of the ways to get this
-data wrong are silent: a mistyped award key produces a chain nobody can ever complete, and a threshold
-out of order strands a tier behind one that unlocks later.
+`Catalog.validate` runs at generation time rather than at import time so a bad row fails the build with a readable message instead of an import traceback.
+The checks exist because most of the ways to get this data wrong are silent: a mistyped award key produces a chain nobody can ever complete, and a threshold out of order strands a tier behind one that unlocks later.
 """
 # Imports
 from ...awards import MP_AWARDS, ZB_AWARDS, XpAward
@@ -21,7 +19,7 @@ EVENTS: tuple[EventChallenge, ...] = MP_EVENTS + MI_EVENTS + ZB_EVENTS
 """ Every challenge granted by a command, 3 of them. """
 ROOT_PATH: str = "challenges"
 """ Unversioned on purpose: an advancement id is state in the player's world, so a version segment would
-wipe every unlock on every pack update and then re-pay the entire catalog on the next tick. """
+wipe every unlock on every pack update and then re-pay the entire catalog. """
 
 
 # Classes
@@ -156,20 +154,17 @@ class Catalog:
 		if not chain.tiers:
 			raise ValueError(f"{label}: no tiers")
 
-		## Thresholds must strictly ascend: the tree parents each tier onto the previous one, so an
-		## out-of-order row would leave a tier unlocking before the node it hangs from.
+		## The tree parents each tier on the previous one, so an out-of-order threshold would unlock a tier before its parent node.
 		thresholds: list[int] = [tier.threshold for tier in chain.tiers]
 		if thresholds != sorted(set(thresholds)):
 			raise ValueError(f"{label}: thresholds must strictly ascend, got {thresholds}")
 
-		## Two rows sharing a title produce two nodes nobody can tell apart, and the toast for the
-		## second one reads as a bug rather than a reward.
+		## Two nodes with the same title cannot be told apart, and the second toast reads as a bug.
 		titles: list[str] = [tier.title for tier in chain.tiers]
 		if len(set(titles)) != len(titles):
 			raise ValueError(f"{label}: duplicate tier titles, got {titles}")
 
-		## The tree is read left to right, so a chain that is much shorter than its neighbours leaves a
-		## ragged column. Ten is the shape the catalog is tuned for.
+		## The tree reads left to right, so a much shorter chain leaves a ragged column; ten is the tuned shape.
 		if len(chain.tiers) < 5:
 			raise ValueError(f"{label}: only {len(chain.tiers)} tiers, which makes the tree vertical again")
 
@@ -188,8 +183,7 @@ class Catalog:
 				raise ValueError(f"{label}: a borrowed stat is never written, so it takes no sources")
 			return
 
-		## One owned objective per chain. Two chains sharing a counter would each pay for the
-		## other's progress, which is never what the catalog means.
+		## Two chains sharing a counter would each pay for the other's progress.
 		if stat.objective in seen_objectives:
 			raise ValueError(f"{label}: objective {stat.objective} already used by {seen_objectives[stat.objective]}")
 		seen_objectives[stat.objective] = label
@@ -200,8 +194,7 @@ class Catalog:
 		if not needs_source and stat.source:
 			raise ValueError(f"{label}: count_one reads no source score")
 
-		## A mistyped award key is the failure this whole method exists for: the chain would
-		## generate cleanly, show up in game, and never move.
+		## A mistyped award key would build cleanly, show in game and never move.
 		side: str = Catalog.side(chain.branch)
 		unknown: list[str] = [key for key in stat.sources if key not in Catalog.awards(side)]
 		if unknown:

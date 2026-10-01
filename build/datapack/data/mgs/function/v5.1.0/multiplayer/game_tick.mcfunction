@@ -7,19 +7,15 @@
 # The XP bar is the progression HUD, so a stray orb would show a level nobody earned; tick_player re-asserts the bar every second.
 kill @e[type=experience_orb]
 
-# Spectate Timer (3s respawn cooldown, real-time via #tick_delta).
-# Range checks instead of exact values: a 2+ tick delta under lag can jump over any single value
-# (an exact =0 respawn check would then never fire)
+# 3 s respawn countdown in real time; range checks, since a 2+ tick delta can jump over an exact 0.
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players operation @s mgs.mp.spectate_timer -= #tick_delta mgs.data
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=21..40},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_2_seconds","color":"gray"}]
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..20},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_1_second","color":"gray"}]
-# Clear the countdown subtitle on respawn: Minecraft keeps the last subtitle until something
-# replaces it, so any later `title` (a round banner, the hit indicator) would redisplay a stale
-# "Respawning in 1 second..." underneath it.
+# The countdown subtitle is cleared: Minecraft keeps the last subtitle, so a later `title` would show "Respawning in 1 second..." under it.
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=..0},gamemode=spectator] run title @s subtitle {"text":""}
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=..0},gamemode=spectator] at @s run function mgs:v5.1.0/multiplayer/actual_respawn
 
-# Dropped-weapon lifetime: count down (real-time via #tick_delta) and remove expired drops
+# Drops count down in real time and expire.
 execute as @e[type=minecraft:item_display,tag=mgs.dropped_gun] run scoreboard players operation @s mgs.drop_timer -= #tick_delta mgs.data
 execute as @e[type=minecraft:interaction,tag=mgs.drop_int] run scoreboard players operation @s mgs.drop_timer -= #tick_delta mgs.data
 kill @e[type=minecraft:item_display,tag=mgs.dropped_gun,scores={mgs.drop_timer=..0}]

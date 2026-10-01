@@ -20,14 +20,13 @@ def write_editor_zb_config() -> None:
 
 	write_zb_defaults(ns)
 
-	# Handle ZB Configure (configure nearest element).
 	write_versioned_function("maps/editor/handle_zb_configure", f"""
-# Find the nearest map element marker (within 10 blocks)
+# Within 10 blocks.
 execute at @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/show_element_config
 execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
 """)
 
-	# show_element_config: runs as the nearest marker, shows type-specific fields
+	# Run as the nearest marker: its type-specific fields.
 	write_versioned_function("maps/editor/show_element_config", "\n".join([
 		f"tellraw @a[tag={ns}.map_editor] {SEP}",
 		*zb_object_config_lines(ns, version),
@@ -36,8 +35,8 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 		f"tellraw @a[tag={ns}.map_editor] {SEP}",
 	]))
 
-	# Backfill missing config fields on markers summoned from an already-saved map, so a field added to `defaults` after the map was written shows its default in the config UI instead of a blank row (e.g. partial_price on doors/perk machines).
-	# Absent-only: never touches a set value.
+	# Markers from an already-saved map get fields added to `defaults` since then (partial_price on doors and perk machines),
+	# so the config UI shows the default instead of a blank row; a set value is never touched.
 	backfill_lines: list[str] = [
 		*write_light_fields(),
 		*(
@@ -64,7 +63,7 @@ def write_zb_defaults(ns: str) -> None:
 		f"tellraw @a[tag={ns}.map_editor] {SEP}",
 		"",
 
-		# Shared group_id default
+		# Shared group_id default.
 		f'tellraw @a[tag={ns}.map_editor] '
 		f'["  ",{{"text":"group_id: ","color":"gray"}},'
 		f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.group_id","color":"white"}}," ",{group_id_btn}]',
@@ -72,7 +71,7 @@ def write_zb_defaults(ns: str) -> None:
 		"",
 	]
 
-	# Elements with no type-specific defaults get no section
+	# No type-specific defaults, no section.
 	for etype, einfo in ZB_ELEMENTS.items():
 		if not einfo.defaults:
 			continue
@@ -95,7 +94,7 @@ def write_zb_defaults(ns: str) -> None:
 	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {SEP}")
 	write_versioned_function("maps/editor/handle_zb_defaults", "\n".join(zb_defaults_lines))
 
-	# Init ZB Defaults (called on editor enter for zombies mode)
+	# On editor entry, zombies mode only.
 	write_versioned_function("maps/editor/init_zb_defaults", "\n".join([
 		f"data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0",
 		*(f"data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {snbt_compound(einfo.defaults)}" for etype, einfo in ZB_ELEMENTS.items()),
@@ -123,19 +122,18 @@ def field_config_row(ns: str, version: str, etype: str, field: str, default_val:
 	""" Tellraw component of one field row: its value, an edit button, a clear button for optional lists and an info tooltip when documented. """
 	snbt_val: str = snbt_suggest(default_val)
 
-	# Door fields (except link_id) propagate to every door sharing the link_id.
-	# Two entry points, not eight: a macro cannot re-quote its argument, so the string fields and the numeric fields need one variant each.
+	# Door fields except link_id apply to every door with the same link_id; two entry points, since a macro cannot re-quote its argument.
 	if etype == "door" and field != "link_id":
 		kind: str = "text" if isinstance(default_val, str) else "number"
 		edit_cmd: str = f'/function {ns}:v{version}/maps/editor/set_door_link_{kind} {{field:"{field}",value:{snbt_val}}}'
 		hover_text: str = f"Sets {field} on ALL doors with same link_id"
 	else:
-		# Optional list fields suggest a usable template instead of empty brackets, so they are easy to fill in
+		# Optional list fields suggest a usable template instead of empty brackets.
 		edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {OPTIONAL_LIST_FIELDS.get(field, snbt_val)}"
 		hover_text = f"Click to edit {field}"
 	edit_btn = Dialogs.btn("✎", edit_cmd, "yellow", hover_text, action="suggest_command")
 
-	# Optional list fields get a "✗" button to clear/disable them (set back to []).
+	# Optional list fields get a "✗" button that sets them back to [].
 	clear_component: str = ""
 	if field in OPTIONAL_LIST_FIELDS:
 		clear_btn = Dialogs.btn(
@@ -145,7 +143,7 @@ def field_config_row(ns: str, version: str, etype: str, field: str, default_val:
 		)
 		clear_component = f'," ",{clear_btn}'
 
-	# Optional info tooltip for constant/enum fields (e.g. trap type, door animation).
+	# Info tooltip for constant and enum fields (trap type, door animation).
 	doc: str | None = FIELD_DOCS.get((etype, field)) or FIELD_DOCS.get(field)
 	info_component: str = ""
 	if doc:
@@ -162,7 +160,7 @@ def marker_config_lines(ns: str) -> list[str]:
 	""" Config panel lines shared by marker kinds: yaw for spawns and zombies elements, the enemy function, and a note on points. """
 	lines: list[str] = []
 
-	# For spawn types: show yaw
+	# Spawn types: yaw.
 	for etype, einfo in ALL_ELEMENTS.items():
 		if einfo.save_type != "spawn":
 			continue
@@ -172,11 +170,10 @@ def marker_config_lines(ns: str) -> list[str]:
 			shown + yaw_row(ns, etype),
 		]
 
-	# For zb_object types: show yaw (rotation)
+	# Zombies objects: yaw.
 	lines += [f"execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] " + yaw_row(ns, etype) for etype in ZB_ELEMENTS]
 
-	# For enemy types: show function.
-	# The suggestion must stay version-independent like the map default above, or a map saved today calls a path that a later pack version no longer ships.
+	# Enemy types: the function. The suggestion stays unversioned like the map default, or a saved map would call a path a later version removes.
 	edit_fn_btn = Dialogs.btn(
 		"✎",
 		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:mob/default/level_1'",
@@ -190,7 +187,7 @@ def marker_config_lines(ns: str) -> list[str]:
 		f'{{"entity":"@s","nbt":"data.function","color":"white"}}," ",{edit_fn_btn}]',
 	]
 
-	# For point types: no configurable fields
+	# Point types have nothing to configure.
 	lines += [
 		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
 		f'["  ","{einfo.emoji} ",{{"text":"{einfo.name} — no configurable fields","color":"gray","italic":true}}]'

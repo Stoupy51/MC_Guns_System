@@ -13,11 +13,8 @@ def write_config_menu() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Config menu (/function mgs:config), a dialog-based settings menu.
-	# The main dialog lists every setting as a button opening its own sub-dialog of value buttons.
-	# Picking a value runs the scoreboard command directly.
-	# Each value button is independent with no submit step, so opening the menu never resets untouched settings.
-	# --- Global Settings (server-wide fake-player scores) ---
+	# /function mgs:config: every setting opens its own picker, whose buttons each run their command directly (no submit step),
+	# so opening the menu never resets untouched settings. Global settings are server-wide fake-player scores.
 	def power_opts(score: str, name: str) -> list[PickerOption]:
 		return [
 			PickerOption(label=str(i), command=f"/scoreboard players set {score} {ns}.config {i}", color="green" if i == 0 else "yellow", hover=f"Set {name} to {i}" + (" (disabled)" if i == 0 else ""))
@@ -38,7 +35,7 @@ def write_config_menu() -> None:
 		config_opt("ON", "#damage_debug", 1, "green", "Enable global damage debug (tellraw @a every hit)"),
 	], back_dialog="config/global")
 
-	# --- Player Specials (self-only scores; commands run as the clicking player) ---
+	# Player specials: the clicking player's own scores.
 	durations: dict[str, tuple[int, str]] = {"OFF": (0, "red"), "10s": (200, "yellow"), "30s": (600, "yellow"), "60s": (1200, "yellow"), "∞": (72000, "light_purple")}
 	percents: dict[str, tuple[int, str]] = {"0%": (0, "red"), "20%": (20, "yellow"), "50%": (50, "yellow"), "80%": (80, "green")}
 
@@ -57,15 +54,13 @@ def write_config_menu() -> None:
 	Dialogs.register_value_picker("config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", special_opts(
 		"quick_swap", percents, lambda label, _: f"Set quick swap to {label}"), back_dialog="config/personal")
 
-	# --- Configuration dialog, organized into categories (by scope) ---
-	# The top-level menu is a short list of categories; each opens its own sub-dialog whose Back button returns to the top-level config.
-	# Leaf value pickers Back to their category (above).
+	# Categories by scope, each a sub-dialog returning to the top level; pickers return to their category.
 	def register_category(sub_id: str, title: str, actions: list[dict[str, str]]) -> None:
 		Dialogs.register_dialog(sub_id, {
 			"type": "minecraft:multi_action",
 			"title": Text.split_emoji(title, color="gold", bold=True),
 			"actions": actions,
-			# Each category lists items of a single kind (settings / mode links) → one column.
+			# One kind of item per category, so one column.
 			"columns": 1,
 			"exit_action": Dialogs.dialog_back_action("config", tooltip="Return to configuration"),
 		})
@@ -82,14 +77,13 @@ def write_config_menu() -> None:
 		Dialogs.dialog_show_btn(f"{ns}:config/quick_reload", "Quick Reload", "Reduce reload time (self only)", "green"),
 		Dialogs.dialog_show_btn(f"{ns}:config/quick_swap", "Quick Swap", "Reduce weapon-swap time (self only)", "aqua"),
 	])
-	# The three game-mode setups sit directly on the first page instead of behind a "Game Modes" category — opening a mode used to cost two clicks for no benefit.
-	# There is no "Players & Teams" category either: team assignment only makes sense in the context of one mode, and every mode's setup dialog already carries its own "Manage Players" button.
+	# The three mode setups sit on the first page (one click), and team assignment lives in each mode's setup ("Manage Players"), where it makes sense.
 	config_actions = [
-		# Row 1: the game modes, side by side (see columns=3 below)
+		# Row 1: the game modes (columns=3 below).
 		Dialogs.dialog_show_btn(f"{ns}:multiplayer/setup", "⚔ Multiplayer", "Open the multiplayer game setup menu", "red"),
 		Dialogs.dialog_show_btn(f"{ns}:zombies/setup", "🧟 Zombies", "Open the zombies setup menu", "green"),
 		Dialogs.dialog_show_btn(f"{ns}:missions/setup", "🎯 Missions", "Open the mission setup menu", "gold"),
-		# Row 2: settings and tools
+		# Row 2: settings and tools.
 		Dialogs.dialog_show_btn(f"{ns}:config/global", "⚙ Global Settings", "Server-wide gameplay settings", "gold"),
 		Dialogs.dialog_show_btn(f"{ns}:config/personal", "⚡ Personal Cheats", "Self-only powerups", "light_purple"),
 		Dialogs.dialog_run_btn("🗺 Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
@@ -99,7 +93,6 @@ def write_config_menu() -> None:
 		"title": Text.split_emoji("☣ MGS Configuration ☣", color="gold", bold=True),
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a game mode, or a settings category", "color": "gray"}}],
 		"actions": config_actions,
-		# 3 columns lays the actions out as two rows: the game modes, then settings + tools.
 		"columns": 3,
 		"exit_action": {"label": {"translate": "gui.done"}},
 	})

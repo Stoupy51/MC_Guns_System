@@ -12,14 +12,11 @@ execute if data storage mgs:multiplayer game{state:"preparing"} run return run t
 # Players join a side through Manage Players or + Join.
 execute unless entity @a[scores={mgs.mp.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_players_have_joined_a_team_use_manage_players_first","color":"red"}]
 
-# Check that a map is selected
 execute if data storage mgs:multiplayer game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_map","color":"red"}]
 
-# Load the selected map
 function mgs:v5.1.0/multiplayer/load_map_from_storage with storage mgs:multiplayer game
 execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_not_found_select_a_valid_map","color":"red"}]
 
-# Copy loaded map data into game state
 data modify storage mgs:multiplayer game.map set from storage mgs:temp map_load.result
 
 execute unless data storage mgs:multiplayer game.map.respawn_commands if data storage mgs:multiplayer game.map.respawn_command[0] run data modify storage mgs:multiplayer game.map.respawn_commands set from storage mgs:multiplayer game.map.respawn_command
@@ -60,21 +57,18 @@ gamerule keep_inventory true
 
 scoreboard players set @a mgs.mp.spectate_timer 0
 
-# Disable natural regeneration, enable custom regen system
 gamerule natural_health_regeneration false
 scoreboard players set #any_game_active mgs.data 1
 
-# Reset per-player regen state (hp_prev seeded from the auto-updated health criterion; a player
-# whose criterion score is still unset just misses this seed and syncs on their first health change)
+# hp_prev comes from the `health` criterion; a player whose score is unset syncs on their first health change.
 scoreboard players set @a mgs.last_hit 0
 scoreboard players set @a mgs.hp_prev 0
 execute as @a run scoreboard players operation @s mgs.hp_prev = @s mgs.health
 
-# Reset stamina state so every player re-inits to full on their next stamina tick (also covers late-joiners)
+# Everyone, late joiners included, re-inits at full stamina on their next tick.
 scoreboard players set @a mgs.stam_seen 0
 
-# Post effects are stored in player NBT, so a previous round that ended badly would still be
-# applied. Clearing here means nobody starts a game scoped or with a red screen.
+# Post effects live in player NBT, so a round that ended badly could still apply them.
 execute as @a run function mgs:v5.1.0/player/fx_reset
 
 function mgs:v5.1.0/shared/load_base_coordinates {mode:"multiplayer"}

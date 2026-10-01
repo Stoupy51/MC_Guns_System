@@ -10,24 +10,21 @@
 # @args		path (string)
 #
 
-# @s = start command marker, at its position
-# Get absolute position
+# Run as the start command marker, at it.
 execute store result score #ax mgs.data run data get entity @s Pos[0]
 execute store result score #ay mgs.data run data get entity @s Pos[1]
 execute store result score #az mgs.data run data get entity @s Pos[2]
 
-# Compute relative coordinates
 scoreboard players operation #ax mgs.data -= #base_x mgs.data
 scoreboard players operation #ay mgs.data -= #base_y mgs.data
 scoreboard players operation #az mgs.data -= #base_z mgs.data
 
-# Build start command entry {pos:[x,y,z],command:"..."}
+# {pos:[x,y,z], command:"..."}
 data modify storage mgs:temp _save_start_cmd set value {pos:[0,0,0],command:""}
 execute store result storage mgs:temp _save_start_cmd.pos[0] int 1 run scoreboard players get #ax mgs.data
 execute store result storage mgs:temp _save_start_cmd.pos[1] int 1 run scoreboard players get #ay mgs.data
 execute store result storage mgs:temp _save_start_cmd.pos[2] int 1 run scoreboard players get #az mgs.data
 data modify storage mgs:temp _save_start_cmd.command set from entity @s data.command
 
-# Append to list path
 $data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_start_cmd
 

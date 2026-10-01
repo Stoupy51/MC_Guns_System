@@ -1,17 +1,14 @@
 """ Challenges: one advancement tab, three branches, 56 nodes, each paying XP.
 
-Vanilla does the work. A threshold tier is a `minecraft:tick` criterion carrying an `entity_scores`
-condition on a lifetime counter, so it unlocks the instant the score qualifies and the pack never runs
-`advancement grant` for it. That is what removes the companion scores, the unlock ladders and the admin
-resync a command-driven version would need, and what makes a retune self-healing: change a threshold,
-rebuild, reload, and everyone who already qualifies unlocks on the next tick.
+A tier is a `minecraft:impossible` advancement, granted by its chain's check function whenever the counter moves (see [hooks.py]).
+A `minecraft:tick` criterion per tier would cost one score check per unearned tier, per player, per tick.
+A catch-up runs every check once per player after each load, so a retuned threshold unlocks for everyone who already qualifies.
 
-The counters ride the award functions the XP system already generates, so no award site is touched. Only
-three feeds need their own code (see [hooks.py]), and only three challenges are granted rather than
-watched, because a moment is not a total.
+The counters ride the award functions the XP system already generates, so no award site is touched.
+Only three feeds need their own code (see [hooks.py]), and three challenges are granted at their site because a moment is not a total.
 
-Advancement paths carry no version. An advancement id is state in the player's world, so a version
-segment would wipe every unlock on every pack update and then re-pay the whole catalog on the next tick.
+Advancement paths carry no version.
+An advancement id is state in the player's world, so a version segment would wipe every unlock on every pack update and then re-pay the whole catalog.
 """
 # Imports
 from stewbeet import Mem, write_load_file
@@ -27,8 +24,8 @@ __all__ = ["Advancements", "Catalog", "generate_advancements"]
 
 # Classes
 class Advancements:
-	""" What the rest of the pack calls. Two entry points: the lines an award function carries, and the
-	command an event site runs. """
+	""" What the rest of the pack calls.
+	Two entry points: the lines an award function carries, and the command an event site runs. """
 
 	# Functions
 	@staticmethod
@@ -45,8 +42,7 @@ class Advancements:
 		"""
 		lines: dict[str, list[str]] = {}
 		for chain in CHAINS:
-			## A borrowed stat is already maintained by the pack, and a chain fed by a dedicated hook has
-			## no award to ride. Both come through here with an empty `sources`.
+			## A borrowed stat is already maintained, and a chain fed by a dedicated hook has no award to ride; both have empty `sources`.
 			if Catalog.side(chain.branch) != side:
 				continue
 			for key in chain.stat.sources:
@@ -96,15 +92,14 @@ def generate_advancements() -> None:
 	ns: str = Mem.ctx.project_id
 	owned: list[Chain] = [chain for chain in CHAINS if chain.stat.owned]
 
-	## Dummy, so they live in level.dat and survive reloads, restarts and the player being offline. The
-	## `adv` segment keeps them recognisable and out of every mode's per-match wipe, which clears by
-	## explicit name. Nothing seeds them: a missing score reads as 0, which is the right starting point.
+	## Dummy, so they survive reloads, restarts and offline players; the `adv` segment keeps them out of every per-match wipe (which clears by name).
+	## A missing score reads as 0, the right start.
 	declarations: str = "\n".join(
 		f"scoreboard objectives add {chain.stat.objective} dummy"
 		for chain in owned
 	)
 	write_load_file(f"""
-# Challenge counters ({len(owned)} of them; the level chains borrow {ns}.mp.xp_level and {ns}.zb.xp_level instead)
+# {len(owned)} challenge counters; the level chains read {ns}.mp.xp_level and {ns}.zb.xp_level.
 {declarations}
 """)
 
@@ -113,8 +108,7 @@ def generate_advancements() -> None:
 	Hooks.write_round_end()
 	Hooks.write_unlocks()
 
-	## Sanity: every event challenge should be reachable from somewhere. The three sites are named in the
-	## catalog, so a challenge added without a grant is a data error worth failing the build over.
+	## Every event challenge must be granted somewhere; a missing grant fails the build.
 	for event in EVENTS:
 		if not event.site:
 			raise ValueError(f"challenge {event.branch}/{event.key}: no site named, so nothing can ever grant it")

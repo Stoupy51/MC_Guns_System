@@ -51,9 +51,8 @@ class Dialogs:
 	def dialog_ref(dialog_id: str) -> str:
 		""" Return the resource id of a registered dialog, e.g. "mgs:v5.1.0/config".
 
-		This is what `minecraft:show_dialog` actions point at. Navigating between menus through
-		show_dialog rather than a run_command matters for more than tidiness: a run_command button
-		makes the client ask the player to confirm running the command every single time.
+		This is what `minecraft:show_dialog` actions point at.
+		Navigating between menus through show_dialog rather than a run_command matters for more than tidiness: a run_command button makes the client ask the player to confirm running the command every single time.
 		"""
 		return f"{Mem.ctx.project_id}:v{Mem.ctx.project_version}/{dialog_id}"
 
@@ -110,7 +109,7 @@ class Dialogs:
 			"title": {"text": title, "color": "gold", "bold": True},
 			"body": [{"type": "minecraft:plain_message", "contents": {"text": desc, "color": "gray"}}],
 			"actions": actions,
-			# Value pickers list options of a single setting (all the same kind) → one column reads cleaner.
+			# One setting per picker, so one column.
 			"columns": 1,
 			"pause": False,
 			"after_action": "none",

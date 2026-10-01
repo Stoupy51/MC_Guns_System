@@ -11,7 +11,6 @@ def write_editor_config() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Handle Config (missions utility).
 	config_target = f"@p[tag={ns}.map_editor,distance=..6,sort=nearest]"
 	config_lines: list[str] = []
 	config_lines.append("# Initialize default enemy function if missing")
@@ -30,7 +29,7 @@ def write_editor_config() -> None:
 	config_lines.append(f'tellraw {config_target} ["  ",{{"text":"\u2139 Edit the function path above, then run the command.","color":"dark_gray","italic":true}}]')
 	config_lines.append("")
 
-	# Show nearest configurable elements that can use the default function.
+	# Nearest elements that can use the default function.
 	for etype, einfo in ALL_ELEMENTS.items():
 		if not einfo.config_uses_default_function:
 			continue
@@ -38,7 +37,7 @@ def write_editor_config() -> None:
 		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.nearest_fn set from entity @n[tag={ns}.element.{etype},distance=..10] data.function')
 		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run function {ns}:v{version}/maps/editor/handle_config_nearest_{etype}_btn with storage {ns}:temp _cfg')
 
-	# Show nearest command-based mission objects.
+	# Nearest command-based mission objects.
 	for etype in ("start_command", "respawn_command"):
 		einfo = ALL_ELEMENTS[etype]
 		config_lines.append(f'execute if entity @e[tag={ns}.element.{etype},distance=..10] run data modify storage {ns}:temp _cfg.nearest_cmd set from entity @n[tag={ns}.element.{etype},distance=..10] data.command')

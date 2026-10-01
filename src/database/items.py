@@ -60,7 +60,6 @@ from ..config.stats.weapons.snipers import M24, M82, MOSIN, SVD
 from ..config.stats.weapons.special import M249, RPG7, RPK
 
 # Constants
-# Weapon ID -> stats dict
 WEAPON_STATS: dict[str, JsonDict] = {
 	"ak47": AK47, "aug": AUG, "famas": FAMAS, "fnfal": FNFAL, "g3a3": G3A3,
 	"m4a1": M4A1, "m16a4": M16A4, "m24": M24, "m82": M82, "m249": M249,
@@ -72,13 +71,12 @@ WEAPON_STATS: dict[str, JsonDict] = {
 	"glock17": GLOCK17, "glock18": GLOCK18, "vz61": VZ61, "ray_gun": RAY_GUN,
 }
 
-# Special rarity overrides
+# Rarity overrides.
 WEAPON_RARITY: dict[str, str] = {
 	"ray_gun": "epic",
 }
 
-# Weapons with a reusable magazine; a full and an "_empty" variant is made for each.
-# The capacity is NOT repeated here — it comes from the weapon's own CAPACITY stat.
+# Weapons with a reusable magazine, each with a full and an "_empty" variant; the capacity comes from the weapon's CAPACITY stat.
 MAGAZINES: tuple[str, ...] = (
 	"ak47", "aug", "deagle", "famas", "fnfal", "g3a3", "glock17", "glock18",
 	"m16a4", "m1911", "m249", "m4a1", "m82", "m9", "mac10", "makarov",
@@ -216,10 +214,10 @@ def add_machines_and_props() -> None:
 	""" Zombies map props: Pack-a-Punch, Mystery Box, perk machines, breaker, turret. """
 	Item(id="pack_a_punch", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("pack_a_punch")))
 
-	# Split into base + lid so the lid can animate open.
+	# Base and lid, so the lid can open.
 	Item(id="mystery_box_base", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("mystery_box_base")))
 	Item(id="mystery_box_lid", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("mystery_box_lid")))
-	# Grayed-out crate (base only, every texture muted) shown at inactive roam spots.
+	# Grayed crate (base only, muted textures) at the inactive roam spots.
 	Item(id="mystery_box_disabled", override_model=recolored_model("mystery_box_base", {
 		"minecraft:block/oak_planks": "minecraft:block/gray_concrete",
 		"minecraft:block/stripped_dark_oak_log": "minecraft:block/deepslate",
@@ -228,12 +226,12 @@ def add_machines_and_props() -> None:
 		"minecraft:block/hay_block_top": "minecraft:block/light_gray_concrete",
 	}, default="minecraft:block/gray_concrete"))
 
-	# A new perk only needs an entry in PERK_MACHINES and a default line in perks.py setup_iter.
+	# A new perk needs an entry in PERK_MACHINES and a default line in the perks setup_iter.
 	Item(id="perk_machine", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("perk_machine")))
 	for perk_id, accent in PERK_MACHINES.items():
 		Item(id=f"perk_machine_{perk_id}", override_model=perk_machine_model(accent))
 
-	# Dedicated model (not a recolor): the middle alcove is open so the perk bottle can float in it.
+	# Its own model, not a recolor: the middle alcove is open so the perk bottle can float in it.
 	Item(id="der_wunderfizz", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("der_wunderfizz")))
 	Item(id="der_wunderfizz_disabled", override_model=recolored_model("der_wunderfizz", {
 		"minecraft:block/gold_block": "minecraft:block/iron_block",
@@ -244,7 +242,7 @@ def add_machines_and_props() -> None:
 	Item(id="power_switch", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("power_switch")))
 	Item(id="power_switch_on", override_model=power_switch_on_model())
 
-	# Stationary base + rotating head (centred on [8,8,8], barrels along +Z for a facing-entity display).
+	# Fixed base and rotating head (centred on [8,8,8], barrels along +Z for a facing-entity display).
 	Item(id="turret_base", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("turret_base")))
 	Item(id="turret_head", override_model=ItemBuilder.load_model(ItemBuilder.get_model_path("turret_head")))
 
@@ -270,13 +268,13 @@ def add_grenades() -> None:
 	):
 		ItemBuilder.add_item(grenade_id, stats=stats, model_path="auto", max_stack_size=4)
 
-	# Widow's Wine web grenade (perk-exclusive): frag geometry, cobweb texture.
+	# Widow's Wine web grenade (perk only): frag geometry, cobweb texture.
 	web = ItemBuilder.add_item("web_grenade", stats=WEB_GRENADE, model_path=ItemBuilder.get_model_path("frag_grenade"), max_stack_size=4)
 	if web.override_model:
 		for k in web.override_model["textures"]:
 			web.override_model["textures"][k] = f"{ns}:item/cobweb"
 
-	# Zombies-exclusive tactical (mystery box / wallbuys only), capped at 3 by the give/refill functions.
+	# Zombies-only tactical (mystery box, wallbuys), capped at 3 by the give and refill functions.
 	ItemBuilder.add_item("monkey_bomb", stats=MONKEY_BOMB, model_path="auto", max_stack_size=3)
 
 def main() -> None:

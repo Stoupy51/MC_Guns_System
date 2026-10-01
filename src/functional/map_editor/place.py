@@ -10,21 +10,16 @@ def write_editor_place() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# On Place (Advancement Reward).
 	write_versioned_function("maps/editor/on_place", f"""
-# Revoke advancement immediately so it can trigger again
 advancement revoke @s only {ns}:v{version}/maps/editor/on_place
 
-# Only process if player is in editor mode
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
-# Find the newly spawned bat entity (tagged by entity_data)
+# The bat the egg spawned (tagged through entity_data).
 execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/editor/process_element
 """)
 
-	# Process Placed Element (universal - handles all types).
 	process_lines: list[str] = []
-	# Destroy handler first
 	process_lines.append('# DESTROY handler')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.destroy] run function {ns}:v{version}/maps/editor/handle_destroy')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.destroy] run return run kill @s')
@@ -54,7 +49,6 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run return run kill @s')
 		process_lines.append("")
 
-	# Zombies utility tool handlers
 	process_lines.append("# Zombies utility tool handlers")
 	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run function {ns}:v{version}/maps/editor/handle_zb_defaults')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run return run kill @s')
@@ -62,7 +56,6 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_configure] run return run kill @s')
 	process_lines.append("")
 
-	# Editor utility handlers (save, exit, save & exit)
 	process_lines.append("# Editor utility handlers")
 	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_exit')
 	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] run return run kill @s')

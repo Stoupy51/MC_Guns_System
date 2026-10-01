@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/maps/editor/refresh_displays [ at @s ]
 #
 
-# @s = wunderfizz marker, at @s
+# Run as the Wunderfizz marker, at it.
 data modify storage mgs:temp _wf_disp.tag set value "mgs.editor_display"
 data modify storage mgs:temp _wf_disp.item_id set value ""
 data modify storage mgs:temp _wf_disp.item_model set value ""
