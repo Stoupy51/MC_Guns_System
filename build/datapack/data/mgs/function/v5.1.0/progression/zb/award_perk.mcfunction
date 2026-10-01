@@ -23,5 +23,6 @@ scoreboard players add @s mgs.zb.xp_prog 5
 
 # Observers of this award
 scoreboard players add @s mgs.adv.zb.perks 1
+function mgs:v5.1.0/progression/adv/zb/perks/check
 function mgs:v5.1.0/progression/zb/settle
 

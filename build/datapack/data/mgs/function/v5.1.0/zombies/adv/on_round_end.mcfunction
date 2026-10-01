@@ -6,6 +6,7 @@
 
 execute store result score #adv_round mgs.data run data get storage mgs:zombies game.round
 execute as @a[scores={mgs.zb.in_game=1}] run scoreboard players operation @s mgs.adv.zb.best_round > #adv_round mgs.data
+execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/progression/adv/zb/best_round/check
 
 # Solo run: exactly one player on the roster, deep enough to be worth saying so
 execute store result score #adv_roster mgs.data if entity @a[scores={mgs.zb.in_game=1}]

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/progression/advancements/hooks.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;AA6EG;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

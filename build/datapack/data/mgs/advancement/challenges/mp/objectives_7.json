@@ -17,18 +17,7 @@
 	},
 	"criteria": {
 		"threshold": {
-			"trigger": "minecraft:tick",
-			"conditions": {
-				"player": {
-					"type": "minecraft:entity_scores",
-					"entity": "this",
-					"scores": {
-						"mgs.adv.mp.objectives": {
-							"min": 350
-						}
-					}
-				}
-			}
+			"trigger": "minecraft:impossible"
 		}
 	},
 	"rewards": {

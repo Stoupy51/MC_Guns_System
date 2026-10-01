@@ -221,6 +221,9 @@ scoreboard objectives add mgs.adv.zb.pap dummy
 scoreboard objectives add mgs.adv.zb.box dummy
 scoreboard objectives add mgs.adv.zb.spending dummy
 
+scoreboard objectives add mgs.adv.caught dummy
+scoreboard players reset * mgs.adv.caught
+
 ## Zombies scoreboards
 scoreboard objectives add mgs.zb.in_game dummy
 scoreboard objectives add mgs.zb.points dummy

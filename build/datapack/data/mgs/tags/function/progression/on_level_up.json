@@ -1,3 +1,6 @@
 {
-	"values": []
+	"values": [
+		"mgs:v5.1.0/progression/adv/mp/level/check",
+		"mgs:v5.1.0/progression/adv/zb/level/check"
+	]
 }

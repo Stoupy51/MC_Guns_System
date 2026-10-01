@@ -1,12 +1,8 @@
 """ The advancement JSON: one tab, three branch roots, and every node under them.
 
-Threshold tiers carry their own condition, so vanilla unlocks them the instant the counter qualifies and
-the pack never runs `advancement grant`. That is what removes the companion scores, the unlock ladders
-and the admin resync a command-driven version would have needed, and what makes a retune self-healing:
-lower a threshold, reload, and everyone who already qualifies unlocks on the next tick.
-
-Event challenges are the exception and use `minecraft:impossible`, so the single grant at their site is
-the only way in.
+Tiers and event challenges use `minecraft:impossible`: the pack grants them with `advancement grant`, from
+the check function each counter change runs (see `hooks.py`). A `minecraft:tick` criterion per tier
+would cost one score check per unearned tier, per player, per tick.
 
 Paths are unversioned. Reward function references are not, because the JSON is rewritten on every build
 and always names a function the loaded pack has.
@@ -74,37 +70,6 @@ class Tree:
 			"show_toast": True,
 			"announce_to_chat": False,
 			"hidden": hidden,
-		}
-
-	@staticmethod
-	def score_criteria(objective: str, threshold: int) -> JsonDict:
-		""" Return the criteria block that unlocks when a score reaches a threshold.
-
-		`minecraft:tick` fires once per tick per player and stops being evaluated the moment the
-		advancement completes, so the cost decays to zero as a player finishes the tree.
-
-		`player` is a ContextAwarePredicate, which is a LIST of loot conditions. Handing it a bare
-		condition object makes it fall through to its alternative branch, which reads the value as an
-		EntityPredicate and rejects every key as an unknown entity sub-predicate type. The list is not
-		cosmetic.
-
-		Args:
-			objective (str): Full objective name, ex: "mgs.adv.zb.kills".
-			threshold (int): Minimum value that unlocks it.
-		Returns:
-			JsonDict: One criterion named `threshold`.
-		"""
-		return {
-			"threshold": {
-				"trigger": "minecraft:tick",
-				"conditions": {
-					"player": {
-						"type": "minecraft:entity_scores",
-						"entity": "this",
-						"scores": {objective: {"min": threshold}},
-					},
-				},
-			}
 		}
 
 	@staticmethod
@@ -176,7 +141,7 @@ class Tree:
 				"display": Tree.display(
 					tier.title, chain.description_of(index), chain.icon_of(index), chain.frame_of(index), tier.hidden,
 				),
-				"criteria": Tree.score_criteria(chain.stat.objective, tier.threshold),
+				"criteria": {"threshold": {"trigger": "minecraft:impossible"}},
 				"rewards": {"function": f"{ns}:v{version}/progression/adv/{chain.branch}/{chain.key}/reward_{index + 1}"},
 			})
 			parent = f"{ns}:{path}"
