@@ -22,6 +22,8 @@ class ItemBuilder:
 		"player.cursor",
 		*[f"player.crafting.{i}" for i in range(4)],
 	)
+	ALL_SLOT_RANGES: tuple[str, ...] = ("container.*", "weapon.offhand", "player.cursor", "player.crafting.*")
+	""" The slots of `ALL_SLOTS` as ranges, for `if items` tests that only ask whether any slot matches. """
 
 	# Functions
 	# Utility functions

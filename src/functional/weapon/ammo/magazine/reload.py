@@ -12,13 +12,8 @@ def write_reload() -> None:
 	version: str = Mem.ctx.project_version
 
 	# Check if any matching magazine with bullets exists in inventory (without consuming)
-	has_ammo_checks: str = ""
-	for slot in ItemBuilder.ALL_SLOTS:
-		has_ammo_checks += (
-			f"$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:\"$({BASE_WEAPON})\"}}}}] "
-			f"unless items entity @s {slot} *[custom_data~{{{ns}:{{stats:{{{REMAINING_BULLETS}:0}}}}}}] "
-			f"run return 1\n"
-		)
+	loaded_magazine: str = f'*[custom_data~{{{ns}:{{magazine:true,weapon:"$({BASE_WEAPON})"}}}},!custom_data~{{{ns}:{{stats:{{{REMAINING_BULLETS}:0}}}}}}]'
+	has_ammo_checks: str = "".join(f"$execute if items entity @s {slots} {loaded_magazine} run return 1\n" for slots in ItemBuilder.ALL_SLOT_RANGES)
 	write_versioned_function("ammo/inventory/has_ammo", f"""
 # Check all slots for matching magazines with bullets (return 1 if found, fail otherwise)
 # Excludes empty non-consumable magazines (remaining_bullets: 0)

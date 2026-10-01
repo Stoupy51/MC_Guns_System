@@ -216,7 +216,7 @@ def server(java: str) -> int:
 	if not (run / "server.jar").exists():
 		sys.exit(f"put the {MINECRAFT} server.jar in {run} (piston-data.mojang.com)")
 	shutil.rmtree(run / "world", ignore_errors=True)
-	shutil.copytree(BUILD / "datapack", run / "world/datapacks/mgs")
+	shutil.copytree(BUILD / "datapack", run / "world/datapacks/mgs", ignore_dangling_symlinks=True)
 	libraries_pack(run / "world/datapacks/libs")
 	(run / "eula.txt").write_text("eula=true\n")
 	(run / "server.properties").write_text(
