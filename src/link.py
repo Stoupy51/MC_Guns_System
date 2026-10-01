@@ -34,13 +34,6 @@ def beet_default(ctx: Context) -> None:
 	generate_map_editor()  # Generic across all three modes
 	official_lib_used("bs.dump")
 
-	# MGS never reads `mgs:items`: drop the item storage StewBeet writes on every load, until `items_storage: false` ships (Stoupy51/StewBeet#60)
-	storage_function: str = f"{ns}:v{ctx.project_version}/load/set_items_storage"
-	if storage_function in ctx.data.functions:
-		del ctx.data.functions[storage_function]
-		confirm_load = ctx.data.functions[f"{ns}:v{ctx.project_version}/load/confirm_load"]
-		confirm_load.text = confirm_load.text.replace(f"function {storage_function}\n", "")
-
 	# 3D renders, excluding _zoom variants
 	from stewbeet import Item, Mem
 	from stewbeet.core.utils.fonts.item_images import generate_all_iso_renders  # pyright: ignore[reportMissingTypeStubs]

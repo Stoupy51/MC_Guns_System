@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/zombies/apply_zombie_hp
 #
+# @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
+#
 # @within	mgs:v5.1.0/zombies/types/normal with storage mgs:temp _zb_hp
 #
 # @args		val (unknown)

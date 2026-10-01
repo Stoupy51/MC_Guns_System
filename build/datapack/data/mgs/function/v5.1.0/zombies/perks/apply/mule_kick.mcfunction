@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/zombies/perks/apply/mule_kick
 #
-# @within	???
+# @executed	as @p[tag=mgs.pu_collecting]
+#
+# @within	mgs:v5.1.0/zombies/perks/apply
 #
 
 execute at @s run playsound mgs:zombies/perks/mule_kick ambient @s ~ ~ ~ 1.0 1.0

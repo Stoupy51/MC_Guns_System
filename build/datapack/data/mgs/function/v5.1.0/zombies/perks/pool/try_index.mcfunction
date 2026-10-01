@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/perks/pool/try_index
 #
-# @executed	at @s
+# @executed	as the player & at current position
 #
 # @within	mgs:v5.1.0/zombies/perks/pool/choose_iter {perk_id:"juggernog"}
 #			mgs:v5.1.0/zombies/perks/pool/choose_iter {perk_id:"speed_cola"}

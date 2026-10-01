@@ -1,7 +1,7 @@
 
 #> mgs:v5.1.0/zombies/mystery_box/fire_sale_start
 #
-# @executed	at @s
+# @executed	as the player & at current position
 #
 # @within	mgs:v5.1.0/zombies/powerups/activate/fire_sale
 #
