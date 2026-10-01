@@ -33,10 +33,9 @@ execute if data storage {ns}:zombies game.map.barricades[0] run function {ns}:v{
 """)
 
 	## Reset repair counter at the start of each round
-	write_versioned_function("zombies/on_round_start", f"""
-# Reset barricade repair counters for all players
+	write_versioned_function("zombies/barricades/on_round_start", f"""
 scoreboard players set @a {ns}.zb.barricade_repairs 0
-""")
+""", tags=[f"{ns}:zombies/on_round_start"])
 
 	## Hook into stop — clean up tags on living entities (gm_entity kill handles the entities)
 	write_versioned_function("zombies/stop", f"""

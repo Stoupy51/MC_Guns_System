@@ -1,10 +1,10 @@
 {
 	"version": 3,
 	"file": "on_round_start.mcfunction",
-	"sourceRoot": "../../../../../../..",
+	"sourceRoot": "../../../../../../../..",
 	"sources": [
 		"src/functional/zombies/objects/barricades/hooks.py"
 	],
 	"names": [],
-	"mappings": "AAmCoD;;;;;;AACpD;AACA;AACA"
+	"mappings": "AAmC+D;;;;;;AAC/D;AACA"
 }
