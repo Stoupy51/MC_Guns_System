@@ -30,6 +30,7 @@ Quick config commands:
 
 - Open player config menu: `/trigger mgs.player.config set 1`
 - Open admin/server config menu: `/function mgs:config`
+- After retuning `src/functional/progression/awards.py` or a challenge threshold, rebuild every online player's levels and challenges from their banked XP: `/function mgs:v5.1.0/progression/recompute_all` (the path carries the pack version).
 
 ![Gameplay overview](./assets/img/gameplay_overview.gif)
 ![Config Menu](./assets/img/config_menu.png)
@@ -105,7 +106,7 @@ https://github.com/user-attachments/assets/e6f96ed9-383e-48d2-8c2b-bb47300bba42
 - Sidebar and score tracking by gamemode.
 
 <details>
-<summary>🔥 Exemple of a Domination match</summary>
+<summary>🔥 Example of a Domination match</summary>
 
 ![Multiplayer match](./assets/img/multiplayer_match.gif)
 
@@ -117,9 +118,10 @@ Implemented gamemodes:
 - 🏳️ Domination.
 - ⚡ Hardpoint.
 - 💣 Search and Destroy.
+- 💣 Demolition.
 
 <details>
-<summary>🏳️ Modes de jeu supportés</summary>
+<summary>🏳️ Supported gamemodes</summary>
 
 ![FFA](./assets/img/mode_ffa.png)
 ![Team Deathmatch](./assets/img/mode_tdm.png)
@@ -158,7 +160,7 @@ https://github.com/user-attachments/assets/69d14336-9af0-47ef-a5da-538b0f668787
 
 A generic in-game authoring tool shared by Multiplayer, Missions, and Zombies. Instead of hardcoding coordinates in functions, each map is a storage compound (id, name, base_coordinates, boundaries, mode-specific element arrays) stored in a per-mode list. Element positions are saved relative to base_coordinates and converted to absolute world positions at runtime, so maps are portable and shareable between worlds/projects.
 
-Workflow: open the editor from the config menu (Game Setup), pick a mode tab, then select or create a map. The editor loads the map into temporary storage, spawns markers for existing elements, and gives you editor tools (spawn eggs and utility items). Place eggs to add elements, configure them via per-element handlers, then save — live markers are read back, converted to relative positions, and the map compound is rebuilt. Exiting cleans up all editor entities/items/tags.
+Workflow: open the editor from the config menu (Game Setup), pick a mode tab, then select or create a map. The editor loads the map into temporary storage, spawns markers for existing elements, and gives you editor tools (spawn eggs and utility items). Place eggs to add elements, configure them via per-element handlers, then save: live markers are read back, converted to relative positions, and the map compound is rebuilt. Exiting cleans up all editor entities/items/tags.
 
 Available elements per mode:
 
@@ -176,11 +178,11 @@ https://github.com/user-attachments/assets/7b429b68-c476-4b08-98ce-0fa53cb72608
 
 - Weapon, magazine, grenade, and casing definitions are generated from Python sources.
 - Weapon stats are embedded in item custom_data.
-- Automatic display name/model/lore generation.
+- Display name, model and lore generated at build time.
 - PAP (Pack-a-Punch) schema support in stat config.
 
 ## 🚧 Known WIP / Pending Items
 
 - Legacy crafting system from MGS 4.2 is not integrated.
-- Future multiplayer TODO: final kill cam buffer/recording design: Starting 10 seconds before the end of the game, we record every player's position and rotation every tick in a list (with a max size of 200 ticks, so 10 seconds at 20 ticks per second) (storage {ns}:kill_cam players set value {username:[[x,y,z,yaw,pitch],[x,y,z,yaw,pitch],...]},username_2...})
+- Multiplayer final kill cam: designed in [specs/004-multiplayer-kill-cam](specs/004-multiplayer-kill-cam/), not built.
 
