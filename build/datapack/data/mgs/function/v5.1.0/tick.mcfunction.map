@@ -4,6 +4,7 @@
 	"sourceRoot": "../../../../../..",
 	"sources": [
 		"src/functional/main/objectives.py",
+		"src/functional/shaders/__init__.py",
 		"src/functional/weapon/firing/projectile/damage.py",
 		"src/functional/weapon/grenade/effects.py",
 		"src/functional/mob_ai.py",
@@ -13,5 +14,5 @@
 		"src/functional/missions/game/tick.py"
 	],
 	"names": [],
-	"mappings": "AA8FiB;;;;;;AACjB;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACYA;ACzEiB;AACjB;AACA;AACA;AACA;AC0HA;AACA;AACA;AACA;AACA;AACA;AACA;ACtGA;AACA;AACA;AACA;AACA;ACjEA;AACA;AACA;AACA;ACDA;AACA;ACAiB;AACjB;AACA;AACA"
+	"mappings": "AA8FiB;;;;;;AACjB;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACkBiB;AACjB;AACA;AACA;ACRA;ACzEiB;AACjB;AACA;AACA;AACA;AC0HA;AACA;AACA;AACA;AACA;AACA;AACA;ACtGA;AACA;AACA;AACA;AACA;ACjEA;AACA;AACA;AACA;ACDA;AACA;ACAiB;AACjB;AACA;AACA"
 }

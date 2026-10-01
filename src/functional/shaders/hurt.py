@@ -204,6 +204,8 @@ scoreboard players set #hurt_tier {ns}.data 0
 {gate}.mi.in_game matches 1 run function {ns}:v{version}/player/hurt_resolve
 {gate}.zb.in_game matches 1 run function {ns}:v{version}/player/hurt_resolve
 execute unless score @s {ns}.hurt_fx matches -2147483648.. run scoreboard players set @s {ns}.hurt_fx 0
+# No overlay and no fade playing: every 2 s, take off any hurt id the scores missed, so a desync can never leave the screen red.
+execute if score @s {ns}.hurt_fx matches 0 if score #hurt_tier {ns}.data matches 0 unless score @s {ns}.hurt_out_until matches -2147483648.. if score #fx_sweep {ns}.data matches 0 run function {ns}:v{version}/player/hurt_sweep
 execute if score @s {ns}.hurt_fx = #hurt_tier {ns}.data run return run scoreboard players reset @s {ns}.hurt_pending
 execute if score #hurt_tier {ns}.data > @s {ns}.hurt_fx run return run function {ns}:v{version}/player/hurt_swap
 
@@ -245,6 +247,12 @@ scoreboard players operation @s {ns}.hurt_fall_until += #total_tick {ns}.data
 # Fading to nothing: once the fade has played, the id comes off entirely
 execute if score #hurt_tier {ns}.data matches 0 run scoreboard players operation @s {ns}.hurt_out_until = @s {ns}.hurt_fall_until
 execute if score #hurt_tier {ns}.data matches 0 run scoreboard players add @s {ns}.hurt_out_until 1
+""")
+
+	sweep: str = "\n".join(f"posteffect remove @s {ns}:hurt_{start}_{end}" for start, end in TRANSITIONS)
+	write_versioned_function("player/hurt_sweep", f"""
+# @s = a player whose scores say no overlay is applied
+{sweep}
 """)
 
 	fade_removes: str = "\n".join(

@@ -11,6 +11,8 @@ execute unless entity @s[gamemode=spectator] if score @s mgs.mp.in_game matches 
 execute unless entity @s[gamemode=spectator] if score @s mgs.mi.in_game matches 1 run function mgs:v5.1.0/player/hurt_resolve
 execute unless entity @s[gamemode=spectator] if score @s mgs.zb.in_game matches 1 run function mgs:v5.1.0/player/hurt_resolve
 execute unless score @s mgs.hurt_fx matches -2147483648.. run scoreboard players set @s mgs.hurt_fx 0
+# No overlay and no fade playing: every 2 s, take off any hurt id the scores missed, so a desync can never leave the screen red.
+execute if score @s mgs.hurt_fx matches 0 if score #hurt_tier mgs.data matches 0 unless score @s mgs.hurt_out_until matches -2147483648.. if score #fx_sweep mgs.data matches 0 run function mgs:v5.1.0/player/hurt_sweep
 execute if score @s mgs.hurt_fx = #hurt_tier mgs.data run return run scoreboard players reset @s mgs.hurt_pending
 execute if score #hurt_tier mgs.data > @s mgs.hurt_fx run return run function mgs:v5.1.0/player/hurt_swap
 
