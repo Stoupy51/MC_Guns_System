@@ -88,8 +88,8 @@ scoreboard players set @s {ns}.zb.revive_p 0
 
 {TitleTimes.EVENT.cmd()}
 title @s title ["👥"]
-title @s subtitle [{{"text":"Who's Who — revive your body, or fight on!","color":"dark_aqua"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="aqua")},{{"text":" went down — but plays on as a doppelganger!","color":"gray"}}]
+title @s subtitle [{{"text":"Who's Who: revive your body, or fight on!","color":"dark_aqua"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="aqua")},{{"text":" went down but plays on as a doppelganger!","color":"gray"}}]
 """)
 
 	write_versioned_function("zombies/whos_who/snapshot_inv", f"""
@@ -146,8 +146,8 @@ scoreboard players set @s {ns}.zb.revive_p 0
 
 {TitleTimes.EVENT.cmd()}
 title @s title ["❤"]
-title @s subtitle [{{"text":"Body revived — you are whole again!","color":"green"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":"'s body was revived — they are whole again!","color":"gray"}}]
+title @s subtitle [{{"text":"Body revived: you are whole again!","color":"green"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":"'s body was revived: they are whole again!","color":"gray"}}]
 {ZombiesFeedback.zb_sound('success')}
 """)
 
@@ -156,7 +156,7 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side=
 function {ns}:v{version}/zombies/whos_who/forfeit
 {TitleTimes.BAD_NEWS.cmd()}
 title @s title ["☠"]
-title @s subtitle [{{"text":"Your body bled out — fight on with your pistol.","color":"gray"}}]
+title @s subtitle [{{"text":"Your body bled out. Fight on with your pistol.","color":"gray"}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="dark_aqua")},{{"text":"'s body bled out.","color":"gray"}}]
 """)
 

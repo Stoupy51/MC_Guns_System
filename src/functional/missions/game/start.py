@@ -15,7 +15,7 @@ def write_missions_start() -> None:
 {GameLifecycle.game_start_guards(ns, "missions", "Mission")}
 
 # Players join through Manage Players or + Join.
-execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the mission — use Manage Players first.","color":"red"}}]
+execute unless entity @a[scores={{{ns}.mi.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the mission. Use Manage Players first.","color":"red"}}]
 
 {GameLifecycle.mode_start_map_bootstrap_lines(ns, "missions", normalize_legacy=True)}
 
@@ -109,7 +109,7 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s 
 function {ns}:v{version}/missions/spawn_all_enemies
 
 # A mission with no enemies would complete at once (empty map or broken enemy functions).
-execute if score #mi_total_enemies {ns}.data matches ..0 run tellraw @a [{MGS_TAG},{{"text":"No enemies could be spawned — check the map's enemy markers/functions in the editor.","color":"red"}}]
+execute if score #mi_total_enemies {ns}.data matches ..0 run tellraw @a [{MGS_TAG},{{"text":"No enemies could be spawned. Check the map's enemy markers/functions in the editor.","color":"red"}}]
 execute if score #mi_total_enemies {ns}.data matches ..0 run return run function {ns}:v{version}/missions/stop
 
 # After the enemies spawn.

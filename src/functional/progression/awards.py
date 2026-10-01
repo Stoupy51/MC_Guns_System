@@ -1,11 +1,9 @@
 """ Every way a player earns XP, and what the message says when they do.
 
-One table per side, and every balance number in the whole system lives here. Nothing else hard-codes an
-amount, so retuning the pacing is a one-file edit followed by the admin recompute (see curve.py): the totals
-players already banked are authoritative, and their levels are re-derived from them.
+One table per side, and every balance number in the whole system lives here.
+Nothing else hard-codes an amount, so retuning the pacing is a one-file edit followed by the admin recompute (see curve.py): the totals players already banked are authoritative, and their levels are re-derived from them.
 
-Each row carries its own suffix text because no award ever prints a message of its own — the amount is
-appended to the message the event already broadcasts.
+Each row carries its own suffix text because no award ever prints a message of its own: the amount is appended to the message the event already broadcasts.
 """
 # Imports
 from dataclasses import dataclass
@@ -85,9 +83,8 @@ MP_AWARDS: dict[str, XpAward] = by_key([
 Tuned so a 20-kill win lands around 300-400 XP, which is ~2400 XP/hour, and a mission of ~60 enemies
 lands around 250 XP. A death is deliberately absent: XP never goes down.
 
-The mission rows are separate from `kill` and `headshot` rather than reusing them, because the
-Multiplayer kills challenge counts the `kill` row and its nodes say "Kill N players". A mission enemy is
-not a player. """
+The mission rows are separate from `kill` and `headshot` rather than reusing them, because the Multiplayer kills challenge counts the `kill` row and its nodes say "Kill N players".
+A mission enemy is not a player. """
 
 ZB_AWARDS: dict[str, XpAward] = by_key([
 	XpAward(key="kill",            amount=2,  note="Per zombie, any kill type, via the totalKillCount delta", scaled=True),
@@ -106,7 +103,7 @@ ZB_AWARDS: dict[str, XpAward] = by_key([
 	XpAward(key="game_over",       amount=0,  note="GAME_OVER_XP x the final round", scaled=True),
 	XpAward(key="challenge",       amount=0,  note="Any challenge unlocked; the tier's payout arrives in #xp_gain", scaled=True),
 ])
-""" Zombies awards. Tuned so a round-20 run lands around 1580 XP over ~45 minutes, which is ~2100 XP/hour —
+""" Zombies awards. Tuned so a round-20 run lands around 1580 XP over ~45 minutes, which is ~2100 XP/hour,
 close enough to multiplayer that neither side is the obvious grind. """
 
 POINTS_PER_XP: int = 100

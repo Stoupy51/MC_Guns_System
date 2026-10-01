@@ -1,7 +1,6 @@
 """ Melee stat table: the starting knife and the three Black Ops 2 knife upgrades.
 
-Zombies treats every entry here as a `kind 1` wallbuy (see zombies/objects/wallbuys): buying one
-replaces `hotbar.0`, so a player only ever carries a single melee weapon.
+Zombies treats every entry here as a `kind 1` wallbuy (see zombies/objects/wallbuys): buying one replaces `hotbar.0`, so a player only ever carries a single melee weapon.
 """
 # Imports
 from dataclasses import dataclass
@@ -35,8 +34,7 @@ class Melee:
 	"""
 	camo_eligible: bool = False
 	""" Whether camo.py generates the `<id>_<material>` cosmetic variants for this weapon.
-	Only `combat_knife`'s variants are handed out so far (the loadout editor's Knife row); the upgrades'
-	exist for a future zombies camo pick and are already reachable from the creative loot table.
+	Only `combat_knife`'s variants are handed out so far (the loadout editor's Knife row); the upgrades' variants exist for a future zombies camo pick and are already reachable from the creative loot table.
 	"""
 
 	@property

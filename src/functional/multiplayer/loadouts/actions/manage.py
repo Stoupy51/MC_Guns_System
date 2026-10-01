@@ -79,7 +79,7 @@ scoreboard players set #edit_found {ns}.data 0
 execute if data storage {ns}:temp _find_iter[0] run function {ns}:v{version}/multiplayer/custom/edit_load_iter
 
 # Loadouts saved before editor_state cannot be pre-filled.
-execute if score #edit_found {ns}.data matches 0 run tellraw @s [{MGS_TAG},{{"text":"This loadout predates editing support — rebuild it from scratch (saving still overwrites it).","color":"yellow"}}]
+execute if score #edit_found {ns}.data matches 0 run tellraw @s [{MGS_TAG},{{"text":"This loadout predates editing support. Rebuild it from scratch (saving still overwrites it).","color":"yellow"}}]
 
 # Points are recomputed from the loaded state.
 function {ns}:v{version}/multiplayer/editor/hub

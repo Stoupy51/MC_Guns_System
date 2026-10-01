@@ -17,7 +17,7 @@ def write_multiplayer_start() -> None:
 {GameLifecycle.game_start_guards(ns, "multiplayer", "Game")}
 
 # Players join a side through Manage Players or + Join.
-execute unless entity @a[scores={{{ns}.mp.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined a team — use Manage Players first.","color":"red"}}]
+execute unless entity @a[scores={{{ns}.mp.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined a team. Use Manage Players first.","color":"red"}}]
 
 {GameLifecycle.mode_start_map_bootstrap_lines(ns, "multiplayer", normalize_legacy=True)}
 

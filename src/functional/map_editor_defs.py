@@ -100,13 +100,13 @@ Empty brackets are useless to type into, and each gets a "✗" button to clear i
 # Hover tooltips ("ⓘ") next to constant and enum fields in the element editor, so map makers need not guess the magic numbers.
 # Keyed by (element_type, field); a plain field name is a fallback shared by every element type ("power").
 FIELD_DOCS: dict[tuple[str, str] | str, str] = {
-	("trap", "type"): "Trap behaviour:\n0 = Fire — lethal to zombies, burns players inside\n1 = Electric — lethal to zombies, shocks players inside\n2 = Turret — auto-fires at the nearest zombie every 5 ticks",
+	("trap", "type"): "Trap behaviour:\n0 = Fire: lethal to zombies, burns players inside\n1 = Electric: lethal to zombies, shocks players inside\n2 = Turret: auto-fires at the nearest zombie every 5 ticks",
 	("trap", "duration"): "How long the trap stays active, in ticks (20 ticks = 1 second).",
 	("trap", "cooldown"): "Cooldown before the trap can be re-triggered, in ticks (20 = 1s).",
-	("door", "animation"): "Open animation:\n0 = Destroy — block-break particles + sound\n1+ = Silent — blocks instantly replaced with air",
+	("door", "animation"): "Open animation:\n0 = Destroy: block-break particles + sound\n1+ = Silent: blocks instantly replaced with air",
 	("door", "link_id"): "Doors that share a link_id open together as a single purchase.",
-	("door", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 5000 + partial_price 500 = 10 payments.\nDoor progress is GLOBAL — any mix of players can contribute, and the last\npayment is just whatever is left. Progress is shared by every linked door.",
-	("perk_machine", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 2500 + partial_price 500 = 5 payments.\nPerk progress is LOCAL — each player pays down their own perk, nobody can\ncontribute to someone else's. Progress is lost when the perk is obtained.",
+	("door", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 5000 + partial_price 500 = 10 payments.\nDoor progress is GLOBAL: any mix of players can contribute, and the last\npayment is just whatever is left. Progress is shared by every linked door.",
+	("perk_machine", "partial_price"): "Chip-in payments: points taken per right-click (0 = pay the full price at once).\nExample: price 2500 + partial_price 500 = 5 payments.\nPerk progress is LOCAL: each player pays down their own perk, nobody can\ncontribute to someone else's. Progress is lost when the perk is obtained.",
 	("door", "back_group_id"): "Zombie spawn group_id unlocked behind this door (-1 = none).",
 	("perk_machine", "name"): "Display label shown when hovering the machine.\nLeave EMPTY to auto-resolve the perk's canonical name from perk_id\n(e.g. juggernog -> Juggernog). Only set this to override that name.",
 	("perk_machine", "perk_id"): PERK_ID_DOC,
@@ -118,7 +118,7 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("barricade", "radius"): "Block radius the barricade toggles open/closed around its marker.",
 	("mystery_box_pos", "location_name"): "Name of the place this spot sits in, announced in chat when the box\nlands here (e.g. \"the Power Room\").\nLeave EMPTY to fall back to the generic \"a new location\" message.",
 	"activation_box": "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces enemies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
-	"walk_to": "Optional [x, y, z] offset (relative to this spawn, in blocks).\nWhen set, zombies from this spawn walk straight to that spot instead of\nheading for the nearest player — a pathfinding escort carries them there,\nthen hands them back to normal AI on arrival. Empty [] = normal behaviour.\nAim it just inside a window and they break in through the barricade on the way.",
+	"walk_to": "Optional [x, y, z] offset (relative to this spawn, in blocks).\nWhen set, zombies from this spawn walk straight to that spot instead of\nheading for the nearest player. A pathfinding escort carries them there,\nthen hands them back to normal AI on arrival. Empty [] = normal behaviour.\nAim it just inside a window and they break in through the barricade on the way.",
 	# Shared fallbacks:
 	"can_start_on": "true = the machine is allowed to be the ACTIVE (usable) spot at game\nstart and after it roams. false = a valid roam destination, but never\nthe first active spot. Only one spot is active at a time; the rest show\na grayed-out disabled model. At least one spot must allow starting.",
 	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",

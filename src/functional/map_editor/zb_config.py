@@ -190,7 +190,7 @@ def marker_config_lines(ns: str) -> list[str]:
 	# Point types have nothing to configure.
 	lines += [
 		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] '
-		f'["  ","{einfo.emoji} ",{{"text":"{einfo.name} — no configurable fields","color":"gray","italic":true}}]'
+		f'["  ","{einfo.emoji} ",{{"text":"{einfo.name}: no configurable fields","color":"gray","italic":true}}]'
 		for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type == "point"
 	]
 	return lines

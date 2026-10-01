@@ -15,7 +15,7 @@ def write_zombies_start() -> None:
 {GameLifecycle.game_start_guards(ns, "zombies", "Zombies game")}
 
 # Players join through Manage Players or + Join.
-execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the zombies game — use Manage Players first.","color":"red"}}]
+execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined the zombies game. Use Manage Players first.","color":"red"}}]
 
 {GameLifecycle.mode_start_map_bootstrap_lines(ns, "zombies", normalize_legacy=False)}
 

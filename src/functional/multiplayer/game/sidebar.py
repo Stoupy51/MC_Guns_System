@@ -159,12 +159,12 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 # Label and team are stored apart, so the decider only relabels the left half.
 data modify storage {ns}:temp demo_sb.atk_label set value '[" ⚔ ",{{"text":"Attack","color":"gray"}}]'
 execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run data modify storage {ns}:temp demo_sb.atk_label set value '[" ⚡ ",{{"text":"Decider","color":"gold"}}]'
-data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"—","color":"dark_gray"}}'
+data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"-","color":"dark_gray"}}'
 execute if score #demo_attackers {ns}.data matches 1 run data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"Red","color":"red"}}'
 execute if score #demo_attackers {ns}.data matches 2 run data modify storage {ns}:temp demo_sb.atk_team set value '{{"text":"Blue","color":"blue"}}'
 
-data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Site A","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
-data modify storage {ns}:temp demo_sb.b set value '[[" ",{{"text":"Site B","color":"dark_gray"}}],{{"text":"—","color":"dark_gray"}}]'
+data modify storage {ns}:temp demo_sb.a set value '[[" ",{{"text":"Site A","color":"dark_gray"}}],{{"text":"-","color":"dark_gray"}}]'
+data modify storage {ns}:temp demo_sb.b set value '[[" ",{{"text":"Site B","color":"dark_gray"}}],{{"text":"-","color":"dark_gray"}}]'
 {demo_site_lines}
 
 function {ns}:v{version}/multiplayer/build_sidebar_demo with storage {ns}:temp demo_sb

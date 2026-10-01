@@ -106,7 +106,7 @@ execute at @e[tag={ns}.snd_obj] run particle dust{{color:[1.0,0.6,0.0],scale:1.0
 
 # The carrier's label follows them; see_through is off, so it does not reveal the carrier through walls (as in CoD).
 execute as @a[tag={ns}.snd_carrier] at @s run tp @e[tag={ns}.snd_carrier_label,limit=1] ~ ~2.2 ~
-title @a[tag={ns}.snd_carrier] actionbar [{{"text":"💣 ","color":"white"}},{{"text":"You have the bomb — plant at a site","color":"gold"}}]
+title @a[tag={ns}.snd_carrier] actionbar [{{"text":"💣 ","color":"white"}},{{"text":"You have the bomb: plant at a site","color":"gold"}}]
 
 # A carrier who disconnects leaves no bomb and no carrier, which would end the attack for the round; their label stays, so the bomb drops there.
 execute if score #snd_bomb_state {ns}.data matches 0 unless entity @a[tag={ns}.snd_carrier] if entity @e[tag={ns}.snd_carrier_label] run function {ns}:v{version}/multiplayer/gamemodes/snd/recover_bomb

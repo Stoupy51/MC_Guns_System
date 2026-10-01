@@ -83,9 +83,9 @@ def hsl_color_blend(
 	hls_blend: NDArray[np.floating] = rgb_to_hls(blend_arr[:, :, :3].reshape(-1, 3))
 
 	hls_out: NDArray[np.floating] = hls_base.copy()
-	hls_out[:, 0] = hls_blend[:, 0]   # H ← material
-	hls_out[:, 2] = hls_blend[:, 2]   # S ← material
-	hls_out[:, 1] = (1.0 - l_blend) * hls_base[:, 1] + l_blend * hls_blend[:, 1]   # L ← blend of weapon & material
+	hls_out[:, 0] = hls_blend[:, 0]   # H from the material
+	hls_out[:, 2] = hls_blend[:, 2]   # S from the material
+	hls_out[:, 1] = (1.0 - l_blend) * hls_base[:, 1] + l_blend * hls_blend[:, 1]   # L mixed from the weapon and the material
 
 	# Gamma and contrast on the L channel (weapon luminance).
 	l_channel: NDArray[np.floating] = hls_out[:, 1]

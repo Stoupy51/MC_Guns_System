@@ -17,7 +17,7 @@ def write_zombies_over() -> None:
 	version: str = Mem.ctx.project_version
 
 	zb_stat_line: str = (
-		f'tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", side="zb")}," — Kills: ",'
+		f'tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", side="zb")}," | Kills: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]'
@@ -42,14 +42,14 @@ execute store result score #final_round {ns}.data run data get storage {ns}:zomb
 function {ns}:v{version}/zombies/xp/on_game_over
 
 # The Final Round line is split because only the roster earned the bonus.
-tellraw @a ["","\\n",{{"text":"═══════ GAME OVER ═══════","color":"dark_red","bold":true}}]
+tellraw @a ["","\\n",{{"text":"GAME OVER","color":"dark_red","bold":true}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] ["","  ","🧟 ",{{"text":"Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}},{Xp.suffix("zb", "game_over")}]
 tellraw @a[scores={{{ns}.zb.in_game=0}}] ["","  ","🧟 ",{{"text":"Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}}]
 
 # Best first; the bare selector component renders the team colour.
 {zb_ranked_stats}
 
-tellraw @a ["",{{"text":"═════════════════════════","color":"dark_red","bold":true}},"\\n"]
+tellraw @a ""
 
 function #{ns}:zombies/on_game_end
 
@@ -110,7 +110,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 # Roster: players still in game, else the snapshot game_over took. Tagged so it survives the stop below.
 execute if entity @a[scores={{{ns}.zb.in_game=1}}] run tag @a[scores={{{ns}.zb.in_game=1}}] add {ns}.zb_restart
 execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run tag @a[tag={ns}.zb_last_roster] add {ns}.zb_restart
-execute unless entity @a[tag={ns}.zb_restart] run return run tellraw @s [{MGS_TAG},{{"text":"Nothing to restart — no players from the last game.","color":"red"}}]
+execute unless entity @a[tag={ns}.zb_restart] run return run tellraw @s [{MGS_TAG},{{"text":"Nothing to restart: no players from the last game.","color":"red"}}]
 
 # Before tearing anything down.
 execute if data storage {ns}:zombies game{{map_id:""}} run return run function {ns}:v{version}/zombies/restart_no_map
@@ -129,6 +129,6 @@ function {ns}:v{version}/zombies/start
 	## Warns and drops the roster tag.
 	write_versioned_function("zombies/restart_no_map", f"""
 tag @a[tag={ns}.zb_restart] remove {ns}.zb_restart
-tellraw @s [{MGS_TAG},{{"text":"No map selected — open the setup menu first.","color":"red"}}]
+tellraw @s [{MGS_TAG},{{"text":"No map selected. Open the setup menu first.","color":"red"}}]
 """)
 

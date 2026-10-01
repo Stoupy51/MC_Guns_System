@@ -143,7 +143,7 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 	Dialogs.register_dialog("zombies/admin", {
 		"type": "minecraft:multi_action",
 		"title": ["", "🛠 ", {"text": "Zombies Admin", "color": "dark_red", "bold": True}],
-		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Debug tools — operators only", "color": "gray"}}],
+		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Debug tools (operators only)", "color": "gray"}}],
 		"actions": [
 			Dialogs.dialog_run_btn("⏭ Skip Round", f"/function {ns}:v{version}/zombies/admin/round_skip_1", "End this round and start the next one", "yellow"),
 			Dialogs.dialog_run_btn("⏩ Skip 5 Rounds", f"/function {ns}:v{version}/zombies/admin/round_skip_5", "Jump forward 5 rounds", "gold"),
