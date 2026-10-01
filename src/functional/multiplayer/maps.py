@@ -12,6 +12,7 @@ def generate_maps() -> None:
 	write_load_file(f"""
 # Initialize multiplayer maps storage (empty list, only if not set)
 execute unless data storage {ns}:maps multiplayer run data modify storage {ns}:maps multiplayer set value []
+function #{ns}:maps/register
 """)
 
 	## Function tag for external datapacks to register maps
