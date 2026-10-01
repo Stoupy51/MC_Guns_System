@@ -13,9 +13,7 @@ def write_multiplayer_stop() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Game Stop
-	## The XP this match earned closes the line, which is also where the match win/loss bonus surfaces:
-	## multiplayer/xp/on_game_end runs from the on_game_end tag above, before this iteration reads the score.
+	## The line ends with the match XP, including the win or loss bonus that multiplayer/xp/on_game_end (in the on_game_end tag) adds first.
 	mp_stat_line: str = (
 		f'tellraw @a ["","  ",{Text.player(ns, "@s")},{{"text":" ➤ ","color":"dark_gray"}},'
 		f'{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"green"}},'
@@ -30,7 +28,6 @@ def write_multiplayer_stop() -> None:
 	)
 
 	write_versioned_function("multiplayer/stop", f"""
-# Various cleanup to go back to lobby
 data modify storage {ns}:multiplayer game.state set value "lobby"
 schedule clear {ns}:v{version}/multiplayer/end_prep
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base reset
@@ -41,24 +38,21 @@ effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
 gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
 
-# Mode cleanup BEFORE the gm_entity sweep: a cleanup may need its own markers to still exist in order to
-# undo world changes made from them. S&D restores its bomb sites with `execute at @e[tag=snd_obj] run
-# fill ...`, which silently did nothing while the sweep ran first, leaving the chest on the map forever.
+# Mode cleanup before the gm_entity sweep: S&D restores its sites with `execute at @e[tag=snd_obj] run fill`,
+# which needs the markers to still exist.
 {gm_dispatch(ns, version, "cleanup")}
 kill @e[tag={ns}.gm_entity]
 function #{ns}:multiplayer/on_game_end
 
 {GameLifecycle.regen_disable_lines(ns)}
 
-# Announce scores (team scores are meaningless in FFA — the winner is announced by player_wins)
+# Team scores mean nothing in FFA; player_wins announces the winner.
 tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]
 execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
-# Per-player match stats, best first. The name is a bare selector component so it renders in the
-# player's team colour; this runs before the team leave below, while that colour still applies.
+# Best first; the bare selector shows the team colour, which still applies before the team leave below.
 {mp_ranked_stats}
 
-# Remove sidebar and list displays and leave teams
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.sidebar
 scoreboard objectives setdisplay list
@@ -66,7 +60,7 @@ team leave @a[team={ns}.red]
 team leave @a[team={ns}.blue]
 team leave @a[team={ns}.ffa]
 
-# Call map leave script for each in-game player (state is still active/preparing here)
+# The state is still active or preparing here.
 execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{script:"leave"}}
 
 scoreboard players set @a {ns}.mp.in_game 0

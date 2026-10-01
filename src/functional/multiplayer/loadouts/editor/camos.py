@@ -20,7 +20,7 @@ def write_editor_camos() -> None:
 
 	fn: str = editor_fn(ns, version)
 
-	## Camo dialogs (free) — finish the weapon submenu and return to the hub
+	## Camo dialogs (free): they finish the weapon submenu and return to the hub.
 	def camo_actions_snbt(trig_base: int) -> str:
 		actions: list[str] = []
 		for camo_idx, c in enumerate(CAMO_VARIANTS):
@@ -78,7 +78,7 @@ function {fn}/hub
 {gen_pick_camo_lines("equip_slot2", TRIG_EQUIP2_CAMO_BASE)}
 function {fn}/hub
 """)
-	# The knife needs no *_full field: it is always `combat_knife` + the camo suffix, never scoped.
+	# The knife is always `combat_knife` + the camo suffix, never scoped, so it needs no *_full field.
 	write_versioned_function("multiplayer/editor/pick_knife_camo", f"""
 {gen_pick_camo_lines("knife", TRIG_KNIFE_CAMO_BASE)}
 function {fn}/hub

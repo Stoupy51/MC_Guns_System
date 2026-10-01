@@ -9,20 +9,17 @@
 #			dialog mgs:v5.1.0/multiplayer/setup
 #
 
-# In FFA there are no sides to balance — put everyone on the single FFA team instead of splitting
-# them red/blue, which implied alliances that don't exist and sent them to opposing spawns.
+# FFA: everyone goes to the single FFA team instead of being split red and blue.
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run return run function mgs:v5.1.0/multiplayer/join_ffa
 
-# Count players on each team
 execute store result score #red_count mgs.data if entity @a[scores={mgs.mp.team=1}]
 execute store result score #blue_count mgs.data if entity @a[scores={mgs.mp.team=2}]
 
-# Exclude self from the count so a player never tips the balance toward their own current team
-# (otherwise re-running auto-assign on already-assigned players is unstable and clumps onto one side)
+# The player's own team does not count, so re-running auto-assign stays stable instead of clumping onto one side.
 execute if score @s mgs.mp.team matches 1 run scoreboard players remove #red_count mgs.data 1
 execute if score @s mgs.mp.team matches 2 run scoreboard players remove #blue_count mgs.data 1
 
-# Assign to team with fewer players (red if tied)
+# The smaller team, red when tied.
 execute if score #red_count mgs.data <= #blue_count mgs.data run function mgs:v5.1.0/multiplayer/join_red
 execute if score #red_count mgs.data > #blue_count mgs.data run function mgs:v5.1.0/multiplayer/join_blue
 

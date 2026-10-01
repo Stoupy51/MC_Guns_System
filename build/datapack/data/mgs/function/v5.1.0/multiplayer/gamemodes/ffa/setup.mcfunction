@@ -6,8 +6,7 @@
 # @within	mgs:v5.1.0/multiplayer/start
 #
 
-# Clear leftover red/blue assignments only — players must STAY on the mgs.ffa team
-# (it carries nametagVisibility never + friendlyFire true; a bare 'team leave @a' made nametags visible)
+# Only red and blue leave: players stay on mgs.ffa, which hides nametags and enables friendly fire.
 team leave @a[team=mgs.red]
 team leave @a[team=mgs.blue]
 scoreboard players set @a mgs.mp.team 0

@@ -5,8 +5,7 @@
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/bomb_defused
 #
 
-# Same single-shot guard as attackers_win — this is the path the defuse takes, and the defuse used to be
-# immediately followed by four attacker wins as the wiped-looking alive tags were judged tick after tick.
+# Same single-shot guard: the defuse takes this path, and the wiped-looking alive tags would be judged again each tick.
 execute unless score #snd_round_active mgs.data matches 1 run return fail
 scoreboard players set #snd_round_active mgs.data 0
 

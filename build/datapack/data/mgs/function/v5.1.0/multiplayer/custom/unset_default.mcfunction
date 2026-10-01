@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/player/config/process
 #
 
-# Unset default custom loadout - use standard class instead
+# Back to the standard class.
 scoreboard players set @s mgs.mp.default 0
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.default_loadout_cleared_standard_class_will_be_used","color":"green"}]
 

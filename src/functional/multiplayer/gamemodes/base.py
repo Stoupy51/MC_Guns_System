@@ -7,10 +7,10 @@ from stewbeet import Mem, write_versioned_function
 
 # Classes
 class GameModeVariant(ABC):
-	""" Abstract base for a single multiplayer game-mode (a strategy plugged into the mode).
+	""" Abstract base for one multiplayer game mode.
 
-	Subclasses set :attr:`key` (e.g. ``"tdm"``) and implement :meth:`generate`, writing their
-	functions via :meth:`sub`, which prepends the shared path so each variant only names the leaf.
+	Subclasses set :attr:`key` (e.g. ``"tdm"``) and implement :meth:`generate`.
+	They write their functions through :meth:`sub`, which prepends the shared path so each variant only names the leaf.
 	"""
 
 	#: Short identifier used in the function path (e.g. "ffa", "tdm", "dom", "hp", "snd").
@@ -18,7 +18,7 @@ class GameModeVariant(ABC):
 
 	@property
 	def ns(self) -> str:
-		""" The project namespace (e.g. ``"mgs"``), read lazily — `Mem.ctx` only exists mid-pipeline. """
+		""" The project namespace (e.g. ``"mgs"``), read lazily since `Mem.ctx` only exists mid-pipeline. """
 		return Mem.ctx.project_id
 
 	@property

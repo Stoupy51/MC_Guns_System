@@ -7,7 +7,7 @@
 #			mgs:v5.1.0/multiplayer/enforce_bounds
 #
 
-# Clear attacker input (environmental death) and simulate death
+# No attacker: an environmental death.
 data modify storage mgs:input with set value {}
 function mgs:v5.1.0/multiplayer/simulate_death
 

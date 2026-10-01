@@ -9,9 +9,8 @@ from .....config.catalogs import PICK10_TOTAL, TRIG_HUB
 def write_editor_dialog_base() -> None:
 	ns: str = Mem.ctx.project_id
 
-	## Shared dialog builder (static action lists, points in body, Back → hub) One shared skeleton for all thirteen "points line + static action list" submenus.
-	## Title and hint ride in as whole text components inside single-quoted SNBT so they substitute raw and auto.lang_file still lifts their English out.
-	## The action list stays a literal in each caller: its tooltips contain \n and \uXXXX escapes that a nested SNBT string would eat.
+	## One skeleton for the thirteen "points line + static actions" submenus. Title and hint are whole components in single-quoted SNBT,
+	## so auto.lang_file still translates them; the action list stays literal, since its \n and \uXXXX escapes would not survive nesting.
 	write_versioned_function("multiplayer/editor/show_static_dialog", f"""$data modify storage {ns}:temp dialog set value {{\
 type:"minecraft:multi_action",\
 title:$(title),\

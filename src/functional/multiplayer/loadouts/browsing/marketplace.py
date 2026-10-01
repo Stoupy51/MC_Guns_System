@@ -20,7 +20,7 @@ def write_marketplace() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## MARKETPLACE - Browse all public custom loadouts Organized as: [📋All] [⭐Favorites] [❤Best Liked] filter row, then favorited public loadouts first, then the rest
+	## Public custom loadouts: an All, Favorites and Best Liked filter row, then the player's favorites, then the rest.
 
 	def marketplace_dialog_init() -> str:
 		return (
@@ -44,80 +44,63 @@ def write_marketplace() -> None:
 			f'{{label:{Text.styled_text("\u2764 Best Liked", color=likes_color, bold="true")},tooltip:{{text:"Show all public loadouts sorted by most likes"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MARKETPLACE_LIKES}"}}}}',
 		]
 
-	## marketplace/browse - Default: favorites first, then the rest
+	## Favorites first, then the rest.
 	write_versioned_function("multiplayer/marketplace/browse", f"""
-# Initialize dialog
 data modify storage {ns}:temp dialog set value {marketplace_dialog_init()}
 
-# Add filter/sort buttons (row 1: all / favorites / best liked)
 data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("all")[0]}
 data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("all")[1]}
 data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("all")[2]}
 
-# Load player favorites
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
 
-# Pass 1: Public loadouts that are in player's favorites
 data modify storage {ns}:temp _iter set from storage {ns}:multiplayer custom_loadouts
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/build_list_favs
 
-# Pass 2: Public loadouts NOT in player's favorites
 data modify storage {ns}:temp _iter set from storage {ns}:multiplayer custom_loadouts
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/build_list_rest
 
-# Show dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## marketplace/browse_fav_only - Filter: only public + in player's favorites
+	## Only public loadouts the player favorited.
 	write_versioned_function("multiplayer/marketplace/browse_fav_only", f"""
-# Initialize dialog
 data modify storage {ns}:temp dialog set value {marketplace_dialog_init()}
 data modify storage {ns}:temp dialog.title set value [{{text:"",color:"light_purple",bold:true}},{{text:"Marketplace"}}," \u2014 ",{{text:"Favorites"}}]
 
-# Add filter/sort buttons (favorites tab active)
 data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("fav")[0]}
 data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("fav")[1]}
 data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("fav")[2]}
 
-# Load player favorites
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
 
-# Only show public + in favorites
 data modify storage {ns}:temp _iter set from storage {ns}:multiplayer custom_loadouts
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/build_list_favs
 
-# Show dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## marketplace/browse_likes - Sort by likes descending (find-max passes O(n^2), fine for small n)
+	## By likes, descending (repeated find-max, O(n^2), fine for small n).
 	write_versioned_function("multiplayer/marketplace/browse_likes", f"""
-# Initialize dialog
 data modify storage {ns}:temp dialog set value {marketplace_dialog_init()}
 data modify storage {ns}:temp dialog.title set value [{{text:"",color:"light_purple",bold:true}},{{text:"Marketplace"}}," \u2014 ",{{text:"Best Liked"}}]
 
-# Add filter/sort buttons (likes tab active)
 data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("likes")[0]}
 data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("likes")[1]}
 data modify storage {ns}:temp dialog.actions append value {marketplace_filter_btns("likes")[2]}
 
-# Load player favorites (used in prep_btn normalization)
+# prep_btn reads them.
 function {ns}:v{version}/multiplayer/shared/load_player_favorites
 
-# Collect all public loadouts into _sort_pool
 data modify storage {ns}:temp _sort_pool set value []
 data modify storage {ns}:temp _iter set from storage {ns}:multiplayer custom_loadouts
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/sort_collect_pool
 
-# Build buttons from highest to lowest likes
 execute if data storage {ns}:temp _sort_pool[0] run function {ns}:v{version}/multiplayer/marketplace/sort_build_list
 
-# Show dialog
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
-	## marketplace/build_list_favs - Pass 1: public + in favorites
 	write_versioned_function("multiplayer/marketplace/build_list_favs", f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
 execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplayer/shared/check_is_fav
@@ -127,7 +110,6 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/build_list_favs
 """)
 
-	## marketplace/build_list_rest - Pass 2: public + NOT in favorites
 	write_versioned_function("multiplayer/marketplace/build_list_rest", f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
 execute if score #pub {ns}.data matches 1 run function {ns}:v{version}/multiplayer/shared/check_is_fav
@@ -137,7 +119,6 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/build_list_rest
 """)
 
-	## marketplace/sort_collect_pool - Collect all public loadouts into _sort_pool for likes sort
 	write_versioned_function("multiplayer/marketplace/sort_collect_pool", f"""
 execute store result score #pub {ns}.data run data get storage {ns}:temp _iter[0].public
 execute if score #pub {ns}.data matches 1 run data modify storage {ns}:temp _sort_pool append from storage {ns}:temp _iter[0]
@@ -146,29 +127,26 @@ data remove storage {ns}:temp _iter[0]
 execute if data storage {ns}:temp _iter[0] run function {ns}:v{version}/multiplayer/marketplace/sort_collect_pool
 """)
 
-	## marketplace/sort_build_list - Find max-likes entry, build its button, recurse
+	## Find the most-liked entry, build its button, recurse.
 	write_versioned_function("multiplayer/marketplace/sort_build_list", f"""
-# Find max likes entry in _sort_pool
 scoreboard players set #max_likes {ns}.data -1
 data modify storage {ns}:temp _find_max_iter set from storage {ns}:temp _sort_pool
 execute if data storage {ns}:temp _find_max_iter[0] run function {ns}:v{version}/multiplayer/marketplace/sort_find_max
 
-# Temporarily set _iter[0] to the best entry so prep_btn can use it
+# prep_btn reads _iter[0].
 data modify storage {ns}:temp _iter set value []
 data modify storage {ns}:temp _iter append from storage {ns}:temp _sort_best
 function {ns}:v{version}/multiplayer/marketplace/prep_btn
 
-# Remove best entry from _sort_pool (match by id)
+# Matched by id.
 execute store result score #extract_id {ns}.data run data get storage {ns}:temp _sort_best.id
 data modify storage {ns}:temp _pool_rebuild set from storage {ns}:temp _sort_pool
 data modify storage {ns}:temp _sort_pool set value []
 execute if data storage {ns}:temp _pool_rebuild[0] run function {ns}:v{version}/multiplayer/marketplace/sort_remove_best
 
-# Recurse if pool still has entries
 execute if data storage {ns}:temp _sort_pool[0] run function {ns}:v{version}/multiplayer/marketplace/sort_build_list
 """)
 
-	## marketplace/sort_find_max - Recursive: scan _find_max_iter to find entry with most likes
 	write_versioned_function("multiplayer/marketplace/sort_find_max", f"""
 execute unless data storage {ns}:temp _find_max_iter[0].likes run data modify storage {ns}:temp _find_max_iter[0].likes set value 0
 
@@ -180,7 +158,7 @@ data remove storage {ns}:temp _find_max_iter[0]
 execute if data storage {ns}:temp _find_max_iter[0] run function {ns}:v{version}/multiplayer/marketplace/sort_find_max
 """)
 
-	## marketplace/sort_remove_best - Rebuild _sort_pool excluding the entry with id = #extract_id
+	## Rebuild _sort_pool without the entry whose id is #extract_id.
 	write_versioned_function("multiplayer/marketplace/sort_remove_best", f"""
 execute store result score #entry_id {ns}.data run data get storage {ns}:temp _pool_rebuild[0].id
 execute unless score #entry_id {ns}.data = #extract_id {ns}.data run data modify storage {ns}:temp _sort_pool append from storage {ns}:temp _pool_rebuild[0]
@@ -189,25 +167,20 @@ data remove storage {ns}:temp _pool_rebuild[0]
 execute if data storage {ns}:temp _pool_rebuild[0] run function {ns}:v{version}/multiplayer/marketplace/sort_remove_best
 """)
 
-	## marketplace/prep_btn - Compute triggers, normalize fields, add buttons
 	write_versioned_function("multiplayer/marketplace/prep_btn", f"""
-# Copy entry data for macro use
 data modify storage {ns}:temp _btn_data set from storage {ns}:temp _iter[0]
 
-# Compute triggers
 {compute_trig(ns, "select_trig", TRIG_SELECT_BASE)}
 {compute_trig(ns, "like_trig", TRIG_LIKE_BASE)}
 {compute_trig(ns, "fav_trig", TRIG_FAVORITE_BASE)}
 
-# Normalize and compute perk display
 {normalize_btn_fields(ns)}
 execute unless data storage {ns}:temp _btn_data.owner_name run data modify storage {ns}:temp _btn_data.owner_name set value "?"
 
-# Add buttons to dialog
 function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp _btn_data
 """)
 
-	# Rich tooltip for MARKETPLACE buttons (includes owner name)
+	# Marketplace tooltips also name the owner.
 	mp_tooltip = (
 		'["",{"text":"$(main_gun_display)","color":"green"},'
 		'{"text":" x$(primary_mag_count) mags","color":"dark_green"},'
@@ -233,7 +206,7 @@ function {ns}:v{version}/multiplayer/marketplace/add_btn with storage {ns}:temp 
 		'{"text":"\\u25b6 Click to select","color":"dark_gray","italic":true}]'
 	)
 
-	## marketplace/add_btn - Macro: append 3 buttons (Select + Like + Favorite) with rich tooltip
+	## Select, Like and Favorite buttons, with the rich tooltip.
 	write_versioned_function("multiplayer/marketplace/add_btn", f"""$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"green"}},tooltip:{mp_tooltip},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(select_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2b50 ",color:"gold"}},{{text:"Make Favorite",color:"yellow"}}],tooltip:{{text:"Add to favorites",color:"gold"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(fav_trig)"}}}}
 $data modify storage {ns}:temp dialog.actions append value {{label:[{{text:"\u2665 ",color:"red"}},{{text:"Like the Loadout",color:"yellow"}}],tooltip:{{text:"Like this loadout",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(like_trig)"}}}}

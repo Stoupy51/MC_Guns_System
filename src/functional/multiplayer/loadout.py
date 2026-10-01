@@ -10,7 +10,7 @@ def generate_loadouts() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Initialize default classes in storage as an ordered list
+	## Default classes, as an ordered list in storage.
 	class_entries: list[str] = []
 	for class_id, class_data in MultiplayerClasses.CLASSES.items():
 		class_num: int = MultiplayerClasses.CLASS_IDS[class_id]
@@ -19,83 +19,69 @@ def generate_loadouts() -> None:
 	classes_snbt: str = ",".join(class_entries)
 	write_load_file(f"data modify storage {ns}:multiplayer classes_list set value [{classes_snbt}]")
 
-	## Dynamic loadout application (recursive slot iteration)
+	## Loadouts are applied by recursing over their slots.
 
-	# apply_slot_loot: give the loot table item to the slot (macro)
 	write_versioned_function("multiplayer/apply_slot_loot", "$loot replace entity @s $(slot) loot $(loot)")
 
-	# apply_slot_count: set item count (for equipment stacking, e.g. 2 grenades)
+	# Equipment stacks (2 grenades).
 	write_versioned_function("multiplayer/apply_slot_count", """$item modify entity @s $(slot) {"type":"minecraft:set_count","count":$(count),"add":false}""")
 
-	# apply_slot_consumable: set consumable magazine stack count from #bullets score
+	# From the #bullets score.
 	write_versioned_function("multiplayer/apply_slot_consumable", f"""
 $scoreboard players set #bullets {ns}.data $(bullets)
 $item modify entity @s $(slot) {ns}:v{version}/set_consumable_count
 """)
 
-	# apply_knife: hotbar.0 melee, with the loadout's cosmetic camo suffix ("" = default)
+	# The loadout's camo suffix ("" for none).
 	write_versioned_function("multiplayer/apply_knife", f"""$loot replace entity @s hotbar.0 loot {ns}:i/combat_knife$(camo)
 """)
 
-	# apply_next_slot: recursive function that processes slots[0] then continues
 	write_versioned_function("multiplayer/apply_next_slot", f"""
-# Apply loot to slot
 data modify storage {ns}:temp current_slot set from storage {ns}:temp slots[0]
 function {ns}:v{version}/multiplayer/apply_slot_loot with storage {ns}:temp current_slot
 
-# If count > 1, apply set_count modifier
 execute unless data storage {ns}:temp current_slot{{count:1}} run function {ns}:v{version}/multiplayer/apply_slot_count with storage {ns}:temp current_slot
 
-# If consumable, apply consumable count modifier
 execute if data storage {ns}:temp current_slot{{consumable:true}} run function {ns}:v{version}/multiplayer/apply_slot_consumable with storage {ns}:temp current_slot
 
-# Remove processed slot and recurse
 data remove storage {ns}:temp slots[0]
 execute if data storage {ns}:temp slots[0] run function {ns}:v{version}/multiplayer/apply_next_slot
 """)
 
-	## apply_class_dynamic: reads class from temp storage and applies loadout Called after copying the target class data to mgs:temp
+	## Run after copying the class into {ns}:temp current_class.
 	write_versioned_function("multiplayer/apply_class_dynamic", f"""
-# Clear player inventory
 clear @s
 
-# Apply armor
 item replace entity @s armor.head with air
 item replace entity @s armor.chest with leather_chestplate[dyed_color=10263702,unbreakable={{}}]
 item replace entity @s armor.legs with chainmail_leggings[unbreakable={{}}]
 item replace entity @s armor.feet with iron_boots[unbreakable={{}}]
 
-# Knife in hotbar.0 for every loadout: it is not part of the class slot list because no class can
-# choose it away. Weapons therefore start at hotbar.1 (primary) and hotbar.2 (secondary).
-# Default the camo first: standard classes never set it, and loadouts saved before knife camos
-# existed have no field, so the macro would fail on a missing $(camo).
+# The knife is always given in hotbar.0, so weapons start at hotbar.1 and hotbar.2. The camo defaults to "":
+# standard classes never set it, and older loadouts have no field, which would fail the macro.
 data modify storage {ns}:temp _knife set value {{camo:""}}
 execute if data storage {ns}:temp current_class.knife_camo run data modify storage {ns}:temp _knife.camo set from storage {ns}:temp current_class.knife_camo
 function {ns}:v{version}/multiplayer/apply_knife with storage {ns}:temp _knife
 
-# Copy class slots to iteration temp
 data modify storage {ns}:temp slots set from storage {ns}:temp current_class.slots
 
-# Recursively apply all slots
 execute if data storage {ns}:temp slots[0] run function {ns}:v{version}/multiplayer/apply_next_slot
 
-# Apply perks from the selected loadout (standard class or custom)
 function {ns}:v{version}/multiplayer/apply_perks
 
-# Give class menu item (only in multiplayer)
+# Multiplayer only.
 execute if entity @s[tag={ns}.give_class_menu] run loot replace entity @s hotbar.4 loot {ns}:i/class_menu
 """)
 
-	## apply_perks: reads the perks list from temp current_class and sets the special.* flags.
-	## Shared by both standard classes and custom loadouts so every loadout starts from a clean perk state (any perk not on the loadout is reset to 0 / defaults).
+	## Shared by standard classes and custom loadouts: every perk not on the loadout is reset.
 	write_versioned_function("multiplayer/apply_perks", f"""
-# Sleight of Hand / Fast Hands: percentages (50 = 50% faster), 0 when absent
+# Sleight of Hand, Fast Hands: percentages (50 = 50% faster), 0 when absent.
 execute if data storage {ns}:temp current_class{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 50
 execute unless data storage {ns}:temp current_class{{perks:["quick_reload"]}} run scoreboard players set @s {ns}.special.quick_reload 0
 execute if data storage {ns}:temp current_class{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 50
 execute unless data storage {ns}:temp current_class{{perks:["quick_swap"]}} run scoreboard players set @s {ns}.special.quick_swap 0
 
-# Flag perks (0/1), read by the systems they affect
+# Flags read by the systems they affect.
 execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["scavenger"]}}
 scoreboard players operation @s {ns}.special.scavenger = #has_perk {ns}.data
 execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["flak_jacket"]}}
@@ -109,13 +95,13 @@ scoreboard players operation @s {ns}.special.overkill = #has_perk {ns}.data
 execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["quick_fix"]}}
 scoreboard players operation @s {ns}.special.quick_fix = #has_perk {ns}.data
 
-# Juggernaut: flag + raised max health (24 HP), reset to default 20 otherwise
+# Juggernaut: flag and 24 HP max health, back to 20 otherwise.
 execute store success score #has_perk {ns}.data if data storage {ns}:temp current_class{{perks:["juggernaut"]}}
 scoreboard players operation @s {ns}.special.juggernaut = #has_perk {ns}.data
 execute if score #has_perk {ns}.data matches 1 run attribute @s minecraft:max_health base set 24
 execute if score #has_perk {ns}.data matches 0 run attribute @s minecraft:max_health base reset
 
-# Loadouts never grant the admin/powerup buffs — clear any leftovers
+# Loadouts never grant admin or power-up buffs.
 scoreboard players set @s {ns}.special.infinite_ammo 0
 scoreboard players set @s {ns}.special.instant_kill 0
 """)

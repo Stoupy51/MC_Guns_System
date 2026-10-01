@@ -1,8 +1,7 @@
 """ The round-result announce, shared by both bomb modes.
 
-Search & Destroy and Demolition both close a round the same way: name the side that took it, and pay both
-sides — more to the winners, never nothing to the losers. Only the wording differs, so the four win functions
-across the two modes all come through here.
+Search & Destroy and Demolition close a round the same way: name the side that took it, and pay both sides, the winners more.
+Only the wording differs, so the four win functions of the two modes all come through here.
 """
 # Imports
 from ....helpers import MGS_TAG
