@@ -136,6 +136,7 @@ scoreboard objectives add mgs.hurt_pending dummy
 scoreboard objectives add mgs.hurt_fall_until dummy
 scoreboard objectives add mgs.hurt_out_until dummy
 scoreboard objectives add mgs.fx_deaths deathCount
+scoreboard objectives add mgs.fx_rejoins custom:leave_game
 
 # Black Ops style stamina, per player.
 scoreboard objectives add mgs.stam dummy

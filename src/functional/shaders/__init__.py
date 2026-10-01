@@ -95,6 +95,7 @@ def write_lifecycle(ns: str) -> None:
 	write_load_file(f"""
 {objectives}
 scoreboard objectives add {ns}.fx_deaths deathCount
+scoreboard objectives add {ns}.fx_rejoins custom:leave_game
 """)
 
 	# Post effects live in player NBT, so a round that ends badly would leave someone scoped for good.
@@ -105,16 +106,21 @@ posteffect clear @s
 {reset_scores}
 """)
 
-	# A real death respawns a fresh server player with an empty effect list, so only the mirror scores need forgetting.
-	# The crosshair and hurt watchers re-apply on their next tick.
+	# The server copies the effect list onto the respawned player, so leaving it would stack a second crosshair on the next apply.
+	# Clearing on death and on rejoin puts the list and the mirror scores back in step; the crosshair and hurt watchers re-apply on their next tick.
 	write_versioned_function("player/fx_after_death", f"""
-{reset_scores}
+function {ns}:v{version}/player/fx_reset
 scoreboard players set @s {ns}.fx_deaths 0
+""")
+	write_versioned_function("player/fx_after_rejoin", f"""
+function {ns}:v{version}/player/fx_reset
+scoreboard players set @s {ns}.fx_rejoins 0
 """)
 
 	write_versioned_function("player/tick", f"""
-# Mirror scores go stale on a real respawn, since the server drops the effect list with the old player
+# A respawn or a rejoin can leave the effect list and the mirror scores out of step
 execute if score @s {ns}.fx_deaths matches 1.. run function {ns}:v{version}/player/fx_after_death
+execute if score @s {ns}.fx_rejoins matches 1.. run function {ns}:v{version}/player/fx_after_rejoin
 
 # Shader ids that expire on their own: the muzzle flash burst and the zoom and hurt fade-outs
 execute if score @s {ns}.flash_off <= #total_tick {ns}.data run function {ns}:v{version}/player/flash_tick

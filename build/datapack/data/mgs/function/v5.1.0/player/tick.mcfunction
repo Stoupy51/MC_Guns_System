@@ -14,8 +14,9 @@ execute unless score @s mgs.mp.pid matches 1.. run function mgs:v5.1.0/multiplay
 # Black Ops style, only during a game.
 execute if score #any_game_active mgs.data matches 1 run function mgs:v5.1.0/player/regen_tick
 
-# Mirror scores go stale on a real respawn, since the server drops the effect list with the old player
+# A respawn or a rejoin can leave the effect list and the mirror scores out of step
 execute if score @s mgs.fx_deaths matches 1.. run function mgs:v5.1.0/player/fx_after_death
+execute if score @s mgs.fx_rejoins matches 1.. run function mgs:v5.1.0/player/fx_after_rejoin
 
 # Shader ids that expire on their own: the muzzle flash burst and the zoom and hurt fade-outs
 execute if score @s mgs.flash_off <= #total_tick mgs.data run function mgs:v5.1.0/player/flash_tick
