@@ -54,9 +54,9 @@ specs/001-shader-migration-263/
 └── tasks.md
 ```
 
-The existing [TODO_26.3_SHADERS.md](../../TODO_26.3_SHADERS.md) stands in for `research.md`. It is
-line-referenced against the decompiled sources and should not be duplicated here; it is deleted once
-this feature ships, with anything still true folded into the module docstring.
+[POSTEFFECT_26.3.md](../POSTEFFECT_26.3.md) stands in for `research.md`. It is read from the decompiled
+sources and should not be duplicated here. The in-game checklist, the known regressions and the open
+Iris checks are in [verification.md](verification.md).
 
 ### Source Code (repository root)
 

@@ -1,6 +1,6 @@
 # 26.3 shaders: what to verify in game
 
-The migration is written. Reference material lives in [POSTEFFECT_26.3.md](specs/POSTEFFECT_26.3.md);
+The migration is written. Reference material lives in [POSTEFFECT_26.3.md](../POSTEFFECT_26.3.md);
 this file is only the list of things that cannot be checked from a build.
 
 Everything below is verified in game, except the Iris items still open.
@@ -78,7 +78,7 @@ Stop at the first failure. Everything rests on step 1.
 
 ## Iris
 
-Post effects compose with shaderpacks (see [POSTEFFECT_26.3.md](specs/POSTEFFECT_26.3.md) section 7), but
+Post effects compose with shaderpacks (see [POSTEFFECT_26.3.md](../POSTEFFECT_26.3.md) section 7), but
 none of it is tested and Iris had no 26.3 branch at the time of writing.
 
 - [ ] Sanity test with a heavy pack: flash bloom, scope distortion, crosshair, hurt vignette.
