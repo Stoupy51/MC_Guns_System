@@ -198,6 +198,30 @@ Available elements per mode:
 
 Tips: place base coordinates first, validate boundaries early, ensure enough spawn points, verify door group/link consistency, and save frequently.
 
+### Shipping a map with the pack
+
+1. Build the map in the editor and save it.
+2. Print its compound with `/data get storage mgs:maps <mode>[{id:"<id>"}]` (`<mode>` is `multiplayer`, `zombies` or `missions`).
+3. Paste the compound into the generator as a raw string, next to the existing ones, and append it only when its id is missing:
+
+| Mode | File | Registration function | Runs |
+|---|---|---|---|
+| Multiplayer | `src/functional/multiplayer/maps.py` | `maps/multiplayer/default_maps`, in `#mgs:maps/register` | on every load |
+| Zombies | `src/functional/zombies/maps.py` | `maps/zombies/<id>/register`, in `#mgs:zombies/register_maps` | at every Zombies game start |
+| Missions | none yet | none yet | |
+
+```mcfunction
+execute unless data storage mgs:maps multiplayer[{id:"hijacked"}] run data modify storage mgs:maps multiplayer append value {...}
+```
+
+A world that already holds a map with that id keeps its own copy, so in-game edits survive a reload.
+The flip side: a changed built-in map only reaches a world after the stored one is removed, for example with `/data remove storage mgs:maps multiplayer[{id:"hijacked"}]` before `/reload`.
+
+Another datapack can ship maps the same way, by adding its own function to `#mgs:maps/register` or `#mgs:zombies/register_maps`.
+
+Per-map scripts go in the function tags `#mgs:maps/<script>_script`, with `<script>` one of `start`, `tick`, `join`, `leave` and `respawn`. They run at the map's base coordinates.
+Every map's scripts are in the same tags, so each one first checks that its game is active on its own map (see `maps/multiplayer/hijacked/calls/*` and `maps/zombies/kino_der_toten/calls/*`).
+
 https://github.com/user-attachments/assets/7b429b68-c476-4b08-98ce-0fa53cb72608
 
 ![Editor elements](./assets/img/editor_elements.png)
