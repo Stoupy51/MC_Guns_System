@@ -203,7 +203,7 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.infinite_ammo 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.double_points 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_reload 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.quick_swap 0
-scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.additional_shots 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.double_tap 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.phd_flopper 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.deadshot 0
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.timeslip 0

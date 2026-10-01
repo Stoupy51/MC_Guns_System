@@ -147,6 +147,7 @@ scoreboard players remove #hit_particles_left {ns}.data 1
 data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attacker:"@n[tag={ns}.ticking]"}}
 execute if entity @n[tag={ns}.ticking,type=player] run data modify storage {ns}:input with.attacker set value "@p[tag={ns}.ticking]"
 execute store result score #damage {ns}.data run data get storage {ns}:temp damage 10
+execute if score @n[tag={ns}.ticking] {ns}.special.double_tap matches 1.. run scoreboard players operation #damage {ns}.data *= #2 {ns}.data
 function {ns}:v{version}/raycast/apply_decay
 """)
 

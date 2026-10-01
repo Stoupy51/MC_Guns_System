@@ -13,7 +13,7 @@ class SpecialScores:
 		"double_points": r"Double points: duration in ticks (double points earned from kills/hits in zombies)",
 		"quick_reload": r"Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)",
 		"quick_swap": r"Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)",
-		"additional_shots": r"Additional shots: number of extra projectiles per shot (Double Tap perk)",
+		"double_tap": r"Double Tap perk: bullet damage x2",
 		"phd_flopper": r"PhD Flopper perk: immune to explosive self-damage (fall damage handled by attribute)",
 		"deadshot": r"Deadshot Daiquiri perk: 65% weapon spread + recoil",
 		"timeslip": r"Timeslip perk: faster traps / Mystery Box / Pack-a-Punch for the owner",

@@ -74,10 +74,10 @@ PERK_DEFINITIONS: dict[str, PerkDef] = {perk.perk_id: perk for perk in [
 		message_color="gold",
 		text_color="yellow",
 		commands=(
-			"scoreboard players set @s {ns}.special.additional_shots 1",
+			"scoreboard players set @s {ns}.special.double_tap 1",
 		),
 		removal_commands=(
-			"scoreboard players set @s {ns}.special.additional_shots 0",
+			"scoreboard players set @s {ns}.special.double_tap 0",
 		),
 	),
 	PerkDef(
@@ -250,7 +250,7 @@ RECOMMENDED_PRICES: dict[str, int] = {
 PERK_DESCRIPTIONS: dict[str, list[str]] = {
 	"juggernog": ["Raises your max health to 40 (x4).", "Survive far more hits before going down."],
 	"speed_cola": ["Reload all your weapons much faster.", "About twice the reload speed."],
-	"double_tap": ["Fires an extra bullet with every shot.", "Roughly doubles your damage output."],
+	"double_tap": ["Every bullet deals double damage."],
 	"quick_revive": ["Revive downed teammates faster.", "Solo: revives you after you go down."],
 	"mule_kick": ["Carry a third weapon.", "Unlocks an extra weapon slot."],
 	"stamin_up": ["Move faster and sprint for longer.", "+7% move speed, double sprint endurance."],

@@ -65,8 +65,8 @@ scoreboard objectives add mgs.special.double_points dummy
 scoreboard objectives add mgs.special.quick_reload dummy
 # Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add mgs.special.quick_swap dummy
-# Additional shots: number of extra projectiles per shot (Double Tap perk)
-scoreboard objectives add mgs.special.additional_shots dummy
+# Double Tap perk: bullet damage x2
+scoreboard objectives add mgs.special.double_tap dummy
 # PhD Flopper perk: immune to explosive self-damage (fall damage handled by attribute)
 scoreboard objectives add mgs.special.phd_flopper dummy
 # Deadshot Daiquiri perk: 65% weapon spread + recoil

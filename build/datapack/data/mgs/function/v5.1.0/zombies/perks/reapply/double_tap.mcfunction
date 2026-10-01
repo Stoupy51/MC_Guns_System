@@ -7,5 +7,5 @@
 #			mgs:v5.1.0/zombies/whos_who/revive_complete
 #
 
-scoreboard players set @s mgs.special.additional_shots 1
+scoreboard players set @s mgs.special.double_tap 1
 
