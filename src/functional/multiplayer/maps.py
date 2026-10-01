@@ -25,15 +25,6 @@ execute unless data storage {ns}:maps multiplayer[{{id:"hijacked"}}] run data mo
 execute unless data storage {ns}:maps multiplayer[{{id:"highrise"}}] run data modify storage {ns}:maps multiplayer append value {highrise_map}
 """, tags=[f"{ns}:maps/register"])
 
-	## Dynamic Map Registration (macro)
-	write_versioned_function("maps/multiplayer/register_map", f"""
-# Append map from {ns}:input multiplayer.map to the maps list
-# Expected format: {{id:"id", name:"Name", description:"Desc", base_coordinates:[x,y,z],
-#   boundaries:[], spawning_points:{{red:[], blue:[], general:[]}},
-#   out_of_bounds:[], search_and_destroy:[], domination:[], hardpoint:[]}}
-data modify storage {ns}:maps multiplayer append from storage {ns}:input multiplayer.map
-""")
-
 	# ── Hijacked map scripts.
 	# Logic functions (actual work)
 	write_versioned_function("maps/multiplayer/hijacked/start", "# Hijacked map start script")

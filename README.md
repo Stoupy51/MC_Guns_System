@@ -80,7 +80,6 @@ Major differences in 5.0 (Minecraft 26.3+) compared to MGS 4.2:
 - Quick swap and quick reload modifiers.
 - Recoil and casing ejection.
 - Actionbar weapon HUD.
-- Runtime lore rebuilding from weapon stats.
 - Advanced firing and environment-aware sound logic.
 
 https://github.com/user-attachments/assets/a8094f23-320a-4708-8b7c-132a2f3dc7c4
