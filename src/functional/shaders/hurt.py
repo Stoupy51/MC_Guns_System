@@ -249,10 +249,24 @@ execute if score #hurt_tier {ns}.data matches 0 run scoreboard players operation
 execute if score #hurt_tier {ns}.data matches 0 run scoreboard players add @s {ns}.hurt_out_until 1
 """)
 
-	sweep: str = "\n".join(f"posteffect remove @s {ns}:hurt_{start}_{end}" for start, end in TRANSITIONS)
+	# Every stray id comes off first, then one fade starts from the strongest look found, as if the player healed.
+	sweep: str = "\n".join(
+		f"execute store success score #hurt_stray {ns}.data run posteffect remove @s {ns}:hurt_{start}_{end}"
+		+ (f"\nexecute if score #hurt_stray {ns}.data matches 1 unless score #hurt_was {ns}.data matches {end}.. run scoreboard players set #hurt_was {ns}.data {end}" if end else "")
+		for start, end in TRANSITIONS
+	)
 	write_versioned_function("player/hurt_sweep", f"""
 # @s = a player whose scores say no overlay is applied
+scoreboard players set #hurt_was {ns}.data 0
 {sweep}
+execute if score #hurt_was {ns}.data matches 1.. run function {ns}:v{version}/player/hurt_fade_out
+""")
+
+	write_versioned_function("player/hurt_fade_out", f"""
+# @s = a player with no hurt id applied, #hurt_was = the level whose look the fade starts from
+scoreboard players operation @s {ns}.hurt_fx = #hurt_was {ns}.data
+scoreboard players set #hurt_tier {ns}.data 0
+function {ns}:v{version}/player/hurt_swap
 """)
 
 	fade_removes: str = "\n".join(

@@ -103,8 +103,13 @@ scoreboard players set #fx_sweep_period {ns}.data 40
 	# Every game start and stop runs this.
 	reset_scores: str = "\n".join(f"scoreboard players reset @s {ns}.{score}" for score in FX_SCORES)
 	write_versioned_function("player/fx_reset", f"""
+scoreboard players set #hurt_was {ns}.data 0
+execute if score @s {ns}.hurt_fx matches 1.. run scoreboard players operation #hurt_was {ns}.data = @s {ns}.hurt_fx
 posteffect clear @s
 {reset_scores}
+
+# The red overlay fades out instead of vanishing
+execute if score #hurt_was {ns}.data matches 1.. run function {ns}:v{version}/player/hurt_fade_out
 """)
 
 	# The server copies the effect list onto the respawned player, so leaving it would stack a second crosshair on the next apply.
