@@ -7,7 +7,8 @@ One directory per feature, in the Spec Kit layout (`spec.md` -> `plan.md` -> `ta
 | [002-zombies-save-load](002-zombies-save-load/) | Specced only |
 | [003-zombie-special-types](003-zombie-special-types/) | Stubs in `zombies/game/round/enemies.py` fall through to `types/normal` |
 | [004-multiplayer-kill-cam](004-multiplayer-kill-cam/) | Design sketch only |
-| [006-weapon-fire-modes-tacticals](006-weapon-fire-modes-tacticals/) | Two known gaps (`firing/sound.py`, `stats/weapons/grenades.py`) |
+| [006-weapon-fire-modes-tacticals](006-weapon-fire-modes-tacticals/) | Built, in-game checks open (T003, T009 to T013, T020) |
+| [008-original-fire-modes](008-original-fire-modes/) | Specced only |
 
 Working on one of these: run `/speckit-tasks` to regenerate its task list from the current code,
 or `/speckit-converge` to have the remaining work appended after a partial implementation.
