@@ -1,6 +1,6 @@
 # Post effects in 26.3: a course
 
-> Every claim here is read from `26.3` release sources in [minecraft_source_code/](../minecraft_source_code/)
+> Every claim here is read from `26.3` release sources in [minecraft-decompiled/](../../minecraft-decompiled/)
 > and from the vanilla assets inside `.minecraft/versions/26.3/26.3.jar`. Nothing is from memory.
 
 ---
@@ -8,7 +8,7 @@
 ## 1. Where a post effect sits
 
 `GameRenderer.render()` runs this order every frame
-([GameRenderer.java:494-501](../minecraft_source_code/net/minecraft/client/renderer/GameRenderer.java#L494-L501)):
+([GameRenderer.java:494-501](../../minecraft-decompiled/net/minecraft/client/renderer/GameRenderer.java#L494-L501)):
 
 ```
 preparePostEffects(requested)   // resolve ids -> PostChain objects
@@ -25,7 +25,7 @@ Two consequences you get for free:
   world-space-looking crosshair; the real HUD stays sharp on top.
 
 A `PostChain` is a list of passes. Each pass is one fullscreen triangle
-(`renderPass.draw(3, 1, 0, 0)`, [PostPass.java:144](../minecraft_source_code/net/minecraft/client/renderer/PostPass.java#L144))
+(`renderPass.draw(3, 1, 0, 0)`, [PostPass.java:144](../../minecraft-decompiled/net/minecraft/client/renderer/PostPass.java#L144))
 reading N sampler inputs and writing exactly one output target.
 
 ---
@@ -35,10 +35,10 @@ reading N sampler inputs and writing exactly one output target.
 ### `minecraft:end_of_frame` (always on)
 
 Put `assets/minecraft/post_effect/end_of_frame.json` in the resource pack. It is prepended to the
-request list every frame ([:432](../minecraft_source_code/net/minecraft/client/renderer/GameRenderer.java#L432)),
+request list every frame ([:432](../../minecraft-decompiled/net/minecraft/client/renderer/GameRenderer.java#L432)),
 so it **always runs first**, cannot be disabled by any command, and is silent when absent
 (`ShaderManager` special-cases the missing-file warning for this id only,
-[:353](../minecraft_source_code/net/minecraft/client/renderer/ShaderManager.java#L353)).
+[:353](../../minecraft-decompiled/net/minecraft/client/renderer/ShaderManager.java#L353)).
 
 It must be in the `minecraft` namespace. `mgs:end_of_frame` does nothing.
 
@@ -55,9 +55,9 @@ Permission level 2 (`Commands.LEVEL_GAMEMASTERS`). The id is any `assets/<ns>/po
 in the client's resource packs. The server has no idea whether it exists; it just ships the id.
 
 The whole list is sent as one packet,
-[ClientboundPostEffectsPacket](../minecraft_source_code/net/minecraft/network/protocol/common/ClientboundPostEffectsPacket.java),
+[ClientboundPostEffectsPacket](../../minecraft-decompiled/net/minecraft/network/protocol/common/ClientboundPostEffectsPacket.java),
 and the client replaces its list wholesale
-([LocalPlayer.java:1324](../minecraft_source_code/net/minecraft/client/player/LocalPlayer.java#L1324)).
+([LocalPlayer.java:1324](../../minecraft-decompiled/net/minecraft/client/player/LocalPlayer.java#L1324)).
 
 ---
 
@@ -65,15 +65,15 @@ and the client replaces its list wholesale
 
 | Question | Answer | Source |
 |---|---|---|
-| Can an id appear twice? | No. `add` returns false and the command fails if already present. | [ServerPlayer.java:1092](../minecraft_source_code/net/minecraft/server/level/ServerPlayer.java#L1092) |
-| Is the list ordered? | Yes, insertion order, and that is the execution order. | [:1096](../minecraft_source_code/net/minecraft/server/level/ServerPlayer.java#L1096) |
+| Can an id appear twice? | No. `add` returns false and the command fails if already present. | [ServerPlayer.java:1092](../../minecraft-decompiled/net/minecraft/server/level/ServerPlayer.java#L1092) |
+| Is the list ordered? | Yes, insertion order, and that is the execution order. | [:1096](../../minecraft-decompiled/net/minecraft/server/level/ServerPlayer.java#L1096) |
 | Can I reorder without clearing? | No. `remove` + `add` moves an effect to the end. | same |
-| Does it survive relog? | Yes, stored in player NBT under `post_effects`. | [:463](../minecraft_source_code/net/minecraft/server/level/ServerPlayer.java#L463) |
-| Does it survive death? | **No.** `restoreFrom` never copies `postEffects`, so a respawn starts empty. | [:1680](../minecraft_source_code/net/minecraft/server/level/ServerPlayer.java#L1680) |
-| Does it survive a dimension change? | Yes, and `sendPostEffects()` is called explicitly on arrival. | [:1216](../minecraft_source_code/net/minecraft/server/level/ServerPlayer.java#L1216) |
-| Missing on the client? | Logged once, added to `failedPostEffects`, skipped. No crash. | [GameRenderer.java:531](../minecraft_source_code/net/minecraft/client/renderer/GameRenderer.java#L531) |
-| Failed to compile? | Blacklisted until the next resource reload. F3+T after every GLSL fix. | [:523-527](../minecraft_source_code/net/minecraft/client/renderer/GameRenderer.java#L523-L527) |
-| `/execute store result` | `list` stores the effect count, the others store the affected player count. | [PostEffectCommand.java](../minecraft_source_code/net/minecraft/server/commands/PostEffectCommand.java) |
+| Does it survive relog? | Yes, stored in player NBT under `post_effects`. | [:463](../../minecraft-decompiled/net/minecraft/server/level/ServerPlayer.java#L463) |
+| Does it survive death? | **No.** `restoreFrom` never copies `postEffects`, so a respawn starts empty. | [:1680](../../minecraft-decompiled/net/minecraft/server/level/ServerPlayer.java#L1680) |
+| Does it survive a dimension change? | Yes, and `sendPostEffects()` is called explicitly on arrival. | [:1216](../../minecraft-decompiled/net/minecraft/server/level/ServerPlayer.java#L1216) |
+| Missing on the client? | Logged once, added to `failedPostEffects`, skipped. No crash. | [GameRenderer.java:531](../../minecraft-decompiled/net/minecraft/client/renderer/GameRenderer.java#L531) |
+| Failed to compile? | Blacklisted until the next resource reload. F3+T after every GLSL fix. | [:523-527](../../minecraft-decompiled/net/minecraft/client/renderer/GameRenderer.java#L523-L527) |
+| `/execute store result` | `list` stores the effect count, the others store the affected player count. | [PostEffectCommand.java](../../minecraft-decompiled/net/minecraft/server/commands/PostEffectCommand.java) |
 
 The death behaviour is the useful one: you do not need a defensive clear on respawn. You still need
 one on join and on game end, because relog does restore.
@@ -115,24 +115,24 @@ one on join and on game end, because relog does restore.
 }
 ```
 
-Rules, from [PostChainConfig.java](../minecraft_source_code/net/minecraft/client/renderer/PostChainConfig.java):
+Rules, from [PostChainConfig.java](../../minecraft-decompiled/net/minecraft/client/renderer/PostChainConfig.java):
 
 - **Targets.** `width`/`height` default to the screen size. Omitting both gives a fullscreen buffer.
-  Format is hardcoded `RGBA8_UNORM` ([PostChain.java:248](../minecraft_source_code/net/minecraft/client/renderer/PostChain.java#L248)),
+  Format is hardcoded `RGBA8_UNORM` ([PostChain.java:248](../../minecraft-decompiled/net/minecraft/client/renderer/PostChain.java#L248)),
   so no HDR, 8 bits per channel, everything clamped to [0, 1].
 - **`persistent: true`** keeps the target alive across frames. It is cleared to `clear_color` exactly
-  once, when it is allocated ([RenderTargetDescriptor.prepare](../minecraft_source_code/com/mojang/blaze3d/resource/RenderTargetDescriptor.java)).
+  once, when it is allocated ([RenderTargetDescriptor.prepare](../../minecraft-decompiled/com/mojang/blaze3d/resource/RenderTargetDescriptor.java)).
   Non-persistent targets are pooled and you must not assume their contents.
 - **External targets.** A post effect may only reference `minecraft:main`
   (`LevelTargetBundle.MAIN_TARGETS`). Referencing `minecraft:entity_outline` or anything else makes
   `isPostEffectValid` reject the whole chain.
 - **`sampler_name: "In"`** becomes the GLSL uniform **`InSampler`**. The suffix is added for you
-  ([PostChain.java:101](../minecraft_source_code/net/minecraft/client/renderer/PostChain.java#L101)).
+  ([PostChain.java:101](../../minecraft-decompiled/net/minecraft/client/renderer/PostChain.java#L101)).
 - **Texture inputs** resolve to `textures/effect/<path>.png`. `width`/`height` are mandatory and must
   match the real file.
 - **`use_depth_buffer: true`** samples the depth texture of that target instead of its colour.
 - **Uniforms** are baked from the JSON at load time. Types: `int`, `ivec3`, `float`, `vec2`, `vec3`,
-  `vec4`, `matrix4x4` ([UniformValue.java:101](../minecraft_source_code/net/minecraft/client/renderer/UniformValue.java#L101)).
+  `vec4`, `matrix4x4` ([UniformValue.java:101](../../minecraft-decompiled/net/minecraft/client/renderer/UniformValue.java#L101)).
   They are constants. There is no server-side channel to change them.
 - A pass must not sample the target it writes, and that includes `minecraft:main`. Reading main
   while rendering into it is a GPU feedback loop that shows up as a tiled grid of stale blocks
@@ -186,7 +186,7 @@ What changed and what you must do:
 ### The free uniforms
 
 `POST_PROCESSING_SNIPPET` inherits `GLOBALS_SNIPPET`, so every post pass gets the `Globals` block
-bound ([RenderPipelines.java:340](../minecraft_source_code/net/minecraft/client/renderer/RenderPipelines.java#L340)):
+bound ([RenderPipelines.java:340](../../minecraft-decompiled/net/minecraft/client/renderer/RenderPipelines.java#L340)):
 
 ```glsl
 layout(std140) uniform Globals {
@@ -220,11 +220,11 @@ execute store success score #had mgs.data run posteffect remove @s mgs:hurt_crit
 ```
 
 One thing to know: removing an effect **destroys its persistent targets**
-([GameRenderer.java:546-548](../minecraft_source_code/net/minecraft/client/renderer/GameRenderer.java#L546-L548)).
+([GameRenderer.java:546-548](../../minecraft-decompiled/net/minecraft/client/renderer/GameRenderer.java#L546-L548)).
 Re-adding it later reallocates them at `clear_color`. Any lerp or accumulator inside that chain
 starts from zero again. Same thing happens whenever the level stops rendering, for example in a
 menu, because `preparePostEffects(emptyList())` runs on that path
-([:503](../minecraft_source_code/net/minecraft/client/renderer/GameRenderer.java#L503)).
+([:503](../../minecraft-decompiled/net/minecraft/client/renderer/GameRenderer.java#L503)).
 
 That reset is not only a hazard. It is the only per-activation signal the client gets, and section 7
 turns it into a timer.
@@ -305,9 +305,9 @@ the three passes are `1x1`, so the cost is noise.
 
 The command floor is exactly one tick, 50 ms, and that floor is hard.
 `postEffectsDirty` is flushed once per player tick at the end of `ServerPlayer.tick()`
-([:653](../minecraft_source_code/net/minecraft/server/level/ServerPlayer.java#L653)), while datapack
+([:653](../../minecraft-decompiled/net/minecraft/server/level/ServerPlayer.java#L653)), while datapack
 functions run earlier in the same tick (`tickChildren` pushes `commandFunctions` before `levels`,
-[MinecraftServer.java:1089](../minecraft_source_code/net/minecraft/server/MinecraftServer.java#L1089)).
+[MinecraftServer.java:1089](../../minecraft-decompiled/net/minecraft/server/MinecraftServer.java#L1089)).
 So an `add` reaches the client at the end of the tick it was issued in, which is good, but an
 `add` and a `remove` in the **same** tick cancel out and the client sees nothing at all.
 
@@ -346,7 +346,7 @@ own clock. Five states become 25 generated files and the ramp is exact regardles
 **The pixel relay, within a frame only.** An effect can write a value into a few pixels of
 `minecraft:main` and any effect *later in the same list* can read it back, which is an ordered
 state bus across one frame. It does **not** survive to the next frame: `minecraft:main` is cleared
-at the top of every frame ([GameRenderer.java:479](../minecraft_source_code/net/minecraft/client/renderer/GameRenderer.java#L479),
+at the top of every frame ([GameRenderer.java:479](../../minecraft-decompiled/net/minecraft/client/renderer/GameRenderer.java#L479),
 plus `LevelRenderer`'s own clear pass), so nothing accumulates there.
 
 That has a consequence worth stating plainly, because it rules out a whole class of designs:
@@ -383,11 +383,11 @@ which is free when they are generated from one Python function.
 ### Cost
 
 Shipping any post effect flips `consistentDepthRequired` on permanently
-([GameRenderer.java:671](../minecraft_source_code/net/minecraft/client/renderer/GameRenderer.java#L671)),
+([GameRenderer.java:671](../../minecraft-decompiled/net/minecraft/client/renderer/GameRenderer.java#L671)),
 which renders hand and 3D HUD depth into a separate target and adds a depth integration pass.
 
 That pass, `core/integrate_depth`, copies the held item's depth back into main **before** post
-effects run ([GameRenderer.java:726-741](../minecraft_source_code/net/minecraft/client/renderer/GameRenderer.java#L726-L741)),
+effects run ([GameRenderer.java:726-741](../../minecraft-decompiled/net/minecraft/client/renderer/GameRenderer.java#L726-L741)),
 and its colour is already in main too. A post effect therefore sees the gun and cannot draw behind
 it. The pack overrides that one shader to write gun pixels at exactly `1.0`, the near plane, which no
 world geometry can reach, so `mgs:post/flash` skips them. Nothing else reads main depth afterwards:

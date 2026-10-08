@@ -25,6 +25,7 @@ A refactor must leave `check` empty. A behaviour change shows in `check` and onl
 - `src/config`: stats and catalogs. `src/database`: item builders, camo, models.
 - `src/functional/<domain>`: one package per system (weapon, core, progression, zombies, multiplayer, missions, map_editor, shaders).
 - `specs/`: planned features; the inbox at the bottom of `specs/README.md` takes loose notes.
+- The decompiled 26.3 sources live outside the repo, in `../minecraft-decompiled`.
 
 ## Conventions
 
@@ -51,4 +52,3 @@ These live in players' worlds. Renaming one needs a migration and the author's a
 
 - 312 media files under `build/` are committed as symlinks (mode 120000) and show as modified after a build. Never commit them:
   `git ls-files -s build | awk '$1=="120000"{print $4}' | xargs git update-index --assume-unchanged`
-- `minecraft_source_code` is a git link with no `.gitmodules` entry, so a fresh clone gets it empty.
