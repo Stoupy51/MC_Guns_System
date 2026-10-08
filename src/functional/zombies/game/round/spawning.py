@@ -14,7 +14,8 @@ def write_round_spawning() -> None:
 
 	type_rolls: str = "\n".join(
 		f'execute if score #zb_type_roll {ns}.data matches {upper - zombie.weight + 1}..{upper} if score #zb_round {ns}.data matches {zombie.first_round}.. '
-		f'run data modify storage {ns}:temp _zpos.type set value "{zombie.type_id}"'
+		+ (f"unless entity @e[type=minecraft:zombie,tag={ns}.zb_{zombie.type_id},limit=1] " if zombie.unique else "")
+		+ f'run data modify storage {ns}:temp _zpos.type set value "{zombie.type_id}"'
 		for zombie, upper in zip(SPECIAL_TYPES, accumulate(z.weight for z in SPECIAL_TYPES), strict=True)
 	)
 

@@ -5,7 +5,7 @@
 #
 # @within	mgs:v5.1.0/shared/check_bounds [ at @s ]
 #			mgs:v5.1.0/zombies/check_bounds_player [ at @s ]
-#			mgs:v5.1.0/zombies/dog_max_ammo_at_self [ at @s ]
+#			mgs:v5.1.0/zombies/max_ammo_at_self [ at @s ]
 #			mgs:v5.1.0/zombies/powerups/spawn_random_at_self [ at @s ]
 #			mgs:v5.1.0/zombies/revive/void_revive_whos_who [ at @s ]
 #			mgs:v5.1.0/multiplayer/check_bounds [ at @s ]

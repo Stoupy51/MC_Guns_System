@@ -8,6 +8,25 @@
 # @args		level (string)
 #
 
-# TODO: ranged attack, drops an ammo power-up on death.
+scoreboard players set #zb_no_walker mgs.data 1
 $function mgs:v5.1.0/zombies/types/normal {level:"$(level)"}
+scoreboard players set #zb_no_walker mgs.data 0
+tag @s add mgs.zb_armed
+
+# 100% of the round's speed; the escort taxi reads this base value.
+execute store result storage mgs:temp _zb_speed.value double 0.001 run attribute @s minecraft:movement_speed base get 1000
+function mgs:v5.1.0/zombies/set_speed with storage mgs:temp _zb_speed
+execute store result score #zb_speed mgs.data run attribute @s minecraft:movement_speed base get 1000
+execute if score #zb_speed mgs.data matches 290.. run tag @s add mgs.zb_sprint
+execute if score #zb_speed mgs.data matches ..289 run tag @s remove mgs.zb_sprint
+
+# 100% of the health normal just applied (#zb_hp).
+scoreboard players operation #zb_hp mgs.data *= #100 mgs.data
+scoreboard players operation #zb_hp mgs.data /= #100 mgs.data
+execute if score #zb_hp mgs.data matches 2049.. run scoreboard players set #zb_hp mgs.data 2048
+execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players get #zb_hp mgs.data
+function mgs:v5.1.0/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
+
+attribute @s minecraft:scale base set 1.0
+$function mgs:v5.1.0/mob/default/on_new {entity:"Zombie",level:$(level),active_time:60,sleep_time:40}
 

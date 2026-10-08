@@ -71,6 +71,9 @@ function mgs:v5.1.0/zombies/death_watch_tick
 # Recovers a round that stopped advancing (see watchdog_tick).
 function mgs:v5.1.0/zombies/watchdog_tick
 
+# Once a second, at most one aura zombie (types/aura is unique).
+execute if score #zb_tick_mod mgs.data matches 0 as @e[type=minecraft:zombie,tag=mgs.zb_aura,limit=1] at @s run function mgs:v5.1.0/zombies/aura_tick
+
 # Gated on the round kind, not #zb_dog_pending: a portal orphaned by a desynced counter would never tick, strike or die.
 execute if score #zb_dog_round mgs.data matches 1 as @e[type=minecraft:marker,tag=mgs.dog_portal] at @s run function mgs:v5.1.0/zombies/dog_portal_tick
 

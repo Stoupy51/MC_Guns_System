@@ -44,9 +44,13 @@ scoreboard players operation #zb_dog_left {ns}.data += #zb_dog_alive {ns}.data
 execute if score #zb_dog_left {ns}.data matches ..0 if score #zb_dog_ammo_done {ns}.data matches 0 run function {ns}:v{version}/zombies/dog_max_ammo_at_self
 """)
 
-	## Run as the last hound where it died. A fixed reward, so it skips the shuffle bag and the drop roll.
 	write_versioned_function("zombies/dog_max_ammo_at_self", f"""
 scoreboard players set #zb_dog_ammo_done {ns}.data 1
+function {ns}:v{version}/zombies/max_ammo_at_self
+""")
+
+	## Run as the last hound or an armed zombie where it died. A fixed reward, so it skips the shuffle bag and the drop roll.
+	write_versioned_function("zombies/max_ammo_at_self", f"""
 scoreboard players add #pu_uid {ns}.data 1
 data modify storage {ns}:temp _pu_spawn set value {{x:0,y:0,z:0,uid:0,type:"max_ammo"}}
 {Probe.pos()}

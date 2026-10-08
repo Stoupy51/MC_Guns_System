@@ -4,9 +4,10 @@
 # @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
 #
 # @within	mgs:v5.1.0/zombies/summon_zombie_at {level:"$(level)"}
-#			mgs:v5.1.0/zombies/types/armed {level:"$(level)"}
 #			mgs:v5.1.0/zombies/types/fast {level:"$(level)"}
 #			mgs:v5.1.0/zombies/types/tank {level:"$(level)"}
+#			mgs:v5.1.0/zombies/types/armed {level:"$(level)"}
+#			mgs:v5.1.0/zombies/types/aura {level:"$(level)"}
 #
 
 tag @s add mgs.zb_scaled
