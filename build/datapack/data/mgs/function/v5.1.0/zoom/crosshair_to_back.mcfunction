@@ -1,10 +1,10 @@
 
 #> mgs:v5.1.0/zoom/crosshair_to_back
 #
-# @executed	at @s & anchored eyes & positioned ^ ^ ^0.001 & as @a[distance=..16]
+# @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.1.0/player/apply_flash_if_can_see
-#			mgs:v5.1.0/player/apply_pap_flash_if_can_see
+# @within	mgs:v5.1.0/player/apply_flash
+#			mgs:v5.1.0/player/apply_pap_flash
 #
 
 execute unless score @s mgs.cross_to matches -2147483648.. run return 0

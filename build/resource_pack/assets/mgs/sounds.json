@@ -775,17 +775,17 @@
 		"subtitle": "spas12/fire",
 		"sounds": ["mgs:spas12/fire"]
 	},
-	"spas12/fire_alt": {
-		"subtitle": "spas12/fire_alt",
-		"sounds": ["mgs:spas12/fire_alt"]
+	"spas12/fire_semi": {
+		"subtitle": "spas12/fire_semi",
+		"sounds": ["mgs:spas12/fire_semi"]
 	},
 	"spas12/pap_fire": {
 		"subtitle": "spas12/pap_fire",
 		"sounds": ["mgs:spas12/pap_fire"]
 	},
-	"spas12/pap_fire_alt": {
-		"subtitle": "spas12/pap_fire_alt",
-		"sounds": ["mgs:spas12/pap_fire_alt"]
+	"spas12/pap_fire_semi": {
+		"subtitle": "spas12/pap_fire_semi",
+		"sounds": ["mgs:spas12/pap_fire_semi"]
 	},
 	"spas12/pump": {
 		"subtitle": "spas12/pump",

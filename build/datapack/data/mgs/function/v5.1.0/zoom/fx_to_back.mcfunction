@@ -1,10 +1,10 @@
 
 #> mgs:v5.1.0/zoom/fx_to_back
 #
-# @executed	at @s & anchored eyes & positioned ^ ^ ^0.001 & as @a[distance=..16]
+# @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.1.0/player/apply_flash_if_can_see
-#			mgs:v5.1.0/player/apply_pap_flash_if_can_see
+# @within	mgs:v5.1.0/player/apply_flash
+#			mgs:v5.1.0/player/apply_pap_flash
 #
 
 # Post effects run in list order. The flash lights the scene from the unmagnified depth buffer,
