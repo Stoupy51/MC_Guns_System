@@ -24,6 +24,7 @@ from stouputils.typing import JsonDict
 
 # Constants
 ROOT: Path = Path(__file__).resolve().parent.parent
+VENV_BIN: Path = ROOT / ".venv" / ("Scripts" if sys.platform == "win32" else "bin")
 BUILD: Path = ROOT / "build"
 WORK: Path = ROOT / ".refactor"
 BASELINE: Path = WORK / "baseline"
@@ -51,10 +52,12 @@ class Resource:
 
 # Functions
 def build() -> None:
-	""" Run StewBeet, then remove the folder its livereload plugin makes from the Windows paths of beet.yml. """
-	if subprocess.run([str(ROOT / ".venv/bin/stewbeet"), "build"], cwd=ROOT).returncode != 0:
+	""" Run StewBeet, then on Linux remove the `D:` folder its livereload plugin makes from the Windows paths of beet.yml. """
+	if subprocess.run([str(VENV_BIN / "stewbeet"), "build"], cwd=ROOT).returncode != 0:
 		sys.exit("build failed")
-	shutil.rmtree(ROOT / "D:", ignore_errors=True)
+	# On Windows, ROOT / "D:" is ROOT itself
+	if sys.platform != "win32":
+		shutil.rmtree(ROOT / "D:", ignore_errors=True)
 
 
 def files(root: Path) -> Iterator[tuple[str, Path]]:
@@ -265,10 +268,9 @@ def libraries_pack(target: Path) -> None:
 
 def lint() -> int:
 	""" ruff, pyright strict (with the project interpreter) and complexipy over src and scripts. """
-	venv = ROOT / ".venv/bin"
 	return max(
-		subprocess.run([str(venv / "ruff"), "check", "src", "scripts"], cwd=ROOT).returncode,
-		subprocess.run([str(venv / "pyright"), "src", "scripts", "--pythonpath", str(venv / "python")], cwd=ROOT).returncode,
+		subprocess.run([str(VENV_BIN / "ruff"), "check", "src", "scripts"], cwd=ROOT).returncode,
+		subprocess.run([str(VENV_BIN / "pyright"), "src", "scripts", "--pythonpath", sys.executable], cwd=ROOT).returncode,
 		subprocess.run(["uvx", "complexipy", "src", "scripts", "--failed", "--max-complexity-allowed", "15"], cwd=ROOT).returncode,
 	)
 
