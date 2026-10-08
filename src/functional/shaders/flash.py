@@ -29,6 +29,15 @@ COOLDOWN_TICKS: int = 2
 SPARK_SIZE: int = 1536
 """ Side of the spark sheet, a 3x3 grid of nine sprites. """
 
+FLASH_TINT: list[float] = [1.0, 0.8, 0.5]
+""" Warm muzzle colour, for the scene light and for the particle other players see. """
+
+PAP_TINT: list[float] = [0.6, 0.0, 1.0]
+""" Pack-a-Punch purple, same uses. """
+
+OBSERVER_MUZZLE: str = "^-0.35 ^-0.3 ^1"
+""" Where other players see the flash particle, from the shooter's eyes: the third-person gun is held right and low. """
+
 
 @dataclass(frozen=True)
 class FlashVariant:
@@ -177,7 +186,7 @@ def register_variants(ns: str) -> None:
 		{"sampler_name": "Spark", "location": f"{ns}:flash", "width": SPARK_SIZE, "height": SPARK_SIZE, "bilinear": True},
 	]
 	for variant in FLASH_VARIANTS:
-		tint: list[float] = [0.6, 0.0, 1.0, 1.0] if variant.pap else [1.0, 0.8, 0.5, 0.0]
+		tint: list[float] = [*PAP_TINT, 1.0] if variant.pap else [*FLASH_TINT, 0.0]
 		spark: list[float] = [0.0, -0.125, 0.6, 0.6] if variant.zoomed else [0.085, -0.11, 0.45, 0.45]
 		for slot in (0, 1):
 			timed_effect(
@@ -198,13 +207,16 @@ def write_functions(ns: str) -> None:
 	version: str = Mem.ctx.project_version
 
 	write_versioned_function("player/fire_weapon", f"""
-# Shader: muzzle flash for everyone who can see the shooter - skip for grenades
+# Shader: muzzle flash, skipped for grenades. The post effect lights the scene from its viewer's camera,
+# so only the shooter gets it; other players see a flash particle at the muzzle.
 execute store success score #has_pap_level {ns}.data if data storage {ns}:gun all.stats.pap_level
-execute if score #has_pap_level {ns}.data matches 1 unless data storage {ns}:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_pap_flash_if_can_see
-execute if score #has_pap_level {ns}.data matches 0 unless data storage {ns}:gun all.stats.grenade_type at @s anchored eyes positioned ^ ^ ^0.001 as @a[distance=..16] run function {ns}:v{version}/player/apply_flash_if_can_see
+execute if score #has_pap_level {ns}.data matches 1 unless data storage {ns}:gun all.stats.grenade_type run function {ns}:v{version}/player/apply_pap_flash
+execute if score #has_pap_level {ns}.data matches 0 unless data storage {ns}:gun all.stats.grenade_type run function {ns}:v{version}/player/apply_flash
+execute if score #has_pap_level {ns}.data matches 1 unless data storage {ns}:gun all.stats.grenade_type at @s anchored eyes run particle flash{{color:{[*PAP_TINT, 1.0]}}} {OBSERVER_MUZZLE} 0 0 0 0 1 force @a[distance=0.01..48]
+execute if score #has_pap_level {ns}.data matches 0 unless data storage {ns}:gun all.stats.grenade_type at @s anchored eyes run particle flash{{color:{[*FLASH_TINT, 1.0]}}} {OBSERVER_MUZZLE} 0 0 0 0 1 force @a[distance=0.01..48]
 """)
 
-	for name, pap in (("apply_flash_if_can_see", False), ("apply_pap_flash_if_can_see", True)):
+	for name, pap in (("apply_flash", False), ("apply_pap_flash", True)):
 		adds: list[str] = []
 		for variant in (v for v in FLASH_VARIANTS if v.pap == pap):
 			aim: str = "if" if variant.zoomed else "unless"
@@ -215,19 +227,13 @@ execute if score #has_pap_level {ns}.data matches 0 unless data storage {ns}:gun
 				adds.append(f"{guard} scoreboard players set @s {ns}.flash_id {index}")
 		lines: str = "\n".join(adds)
 		write_versioned_function(f"player/{name}", f"""
-# At most one burst per {COOLDOWN_TICKS} ticks for this observer
+# At most one burst per {COOLDOWN_TICKS} ticks
 execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0
 scoreboard players set @s {ns}.last_muzzle_flash {COOLDOWN_TICKS}
 scoreboard players operation @s {ns}.last_muzzle_flash += #total_tick {ns}.data
 
-# Check line of sight to the muzzle and set #can_see accordingly (score 0 or 1).
-scoreboard players set #can_see {ns}.data 0
-execute if entity @s[tag={ns}.ticking] run scoreboard players set #can_see {ns}.data 1
-execute if score #can_see {ns}.data matches 0 store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
-execute if score #can_see {ns}.data matches 0 run return 0
-
 # Swap the previous burst for the other slot, so the new one is always a fresh chain.
-# The sprite sits at the muzzle, which moves on ADS, so the variant follows this observer's own aim.
+# The sprite sits at the muzzle, which moves on ADS, so the variant follows the shooter's aim.
 function {ns}:v{version}/player/flash_clear
 execute store success score #flash_slot_was_1 {ns}.data if score @s {ns}.flash_slot matches 1
 execute store result score @s {ns}.flash_slot if score #flash_slot_was_1 {ns}.data matches 0
