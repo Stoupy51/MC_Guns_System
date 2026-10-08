@@ -86,8 +86,8 @@ Ordered before the replay on purpose. If the recorder cannot be made cheap, the 
 ## Phase 6: Polish
 
 - [ ] T025 Tune `PLAYBACK_SPEED` and the replay length so the sequence lands rather than dragging
-- [ ] T026 Delete the "Future multiplayer TODO" sketch from the root `README.md` and add the kill cam to the multiplayer feature list
-- [ ] T027 `ruff check src --fix` and a clean `beet build`
+- [ ] T026 Move the kill cam from the root `README.md` "Known WIP" list to the multiplayer feature list
+- [ ] T027 `uv run python scripts/verify.py lint` and `uv run python scripts/verify.py validate` pass
 
 ---
 
@@ -111,5 +111,5 @@ Ship Phases 1 to 4 as the MVP, then harden with Phase 5 before it goes anywhere 
 ## Notes
 
 - The camera pattern already exists; read `src/functional/zombies/player/revive/down.py` before writing T012
-- Buffers are keyed by username per the original sketch. Switch to UUID only if name changes prove to matter
+- Buffers are keyed by username. Switch to UUID only if name changes prove to matter
 - Commit per phase; the recorder and the replay are independently reviewable

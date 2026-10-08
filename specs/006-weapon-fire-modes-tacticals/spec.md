@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: Two long-standing `# TODO` comments: [src/functional/weapon/firing/sound.py:82](../../src/functional/weapon/firing/sound.py) and [src/config/stats/weapons/grenades.py:100](../../src/config/stats/weapons/grenades.py).
+**Input**: Two long-standing `# TODO` comments: [src/functional/weapon/firing/sound.py](../../src/functional/weapon/firing/sound.py) and [src/config/stats/weapons/grenades.py](../../src/config/stats/weapons/grenades.py).
 
 ## User Scenarios & Testing *(mandatory)*
 

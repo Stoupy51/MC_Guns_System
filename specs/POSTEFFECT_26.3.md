@@ -2,7 +2,6 @@
 
 > Every claim here is read from `26.3` release sources in [minecraft_source_code/](../minecraft_source_code/)
 > and from the vanilla assets inside `.minecraft/versions/26.3/26.3.jar`. Nothing is from memory.
-> Companion document: [001-shader-migration-263/verification.md](001-shader-migration-263/verification.md), the in-game checklist.
 
 ---
 
@@ -403,8 +402,8 @@ everything behind `/posteffect`, which costs nothing when nobody has an effect.
 Post effects compose with Iris shaderpacks. Iris finishes inside `renderLevel()` and its colorspace
 pass is injected at that method's tail, both before `applyPostEffects()`. No Iris mixin touches
 `getPostChain`, `requestedPostEffects` or `applyPostEffects`. You are overlaying an already
-tonemapped sRGB image, so aggressive grading will band, but it works. The Iris checks still open are in
-[001-shader-migration-263/verification.md](001-shader-migration-263/verification.md).
+tonemapped sRGB image, so aggressive grading will band, but it works. Iris draws the hand in
+its own pass and never runs `core/integrate_depth`, so no depth a post effect reads can mask the gun.
 
 ---
 

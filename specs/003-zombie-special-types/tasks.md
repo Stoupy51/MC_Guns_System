@@ -18,7 +18,7 @@ description: "Task list for zombie special types"
 
 ## Phase 1: Setup
 
-- [ ] T001 Split `src/functional/zombies/game/round/enemies.py` into the `enemies/` package from plan.md, moving code only, and confirm `beet build` output is byte-identical before adding anything
+- [ ] T001 Move `src/functional/zombies/game/round/enemies.py` into the `src/functional/zombies/enemies/types/` package from plan.md, moving code only, and confirm `uv run python scripts/verify.py check` is empty before adding anything
 
 ---
 
@@ -26,8 +26,8 @@ description: "Task list for zombie special types"
 
 **Purpose**: The type table and the spawn roll. Every type after this is a table row plus one module.
 
-- [ ] T002 Define a `ZombieType` dataclass in `src/functional/zombies/game/round/enemies/types.py` with one explicit keyword-argument constructor call per type: id, distinguishing tag, speed factor, health factor, first round, spawn weight
-- [ ] T003 Extract the BO health curve into `enemies/curve.py` (`calc_zombie_hp`, `apply_zombie_hp`, `apply_dog_hp`) and have every type call it instead of restating it
+- [ ] T002 Define a `ZombieType` dataclass in `src/functional/zombies/enemies/types/table.py` with one explicit keyword-argument constructor call per type: id, distinguishing tag, speed factor, health factor, first round, spawn weight
+- [ ] T003 Extract the BO health curve into `types/curve.py` (`calc_zombie_hp`, `apply_zombie_hp`, `apply_dog_hp`) and have every type call it instead of restating it
 - [ ] T004 Replace the hardcoded `data modify storage {ns}:temp _zpos.type set value "normal"` in `src/functional/zombies/game/round/spawning.py` with a weighted roll generated from the `types.py` table
 - [ ] T005 Gate the roll on the Zonweeb variant, so the Vanilla variant always rolls `normal` (FR-001), and skip it entirely on dog rounds (FR-009)
 - [ ] T006 Verify the gate before any type exists: a Zonweeb game and a Vanilla game both still spawn only normal zombies, and nothing regressed
@@ -42,9 +42,9 @@ description: "Task list for zombie special types"
 
 **Independent Test**: Zonweeb game, `/scoreboard players set #zb_round mgs.data 20`, watch a wave.
 
-- [ ] T007 [US1] Rewrite `types/normal` in `enemies/normal.py` to read its speed and health factors from the table, so every other type scales against one reference rather than against a copied ladder
-- [ ] T008 [P] [US1] Implement `types/fast` in `enemies/fast.py`: speed above the round's normal value, health below it, and a distinguishing tag
-- [ ] T009 [P] [US1] Implement `types/tank` in `enemies/tank.py`: health well above the round's normal value, speed below it, and a distinguishing tag
+- [ ] T007 [US1] Rewrite `types/normal` in `types/normal.py` to read its speed and health factors from the table, so every other type scales against one reference rather than against a copied ladder
+- [ ] T008 [P] [US1] Implement `types/fast` in `types/fast.py`: speed above the round's normal value, health below it, and a distinguishing tag
+- [ ] T009 [P] [US1] Implement `types/tank` in `types/tank.py`: health well above the round's normal value, speed below it, and a distinguishing tag
 - [ ] T010 [US1] Make sure the fast type and the round-15 10% walker roll cannot combine into a fast zombie slower than a normal one
 - [ ] T011 [US1] Verify tank health stays under the 2048 cap in `curve.py` at rounds 40, 50 and 80
 - [ ] T012 [P] [US1] Give fast and tank a visual difference (scale, equipment or a subtle glow) so they read from across a room
@@ -60,7 +60,7 @@ description: "Task list for zombie special types"
 
 **Goal**: An armed zombie that attacks at range and drops ammo.
 
-- [ ] T016 [US2] Implement `types/armed` base stats in `enemies/armed.py` and give it a visibly armed look
+- [ ] T016 [US2] Implement `types/armed` base stats in `types/armed.py` and give it a visibly armed look
 - [ ] T017 [US2] Implement the ranged attack tick: line of sight check, cooldown, damage application, and a firing cue the player can hear and locate
 - [ ] T018 [US2] Gate the attack tick on armed zombies being alive, the same count-gated pattern the escort system uses, so it costs nothing when none are out
 - [ ] T019 [US2] Hook the guaranteed ammo power-up into `src/functional/zombies/rewards/powerups/drops.py` on armed-zombie death, bypassing the random roll
@@ -73,8 +73,8 @@ description: "Task list for zombie special types"
 
 **Goal**: An aura zombie that makes nearby zombies tougher, and dies first because of it.
 
-- [ ] T022 [US3] Add the `aura` row to `types/types.py` with a hard cap of one alive at a time (FR-010)
-- [ ] T023 [US3] Implement `types/aura` in `enemies/aura.py`: base stats plus an unmistakable look, since the whole mechanic depends on players spotting it
+- [ ] T022 [US3] Add the `aura` row to `types/table.py` with a hard cap of one alive at a time (FR-010)
+- [ ] T023 [US3] Implement `types/aura` in `types/aura.py`: base stats plus an unmistakable look, since the whole mechanic depends on players spotting it
 - [ ] T024 [US3] Implement the aura tick on an interval (roughly every 10 ticks), applying resistance to zombies in radius through an attribute modifier or a short effect that lapses on its own
 - [ ] T025 [US3] Make the resistance lift when the aura zombie dies, whether it lapses naturally or is cleared explicitly, and verify it on a nuke that kills the whole wave at once
 - [ ] T026 [US3] Measure the aura tick with F3+L against a full horde, before and after, and confirm no measurable MSPT change (SC-005)
@@ -85,9 +85,8 @@ description: "Task list for zombie special types"
 ## Phase 6: Polish
 
 - [ ] T028 Tune the weight table across rounds 10, 20, 40 and 60 so waves stay varied without any one type dominating
-- [ ] T029 Update `src/functional/zombies/README.md`: delete the aura idea from §10 and fix its pre-restructure module names (`round.py`)
-- [ ] T030 Add the special types to the root `README.md` zombies feature list
-- [ ] T031 `ruff check src --fix` and a clean `beet build`
+- [ ] T029 Add the special types to the root `README.md` zombies feature list
+- [ ] T030 `uv run python scripts/verify.py lint` and `uv run python scripts/verify.py validate` pass
 
 ---
 

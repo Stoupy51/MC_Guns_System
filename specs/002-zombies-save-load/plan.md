@@ -22,7 +22,7 @@ half-correct restore from corrupting a map.
 
 **Testing**: In-game only, one verification pass per subsystem. This is the reason the feature was deferred, so the task list is organized around it
 
-**Target Platform**: Minecraft Java 26.2, singleplayer and multiplayer
+**Target Platform**: Minecraft Java, at the version pinned in `beet.yml`, singleplayer and multiplayer
 
 **Project Type**: Minecraft datapack generated from a Python build pipeline
 

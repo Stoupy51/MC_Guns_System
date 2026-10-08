@@ -21,7 +21,7 @@ feature is one `execute if score` that fails.
 
 **Testing**: In-game. F3+L for SC-001, short FFA matches for the sequence itself
 
-**Target Platform**: Minecraft Java 26.2, multiplayer
+**Target Platform**: Minecraft Java, at the version pinned in `beet.yml`, multiplayer
 
 **Project Type**: Minecraft datapack generated from a Python build pipeline
 

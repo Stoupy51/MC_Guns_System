@@ -21,7 +21,7 @@ The cheap half (fast, tank) is pure attribute work on a curve that already exist
 
 **Testing**: In-game. `/scoreboard players set #zb_round mgs.data <n>` to jump rounds, F3+L for the aura's tick cost
 
-**Target Platform**: Minecraft Java 26.2
+**Target Platform**: Minecraft Java, at the version pinned in `beet.yml`
 
 **Project Type**: Minecraft datapack generated from a Python build pipeline
 
@@ -57,12 +57,13 @@ specs/003-zombie-special-types/
 ### Source Code (repository root)
 
 ```text
-src/functional/zombies/game/round/
-├── enemies.py                  # Today: normal, dog, and three fall-through stubs
-└── enemies/                    # After: one module per type plus the shared curve
+src/functional/zombies/game/round/enemies.py  # Today: normal, dog, and three fall-through stubs
+
+src/functional/zombies/enemies/               # Existing enemy behaviours: escort/, roaming, monkey_bomb, vocals
+└── types/                      # After: one module per type plus the shared curve
     ├── __init__.py             # write_enemy_types(): dispatch, unchanged entry point
     ├── curve.py                # calc_zombie_hp, apply_zombie_hp, apply_dog_hp, the shared BO curve
-    ├── types.py                # ZombieType dataclass rows: factors, round gates, spawn weights
+    ├── table.py                # ZombieType dataclass rows: factors, round gates, spawn weights
     ├── normal.py               # types/normal, the reference the others scale from
     ├── dog.py                  # types/dog
     ├── fast.py                 # types/fast
@@ -74,7 +75,7 @@ src/functional/zombies/game/round/spawning.py    # do_spawn_zombie: weight roll 
 src/functional/zombies/rewards/powerups/drops.py # Armed zombie's guaranteed ammo drop hooks in here
 ```
 
-**Structure Decision**: `enemies.py` becomes `enemies/`, one module per type, with the BO health curve
+**Structure Decision**: `game/round/enemies.py` becomes `zombies/enemies/types/`, next to the other enemy behaviours, one module per type, with the BO health curve
 extracted to `curve.py` since every type calls it. The alternative, one 600-line `enemies.py`, breaks
 the 300-line rule and buries the interesting per-type logic in a wall of attribute commands.
 

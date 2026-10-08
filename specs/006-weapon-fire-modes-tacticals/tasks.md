@@ -74,7 +74,7 @@ The two stories are independent. Either can ship alone.
 ## Phase 3: Polish
 
 - [ ] T021 Update the root `README.md` weapon framework list if the tactical slot description changed
-- [ ] T022 `ruff check src --fix` and a clean `beet build`
+- [ ] T022 `uv run python scripts/verify.py lint` and `uv run python scripts/verify.py validate` pass
 
 ---
 

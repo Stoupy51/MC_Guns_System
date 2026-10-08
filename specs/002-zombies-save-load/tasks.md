@@ -130,9 +130,8 @@ description: "Task list for zombies save and load"
 
 ## Phase 7: Polish
 
-- [ ] T047 Update `src/functional/zombies/README.md`: delete §11 and fix the pre-restructure module names it still uses (`perks.py`, `round.py`, `power.py`)
-- [ ] T048 Add save and load to the root `README.md` zombies feature list
-- [ ] T049 `ruff check src --fix` and a clean `beet build`
+- [ ] T047 Add save and load to the root `README.md` zombies feature list
+- [ ] T048 `uv run python scripts/verify.py lint` and `uv run python scripts/verify.py validate` pass
 
 ---
 

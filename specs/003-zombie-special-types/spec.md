@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: The three stub type functions in [src/functional/zombies/game/round/enemies.py](../../src/functional/zombies/game/round/enemies.py) and the aura-zombie idea in [src/functional/zombies/README.md](../../src/functional/zombies/README.md) §10.
+**Input**: The three stub type functions in [src/functional/zombies/game/round/enemies.py](../../src/functional/zombies/game/round/enemies.py) and the aura-zombie idea from the zombies backlog.
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -99,7 +99,7 @@ outside, and compare shots to kill.
 - **FR-008**: Every special type MUST be visually distinguishable from a normal zombie before it acts.
 - **FR-009**: Special types MUST NOT spawn during dog rounds.
 - **FR-010**: At most one aura zombie MUST be alive at a time.
-- **FR-011**: The TODO comments in `enemies.py` MUST be removed as each type lands, not left beside a working implementation.
+- **FR-011**: The TODO comments on the stub types MUST be removed as each type lands, not left beside a working implementation.
 
 ### Key Entities
 
@@ -115,7 +115,7 @@ outside, and compare shots to kill.
 - **SC-003**: A fast zombie's effective speed and a tank zombie's health differ from the round's normal values by a documented, deliberate factor at rounds 1, 10, 20 and 40.
 - **SC-004**: Tank health never exceeds the 2048 cap, checked at round 50 and beyond.
 - **SC-005**: The aura's per-tick cost does not measurably move MSPT with a full horde on screen, measured with F3+L before and after.
-- **SC-006**: `enemies.py` contains no TODO comments for any shipped type.
+- **SC-006**: No shipped type keeps its TODO comment.
 
 ## Assumptions
 

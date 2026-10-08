@@ -6,13 +6,13 @@
 
 **Status**: Draft
 
-**Input**: The "Future multiplayer TODO" in the root [README.md](../../README.md), which sketches a per-tick position and rotation buffer for the last 10 seconds of a match.
+**Input**: A sketch of a per-tick position and rotation buffer for the last 10 seconds of a match.
 
 ## User Scenarios & Testing *(mandatory)*
 
 Call of Duty's final kill cam: when a match ends, everyone watches the last kill replayed from the
-killer's point of view before the scoreboard comes up. The README sketches the recording half (a
-200-tick ring buffer of every player's position and rotation) and stops there.
+killer's point of view before the scoreboard comes up. The recording half is a
+200-tick ring buffer of every player's position and rotation.
 
 ### User Story 1 - Everyone sees the final kill replayed (Priority: P1)
 

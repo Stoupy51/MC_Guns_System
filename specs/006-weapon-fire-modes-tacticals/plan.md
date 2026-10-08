@@ -22,7 +22,7 @@ before it is implemented.
 
 **Testing**: In-game. A zombies game for User Story 1, a range for User Story 2
 
-**Target Platform**: Minecraft Java 26.2
+**Target Platform**: Minecraft Java, at the version pinned in `beet.yml`
 
 **Project Type**: Minecraft datapack generated from a Python build pipeline
 

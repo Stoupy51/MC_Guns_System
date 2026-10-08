@@ -6,7 +6,7 @@
 
 **Status**: Draft
 
-**Input**: [src/functional/zombies/README.md](../../src/functional/zombies/README.md) §11, "Zombies - save a game and load it later [NOT IMPLEMENTED - specced only]".
+**Input**: The zombies backlog item "save a game and load it later".
 
 ## User Scenarios & Testing *(mandatory)*
 
@@ -135,4 +135,3 @@ Suggested layout, kept from the original spec:
 - The existing `restore_inventory` path, built for Who's Who and Tombstone, is correct and reusable as-is.
 - Slot count is small and fixed (for example 5). No pagination is needed in the picker.
 - Cross-version loading is out of scope. A save taken on one pack version may refuse to load on another.
-- `src/functional/zombies/README.md` names pre-restructure modules (`perks.py`, `round.py`, `power.py`). The current paths are the packages under `src/functional/zombies/`; the README needs updating alongside this work.
