@@ -113,7 +113,7 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("perk_machine", "price"): PERK_PRICE_DOC,
 	("wunderfizz", "all_perks"): "false = the machine only rolls perks that have a machine placed on\nthis map (like the Random Perk power-up).\ntrue = rolls across EVERY defined perk (BO2 Origins behaviour), so it\ncan grant perks with no machine on the map.",
 	("wunderfizz", "price"): "Points per use. Cycles perk bottles and grants one random perk the\nbuyer doesn't already own, collectable by the buyer for 10s. Suggested: 1500.",
-	("wallbuy", "weapon_id"): "Item id given on purchase. Guns (e.g. m1911, ak47, mp5),\nknives (bowie_knife, ~3000 pts), lethal grenades (frag_grenade,\nsemtex...), or tacticals (monkey_bomb). Non-guns route to their\nown slot: knife hotbar.0, lethals hotbar.7 (x4), tacticals hotbar.6 (x3).",
+	("wallbuy", "weapon_id"): "Item id given on purchase. Guns (e.g. m1911, ak47, mp5),\nknives (bowie_knife, ~3000 pts), lethal grenades (frag_grenade,\nsemtex), or tacticals (monkey_bomb, smoke_grenade, flash_grenade).\nNon-guns route to their own slot: knife hotbar.0, lethals hotbar.7 (x4), tacticals hotbar.6 (x3).",
 	("wallbuy", "magazine_id"): "Magazine item paired with the gun (e.g. m1911_mag).\nLeave empty for knife/grenade/tactical wallbuys.",
 	("barricade", "radius"): "Block radius the barricade toggles open/closed around its marker.",
 	("mystery_box_pos", "location_name"): "Name of the place this spot sits in, announced in chat when the box\nlands here (e.g. \"the Power Room\").\nLeave EMPTY to fall back to the generic \"a new location\" message.",

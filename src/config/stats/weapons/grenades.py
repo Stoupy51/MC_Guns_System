@@ -42,6 +42,7 @@ SEMTEX: JsonDict = {
 }
 
 SMOKE_GRENADE: JsonDict = {
+	"tactical": True,
 	"stats": {
 		GRENADE_TYPE: "smoke", FIRE_MODE: "semi",
 		CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
@@ -53,6 +54,7 @@ SMOKE_GRENADE: JsonDict = {
 }
 
 FLASH_GRENADE: JsonDict = {
+	"tactical": True,
 	"stats": {
 		GRENADE_TYPE: "flash", FIRE_MODE: "semi",
 		CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
@@ -76,7 +78,7 @@ WEB_GRENADE: JsonDict = {
 	}
 }
 
-# Zombies-only tactical (hotbar.6): attracts zombies during the fuse, then explodes. "tactical" keeps it out of the camo pipeline and routes it to the tactical slot;
+# Zombies-only tactical (hotbar.6): attracts zombies during the fuse, then explodes. "tactical" routes it to the tactical slot, like smoke and flash;
 # base_weapon lets the mystery box duplicate check match it. Damage uses the BO to MC 2/15 conversion (BO ~1000, MC ~130), one-shotting the horde up to about round 10.
 MONKEY_BOMB: JsonDict = {
 	"tactical": True,
@@ -90,7 +92,9 @@ MONKEY_BOMB: JsonDict = {
 	}
 }
 
-# Lethal grenades (zombies lethal slot, hotbar.7, wallbuy kind 2): this order is the {ns}.zb.lethal_type index (0 = frag_grenade),
-# so an empty slot refills with the bought type on round end, Max Ammo and recovery (see zombies inventory).
-LETHAL_GRENADE_IDS: list[str] = ["frag_grenade", "semtex", "smoke_grenade", "flash_grenade"] # TODO: smoke and flash should be tactical instead (like monkeys)
+LETHAL_GRENADE_IDS: list[str] = ["frag_grenade", "semtex"]
+""" Zombies lethal slot (hotbar.7, wallbuy kind 2), refilled with the bought type on round end, Max Ammo and recovery.
+
+The order is the `{ns}.zb.lethal_type` enum, stored in live player scores: reordering renumbers them, and an index past the end refills frags.
+"""
 

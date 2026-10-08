@@ -230,14 +230,15 @@ def main() -> None:
 	stp.multiprocessing(blend_texture, [astuple(job) for job in stp.unique_list(queue)], use_starmap=True, desc="Blending camo textures", max_workers=1)
 
 def is_camo_eligible(ns: str, item: Item) -> bool:
-	""" Every non-tactical gun, plus the melee weapons flagged `camo_eligible` in MELEE_WEAPONS.
+	""" Every gun but monkey_bomb, plus the melee weapons flagged `camo_eligible` in MELEE_WEAPONS.
 
-	Tacticals such as monkey_bomb get no camos, and their models use vanilla block textures absent from the folder the blender reads.
+	Smoke and flash keep their camos for multiplayer loadouts even though they are tacticals.
+	The monkey_bomb model uses vanilla block textures absent from the folder the blender reads.
 	"""
 	if item.id in CAMO_MELEE:
 		return True
 	custom: JsonDict = item.components.get("custom_data", {}).get(ns, {})
-	return bool(custom.get("gun")) and not custom.get("tactical")
+	return bool(custom.get("gun")) and item.id != "monkey_bomb"
 
 def add_camo_variant(ns: str, textures_folder: str, weapon: Item, material: str) -> list[BlendJob]:
 	""" Register the `material` variant of a weapon, and return the texture blends its model needs. """

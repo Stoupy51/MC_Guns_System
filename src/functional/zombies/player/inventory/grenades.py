@@ -31,10 +31,10 @@ execute if items entity @s hotbar.7 {equipment_1_match} run return 0
 execute unless items entity @s hotbar.7 * run function {ns}:v{version}/zombies/inventory/give_lethal_type {{count:2}}
 """)
 
-	# {ns}.zb.lethal_type is set on give (frag) and on a lethal wall-buy; frag is the fallback.
+	# {ns}.zb.lethal_type is set on give (frag) and on a lethal wall-buy; frag is the fallback, also for an index past the end of the list.
 	# Widow's Wine owners always get webs, so every refill path hands out webs.
 	lethal_loot_lines: str = f"execute if score @s {ns}.special.widows_wine matches 1 run return run loot replace entity @s hotbar.7 loot {ns}:i/web_grenade\n"
-	lethal_loot_lines += f"execute unless score @s {ns}.zb.lethal_type matches 1.. run loot replace entity @s hotbar.7 loot {ns}:i/{LETHAL_GRENADE_IDS[0]}\n"
+	lethal_loot_lines += f"execute unless score @s {ns}.zb.lethal_type matches 1..{len(LETHAL_GRENADE_IDS) - 1} run loot replace entity @s hotbar.7 loot {ns}:i/{LETHAL_GRENADE_IDS[0]}\n"
 	lethal_loot_lines += "\n".join(
 		f"execute if score @s {ns}.zb.lethal_type matches {i} run loot replace entity @s hotbar.7 loot {ns}:i/{gid}"
 		for i, gid in enumerate(LETHAL_GRENADE_IDS) if i > 0
