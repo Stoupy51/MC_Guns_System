@@ -38,11 +38,11 @@ A player drops a SPAS-12 to switch it to semi-automatic. It now fires faster, wi
 
 **Why this priority**: It is the one gun whose second mode is missing entirely, and its semi-automatic clips already ship unused.
 
-**Independent Test**: Fire a SPAS-12 in each mode on the range. Pump-action: one shot every 16 ticks, the pump sound mid-cycle, the shell out at the pump. Semi-automatic: one shot every 9 ticks, no pump, the shell out on the shot.
+**Independent Test**: Fire a SPAS-12 in each mode on the range. Pump-action: one shot every 16 ticks, the pump sound and the shell halfway through. Semi-automatic: one shot every 9 ticks, no pump, the shell out on the shot.
 
 **Acceptance Scenarios**:
 
-1. **Given** a SPAS-12 in pump-action, **When** it fires, **Then** the shooter hears `fire`, the pump plays 6 ticks after the shot, the shell ejects 10 ticks after it, and the next shot is possible 16 ticks after it.
+1. **Given** a SPAS-12 in pump-action, **When** it fires, **Then** the shooter hears `fire`, the pump plays and the shell ejects halfway through the cooldown, and the next shot is possible 16 ticks after it.
 2. **Given** a SPAS-12 in semi-automatic, **When** it fires, **Then** the shooter hears `fire_semi`, no pump plays, the shell ejects on the shot, and the next shot is possible 9 ticks after it.
 3. **Given** a crouching player, **When** they fire the SPAS-12, **Then** the spread is 190 in pump-action and 230 in semi-automatic.
 4. **Given** a Pack-a-Punched SPAS-12 in semi-automatic, **When** it fires, **Then** the shooter hears `pap_fire_semi`.
@@ -88,7 +88,7 @@ The M16A4 fires its three rounds two ticks apart and the FAMAS on three consecut
   | spas12 | pump, semi |
   | Every other gun | its single current mode |
 
-- **FR-003**: `pump` MUST be a fire mode: one shot, then the pump sound and the shell ejection at their own delays, then the cooldown, as the M500 and M590 already behave.
+- **FR-003**: `pump` MUST be a fire mode for single taps, where the pump sound and the shell ejection happen together halfway through the cooldown. The M500 and M590 already pump there; their shell moves from the shot to the pump. The original timed the SPAS-12 pump and shell 6 and 10 ticks after the shot; the halfway point is the port's existing rule for every pump gun.
 - **FR-004**: A mode MUST be able to override, for its gun: the cooldown, the crouched accuracy, the shooter's fire sound, the Pack-a-Punch fire sound, and when the shell ejects.
 - **FR-005**: Another player MUST always hear the gun's base `fire` (or `pap_fire`) sound, whatever the mode.
 - **FR-006**: A burst MUST be able to declare the delay between its shots separately from the cooldown that follows it (M16A4: 2 then 3, FAMAS: 1 then 3).

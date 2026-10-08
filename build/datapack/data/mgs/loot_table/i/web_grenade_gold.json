@@ -14,7 +14,7 @@
 								"minecraft:custom_data": {
 									"mgs": {
 										"gun": true,
-										"stats": {"grenade_type": "web","fire_mode": "semi","base_weapon": "web_grenade","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1500,"proj_gravity": 60,"proj_model": "frag_grenade","grenade_fuse": 40,"grenade_effect_radius": 5,"models": {"normal": "mgs:web_grenade_gold","zoom": "mgs:web_grenade_gold_zoom"}},
+										"stats": {"grenade_type": "web","fire_mode": "semi","fire_modes": [{"name": "semi"}],"base_weapon": "web_grenade","capacity": 1,"remaining_bullets": 1,"cooldown": 20,"proj_speed": 1500,"proj_gravity": 60,"proj_model": "frag_grenade","grenade_fuse": 40,"grenade_effect_radius": 5,"models": {"normal": "mgs:web_grenade_gold","zoom": "mgs:web_grenade_gold_zoom"}},
 										"web_grenade_gold": true
 									},
 									"smithed": {

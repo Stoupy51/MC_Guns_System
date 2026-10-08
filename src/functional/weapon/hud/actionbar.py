@@ -3,7 +3,7 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....config.stats.colors import END_HEX, START_HEX
-from ....config.stats.keys import CAPACITY, FIRE_MODE, REMAINING_BULLETS
+from ....config.stats.keys import CAPACITY, FIRE_MODE, FIRE_MODES, REMAINING_BULLETS
 
 
 # Functions
@@ -42,30 +42,21 @@ function {ns}:v{version}/actionbar/add_dps
 function {ns}:v{version}/actionbar/display with storage {ns}:temp actionbar
 """)
 
-	# [S | B | A]
+	# [P | S | B | A], each letter only when the weapon has that mode; a throwable without a list shows its current mode.
+	mode_lines: str = "\n\n".join(f"""execute store result score #has_mode {ns}.data if data storage {ns}:gun all.stats.{FIRE_MODES}[{{name:"{mode}"}}]
+execute if data storage {ns}:gun all.stats{{{FIRE_MODE}:"{mode}"}} run scoreboard players set #has_mode {ns}.data 1
+execute if score #has_mode {ns}.data matches 1 if score #ab_modes {ns}.data matches 1.. run data modify storage {ns}:temp actionbar.list append value {{"text":" | "}}
+execute if score #has_mode {ns}.data matches 1 if data storage {ns}:gun all.stats{{{FIRE_MODE}:"{mode}"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"{letter}","color":"yellow","bold":true}}
+execute if score #has_mode {ns}.data matches 1 unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"{mode}"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"{letter}"}}
+execute if score #has_mode {ns}.data matches 1 run scoreboard players add #ab_modes {ns}.data 1""" for letter, mode in (("P", "pump"), ("S", "semi"), ("B", "burst"), ("A", "auto")))
 	write_versioned_function("actionbar/build_fire_mode_indicator", f"""
 data modify storage {ns}:temp actionbar set value {{list:[]}}
 
 data modify storage {ns}:temp actionbar.list append value {{"text":"","color":"#{START_HEX}"}}
 data modify storage {ns}:temp actionbar.list append value {{"text":"[ ","color":"#{END_HEX}"}}
+scoreboard players set #ab_modes {ns}.data 0
 
-execute store result score #has_auto {ns}.data if data storage {ns}:gun all.stats.can_auto
-execute store result score #has_burst {ns}.data if data storage {ns}:gun all.stats.can_burst
-
-# auto and burst: [S | B | A]; auto only: [S | A]; burst only: [S | B]; neither: [S].
-
-execute if data storage {ns}:gun all.stats{{{FIRE_MODE}:"semi"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"S","color":"yellow","bold":true}}
-execute unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"semi"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"S"}}
-
-execute if score #has_burst {ns}.data matches 1 run data modify storage {ns}:temp actionbar.list append value {{"text":" | "}}
-
-execute if score #has_burst {ns}.data matches 1 if data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"B","color":"yellow"}}
-execute if score #has_burst {ns}.data matches 1 unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"B"}}
-
-execute if score #has_auto {ns}.data matches 1 run data modify storage {ns}:temp actionbar.list append value {{"text":" | "}}
-
-execute if score #has_auto {ns}.data matches 1 if data storage {ns}:gun all.stats{{{FIRE_MODE}:"auto"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"A","color":"yellow","bold":true}}
-execute if score #has_auto {ns}.data matches 1 unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"auto"}} run data modify storage {ns}:temp actionbar.list append value {{"text":"A"}}
+{mode_lines}
 
 data modify storage {ns}:temp actionbar.list append value {{"text":" ] ","color":"#{END_HEX}"}}
 """)

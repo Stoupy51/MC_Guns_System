@@ -21,18 +21,10 @@ This parameter is optional and primarily used for weapons with longer reload ani
 COOLDOWN: str = "cooldown"
 """ Delay between consecutive shots, measured in game ticks.
 Controls the weapon's rate of fire. Lower values result in faster firing rates. """
-BURST: str = "burst"
-""" Number of rounds automatically fired when in burst fire mode.
-A value of 1 indicates semi-automatic, while 3 would be a three-round burst. """
-CAN_BURST: str = "can_burst"
-""" Boolean flag indicating whether the weapon supports burst fire mode.
-If true, players can toggle between auto and burst fire modes by dropping the weapon. """
-CAN_AUTO: str = "can_auto"
-""" Boolean flag indicating whether the weapon supports automatic fire mode.
-If true, players can hold right-click to continuously fire. All weapons support semi-auto. """
 FIRE_MODE: str = "fire_mode"
-""" Current firing mode of the weapon: 'auto' for automatic fire or 'burst' for burst fire.
-In auto mode, holding right-click continuously fires. In burst mode, each click fires a fixed burst. """
+""" Name of the current fire mode, always the name of the first entry of FIRE_MODES. """
+FIRE_MODES: str = "fire_modes"
+""" The weapon's selector positions (see FireMode), current one first: dropping the weapon rotates the list. """
 PELLET_COUNT: str = "pellet_count"
 """ Number of projectiles fired per shot (usually for shotguns). """
 DAMAGE: str = "damage"
@@ -131,7 +123,6 @@ STATS_FIELDS: tuple[str, ...] = (
 	RELOAD_END,
 	RELOAD_MID,
 	COOLDOWN,
-	BURST,
 	PELLET_COUNT,
 	DAMAGE,
 	DECAY,
@@ -152,8 +143,7 @@ STATS_FIELDS: tuple[str, ...] = (
 	EXPLOSION_DAMAGE,
 	EXPLOSION_DECAY,
 	FIRE_MODE,
-	CAN_AUTO,
-	CAN_BURST,
+	FIRE_MODES,
 )
 
 # Optional constants

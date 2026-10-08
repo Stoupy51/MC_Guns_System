@@ -141,6 +141,8 @@ scoreboard players set #fx_sweep_period mgs.data 40
 
 execute as @a run function mgs:v5.1.0/player/fx_reset
 
+data modify storage mgs:data fire_modes set value {"rpg7":[{"name":"semi"}],"ak47":[{"name":"auto"},{"name":"semi"}],"aug":[{"name":"auto"},{"name":"semi"}],"famas":[{"name":"auto"},{"name":"burst","burst":3,"burst_spacing":1,"burst_pause":2},{"name":"semi"}],"fnfal":[{"name":"auto"},{"name":"semi"}],"g3a3":[{"name":"auto"},{"name":"semi"}],"m4a1":[{"name":"auto"},{"name":"semi"}],"m16a4":[{"name":"burst","burst":3,"burst_pause":1},{"name":"semi"}],"m24":[{"name":"semi"}],"m82":[{"name":"semi"}],"m249":[{"name":"auto"}],"m500":[{"name":"pump"}],"m590":[{"name":"pump"}],"mac10":[{"name":"auto"},{"name":"semi"}],"mosin":[{"name":"semi"}],"mp5":[{"name":"auto"},{"name":"semi"}],"mp7":[{"name":"auto"},{"name":"semi"}],"ppsh41":[{"name":"auto"},{"name":"semi"}],"rpk":[{"name":"auto"},{"name":"semi"}],"scar17":[{"name":"auto"},{"name":"semi"}],"spas12":[{"name":"pump"},{"name":"semi","cooldown":9,"pap_cooldown":7,"accuracy_sneak":230,"fire_sound":"spas12/fire_semi","pap_fire_sound":"spas12/pap_fire_semi"}],"sten":[{"name":"auto"},{"name":"semi"}],"svd":[{"name":"semi"}],"m1911":[{"name":"semi"}],"m9":[{"name":"semi"}],"deagle":[{"name":"semi"}],"makarov":[{"name":"semi"}],"glock17":[{"name":"semi"}],"glock18":[{"name":"auto"},{"name":"semi"}],"vz61":[{"name":"auto"},{"name":"semi"}],"ray_gun":[{"name":"auto"}],"web_grenade":[{"name":"semi"}],"monkey_bomb":[{"name":"semi"}]}
+
 # Black Ops style stamina, per player.
 scoreboard objectives add mgs.stam dummy
 scoreboard objectives add mgs.stam_max dummy

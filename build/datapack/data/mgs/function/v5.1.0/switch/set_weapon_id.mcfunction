@@ -7,10 +7,5 @@
 #
 
 execute store result storage mgs:gun all.stats.weapon_id int 1 run scoreboard players add #next_id mgs.data 1
-
-# auto when the weapon supports it, else semi.
-execute unless data storage mgs:gun all.stats.fire_mode if data storage mgs:gun all.stats.can_auto run data modify storage mgs:gun all.stats.fire_mode set value "auto"
-execute unless data storage mgs:gun all.stats.fire_mode unless data storage mgs:gun all.stats.can_auto run data modify storage mgs:gun all.stats.fire_mode set value "semi"
-
 item modify entity @s weapon.mainhand mgs:v5.1.0/set_weapon_id
 

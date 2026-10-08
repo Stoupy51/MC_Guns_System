@@ -11,7 +11,7 @@ from stewbeet import (
 	write_versioned_function,
 )
 
-from ...config.stats.keys import BURST, RELOAD_TIME, REMAINING_BULLETS
+from ...config.stats.keys import FIRE_MODES, RELOAD_TIME, REMAINING_BULLETS
 from ..helpers.probes import Probe
 
 
@@ -98,7 +98,7 @@ execute unless score #is_mid_burst {ns}.data matches 1 run scoreboard players se
 """)
 
 	write_versioned_function("player/check_mid_burst", f"""
-execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{BURST}
+execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{FIRE_MODES}[0].burst
 
 execute if score @s {ns}.burst_count < #burst_limit {ns}.data run scoreboard players set #is_mid_burst {ns}.data 1
 """)
@@ -221,7 +221,7 @@ execute store result score #fire_mode_is_burst {ns}.data if data storage {ns}:gu
 execute if score #fire_mode_is_burst {ns}.data matches 0 run scoreboard players set @s {ns}.burst_count 0
 execute if score #fire_mode_is_burst {ns}.data matches 0 run return 0
 
-execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.burst
+execute store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{FIRE_MODES}[0].burst
 execute if score @s {ns}.burst_count >= #burst_limit {ns}.data run scoreboard players set @s {ns}.burst_count 0
 """)
 

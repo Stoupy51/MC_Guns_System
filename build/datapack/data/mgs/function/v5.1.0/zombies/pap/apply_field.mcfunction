@@ -9,7 +9,6 @@
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"reload_end"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"reload_mid"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"cooldown"}
-#			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"burst"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"pellet_count"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"damage"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"decay"}
@@ -30,8 +29,7 @@
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"expl_damage"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"expl_decay"}
 #			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"fire_mode"}
-#			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"can_auto"}
-#			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"can_burst"}
+#			mgs:v5.1.0/zombies/pap/apply_runtime_overrides {field:"fire_modes"}
 #
 # @args		field (string)
 #

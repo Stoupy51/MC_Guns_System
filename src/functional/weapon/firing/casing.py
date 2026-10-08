@@ -8,6 +8,7 @@ from ....config.stats.keys import (
 	CASING_NORMAL,
 	CASING_OFFSET,
 	CASING_TANGENT,
+	FIRE_MODE,
 )
 
 
@@ -16,8 +17,9 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
+	# A pump gun throws its shell out with the pump (sound/check/pump).
 	write_versioned_function("player/right_click", f"""
-function {ns}:v{version}/casing/main
+execute unless data storage {ns}:gun all.stats{{{FIRE_MODE}:"pump"}} run function {ns}:v{version}/casing/main
 """)
 
 	item_nbt: str = f"""{{Tags:["{ns}.new","{ns}.casing"],Item:{{id:"minecraft:stone",count:1,components:{{"minecraft:item_model":"air"}}}},PickupDelay:32767,Age:5990}}"""

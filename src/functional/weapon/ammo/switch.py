@@ -1,8 +1,10 @@
 """ Weapon switching: swap timing, weapon ids, and fire-mode toggling on drop. """
 # Imports
-from stewbeet import ItemModifier, JsonDict, Mem, set_json_encoder, write_versioned_function
+import json
 
-from ....config.stats.keys import CAN_AUTO, CAN_BURST, FIRE_MODE, SWITCH, WEAPON_ID
+from stewbeet import Item, ItemModifier, JsonDict, Mem, set_json_encoder, write_load_file, write_versioned_function
+
+from ....config.stats.keys import BASE_WEAPON, FIRE_MODE, FIRE_MODES, SWITCH, WEAPON_ID
 
 
 # Functions
@@ -10,8 +12,17 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
+	# Every weapon's selector positions by base weapon, for items that predate fire_modes.
+	fire_modes: JsonDict = {}
+	for item in map(Item.from_id, Mem.definitions):
+		stats: JsonDict = item.components.get("custom_data", {}).get(ns, {}).get("stats", {})
+		if BASE_WEAPON in stats and FIRE_MODES in stats:
+			fire_modes[stats[BASE_WEAPON]] = stats[FIRE_MODES]
+	write_load_file(f"data modify storage {ns}:data {FIRE_MODES} set value {json.dumps(fire_modes, separators=(',', ':'))}\n")
+
 	write_versioned_function("switch/main", f"""
 execute if data storage {ns}:gun all.gun unless data storage {ns}:gun all.stats.{WEAPON_ID} run function {ns}:v{version}/switch/set_weapon_id
+execute if data storage {ns}:gun all.stats.{BASE_WEAPON} unless data storage {ns}:gun all.stats.{FIRE_MODES} run function {ns}:v{version}/switch/adopt_fire_modes with storage {ns}:gun all.stats
 
 # A different weapon than last tick starts the switch cooldown.
 scoreboard players set #current_id {ns}.data 0
@@ -23,12 +34,18 @@ scoreboard players operation @s {ns}.last_selected = #current_id {ns}.data
 
 	write_versioned_function("switch/set_weapon_id", f"""
 execute store result storage {ns}:gun all.stats.{WEAPON_ID} int 1 run scoreboard players add #next_id {ns}.data 1
-
-# auto when the weapon supports it, else semi.
-execute unless data storage {ns}:gun all.stats.{FIRE_MODE} if data storage {ns}:gun all.stats.{CAN_AUTO} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
-execute unless data storage {ns}:gun all.stats.{FIRE_MODE} unless data storage {ns}:gun all.stats.{CAN_AUTO} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
-
 item modify entity @s weapon.mainhand {ns}:v{version}/set_weapon_id
+""")
+
+	# Items made before fire_modes carry can_auto, can_burst and burst instead: they take their weapon's list, once.
+	write_versioned_function("switch/adopt_fire_modes", f"""
+$execute unless data storage {ns}:data {FIRE_MODES}.$({BASE_WEAPON}) run return fail
+$data modify storage {ns}:gun all.stats.{FIRE_MODES} set from storage {ns}:data {FIRE_MODES}.$({BASE_WEAPON})
+data modify storage {ns}:gun all.stats.{FIRE_MODE} set from storage {ns}:gun all.stats.{FIRE_MODES}[0].name
+data remove storage {ns}:gun all.stats.can_auto
+data remove storage {ns}:gun all.stats.can_burst
+data remove storage {ns}:gun all.stats.burst
+item modify entity @s weapon.mainhand {ns}:v{version}/update_stats
 """)
 
 	write_versioned_function("switch/on_weapon_switch", f"""
@@ -125,13 +142,9 @@ tag @s add {ns}.to_pickup
 execute unless items entity @s weapon.mainhand * as @n[type=item,distance=..3,nbt={{Item:{{components:{{"minecraft:custom_data":{{{ns}:{{gun:true}}}}}}}}}}] run function {ns}:v{version}/switch/weapon_back_to_mainhand
 tag @s remove {ns}.to_pickup
 
-# The weapon is back in the main hand.
+# The weapon is back in the main hand; a single-mode weapon has nothing to cycle.
 function {ns}:v{version}/utils/copy_gun_data
-
-# Throwables carry a fire_mode but must not toggle.
-execute unless data storage {ns}:gun all.stats.{CAN_AUTO} unless data storage {ns}:gun all.stats.{CAN_BURST} run return 0
-
-# auto, semi, burst, auto, narrowed to what the weapon supports.
+execute unless data storage {ns}:gun all.stats.{FIRE_MODES}[1] run return 0
 function {ns}:v{version}/switch/do_toggle_fire_mode
 """)
 	write_versioned_function("switch/weapon_back_to_mainhand", f"""
@@ -140,25 +153,11 @@ kill @s
 """)
 
 	write_versioned_function("switch/do_toggle_fire_mode", f"""
-function {ns}:v{version}/utils/copy_gun_data
-data modify storage {ns}:temp fire_mode set from storage {ns}:gun all.stats.{FIRE_MODE}
-
-execute store result score #has_auto {ns}.data if data storage {ns}:gun all.stats.{CAN_AUTO}
-execute store result score #has_burst {ns}.data if data storage {ns}:gun all.stats.{CAN_BURST}
-
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"auto"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "burst"
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"burst"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
-
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 0 if data storage {ns}:temp {{fire_mode:"auto"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
-execute if score #has_auto {ns}.data matches 1 if score #has_burst {ns}.data matches 0 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
-
-execute if score #has_auto {ns}.data matches 0 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"semi"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "burst"
-execute if score #has_auto {ns}.data matches 0 if score #has_burst {ns}.data matches 1 if data storage {ns}:temp {{fire_mode:"burst"}} run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
-
-# Missing mode: auto when supported, else semi.
-execute unless data storage {ns}:temp fire_mode if score #has_auto {ns}.data matches 1 run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "auto"
-execute unless data storage {ns}:temp fire_mode if score #has_auto {ns}.data matches 0 run data modify storage {ns}:gun all.stats.{FIRE_MODE} set value "semi"
+# The current mode moves to the back, the next one comes first.
+data modify storage {ns}:gun all.stats.{FIRE_MODES} append from storage {ns}:gun all.stats.{FIRE_MODES}[0]
+data remove storage {ns}:gun all.stats.{FIRE_MODES}[0]
+data modify storage {ns}:gun all.stats.{FIRE_MODE} set from storage {ns}:gun all.stats.{FIRE_MODES}[0].name
+scoreboard players set @s {ns}.burst_count 0
 
 item modify entity @s weapon.mainhand {ns}:v{version}/set_fire_mode
 
@@ -168,8 +167,7 @@ data modify storage {ns}:signals on_fire_mode_change.weapon set from storage {ns
 data modify storage {ns}:signals on_fire_mode_change.fire_mode set from storage {ns}:gun all.stats.{FIRE_MODE}
 function #{ns}:signals/on_fire_mode_change
 
-# @p would pay a needless distance sort.
-playsound minecraft:block.note_block.hat ambient @s
+playsound {ns}:common/fireselect player @s
 
 # So the fire-mode highlight follows at once.
 scoreboard players set @s {ns}.ab_force 1
@@ -201,6 +199,11 @@ scoreboard players set @s {ns}.ab_force 1
 			{
 				"source": f"all.stats.{FIRE_MODE}",
 				"target": f"{ns}.stats.{FIRE_MODE}",
+				"op": "replace"
+			},
+			{
+				"source": f"all.stats.{FIRE_MODES}",
+				"target": f"{ns}.stats.{FIRE_MODES}",
 				"op": "replace"
 			}
 		]

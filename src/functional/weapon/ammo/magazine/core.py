@@ -9,7 +9,7 @@ from stewbeet import (
 )
 
 from .....config.stats.items import ItemBuilder
-from .....config.stats.keys import CAPACITY, REMAINING_BULLETS
+from .....config.stats.keys import CAPACITY, FIRE_MODE, REMAINING_BULLETS
 from .lore import create_lore_functions
 
 
@@ -37,14 +37,14 @@ function {ns}:v{version}/ammo/decrease
 """)
 
 	write_versioned_function("ammo/decrease", f"""
+# Read by the mid-cooldown pump check.
+execute if data storage {ns}:gun all.stats{{{FIRE_MODE}:"pump"}} run tag @s add {ns}.pump_sound
+
 # Infinite ammo refills to capacity and consumes nothing.
 execute if score @s {ns}.special.infinite_ammo matches 1.. run return run function {ns}:v{version}/ammo/infinite_refill
 
 scoreboard players remove @s {ns}.{REMAINING_BULLETS} 1
 execute if score @s {ns}.{REMAINING_BULLETS} matches ..0 run function {ns}:v{version}/ammo/reload
-
-# Read by the mid-cooldown sound check.
-execute if data storage {ns}:gun all.sounds.pump run tag @s add {ns}.pump_sound
 
 # Read by the mid-reload sound check.
 execute if data storage {ns}:gun all.sounds.playermid run tag @s add {ns}.reload_mid_sound

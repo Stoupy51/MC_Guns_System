@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "adopt_fire_modes.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/weapon/ammo/switch.py"
+	],
+	"names": [],
+	"mappings": "AAwCqD;;;;;;;;;;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

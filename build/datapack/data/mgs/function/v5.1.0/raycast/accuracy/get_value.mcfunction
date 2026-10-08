@@ -15,6 +15,7 @@ execute unless predicate mgs:v5.1.0/is_on_ground if predicate mgs:v5.1.0/is_snea
 
 execute unless predicate mgs:v5.1.0/is_on_ground run return run data modify storage mgs:gun accuracy set from storage mgs:gun all.stats.acc_jump
 
+execute if predicate mgs:v5.1.0/is_sneaking if data storage mgs:gun all.stats.fire_modes[0].accuracy_sneak run return run data modify storage mgs:gun accuracy set from storage mgs:gun all.stats.fire_modes[0].accuracy_sneak
 execute if predicate mgs:v5.1.0/is_sneaking run return run data modify storage mgs:gun accuracy set from storage mgs:gun all.stats.acc_sneak
 
 execute if predicate mgs:v5.1.0/is_sprinting run return run data modify storage mgs:gun accuracy set from storage mgs:gun all.stats.acc_sprint

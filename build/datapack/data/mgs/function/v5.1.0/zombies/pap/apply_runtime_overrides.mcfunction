@@ -13,7 +13,6 @@ execute if data storage mgs:temp _pap_extract.stats.pap_stats.reload_time run fu
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.reload_end run function mgs:v5.1.0/zombies/pap/apply_field {field:"reload_end"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.reload_mid run function mgs:v5.1.0/zombies/pap/apply_field {field:"reload_mid"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.cooldown run function mgs:v5.1.0/zombies/pap/apply_field {field:"cooldown"}
-execute if data storage mgs:temp _pap_extract.stats.pap_stats.burst run function mgs:v5.1.0/zombies/pap/apply_field {field:"burst"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.pellet_count run function mgs:v5.1.0/zombies/pap/apply_field {field:"pellet_count"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.damage run function mgs:v5.1.0/zombies/pap/apply_field {field:"damage"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.decay run function mgs:v5.1.0/zombies/pap/apply_field {field:"decay"}
@@ -34,6 +33,5 @@ execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_radius run fu
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_damage run function mgs:v5.1.0/zombies/pap/apply_field {field:"expl_damage"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.expl_decay run function mgs:v5.1.0/zombies/pap/apply_field {field:"expl_decay"}
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.fire_mode run function mgs:v5.1.0/zombies/pap/apply_field {field:"fire_mode"}
-execute if data storage mgs:temp _pap_extract.stats.pap_stats.can_auto run function mgs:v5.1.0/zombies/pap/apply_field {field:"can_auto"}
-execute if data storage mgs:temp _pap_extract.stats.pap_stats.can_burst run function mgs:v5.1.0/zombies/pap/apply_field {field:"can_burst"}
+execute if data storage mgs:temp _pap_extract.stats.pap_stats.fire_modes run function mgs:v5.1.0/zombies/pap/apply_field {field:"fire_modes"}
 

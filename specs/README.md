@@ -8,7 +8,7 @@ One directory per feature, in the Spec Kit layout (`spec.md` -> `plan.md` -> `ta
 | [003-zombie-special-types](003-zombie-special-types/) | Stubs in `zombies/game/round/enemies.py` fall through to `types/normal` |
 | [004-multiplayer-kill-cam](004-multiplayer-kill-cam/) | Design sketch only |
 | [006-weapon-fire-modes-tacticals](006-weapon-fire-modes-tacticals/) | Built, in-game checks open (T003, T009 to T013, T020) |
-| [008-original-fire-modes](008-original-fire-modes/) | Specced only |
+| [008-original-fire-modes](008-original-fire-modes/) | Built, in-game checks open (T014 to T017) |
 
 Working on one of these: run `/speckit-tasks` to regenerate its task list from the current code,
 or `/speckit-converge` to have the remaining work appended after a partial implementation.

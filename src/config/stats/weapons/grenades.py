@@ -2,6 +2,7 @@
 # Imports
 from stewbeet import JsonDict
 
+from ..fire_modes import SEMI, FireMode
 from ..keys import (
 	BASE_WEAPON,
 	CAPACITY,
@@ -9,7 +10,6 @@ from ..keys import (
 	EXPLOSION_DAMAGE,
 	EXPLOSION_DECAY,
 	EXPLOSION_RADIUS,
-	FIRE_MODE,
 	GRENADE_DURATION,
 	GRENADE_EFFECT_RADIUS,
 	GRENADE_FUSE,
@@ -23,7 +23,7 @@ from ..keys import (
 # Constants
 FRAG_GRENADE: JsonDict = {
 	"stats": {
-		GRENADE_TYPE: "frag", FIRE_MODE: "semi",
+		GRENADE_TYPE: "frag", **FireMode.stats(SEMI),
 		CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
 		PROJECTILE_SPEED: 1000, PROJECTILE_GRAVITY: 60, PROJECTILE_MODEL: "frag_grenade",
 		GRENADE_FUSE: 80,  # 4 seconds
@@ -33,7 +33,7 @@ FRAG_GRENADE: JsonDict = {
 
 SEMTEX: JsonDict = {
 	"stats": {
-		GRENADE_TYPE: "semtex", FIRE_MODE: "semi",
+		GRENADE_TYPE: "semtex", **FireMode.stats(SEMI),
 		CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
 		PROJECTILE_SPEED: 1200, PROJECTILE_GRAVITY: 50, PROJECTILE_MODEL: "semtex",
 		GRENADE_FUSE: 80,  # 4 seconds
@@ -44,7 +44,7 @@ SEMTEX: JsonDict = {
 SMOKE_GRENADE: JsonDict = {
 	"tactical": True,
 	"stats": {
-		GRENADE_TYPE: "smoke", FIRE_MODE: "semi",
+		GRENADE_TYPE: "smoke", **FireMode.stats(SEMI),
 		CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
 		PROJECTILE_SPEED: 1000, PROJECTILE_GRAVITY: 60, PROJECTILE_MODEL: "smoke_grenade",
 		GRENADE_FUSE: 60,  # 3 seconds before activation
@@ -56,7 +56,7 @@ SMOKE_GRENADE: JsonDict = {
 FLASH_GRENADE: JsonDict = {
 	"tactical": True,
 	"stats": {
-		GRENADE_TYPE: "flash", FIRE_MODE: "semi",
+		GRENADE_TYPE: "flash", **FireMode.stats(SEMI),
 		CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
 		PROJECTILE_SPEED: 1200, PROJECTILE_GRAVITY: 50, PROJECTILE_MODEL: "flash_grenade",
 		GRENADE_FUSE: 60,  # 3 seconds before detonation
@@ -69,7 +69,7 @@ FLASH_GRENADE: JsonDict = {
 # TODO: it reuses the frag art until a web-grenade texture exists.
 WEB_GRENADE: JsonDict = {
 	"stats": {
-		GRENADE_TYPE: "web", FIRE_MODE: "semi",
+		GRENADE_TYPE: "web", **FireMode.stats(SEMI),
 		BASE_WEAPON: "web_grenade",
 		CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
 		PROJECTILE_SPEED: 1500, PROJECTILE_GRAVITY: 60, PROJECTILE_MODEL: "frag_grenade",  # 1.5x throw motion
@@ -83,7 +83,7 @@ WEB_GRENADE: JsonDict = {
 MONKEY_BOMB: JsonDict = {
 	"tactical": True,
 	"stats": {
-		GRENADE_TYPE: "monkey_bomb", FIRE_MODE: "semi",
+		GRENADE_TYPE: "monkey_bomb", **FireMode.stats(SEMI),
 		BASE_WEAPON: "monkey_bomb",
 		CAPACITY: 1, REMAINING_BULLETS: 1, COOLDOWN: 20,
 		PROJECTILE_SPEED: 800, PROJECTILE_GRAVITY: 60, PROJECTILE_MODEL: "monkey_bomb",

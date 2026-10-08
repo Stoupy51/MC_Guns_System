@@ -5,7 +5,7 @@ from dataclasses import dataclass
 
 from stewbeet import Mem, write_versioned_function
 
-from ....config.stats.keys import COOLDOWN, RELOAD_END, RELOAD_TIME
+from ....config.stats.keys import COOLDOWN, FIRE_MODES, RELOAD_END, RELOAD_TIME
 
 
 # Classes
@@ -93,22 +93,24 @@ execute anchored eyes positioned ^ ^ ^ if block ~ ~ ~ #{ns}:v{version}/sounds/wa
 ## A Pack-a-Punched gun with a pap_fire sound plays it instead.
 scoreboard players set #do_pap_sound {ns}.data 0
 execute if data storage {ns}:gun all.stats.pap_level if data storage {ns}:gun all.sounds.pap_fire run scoreboard players set #do_pap_sound {ns}.data 1
-execute if score #do_pap_sound {ns}.data matches 1 run function {ns}:v{version}/sound/fire_pap with storage {ns}:gun all.sounds
+data modify storage {ns}:temp fire_sound set value {{}}
+execute if score #do_pap_sound {ns}.data matches 0 run data modify storage {ns}:temp fire_sound.others set from storage {ns}:gun all.sounds.fire
+execute if score #do_pap_sound {ns}.data matches 1 run data modify storage {ns}:temp fire_sound.others set from storage {ns}:gun all.sounds.pap_fire
 
-execute if score #do_pap_sound {ns}.data matches 0 run function {ns}:v{version}/sound/fire_simple with storage {ns}:gun all.sounds
+# The shooter hears the fire mode's own sound when it has one (a missing path leaves the weapon's).
+data modify storage {ns}:temp fire_sound.self set from storage {ns}:temp fire_sound.others
+execute if score #do_pap_sound {ns}.data matches 0 run data modify storage {ns}:temp fire_sound.self set from storage {ns}:gun all.stats.{FIRE_MODES}[0].fire_sound
+execute if score #do_pap_sound {ns}.data matches 1 run data modify storage {ns}:temp fire_sound.self set from storage {ns}:gun all.stats.{FIRE_MODES}[0].pap_fire_sound
+function {ns}:v{version}/sound/fire with storage {ns}:temp fire_sound
 
 # Sniper rifles.
 execute if data storage {ns}:gun all.sounds.cycle run function {ns}:v{version}/sound/cycle with storage {ns}:gun all.sounds
 
 execute if data storage {ns}:gun all.sounds.crack run function {ns}:v{version}/sound/acoustics_main with storage {ns}:gun all.sounds
 """)
-	write_versioned_function("sound/fire_pap", f"""
-$playsound {ns}:$(pap_fire) player @s ~ ~ ~ 0.10
-$playsound {ns}:$(pap_fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
-""")
-	write_versioned_function("sound/fire_simple", f"""
-$playsound {ns}:$(fire) player @s ~ ~ ~ 0.10
-$playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
+	write_versioned_function("sound/fire", f"""
+$playsound {ns}:$(self) player @s ~ ~ ~ 0.10
+$playsound {ns}:$(others) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
 	write_versioned_function("sound/cycle", f"""
 $playsound {ns}:$(cycle) player @s ~ ~ ~ 0.5
@@ -162,27 +164,35 @@ execute if score #processed_acoustics {ns}.data matches 4 run function {ns}:v{ve
 execute if score #processed_acoustics {ns}.data matches 5 run function {ns}:v{version}/sound/hearing/5_water with storage {ns}:temp _turret_snd
 """)
 
+	# The cooldown score is an expiry tick, so each check compares the ticks left against its moment.
+	remaining: str = f"""scoreboard players operation #remaining {ns}.data = @s {ns}.cooldown
+scoreboard players operation #remaining {ns}.data -= #total_tick {ns}.data"""
+
 	write_versioned_function("sound/check/pump", f"""
 scoreboard players set #divisor {ns}.data 2
 execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{COOLDOWN}
 scoreboard players operation #half {ns}.data /= #divisor {ns}.data
+{remaining}
 
-# Half the cooldown: the mid sound plays.
-execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}/sound/pump with storage {ns}:gun all.sounds
+# Half the cooldown: the pump plays and throws the shell out.
+execute if score #remaining {ns}.data = #half {ns}.data run function {ns}:v{version}/sound/pump with storage {ns}:gun all.sounds
+execute if score #remaining {ns}.data = #half {ns}.data run function {ns}:v{version}/casing/main
 """)
 
 	write_versioned_function("sound/check/reload_mid", f"""
 scoreboard players set #divisor {ns}.data 2
 execute store result score #half {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_TIME}
 scoreboard players operation #half {ns}.data /= #divisor {ns}.data
+{remaining}
 
 # Half the cooldown: the mid sound plays.
-execute if score @s {ns}.cooldown = #half {ns}.data run function {ns}:v{version}/sound/player_mid with storage {ns}:gun all.sounds
+execute if score #remaining {ns}.data = #half {ns}.data run function {ns}:v{version}/sound/player_mid with storage {ns}:gun all.sounds
 """)
 
 	write_versioned_function("sound/check/reload_end", f"""
 execute store result score #{RELOAD_END} {ns}.data run data get storage {ns}:gun all.stats.{RELOAD_END}
-execute if score @s {ns}.cooldown = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/player_end with storage {ns}:gun all.sounds
+{remaining}
+execute if score #remaining {ns}.data = #{RELOAD_END} {ns}.data run function {ns}:v{version}/sound/player_end with storage {ns}:gun all.sounds
 """)
 
 	write_versioned_function("sound/propagation", f"""
