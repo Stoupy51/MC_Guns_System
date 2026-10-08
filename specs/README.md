@@ -5,7 +5,7 @@ One directory per feature, in the Spec Kit layout (`spec.md` -> `plan.md` -> `ta
 | Feature | State |
 |---|---|
 | [002-zombies-save-load](002-zombies-save-load/) | Specced only |
-| [003-zombie-special-types](003-zombie-special-types/) | Fast and tank built (in-game checks T006, T011, T013, T014 open); armed and aura not started |
+| [003-zombie-special-types](003-zombie-special-types/) | Built; T001 and T003 (package move) and the in-game checks open |
 | [004-multiplayer-kill-cam](004-multiplayer-kill-cam/) | Design sketch only |
 | [006-weapon-fire-modes-tacticals](006-weapon-fire-modes-tacticals/) | Built, in-game checks open (T003, T009 to T013, T020) |
 | [008-original-fire-modes](008-original-fire-modes/) | Built, in-game checks open (T014 to T017) |

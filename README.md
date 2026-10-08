@@ -171,7 +171,7 @@ Implemented gamemodes:
 
 - Full round loop (start round, spawn loop, round complete, next round).
 - Scaled zombie health/speed by round tiers.
-- Zonweeb special types: fast zombies from round 5 and tanks from round 10, scaled from the round's normal zombie.
+- Zonweeb special types: fast (round 5), tank (round 10), armed with a gun and a Max Ammo drop (round 15), and one aura zombie shielding the horde (round 20).
 - Points, kills, downs tracking.
 - Strict slot-managed inventory (knife, gun slots, mags, equipment).
 - Door system with linked unlock groups.

@@ -10,7 +10,7 @@ from stewbeet import Mem, write_versioned_function
 @dataclass(frozen=True)
 class ZombieType:
 	""" A Zonweeb special zombie, scaled from the round's normal zombie, which it replaces at spawn. """
-	type_id: Literal["fast", "tank"]
+	type_id: Literal["fast", "tank", "armed", "aura"]
 	speed_percent: int
 	health_percent: int
 	""" Of the BO health curve, still capped at 2048. """
@@ -19,14 +19,21 @@ class ZombieType:
 	first_round: int
 	weight: int
 	""" Percent of the spawns from first_round on. """
+	unique: bool = False
+	""" At most one alive at a time. """
 
 
 # Constants
 SPECIAL_TYPES: list[ZombieType] = [
-	ZombieType(type_id="fast", speed_percent=125, health_percent=50,  scale=0.85, first_round=5,  weight=15),
-	ZombieType(type_id="tank", speed_percent=75,  health_percent=300, scale=1.25, first_round=10, weight=8),
+	ZombieType(type_id="fast",  speed_percent=125, health_percent=50,  scale=0.85, first_round=5,  weight=15),
+	ZombieType(type_id="tank",  speed_percent=75,  health_percent=300, scale=1.25, first_round=10, weight=8),
+	ZombieType(type_id="armed", speed_percent=100, health_percent=100, scale=1.0,  first_round=15, weight=5),
+	ZombieType(type_id="aura",  speed_percent=90,  health_percent=200, scale=1.15, first_round=20, weight=3, unique=True),
 ]
 """ Rolled in this order at spawn (zombies/do_spawn_zombie): the weights stack into consecutive ranges of 1..100. """
+
+AURA_RADIUS: int = 6
+""" Blocks around an aura zombie where the horde takes Resistance II. """
 
 
 # Functions
@@ -34,7 +41,7 @@ def write_enemy_types() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Each enemy type takes {level:"1".."4"}; the armed stub falls through to the normal scaling.
+	# Each enemy type takes {level:"1".."4"}.
 
 	## Normal zombie: scale health and speed, then start the rise.
 	write_versioned_function("zombies/types/normal", f"""
@@ -137,12 +144,9 @@ attribute @s minecraft:knockback_resistance base set 1024
 attribute @s minecraft:scale base set 1.5
 """)
 
-	## Armed zombie stub.
-	write_versioned_function("zombies/types/armed", f"""
-# TODO: ranged attack, drops an ammo power-up on death.
-$function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
-""")
-
+	# The Missions gun AI: a random weapon, a visible name, and shots at the nearest player (mob/tick).
+	# The Max Ammo it always drops is in on_zombie_dying.
+	armed_setup: str = f'$function {ns}:v{version}/mob/default/on_new {{entity:"Zombie",level:$(level),active_time:60,sleep_time:40}}'
 	for zombie in SPECIAL_TYPES:
 		write_versioned_function(f"zombies/types/{zombie.type_id}", f"""
 scoreboard players set #zb_no_walker {ns}.data 1
@@ -165,9 +169,16 @@ execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players g
 function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
 
 attribute @s minecraft:scale base set {zombie.scale}
+{armed_setup if zombie.type_id == "armed" else ""}
 """)
 
 	write_versioned_function("zombies/set_speed", """
 $attribute @s minecraft:movement_speed base set $(value)
+""")
+
+	## Once a second; the 2 s effect bridges the gap and lapses on its own once the aura zombie dies.
+	write_versioned_function("zombies/aura_tick", f"""
+effect give @e[type=minecraft:zombie,tag={ns}.zombie_round,distance=..{AURA_RADIUS}] minecraft:resistance 2 1 true
+particle minecraft:soul_fire_flame ~ ~1 ~ {AURA_RADIUS / 2} 0.5 {AURA_RADIUS / 2} 0 12 normal
 """)
 

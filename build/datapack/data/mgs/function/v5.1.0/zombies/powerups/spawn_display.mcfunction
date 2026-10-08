@@ -3,7 +3,7 @@
 #
 # @executed	at @s
 #
-# @within	mgs:v5.1.0/zombies/dog_max_ammo_at_self with storage mgs:temp _pu_spawn
+# @within	mgs:v5.1.0/zombies/max_ammo_at_self with storage mgs:temp _pu_spawn
 #			mgs:v5.1.0/zombies/powerups/do_spawn_random with storage mgs:temp _pu_spawn
 #			mgs:v5.1.0/zombies/powerups/intercept_item with storage mgs:temp _pu_spawn
 #

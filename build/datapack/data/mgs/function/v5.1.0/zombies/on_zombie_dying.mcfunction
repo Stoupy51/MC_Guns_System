@@ -17,6 +17,9 @@ kill @n[type=minecraft:marker,tag=mgs.death_watch,distance=..1]
 # Dogs never roll the drop table: a dog round only drops the Max Ammo of its last hound.
 execute unless entity @s[tag=mgs.zb_dog] run function mgs:v5.1.0/zombies/powerups/check_drop
 
+# Armed zombies always drop a Max Ammo, whatever killed them.
+execute if entity @s[tag=mgs.zb_armed] run function mgs:v5.1.0/zombies/max_ammo_at_self
+
 # Dogs: "was this the last one" needs an exact count.
 execute if entity @s[tag=mgs.zb_dog] run function mgs:v5.1.0/zombies/dog_death
 

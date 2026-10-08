@@ -6,6 +6,8 @@
 # @within	mgs:v5.1.0/zombies/types/normal with storage mgs:temp _zb_hp
 #			mgs:v5.1.0/zombies/types/fast with storage mgs:temp _zb_hp
 #			mgs:v5.1.0/zombies/types/tank with storage mgs:temp _zb_hp
+#			mgs:v5.1.0/zombies/types/armed with storage mgs:temp _zb_hp
+#			mgs:v5.1.0/zombies/types/aura with storage mgs:temp _zb_hp
 #
 # @args		val (unknown)
 #

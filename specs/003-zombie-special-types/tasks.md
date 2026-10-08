@@ -60,12 +60,13 @@ description: "Task list for zombie special types"
 
 **Goal**: An armed zombie that attacks at range and drops ammo.
 
-- [ ] T016 [US2] Implement `types/armed` base stats in `types/armed.py` and give it a visibly armed look
-- [ ] T017 [US2] Implement the ranged attack tick: line of sight check, cooldown, damage application, and a firing cue the player can hear and locate
-- [ ] T018 [US2] Gate the attack tick on armed zombies being alive, the same count-gated pattern the escort system uses, so it costs nothing when none are out
-- [ ] T019 [US2] Hook the guaranteed ammo power-up into `src/functional/zombies/rewards/powerups/drops.py` on armed-zombie death, bypassing the random roll
+- [X] T016 [US2] Implement `types/armed` base stats in `types/armed.py` and give it a visibly armed look
+- [X] T017 [US2] Implement the ranged attack tick: line of sight check, cooldown, damage application, and a firing cue the player can hear and locate
+- [X] T018 [US2] Gate the attack tick on armed zombies being alive, the same count-gated pattern the escort system uses, so it costs nothing when none are out
+- [X] T019 [US2] Hook the guaranteed ammo power-up into `src/functional/zombies/rewards/powerups/drops.py` on armed-zombie death, bypassing the random roll
+  Built on the Missions gun AI (`mob/default/on_new`, `mob/tick`, gated by `#armed_mob_count`); the Max Ammo drops from `on_zombie_dying` through `max_ammo_at_self`, shared with the last hound.
 - [ ] T020 [US2] Verify the drop fires on every death path: shot, trap, nuke, and the round-end cleanup
-- [ ] T021 [US2] Delete the armed TODO comment
+- [X] T021 [US2] Delete the armed TODO comment
 
 ---
 
@@ -73,9 +74,10 @@ description: "Task list for zombie special types"
 
 **Goal**: An aura zombie that makes nearby zombies tougher, and dies first because of it.
 
-- [ ] T022 [US3] Add the `aura` row to `types/table.py` with a hard cap of one alive at a time (FR-010)
-- [ ] T023 [US3] Implement `types/aura` in `types/aura.py`: base stats plus an unmistakable look, since the whole mechanic depends on players spotting it
-- [ ] T024 [US3] Implement the aura tick on an interval (roughly every 10 ticks), applying resistance to zombies in radius through an attribute modifier or a short effect that lapses on its own
+- [X] T022 [US3] Add the `aura` row to `types/table.py` with a hard cap of one alive at a time (FR-010)
+- [X] T023 [US3] Implement `types/aura` in `types/aura.py`: base stats plus an unmistakable look, since the whole mechanic depends on players spotting it
+- [X] T024 [US3] Implement the aura tick on an interval (roughly every 10 ticks), applying resistance to zombies in radius through an attribute modifier or a short effect that lapses on its own
+  The tick runs once a second with a 2 s Resistance II, so it lapses on its own within 2 s of the aura zombie's death.
 - [ ] T025 [US3] Make the resistance lift when the aura zombie dies, whether it lapses naturally or is cleared explicitly, and verify it on a nuke that kills the whole wave at once
 - [ ] T026 [US3] Measure the aura tick with F3+L against a full horde, before and after, and confirm no measurable MSPT change (SC-005)
 - [ ] T027 [US3] Verify a zombie inside the aura takes measurably more shots to kill than the same zombie outside it
