@@ -95,9 +95,7 @@ scoreboard players set #do_pap_sound {ns}.data 0
 execute if data storage {ns}:gun all.stats.pap_level if data storage {ns}:gun all.sounds.pap_fire run scoreboard players set #do_pap_sound {ns}.data 1
 execute if score #do_pap_sound {ns}.data matches 1 run function {ns}:v{version}/sound/fire_pap with storage {ns}:gun all.sounds
 
-## TODO: a mode check to choose between fire and fire_alt.
-execute if score #do_pap_sound {ns}.data matches 0 if data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_alt with storage {ns}:gun all.sounds
-execute if score #do_pap_sound {ns}.data matches 0 unless data storage {ns}:gun all.sounds.fire_alt run function {ns}:v{version}/sound/fire_simple with storage {ns}:gun all.sounds
+execute if score #do_pap_sound {ns}.data matches 0 run function {ns}:v{version}/sound/fire_simple with storage {ns}:gun all.sounds
 
 # Sniper rifles.
 execute if data storage {ns}:gun all.sounds.cycle run function {ns}:v{version}/sound/cycle with storage {ns}:gun all.sounds
@@ -111,10 +109,6 @@ $playsound {ns}:$(pap_fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 	write_versioned_function("sound/fire_simple", f"""
 $playsound {ns}:$(fire) player @s ~ ~ ~ 0.10
 $playsound {ns}:$(fire) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
-""")
-	write_versioned_function("sound/fire_alt", f"""
-$playsound {ns}:$(fire_alt) player @s ~ ~ ~ 0.10
-$playsound {ns}:$(fire_alt) player @a[distance=0.01..48] ~ ~ ~ 0.35 1 0.10
 """)
 	write_versioned_function("sound/cycle", f"""
 $playsound {ns}:$(cycle) player @s ~ ~ ~ 0.5
