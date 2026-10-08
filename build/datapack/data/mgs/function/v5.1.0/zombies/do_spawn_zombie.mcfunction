@@ -12,8 +12,12 @@ execute if score #zb_round mgs.data matches 6..10 run data modify storage mgs:te
 execute if score #zb_round mgs.data matches 11..15 run data modify storage mgs:temp _zpos.level set value "3"
 execute if score #zb_round mgs.data matches 16.. run data modify storage mgs:temp _zpos.level set value "4"
 
-# Special types ("armed", "fast", "tank") are for Zonweeb; Vanilla always spawns "normal".
+# Special types replace a normal zombie in Zonweeb only, never on a dog round; Vanilla always spawns "normal".
 data modify storage mgs:temp _zpos.type set value "normal"
+scoreboard players set #zb_type_roll mgs.data 0
+execute if data storage mgs:zombies game{variant:"zonweeb"} unless score #zb_dog_round mgs.data matches 1 store result score #zb_type_roll mgs.data run random value 1..100
+execute if score #zb_type_roll mgs.data matches 1..15 if score #zb_round mgs.data matches 5.. run data modify storage mgs:temp _zpos.type set value "fast"
+execute if score #zb_type_roll mgs.data matches 16..23 if score #zb_round mgs.data matches 10.. run data modify storage mgs:temp _zpos.type set value "tank"
 
 function mgs:v5.1.0/zombies/summon_zombie_at with storage mgs:temp _zpos
 

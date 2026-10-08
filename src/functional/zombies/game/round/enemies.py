@@ -1,6 +1,32 @@
 """ Per-type enemy setup and the Treyarch health curve behind it. """
 # Imports
+from dataclasses import dataclass
+from typing import Literal
+
 from stewbeet import Mem, write_versioned_function
+
+
+# Classes
+@dataclass(frozen=True)
+class ZombieType:
+	""" A Zonweeb special zombie, scaled from the round's normal zombie, which it replaces at spawn. """
+	type_id: Literal["fast", "tank"]
+	speed_percent: int
+	health_percent: int
+	""" Of the BO health curve, still capped at 2048. """
+	scale: float
+	""" Body size, so the type reads from across a room. """
+	first_round: int
+	weight: int
+	""" Percent of the spawns from first_round on. """
+
+
+# Constants
+SPECIAL_TYPES: list[ZombieType] = [
+	ZombieType(type_id="fast", speed_percent=125, health_percent=50,  scale=0.85, first_round=5,  weight=15),
+	ZombieType(type_id="tank", speed_percent=75,  health_percent=300, scale=1.25, first_round=10, weight=8),
+]
+""" Rolled in this order at spawn (zombies/do_spawn_zombie): the weights stack into consecutive ranges of 1..100. """
 
 
 # Functions
@@ -8,7 +34,7 @@ def write_enemy_types() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# Each enemy type takes {level:"1".."4"}; stubs fall through to the normal scaling.
+	# Each enemy type takes {level:"1".."4"}; the armed stub falls through to the normal scaling.
 
 	## Normal zombie: scale health and speed, then start the rise.
 	write_versioned_function("zombies/types/normal", f"""
@@ -38,8 +64,9 @@ execute if score #zb_round {ns}.data matches 36.. run attribute @s minecraft:mov
 # Speed 0.29+ is the BO2 sprint gait, which screams (3-5 s clips) instead of groaning (see vocals).
 execute if score #zb_round {ns}.data matches 10.. run tag @s add {ns}.zb_sprint
 
-# From round 15, 10% are walkers (0.20).
-execute if score #zb_round {ns}.data matches 15.. store result score #zb_speed_roll {ns}.data run random value 1..10
+# From round 15, 10% are walkers (0.20); never a special type, whose speed is a factor of the round's.
+scoreboard players set #zb_speed_roll {ns}.data 0
+execute if score #zb_round {ns}.data matches 15.. unless score #zb_no_walker {ns}.data matches 1 store result score #zb_speed_roll {ns}.data run random value 1..10
 execute if score #zb_round {ns}.data matches 15.. if score #zb_speed_roll {ns}.data matches 1 run attribute @s minecraft:movement_speed base set 0.20
 execute if score #zb_round {ns}.data matches 15.. if score #zb_speed_roll {ns}.data matches 1 run tag @s remove {ns}.zb_sprint
 
@@ -116,15 +143,31 @@ attribute @s minecraft:scale base set 1.5
 $function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
 """)
 
-	## Fast zombie stub.
-	write_versioned_function("zombies/types/fast", f"""
-# TODO: higher movement speed, less health.
+	for zombie in SPECIAL_TYPES:
+		write_versioned_function(f"zombies/types/{zombie.type_id}", f"""
+scoreboard players set #zb_no_walker {ns}.data 1
 $function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
+scoreboard players set #zb_no_walker {ns}.data 0
+tag @s add {ns}.zb_{zombie.type_id}
+
+# {zombie.speed_percent}% of the round's speed; the escort taxi reads this base value.
+execute store result storage {ns}:temp _zb_speed.value double {zombie.speed_percent / 100000} run attribute @s minecraft:movement_speed base get 1000
+function {ns}:v{version}/zombies/set_speed with storage {ns}:temp _zb_speed
+execute store result score #zb_speed {ns}.data run attribute @s minecraft:movement_speed base get 1000
+execute if score #zb_speed {ns}.data matches 290.. run tag @s add {ns}.zb_sprint
+execute if score #zb_speed {ns}.data matches ..289 run tag @s remove {ns}.zb_sprint
+
+# {zombie.health_percent}% of the health normal just applied (#zb_hp).
+scoreboard players operation #zb_hp {ns}.data *= #{zombie.health_percent} {ns}.data
+scoreboard players operation #zb_hp {ns}.data /= #100 {ns}.data
+execute if score #zb_hp {ns}.data matches 2049.. run scoreboard players set #zb_hp {ns}.data 2048
+execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
+function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
+
+attribute @s minecraft:scale base set {zombie.scale}
 """)
 
-	## Tank zombie stub.
-	write_versioned_function("zombies/types/tank", f"""
-# TODO: very high health, slow movement.
-$function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
+	write_versioned_function("zombies/set_speed", """
+$attribute @s minecraft:movement_speed base set $(value)
 """)
 
