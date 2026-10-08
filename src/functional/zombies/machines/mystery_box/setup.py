@@ -47,7 +47,7 @@ scoreboard objectives add {ns}.mb.buyer dummy
 		)
 		pool_weights.append(weight)
 
-	# Monkey Bomb: zombies-only tactical for hotbar.6 (wallbuys/give_tactical); holding any counts as owned, so duplicates re-roll.
+	# Monkey Bomb: zombies-only tactical for hotbar.6 (wallbuys/give_tactical); holding monkey bombs counts as owned, so duplicates re-roll.
 	pool_entries.append(
 		f'{{weapon_id:"monkey_bomb",'
 		f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/monkey_bomb",'

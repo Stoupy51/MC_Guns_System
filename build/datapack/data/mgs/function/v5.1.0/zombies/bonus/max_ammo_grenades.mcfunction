@@ -6,7 +6,7 @@
 # @within	mgs:zombies/bonus/max_ammo
 #
 
-# Tactical slot (hotbar.6, Monkey Bombs): back to 3, never granted from an empty slot (tacticals only come from the Mystery Box or a wall-buy).
+# Tactical slot (hotbar.6: monkey bombs, smoke, flash): back to 3, never granted from an empty slot (tacticals only come from the Mystery Box or a wall-buy).
 execute if items entity @s hotbar.6 *[custom_data~{mgs:{gun:true}}] run item modify entity @s hotbar.6 mgs:v5.1.0/grenade/set_count_3
 
 # Lethal slot (hotbar.7): back to 4.

@@ -59,6 +59,7 @@ specs/006-weapon-fire-modes-tacticals/
 
 ```text
 src/config/stats/weapons/grenades.py             # SMOKE and FLASH gain "tactical": True; LETHAL_GRENADE_IDS shrinks
+src/database/camo.py                             # Camo exclusion keyed on monkey_bomb, not on the tactical flag
 src/functional/zombies/player/inventory/
 ├── grenades.py                                  # give_lethal_type, record_lethal_type, the refill paths
 └── loadout.py                                   # Starting loadout, lethal_type reset

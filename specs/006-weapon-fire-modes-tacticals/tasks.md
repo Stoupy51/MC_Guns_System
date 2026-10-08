@@ -26,17 +26,17 @@ The two stories are independent. Either can ship alone.
 
 ### Handle the enum before moving anything
 
-- [ ] T001 [US1] Document in `src/config/stats/weapons/grenades.py` that `LETHAL_GRENADE_IDS` order defines the `mgs.zb.lethal_type` enum from 0, so its indices are load-bearing and reordering it renumbers live player scores
-- [ ] T002 [US1] Make an out-of-range `lethal_type` fall back to the default lethal in `src/functional/zombies/player/inventory/grenades.py`, so a player carrying the old index 2 or 3 gets frags rather than an empty slot (FR-004)
+- [X] T001 [US1] Document in `src/config/stats/weapons/grenades.py` that `LETHAL_GRENADE_IDS` order defines the `mgs.zb.lethal_type` enum from 0, so its indices are load-bearing and reordering it renumbers live player scores
+- [X] T002 [US1] Make an out-of-range `lethal_type` fall back to the default lethal in `src/functional/zombies/player/inventory/grenades.py`, so a player carrying the old index 2 or 3 gets frags rather than an empty slot (FR-004)
 - [ ] T003 [US1] Verify the fallback with the current list: set `mgs.zb.lethal_type` to 9 by hand, end a round, and confirm the slot refills with frags
 
 ### Move smoke and flash
 
-- [ ] T004 [US1] Add `"tactical": True` to the smoke and flash grenade definitions in `grenades.py`, matching the monkey bomb, so the camo pipeline skips them and the inventory routes them to the tactical slot
-- [ ] T005 [US1] Remove `smoke_grenade` and `flash_grenade` from `LETHAL_GRENADE_IDS` and delete the TODO comment on that line (FR-002, FR-009)
-- [ ] T006 [US1] Extend the wallbuy purchase path in `src/functional/zombies/objects/wallbuys/` to record a tactical purchase the way it records a lethal, so a bought tactical survives a refill (FR-005)
-- [ ] T007 [US1] Make every refill path fill the lethal and tactical slots independently: round-end replenish, Max Ammo, item recovery, and the starting loadout in `player/inventory/loadout.py` (FR-003)
-- [ ] T008 [US1] Confirm the Widow's Wine web-grenade override still forces webs into the lethal slot for its owners on every refill path (FR-006)
+- [X] T004 [US1] Add `"tactical": True` to the smoke and flash grenade definitions in `grenades.py`, matching the monkey bomb, so wallbuys route them to the tactical slot. `database/camo.py` excludes only `monkey_bomb`, so smoke and flash keep the camos multiplayer loadouts use
+- [X] T005 [US1] Remove `smoke_grenade` and `flash_grenade` from `LETHAL_GRENADE_IDS` and delete the TODO comment on that line (FR-002, FR-009)
+- [X] T006 [US1] Extend the wallbuy purchase path in `src/functional/zombies/objects/wallbuys/` to record a tactical purchase the way it records a lethal, so a bought tactical survives a refill (FR-005)
+- [X] T007 [US1] Make every refill path fill the lethal and tactical slots independently: round-end replenish, Max Ammo, item recovery, and the starting loadout in `player/inventory/loadout.py` (FR-003)
+- [X] T008 [US1] Confirm the Widow's Wine web-grenade override still forces webs into the lethal slot for its owners on every refill path (FR-006)
 
 ### Verify
 
