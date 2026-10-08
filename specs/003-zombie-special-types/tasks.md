@@ -26,10 +26,10 @@ description: "Task list for zombie special types"
 
 **Purpose**: The type table and the spawn roll. Every type after this is a table row plus one module.
 
-- [ ] T002 Define a `ZombieType` dataclass in `src/functional/zombies/enemies/types/table.py` with one explicit keyword-argument constructor call per type: id, distinguishing tag, speed factor, health factor, first round, spawn weight
+- [X] T002 Define a `ZombieType` dataclass (in `game/round/enemies.py` until T001 moves it to `src/functional/zombies/enemies/types/table.py`) with one explicit keyword-argument constructor call per type: id, distinguishing tag, speed factor, health factor, first round, spawn weight
 - [ ] T003 Extract the BO health curve into `types/curve.py` (`calc_zombie_hp`, `apply_zombie_hp`, `apply_dog_hp`) and have every type call it instead of restating it
-- [ ] T004 Replace the hardcoded `data modify storage {ns}:temp _zpos.type set value "normal"` in `src/functional/zombies/game/round/spawning.py` with a weighted roll generated from the `types.py` table
-- [ ] T005 Gate the roll on the Zonweeb variant, so the Vanilla variant always rolls `normal` (FR-001), and skip it entirely on dog rounds (FR-009)
+- [X] T004 Replace the hardcoded `data modify storage {ns}:temp _zpos.type set value "normal"` in `src/functional/zombies/game/round/spawning.py` with a weighted roll generated from the `types.py` table
+- [X] T005 Gate the roll on the Zonweeb variant, so the Vanilla variant always rolls `normal` (FR-001), and skip it entirely on dog rounds (FR-009)
 - [ ] T006 Verify the gate before any type exists: a Zonweeb game and a Vanilla game both still spawn only normal zombies, and nothing regressed
 
 **Checkpoint**: The dispatch is live and provably inert. Types can be added one at a time.
@@ -42,15 +42,15 @@ description: "Task list for zombie special types"
 
 **Independent Test**: Zonweeb game, `/scoreboard players set #zb_round mgs.data 20`, watch a wave.
 
-- [ ] T007 [US1] Rewrite `types/normal` in `types/normal.py` to read its speed and health factors from the table, so every other type scales against one reference rather than against a copied ladder
-- [ ] T008 [P] [US1] Implement `types/fast` in `types/fast.py`: speed above the round's normal value, health below it, and a distinguishing tag
-- [ ] T009 [P] [US1] Implement `types/tank` in `types/tank.py`: health well above the round's normal value, speed below it, and a distinguishing tag
-- [ ] T010 [US1] Make sure the fast type and the round-15 10% walker roll cannot combine into a fast zombie slower than a normal one
+- [X] T007 [US1] Keep `types/normal` as the single reference: special types run it, then scale its speed and health by their table percentages
+- [X] T008 [P] [US1] Implement `types/fast` in `types/fast.py`: speed above the round's normal value, health below it, and a distinguishing tag
+- [X] T009 [P] [US1] Implement `types/tank` in `types/tank.py`: health well above the round's normal value, speed below it, and a distinguishing tag
+- [X] T010 [US1] Make sure the fast type and the round-15 10% walker roll cannot combine into a fast zombie slower than a normal one
 - [ ] T011 [US1] Verify tank health stays under the 2048 cap in `curve.py` at rounds 40, 50 and 80
-- [ ] T012 [P] [US1] Give fast and tank a visual difference (scale, equipment or a subtle glow) so they read from across a room
+- [X] T012 [P] [US1] Give fast and tank a visual difference (scale, equipment or a subtle glow) so they read from across a room
 - [ ] T013 [US1] Verify the escort taxi speed derivation still matches at both ends: force a fast zombie and a tank zombie into an escort and confirm each taxi moves at its passenger's speed
 - [ ] T014 [US1] Verify kills, points, power-up rolls, nukes, traps, barricades and round completion all treat both types as ordinary zombies
-- [ ] T015 [US1] Delete the fast and tank TODO comments
+- [X] T015 [US1] Delete the fast and tank TODO comments
 
 **Checkpoint**: Waves are varied. This alone is worth shipping.
 

@@ -1,12 +1,22 @@
 """ Spawn pacing, proximity marker selection, activation boxes and the dog spawn portals. """
 # Imports
+from itertools import accumulate
+
 from stewbeet import Mem, write_versioned_function
+
+from .enemies import SPECIAL_TYPES
 
 
 # Functions
 def write_round_spawning() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+
+	type_rolls: str = "\n".join(
+		f'execute if score #zb_type_roll {ns}.data matches {upper - zombie.weight + 1}..{upper} if score #zb_round {ns}.data matches {zombie.first_round}.. '
+		f'run data modify storage {ns}:temp _zpos.type set value "{zombie.type_id}"'
+		for zombie, upper in zip(SPECIAL_TYPES, accumulate(z.weight for z in SPECIAL_TYPES), strict=True)
+	)
 
 	## Spawn timer max(1, 20 - round) ticks, batch floor((round - 1) / 50) + 1.
 	write_versioned_function("zombies/calc_spawn_timer", f"""
@@ -86,8 +96,11 @@ execute if score #zb_round {ns}.data matches 6..10 run data modify storage {ns}:
 execute if score #zb_round {ns}.data matches 11..15 run data modify storage {ns}:temp _zpos.level set value "3"
 execute if score #zb_round {ns}.data matches 16.. run data modify storage {ns}:temp _zpos.level set value "4"
 
-# Special types ("armed", "fast", "tank") are for Zonweeb; Vanilla always spawns "normal".
+# Special types replace a normal zombie in Zonweeb only, never on a dog round; Vanilla always spawns "normal".
 data modify storage {ns}:temp _zpos.type set value "normal"
+scoreboard players set #zb_type_roll {ns}.data 0
+execute if data storage {ns}:zombies game{{variant:"zonweeb"}} unless score #zb_dog_round {ns}.data matches 1 store result score #zb_type_roll {ns}.data run random value 1..100
+{type_rolls}
 
 function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
 
