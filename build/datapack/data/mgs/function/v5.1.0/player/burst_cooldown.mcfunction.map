@@ -1,10 +1,10 @@
 {
 	"version": 3,
-	"file": "init_burst_clicks.mcfunction",
+	"file": "burst_cooldown.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
 		"src/functional/weapon/firing/raycast/clicks.py"
 	],
 	"names": [],
-	"mappings": "AAuEsD;;;;;;;;AACtD;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAuEmD;;;;;;;;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

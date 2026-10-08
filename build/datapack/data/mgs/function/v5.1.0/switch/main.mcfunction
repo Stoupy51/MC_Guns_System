@@ -7,6 +7,7 @@
 #
 
 execute if data storage mgs:gun all.gun unless data storage mgs:gun all.stats.weapon_id run function mgs:v5.1.0/switch/set_weapon_id
+execute if data storage mgs:gun all.stats.base_weapon unless data storage mgs:gun all.stats.fire_modes run function mgs:v5.1.0/switch/adopt_fire_modes with storage mgs:gun all.stats
 
 # A different weapon than last tick starts the switch cooldown.
 scoreboard players set #current_id mgs.data 0

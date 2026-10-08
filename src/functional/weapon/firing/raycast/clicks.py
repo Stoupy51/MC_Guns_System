@@ -3,10 +3,10 @@
 from stewbeet import Mem, write_versioned_function
 
 from .....config.stats.keys import (
-	BURST,
 	COOLDOWN,
 	DAMAGE,
 	FIRE_MODE,
+	FIRE_MODES,
 	GRENADE_TYPE,
 	PELLET_COUNT,
 	PROJECTILE_SPEED,
@@ -22,27 +22,26 @@ def write_click_handling() -> None:
 # From the fire mode and the held-click state.
 scoreboard players set #bullets_to_fire {ns}.data 1
 
-execute store result score #fire_mode_is_semi {ns}.data if data storage {ns}:gun all.stats{{{FIRE_MODE}:"semi"}}
 execute store result score #fire_mode_is_burst {ns}.data if data storage {ns}:gun all.stats{{{FIRE_MODE}:"burst"}}
 
-# Semi: single taps only.
-execute if score #fire_mode_is_semi {ns}.data matches 1 if score @s {ns}.held_click matches 1.. run return fail
+# Semi and pump: single taps only.
+execute if score @s {ns}.held_click matches 1.. if data storage {ns}:gun all.stats{{{FIRE_MODE}:"semi"}} run return fail
+execute if score @s {ns}.held_click matches 1.. if data storage {ns}:gun all.stats{{{FIRE_MODE}:"pump"}} run return fail
 
 # Burst: no more once the burst limit is reached.
-execute if score #fire_mode_is_burst {ns}.data matches 1 store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{BURST}
+execute if score #fire_mode_is_burst {ns}.data matches 1 store result score #burst_limit {ns}.data run data get storage {ns}:gun all.stats.{FIRE_MODES}[0].burst
 execute if score #fire_mode_is_burst {ns}.data matches 1 if score @s {ns}.burst_count >= #burst_limit {ns}.data run return fail
 
-# First shot of a burst: pending_clicks = (BURST - 1) x COOLDOWN sustains it.
-execute if score #fire_mode_is_burst {ns}.data matches 1 if score @s {ns}.burst_count matches 0 run function {ns}:v{version}/player/init_burst_clicks
-
-execute if score #fire_mode_is_burst {ns}.data matches 1 run scoreboard players add @s {ns}.burst_count 1
-
-# Auto: continuous fire.
-
-# As an expiry tick: now + cooldown.
+# The fire mode's cooldown when it has one, its Pack-a-Punch value on an upgraded gun.
 execute store result score #cooldown {ns}.data run data get storage {ns}:gun all.stats.{COOLDOWN}
+execute if data storage {ns}:gun all.stats.{FIRE_MODES}[0].cooldown store result score #cooldown {ns}.data run data get storage {ns}:gun all.stats.{FIRE_MODES}[0].cooldown
+execute if data storage {ns}:gun all.stats.pap_level if data storage {ns}:gun all.stats.{FIRE_MODES}[0].pap_cooldown store result score #cooldown {ns}.data run data get storage {ns}:gun all.stats.{FIRE_MODES}[0].pap_cooldown
+execute if score #fire_mode_is_burst {ns}.data matches 1 run function {ns}:v{version}/player/burst_cooldown
+
 # Timeslip (zombies): halves the throw cooldown of grenades and equipment.
 execute if score @s {ns}.special.timeslip matches 1 if data storage {ns}:gun all.stats.{GRENADE_TYPE} run scoreboard players operation #cooldown {ns}.data /= #2 {ns}.data
+
+# As an expiry tick: now + cooldown.
 scoreboard players operation #cooldown {ns}.data += #total_tick {ns}.data
 scoreboard players operation @s {ns}.cooldown = #cooldown {ns}.data
 
@@ -69,13 +68,21 @@ execute if data storage {ns}:gun all.stats.{PROJECTILE_SPEED} run return run fun
 function {ns}:v{version}/player/shoot
 """)
 
-	write_versioned_function("player/init_burst_clicks", f"""
-execute store result score #burst_clicks {ns}.data run data get storage {ns}:gun all.stats.{BURST}
-scoreboard players remove #burst_clicks {ns}.data 1
-execute store result score #cooldown_value {ns}.data run data get storage {ns}:gun all.stats.{COOLDOWN}
-scoreboard players operation #burst_clicks {ns}.data *= #cooldown_value {ns}.data
+	# #cooldown holds the weapon's cooldown on entry and leaves with this round's.
+	write_versioned_function("player/burst_cooldown", f"""
+execute if data storage {ns}:gun all.stats.{FIRE_MODES}[0].burst_spacing store result score #cooldown {ns}.data run data get storage {ns}:gun all.stats.{FIRE_MODES}[0].burst_spacing
 
-scoreboard players operation @s {ns}.pending_clicks = #burst_clicks {ns}.data
+# First round: pending_clicks = (burst - 1) x spacing sustains the burst without the button held.
+execute if score @s {ns}.burst_count matches 0 run scoreboard players operation @s {ns}.pending_clicks = #burst_limit {ns}.data
+execute if score @s {ns}.burst_count matches 0 run scoreboard players remove @s {ns}.pending_clicks 1
+execute if score @s {ns}.burst_count matches 0 run scoreboard players operation @s {ns}.pending_clicks *= #cooldown {ns}.data
+
+scoreboard players add @s {ns}.burst_count 1
+
+# Last round: the pause before the next burst.
+scoreboard players set #burst_pause {ns}.data 0
+execute if score @s {ns}.burst_count >= #burst_limit {ns}.data store result score #burst_pause {ns}.data run data get storage {ns}:gun all.stats.{FIRE_MODES}[0].burst_pause
+scoreboard players operation #cooldown {ns}.data += #burst_pause {ns}.data
 """)
 
 	write_versioned_function("player/shoot", f"""

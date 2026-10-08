@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.1.0/player/right_click
+#			mgs:v5.1.0/sound/check/pump
 #
 
 scoreboard players set #is_zoom mgs.data 0

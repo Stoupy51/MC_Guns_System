@@ -9,6 +9,11 @@
 			"source": "all.stats.fire_mode",
 			"target": "mgs.stats.fire_mode",
 			"op": "replace"
+		},
+		{
+			"source": "all.stats.fire_modes",
+			"target": "mgs.stats.fire_modes",
+			"op": "replace"
 		}
 	]
 }

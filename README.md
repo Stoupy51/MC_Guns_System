@@ -105,7 +105,7 @@ Major differences in 5.0 (Minecraft 26.3+) compared to MGS 4.2:
 - Slow projectiles (RPG-like travel + explosion).
 - Throwable grenades (frag, semtex, smoke, flash).
 - Ammo + reload + reserve ammo management.
-- Fire mode switching (semi/auto/burst where available).
+- Fire mode switching on drop, with each weapon's original modes (auto, semi, burst, pump).
 - Quick swap and quick reload modifiers.
 - Recoil and casing ejection.
 - Actionbar weapon HUD.

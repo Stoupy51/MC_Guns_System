@@ -3,6 +3,7 @@
 from stewbeet import JsonDict
 
 from ..casings import CASING_12GA3IN, CASING_12GA275IN
+from ..fire_modes import PUMP, FireMode
 from ..keys import (
 	ACCURACY_BASE,
 	ACCURACY_JUMP,
@@ -19,7 +20,6 @@ from ..keys import (
 	COOLDOWN,
 	DAMAGE,
 	DECAY,
-	FIRE_MODE,
 	KICK,
 	PAP_NAME,
 	PAP_STATS,
@@ -33,10 +33,15 @@ from ..keys import (
 from ..sounds import PUMP_SOUNDS, gun_sounds
 
 # Constants
+SPAS12_SEMI: FireMode = FireMode(
+	name="semi", cooldown=9, pap_cooldown=7, accuracy_sneak=230, fire_sound="spas12/fire_semi", pap_fire_sound="spas12/pap_fire_semi",
+)
+""" The original selector's second position: no pump, faster, steadier when crouched. pap_cooldown keeps the PaP's 16 to 12 ratio. """
+
 # Shotguns
 SPAS12: JsonDict = {
 	"stats": {
-		BASE_WEAPON: "spas12", FIRE_MODE: "semi", SINGLE_RELOAD: True,
+		BASE_WEAPON: "spas12", **FireMode.stats(PUMP, SPAS12_SEMI), SINGLE_RELOAD: True,
 		CAPACITY: 8, RELOAD_TIME: 20, COOLDOWN: 16, PELLET_COUNT: 3, DAMAGE: 13, DECAY: 0.82, WEIGHT: 5,
 		ACCURACY_BASE: 230, ACCURACY_SNEAK: 190, ACCURACY_WALK: 300, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
 		SWITCH: 25, KICK: 6, CASING_MODEL: CASING_12GA275IN, CASING_NORMAL: 25, CASING_TANGENT: 100, CASING_BINORMAL: -200,
@@ -61,7 +66,7 @@ SPAS12: JsonDict = {
 
 M500: JsonDict = {
 	"stats": {
-		BASE_WEAPON: "m500", FIRE_MODE: "semi", SINGLE_RELOAD: True,
+		BASE_WEAPON: "m500", **FireMode.stats(PUMP), SINGLE_RELOAD: True,
 		CAPACITY: 5, RELOAD_TIME: 22, COOLDOWN: 18, PELLET_COUNT: 3, DAMAGE: 14, DECAY: 0.82, WEIGHT: 4,
 		ACCURACY_BASE: 250, ACCURACY_SNEAK: 200, ACCURACY_WALK: 350, ACCURACY_SPRINT: 900, ACCURACY_JUMP: 1600,
 		SWITCH: 20, KICK: 7, CASING_MODEL: CASING_12GA3IN, CASING_NORMAL: 25, CASING_TANGENT: 100, CASING_BINORMAL: -200,
@@ -86,7 +91,7 @@ M500: JsonDict = {
 
 M590: JsonDict = {
 	"stats": {
-		BASE_WEAPON: "m590", FIRE_MODE: "semi", SINGLE_RELOAD: True,
+		BASE_WEAPON: "m590", **FireMode.stats(PUMP), SINGLE_RELOAD: True,
 		CAPACITY: 8, RELOAD_TIME: 22, COOLDOWN: 19, PELLET_COUNT: 3, DAMAGE: 14, DECAY: 0.82, WEIGHT: 4,
 		ACCURACY_BASE: 210, ACCURACY_SNEAK: 175, ACCURACY_WALK: 325, ACCURACY_SPRINT: 800, ACCURACY_JUMP: 1500,
 		SWITCH: 35, KICK: 5, CASING_MODEL: CASING_12GA3IN, CASING_NORMAL: 50, CASING_TANGENT: 80, CASING_BINORMAL: -220,

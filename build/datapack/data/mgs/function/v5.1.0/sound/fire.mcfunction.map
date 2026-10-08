@@ -1,10 +1,10 @@
 {
 	"version": 3,
-	"file": "fire_simple.mcfunction",
+	"file": "fire.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
 		"src/functional/weapon/firing/sound.py"
 	],
 	"names": [],
-	"mappings": "AA4G+C;;;;;;;;;;AAC/C;AACA;AACA"
+	"mappings": "AA8GwC;;;;;;;;;;;AACxC;AACA;AACA"
 }

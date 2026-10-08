@@ -8,6 +8,7 @@ from .....config.stats.keys import (
 	ACCURACY_SNEAK,
 	ACCURACY_SPRINT,
 	ACCURACY_WALK,
+	FIRE_MODES,
 )
 
 
@@ -24,6 +25,7 @@ execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{versio
 
 execute unless predicate {ns}:v{version}/is_on_ground run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_JUMP}
 
+execute if predicate {ns}:v{version}/is_sneaking if data storage {ns}:gun all.stats.{FIRE_MODES}[0].accuracy_sneak run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{FIRE_MODES}[0].accuracy_sneak
 execute if predicate {ns}:v{version}/is_sneaking run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_SNEAK}
 
 execute if predicate {ns}:v{version}/is_sprinting run return run data modify storage {ns}:gun accuracy set from storage {ns}:gun all.stats.{ACCURACY_SPRINT}
