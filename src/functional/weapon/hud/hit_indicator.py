@@ -40,7 +40,6 @@ GLYPH_CHARS: str = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz01234567
 """ Codepoints for the sector glyphs; any character works, these need no SNBT/JSON escaping. """
 
 # Functions
-# TODO: in 26.3, use the new post shader command instead (not yet).
 def main() -> None:
 	ns: str = Mem.ctx.project_id
 	assert 36000 % SECTORS == 0, f"SECTORS={SECTORS} must divide 36000 (yaw range in centidegrees)"
