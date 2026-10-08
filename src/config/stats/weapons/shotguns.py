@@ -56,7 +56,7 @@ SPAS12: JsonDict = {
 			DAMAGE: [26, 31, 37, 44, 52],
 		},
 	},
-	"sounds": gun_sounds("spas12", "fire", "pap_fire", "fire_alt", "reload", "pump", crack="largest")
+	"sounds": gun_sounds("spas12", *PUMP_SOUNDS, crack="largest")
 }
 
 M500: JsonDict = {

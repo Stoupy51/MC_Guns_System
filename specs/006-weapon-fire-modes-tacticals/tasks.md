@@ -58,16 +58,17 @@ The two stories are independent. Either can ship alone.
 
 ### Decide what `fire_alt` means before implementing the TODO
 
-- [ ] T014 [US2] Listen to `assets/sounds/spas12/fire.ogg` and `fire_alt.ogg` and establish what actually differs between them
-- [ ] T015 [US2] Check whether the SPAS-12 has a second fire mode at all. Its declared `FIRE_MODE` in `src/config/stats/weapons/shotguns.py` is `semi`, so the TODO's "mode check" may be describing a mode that was never implemented
-- [ ] T016 [US2] Write the decision into a comment above the dispatch: either a real fire-mode check, an alternating variation on successive shots, or a distance or acoustics condition. If the answer is that `fire_alt` was a spare, delete the sound and the branch instead
+- [X] T014 [US2] Listen to `assets/sounds/spas12/fire.ogg` and `fire_alt.ogg` and establish what actually differs between them
+- [X] T015 [US2] Check whether the SPAS-12 has a second fire mode at all. Its declared `FIRE_MODE` in `src/config/stats/weapons/shotguns.py` is `semi`, so the TODO's "mode check" may be describing a mode that was never implemented
+- [X] T016 [US2] Write the decision into a comment above the dispatch: either a real fire-mode check, an alternating variation on successive shots, or a distance or acoustics condition. If the answer is that `fire_alt` was a spare, delete the sound and the branch instead
+  Decision, from `based_of/guns/031`: `fire_alt` is the semi-auto mode of a pump/semi fire selector the port dropped. The SPAS-12 keeps its pump stats and plays `fire`; the clips are kept as `fire_semi` and `pap_fire_semi` for spec 008
 
 ### Implement
 
-- [ ] T017 [US2] Replace the unconditional `if data ... fire_alt` branch in `src/functional/weapon/firing/sound.py` with the chosen condition, and delete the TODO comment (FR-007, FR-009)
-- [ ] T018 [US2] Confirm `pap_fire` still wins over both when the weapon is Pack-a-Punched (FR-008)
-- [ ] T019 [US2] Confirm every weapon that defines only `fire` is unchanged, since all but one are in that category
-- [ ] T020 [US2] Fire the SPAS-12 under both conditions and confirm neither clip is dead audio (SC-003)
+- [X] T017 [US2] Replace the unconditional `if data ... fire_alt` branch in `src/functional/weapon/firing/sound.py` with the chosen condition, and delete the TODO comment (FR-007, FR-009)
+- [X] T018 [US2] Confirm `pap_fire` still wins over both when the weapon is Pack-a-Punched (FR-008)
+- [X] T019 [US2] Confirm every weapon that defines only `fire` is unchanged, since all but one are in that category
+- [ ] T020 [US2] Fire the SPAS-12 and hear the pump-action `fire` clip, as the shooter and as another player (SC-003)
 
 ---
 
