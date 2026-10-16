@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-16
 
-**Status**: B1 to B6, B8 to B10, L5 and L6 built, not tested in game. B7 waits on FR-012; L1, L3 and L4 are open.
+**Status**: B1 to B6, B8 to B10, L1, L3, L5, L6 and FR-012 built. Played with two clients: a match stopped beside a zombies run in the Nether left the run whole, and no message crossed. B7 waits on a dimension with its own clock; L4 and the tab list (`setdisplay list`, server-wide) are open.
 
 **Input**: Can one Multiplayer match, one Missions run and one Zombies run play at the same time on one
 server without interfering: messages, kills, scores, and everything else? Progression and achievements
@@ -28,7 +28,7 @@ something from another game.
 | B6 | Each stop runs `player/fx_reset` and stamina and hunger resets on `@a`. | `helpers/lifecycle.py` (`regen_disable_lines`) | Ending a mode strips scopes, crosshairs and flashes from players of the other modes. |
 | B7 | Gamerules are global: `natural_health_regeneration`, `keep_inventory`, `immediate_respawn`, `advance_time`, `max_entity_cramming`, `spawn_mobs`; zombies also runs `time set 18000`. | `helpers/lifecycle.py`, every `start.py` and `stop.py`, `zombies/enemies/escort/hooks.py` | Ending one mode turns natural regen back on for the others. Zombies freezes the time of day for everyone. |
 | B8 | `mgs.mp.death_count` and `mgs.mp.spectate_timer` are shared, and each start resets them on `@a`. | every `start.py`, `zombies/player/revive/down.py` | A start in one mode can cancel a respawn or spectate timer in progress in another. |
-| B9 | Missions players join the `mgs.blue` team with `mp.team=1`, and the match stop runs `team leave @a[team=mgs.blue]` and resets `mp.team` on `@a`. | `core/player_menus.py`, `missions/game/stop.py`, `multiplayer/game/stop.py` | Ending a match takes mission players out of their team. |
+| B9 | Missions players join the `mgs.blue` team with `mp.team=1`, and the match stop and the FFA setup run `team leave @a[team=mgs.blue]` and reset `mp.team` on `@a`. | `core/player_menus.py`, `missions/game/stop.py`, `multiplayer/game/stop.py`, `multiplayer/gamemodes/free_for_all.py` | Starting an FFA or ending a match takes mission players out of their team. |
 | B10 | Map scripts are entries of one function tag per script (`#mgs:maps/tick_script`), each guarded only by its own mode's state and map. | `core/commands.py`, `zombies/maps.py`, `multiplayer/maps.py` | The zombies tick runs the match map's tick script too, at the zombies base, and the reverse. |
 
 ### Leaks
@@ -47,7 +47,7 @@ something from another game.
 - Each mode's own per-player objectives (`mp.*`, `mi.*`, `zb.*`) and fake players (`#mp_*`, `#mi_*`, `#zb_*`).
 - XP listeners check both the mode state and the player's `in_game` (`multiplayer/xp.py`, `missions/xp.py`, `zombies/xp.py`).
 - Simulated deaths route by `in_game` (`main/damage.py`).
-- A player is in one team at a time. Missions shares `mgs.blue` with Team Deathmatch, which is harmless once B9 is fixed, since the arenas are apart and teammates cannot hurt each other.
+- A player is in one team at a time, and each mode has its own teams: `mgs.red`, `mgs.blue` and `mgs.ffa` (gold) for matches, `mgs.missions` (aqua), `mgs.zombies` (yellow). Their colors differ, so a sidebar shown per team color stays in its mode.
 - Post effects are per player.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -108,10 +108,10 @@ in the reverse order, then in another order. After each stop, the remaining game
 - **FR-008**: Gamerules MUST be set to the value needed by the modes still running: a stop restores a global default only when no other mode is active. Zombies time of day stops being global with FR-012.
 - **FR-009**: Shared respawn objectives (`mp.death_count`, `mp.spectate_timer`) MUST only be reset for the mode's players.
 - **FR-010**: Joining any mode MUST be refused while the player is in another one.
-- **FR-011**: The sidebar MUST be shown per team (`sidebar.team.<color>`) or per mode in a way that does not leak to other modes.
+- **FR-011**: The sidebar MUST be shown per team color (`sidebar.team.<color>`): red, blue and gold for matches, yellow for zombies.
 - **FR-013**: `shared/maps/call_script_at_base` MUST take the calling mode, place the script at that mode's base, and every map script MUST check that mode before running.
 - **FR-014**: Out-of-bounds markers MUST carry their mode tag, and each mode MUST only check its own.
-- **FR-012**: Zombies MUST run in its own dimension (`mgs:zombies`, to add), with a dimension type fixing its time of day, so that `time set` and `advance_time` no longer touch the other modes. Zombies maps move into it.
+- **FR-012**: A map MUST carry the dimension it is in (`dimension` in its data, recorded by the map editor on save, overworld when absent), for every mode. Each entry point of a mode (`shared/enter_map`, `MAP_ENTRIES` in `core/commands.py`) MUST run in that dimension, so summons, teleports and forceloads land there. A Zombies map in a dimension of its own keeps `time set` and `advance_time` from reaching the other modes only if that dimension has its own clock; adding such a dimension is a separate step.
 
 ### Key Entities
 

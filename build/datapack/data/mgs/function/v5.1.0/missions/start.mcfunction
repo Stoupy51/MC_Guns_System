@@ -6,6 +6,8 @@
 # @within	dialog mgs:v5.1.0/missions/setup
 #
 
+execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"missions",fn:"mgs:v5.1.0/missions/start"}
+
 execute if data storage mgs:missions game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_already_in_progress","color":"red"}]
 execute if data storage mgs:missions game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_already_preparing","color":"red"}]
 
@@ -40,7 +42,7 @@ scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.spectate_timer 0
 scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.death_count 0
 
 scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 1
-team join mgs.blue @a[scores={mgs.mi.in_game=1}]
+team join mgs.missions @a[scores={mgs.mi.in_game=1}]
 
 tag @a[scores={mgs.mi.in_game=1}] add mgs.give_class_menu
 
@@ -82,5 +84,5 @@ execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/shared/tp_to_po
 
 schedule function mgs:v5.1.0/missions/preload_complete 20t
 
-tellraw @a ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.loading_mission_area","color":"yellow"}]
+tellraw @a[scores={mgs.mi.in_game=1}] ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.loading_mission_area","color":"yellow"}]
 

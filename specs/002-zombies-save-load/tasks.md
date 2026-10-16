@@ -28,7 +28,7 @@ description: "Task list for zombies suspend, resume, save and load"
 - [X] T008 [US1] Admin menu: Pause, Resume and End for a suspended run (FR-006)
 - [ ] T009 [US1] Verify solo quit and reopen mid-round and between rounds (SC-001)
 - [ ] T010 [US1] Verify a co-op restart, one player leaving and coming back, and a downed player leaving (SC-002, US1/AC3, US1/AC4)
-- [ ] T011 [US1] Verify a player offline when the run ended comes back clean (SC-003)
+- [X] T011 [US1] Verify a player offline when the run ended comes back clean (SC-003)
 
 **Checkpoint**: Shippable alone. It fixes the lost runs.
 

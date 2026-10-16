@@ -7,5 +7,7 @@
 #
 
 function mgs:v5.1.0/multiplayer/refresh_sidebar_dom
-scoreboard objectives setdisplay sidebar mgs.sidebar
+scoreboard objectives setdisplay sidebar.team.red mgs.sidebar
+scoreboard objectives setdisplay sidebar.team.blue mgs.sidebar
+scoreboard objectives setdisplay sidebar.team.gold mgs.sidebar
 

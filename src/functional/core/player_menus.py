@@ -164,7 +164,7 @@ execute if score @s {ns}.mi.in_game matches 0 if data storage {ns}:missions game
 execute if score @s {ns}.mi.in_game matches 0 if data storage {ns}:missions game{{state:"preparing"}} run function {ns}:v{version}/missions/join_game
 scoreboard players set @s {ns}.mi.in_game 1
 scoreboard players set @s {ns}.mp.team 1
-team join {ns}.blue @s
+team join {ns}.missions @s
 tellraw @s ["",{{"text":"Joined the ","color":"white"}},{{"text":"Mission","color":"aqua","bold":true}}]
 """)
 

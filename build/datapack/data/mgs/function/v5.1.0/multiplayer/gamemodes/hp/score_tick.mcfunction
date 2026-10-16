@@ -5,10 +5,10 @@
 #
 
 # Only an uncontested zone scores.
-execute if score #hp_red mgs.data matches 1.. unless score #hp_blue mgs.data matches 1.. at @e[tag=mgs.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
+execute if score #hp_red mgs.data matches 1.. unless score #hp_blue mgs.data matches 1.. at @e[tag=mgs.hp_marker] run playsound minecraft:block.note_block.bell player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.2
 execute if score #hp_red mgs.data matches 1.. unless score #hp_blue mgs.data matches 1.. run scoreboard players add #red mgs.mp.team 1
 
-execute if score #hp_blue mgs.data matches 1.. unless score #hp_red mgs.data matches 1.. at @e[tag=mgs.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
+execute if score #hp_blue mgs.data matches 1.. unless score #hp_red mgs.data matches 1.. at @e[tag=mgs.hp_marker] run playsound minecraft:block.note_block.bell player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.2
 execute if score #hp_blue mgs.data matches 1.. unless score #hp_red mgs.data matches 1.. run scoreboard players add #blue mgs.mp.team 1
 
 # First side to hold this hill since it rotated.

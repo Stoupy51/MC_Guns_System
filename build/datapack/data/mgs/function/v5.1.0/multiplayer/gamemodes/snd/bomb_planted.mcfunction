@@ -25,5 +25,5 @@ tag @s add mgs.xp_earner
 execute as @e[tag=mgs.snd_obj,limit=1,sort=nearest] at @s run function mgs:v5.1.0/multiplayer/gamemodes/snd/place_planted_bomb
 tag @a remove mgs.xp_earner
 
-playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
+playsound minecraft:block.note_block.pling player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 0.5
 

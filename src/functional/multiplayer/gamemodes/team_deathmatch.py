@@ -19,7 +19,7 @@ class TeamDeathmatch(GameModeVariant):
 # Players with no team are assigned one, so team scores can rise.
 execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=0}}] run function {ns}:v{version}/multiplayer/auto_assign_team
 
-tellraw @a [{MGS_TAG},{{"text":"Team Deathmatch! First team to the score limit wins!","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Team Deathmatch! First team to the score limit wins!","color":"yellow"}}]
 """)
 
 		## Scoring is done by the kill signal.

@@ -33,11 +33,11 @@ class SndRounds:
 execute if data storage {ns}:multiplayer game{{state:"lobby"}} run return fail
 execute if data storage {ns}:multiplayer game{{state:"ended"}} run return fail
 
-tellraw @a [{MGS_TAG},{{"text":"Round ","color":"gold"}},{{"score":{{"name":"#snd_round","objective":"{ns}.data"}},"color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Round ","color":"gold"}},{{"score":{{"name":"#snd_round","objective":"{ns}.data"}},"color":"yellow"}}]
 
-execute if score #snd_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
-execute if score #snd_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
-playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
+execute if score #snd_attackers {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
+execute if score #snd_attackers {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
+playsound minecraft:block.note_block.harp player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 
 scoreboard players set #snd_bomb_state {ns}.data 0
 scoreboard players set #snd_bomb_timer {ns}.data 0
@@ -81,7 +81,7 @@ scoreboard players set #snd_round_active {ns}.data 0
 execute if score #snd_attackers {ns}.data matches 1 run scoreboard players add #red {ns}.mp.team 1
 execute if score #snd_attackers {ns}.data matches 2 run scoreboard players add #blue {ns}.mp.team 1
 {RoundXp.result_lines(ns, "#snd_attackers", attackers_won=True, note="(Attackers) win the round!")}
-playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
+playsound minecraft:entity.player.levelup player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
 """)
@@ -94,7 +94,7 @@ scoreboard players set #snd_round_active {ns}.data 0
 execute if score #snd_attackers {ns}.data matches 1 run scoreboard players add #blue {ns}.mp.team 1
 execute if score #snd_attackers {ns}.data matches 2 run scoreboard players add #red {ns}.mp.team 1
 {RoundXp.result_lines(ns, "#snd_attackers", attackers_won=False, note="(Defenders) win the round!")}
-playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
+playsound minecraft:entity.player.levelup player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/snd/next_round
 """)
@@ -119,8 +119,8 @@ execute if score #blue {ns}.mp.team >= #snd_win_threshold {ns}.data run return r
 scoreboard players add #snd_round {ns}.data 1
 execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} if score #snd_attackers {ns}.data matches 1 run scoreboard players set #snd_attackers {ns}.data 2
 execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} if score #snd_attackers {ns}.data matches 2 run scoreboard players set #snd_attackers {ns}.data 1
-execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run tellraw @a [{MGS_TAG},{{"text":"⚔ ","color":"white"}},{{"text":"Sides swapped!","color":"gold"}}]
-execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
+execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"⚔ ","color":"white"}},{{"text":"Sides swapped!","color":"gold"}}]
+execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run playsound minecraft:block.note_block.xylophone player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 # 3 s later.
 schedule function {ns}:v{version}/multiplayer/gamemodes/snd/start_round 60t
 """)

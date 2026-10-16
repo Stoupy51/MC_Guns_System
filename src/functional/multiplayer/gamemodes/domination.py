@@ -16,7 +16,7 @@ class Domination(GameModeVariant):
 		version: str = self.version
 
 		self.sub("setup", f"""
-tellraw @a [{MGS_TAG},{{"text":"Domination! Capture and hold zones to earn points!","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Domination! Capture and hold zones to earn points!","color":"yellow"}}]
 
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 
@@ -160,7 +160,7 @@ tag @a remove {CAPTURER}
 {neut_guard} run tag {nearby} add {CAPTURER}
 {neutralize_labels}
 {Xp.give("mp", "dom_neutralize", f"@a[tag={CAPTURER}]")}
-{neut_guard} run playsound minecraft:block.note_block.bass player @a ~ ~ ~ 1 0.5
+{neut_guard} run playsound minecraft:block.note_block.bass player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 0.5
 {neut_guard} run scoreboard players set @s {ns}.mp.dom_owner 0
 {neut_guard} run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "yellow"
 
@@ -168,7 +168,7 @@ tag @a remove {CAPTURER}
 {cap_guard} run tag {nearby} add {CAPTURER}
 {capture_labels}
 {Xp.give("mp", "dom_capture", f"@a[tag={CAPTURER}]")}
-{cap_guard} run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 {pitch}
+{cap_guard} run playsound minecraft:block.note_block.bell player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 {pitch}
 {cap_guard} run data modify entity @n[tag={ns}.dom_label,distance=..1] text.color set value "{color}"
 {cap_guard} run scoreboard players set @s {ns}.mp.dom_owner {owner_id}
 tag @a remove {CAPTURER}

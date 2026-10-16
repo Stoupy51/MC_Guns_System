@@ -22,7 +22,7 @@ class Hardpoint(GameModeVariant):
 		version: str = self.version
 
 		self.sub("setup", f"""
-tellraw @a [{MGS_TAG},{{"text":"Hardpoint! Control the zone to score!","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Hardpoint! Control the zone to score!","color":"yellow"}}]
 
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 
@@ -75,8 +75,8 @@ scoreboard players add #hp_zone_idx {ns}.data 1
 
 function {ns}:v{version}/multiplayer/gamemodes/hp/summon_marker with storage {ns}:temp _hp_pos
 
-tellraw @a [{MGS_TAG},{{"text":"⚡ ","color":"white"}},{{"text":"Hardpoint ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true}},{{"text":" active!","color":"dark_purple"}}]
-playsound minecraft:block.note_block.chime player @a ~ ~ ~ 1 1.0
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"⚡ ","color":"white"}},{{"text":"Hardpoint ","color":"dark_purple"}},{{"storage":"{ns}:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true}},{{"text":" active!","color":"dark_purple"}}]
+playsound minecraft:block.note_block.chime player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 """)
 
 		self.sub("summon_marker", f"""
@@ -133,10 +133,10 @@ execute if score #hp_score_timer {ns}.data matches ..0 run scoreboard players se
 		)
 		self.sub("score_tick", f"""
 # Only an uncontested zone scores.
-execute {alone[1]} at @e[tag={ns}.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
+execute {alone[1]} at @e[tag={ns}.hp_marker] run playsound minecraft:block.note_block.bell player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.2
 execute {alone[1]} run scoreboard players add #red {ns}.mp.team 1
 
-execute {alone[2]} at @e[tag={ns}.hp_marker] run playsound minecraft:block.note_block.bell player @a ~ ~ ~ 1 1.2
+execute {alone[2]} at @e[tag={ns}.hp_marker] run playsound minecraft:block.note_block.bell player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.2
 execute {alone[2]} run scoreboard players add #blue {ns}.mp.team 1
 
 # First side to hold this hill since it rotated.

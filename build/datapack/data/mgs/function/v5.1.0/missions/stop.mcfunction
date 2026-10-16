@@ -6,7 +6,7 @@
 #			dialog mgs:v5.1.0/missions/setup
 #
 
-function mgs:v5.1.0/shared/use_map_frame {mode:"missions"}
+execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"missions",fn:"mgs:v5.1.0/missions/stop"}
 
 data modify storage mgs:missions game.state set value "lobby"
 schedule clear mgs:v5.1.0/missions/end_prep
@@ -40,7 +40,7 @@ scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.stam_seen 0
 # Every shader id off, so nothing survives into the lobby.
 execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
+tellraw @a[scores={mgs.mi.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
 
 execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"missions",script:"leave"}
 

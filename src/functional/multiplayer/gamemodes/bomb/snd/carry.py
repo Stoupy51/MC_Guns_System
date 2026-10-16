@@ -52,7 +52,7 @@ summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_loose","{ns}.multiplayer_e
 		variant.sub("recover_bomb", f"""
 execute at @e[tag={ns}.snd_carrier_label,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
 kill @e[tag={ns}.snd_carrier_label]
-tellraw @a [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier left the game: bomb dropped!","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier left the game: bomb dropped!","color":"yellow"}}]
 """)
 
 		## Run as a living player standing on the loose bomb.
@@ -67,7 +67,7 @@ kill @e[tag={ns}.snd_loose]
 summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.snd_carrier_label","{ns}.multiplayer_entity"],billboard:"vertical",teleport_duration:1,text:[{{"text":"💣","color":"white"}}],transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:false}}
 
 {Xp.announce("mp", "bomb_pickup", f'{MGS_TAG},{{"text":"💣 ","color":"white"}},{Text.player(ns, "@s")},{{"text":" picked up the bomb!","color":"gold"}}')}
-playsound minecraft:item.armor.equip_chain player @a ~ ~ ~ 1 1.2
+playsound minecraft:item.armor.equip_chain player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.2
 """)
 
 		## The carrier died: the bomb drops where they fell, so the attack can go on.
@@ -75,6 +75,6 @@ playsound minecraft:item.armor.equip_chain player @a ~ ~ ~ 1 1.2
 tag @s remove {ns}.snd_carrier
 execute at @e[tag={ns}.snd_carrier_label,limit=1] run function {ns}:v{version}/multiplayer/gamemodes/snd/spawn_loose_bomb
 kill @e[tag={ns}.snd_carrier_label]
-tellraw @a [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier is down!","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"The bomb carrier is down!","color":"yellow"}}]
 """)
 

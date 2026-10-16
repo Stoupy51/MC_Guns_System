@@ -3,8 +3,9 @@
 	"file": "freeze_tick.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
+		"src/functional/core/commands.py",
 		"src/functional/zombies/game/lifecycle/tick.py"
 	],
 	"names": [],
-	"mappings": "AAsIiD;;;;;;AACjD;AACA;AACA;AACA;AACA"
+	"mappings": ";;;;;;AA8HK;ACQ4C;AACjD;AACA;AACA;AACA;AACA"
 }

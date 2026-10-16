@@ -3,8 +3,9 @@
 	"file": "respawn_tp.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
+		"src/functional/core/commands.py",
 		"src/functional/multiplayer/game/spawns.py"
 	],
 	"names": [],
-	"mappings": "AAyHoD;;;;;;;AACpD;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": ";;;;;;;AA8HK;ACL+C;AACpD;AACA;AACA;AACA;AACA;AACA;AACA"
 }

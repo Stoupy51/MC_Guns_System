@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/multiplayer/start
 #
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.search_destroy_carry_the_bomb_to_a_site_or_defend_both","color":"yellow"}]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.search_destroy_carry_the_bomb_to_a_site_or_defend_both","color":"yellow"}]
 
 function mgs:v5.1.0/shared/load_base_coordinates {mode:"multiplayer"}
 

@@ -43,7 +43,7 @@ description: "Task list for fire modes faithful to the original"
 ## Phase 5: Verification
 
 - [X] T013 Build, `verify.py check --diff` limited to the intended functions and item data, `verify.py lint` on the touched files
-- [ ] T014 In game: drop each gun of `_give_all` and compare its cycle with FR-002 (SC-001, SC-002)
+- [X] T014 In game: drop each gun of `_give_all` and compare its cycle with FR-002 (SC-001, SC-002)
 - [ ] T015 In game: SPAS-12 ten shots per mode, pump and shell timing, crouched spread, both semi clips, PaP semi (SC-003, SC-005)
 - [ ] T016 In game: an AK-47 left in burst and a SPAS-12 from before the update, held once, follow the new lists (SC-004)
 - [ ] T017 In game: M16A4 and FAMAS bursts, counting ticks between rounds and before the next burst

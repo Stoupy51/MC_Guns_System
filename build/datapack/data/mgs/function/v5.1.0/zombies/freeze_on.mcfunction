@@ -11,5 +11,5 @@ function mgs:v5.1.0/zombies/freeze_world
 
 title @a[scores={mgs.zb.in_game=1}] times 5 60 10
 title @a[scores={mgs.zb.in_game=1}] title [{"text":"⏸","color":"white"}]
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_froze_the_game","color":"aqua"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_froze_the_game","color":"aqua"}]
 

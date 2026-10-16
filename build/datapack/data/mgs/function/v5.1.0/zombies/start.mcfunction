@@ -7,6 +7,8 @@
 #			dialog mgs:v5.1.0/zombies/setup
 #
 
+execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.1.0/zombies/start"}
+
 execute if data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_already_in_progress","color":"red"}]
 execute if data storage mgs:zombies game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_already_preparing","color":"red"}]
 
@@ -100,7 +102,7 @@ function #mgs:zombies/register_mystery_box_item
 
 schedule function mgs:v5.1.0/zombies/preload_complete 20t
 
-tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.loading_zombies_map","color":"yellow"}]
+tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.loading_zombies_map","color":"yellow"}]
 
 scoreboard players set #zb_escort_count mgs.data 0
 scoreboard players set #zb_escort_mode mgs.data 0

@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/summon_start_command_marker
 #
+# @executed	at @s
+#
 # @within	mgs:v5.1.0/maps/editor/summon_start_command_iter with storage mgs:temp _cpos
 #			mgs:v5.1.0/maps/editor/handle_start_command with storage mgs:temp _pos
 #

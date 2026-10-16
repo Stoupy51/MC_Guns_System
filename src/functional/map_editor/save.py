@@ -49,6 +49,9 @@ data modify storage {ns}:temp _session_enemy_fn set from storage {ns}:temp map_e
 execute store result storage {ns}:temp map_edit.idx int 1 run scoreboard players get @s {ns}.mp.map_idx
 function {ns}:v{version}/maps/editor/load_map_data with storage {ns}:temp map_edit
 
+# The map lives in the dimension it is edited in.
+data modify storage {ns}:temp map_edit.map.dimension set from entity @s Dimension
+
 execute if data storage {ns}:temp _session_enemy_fn run data modify storage {ns}:temp map_edit.map.default_enemy_function set from storage {ns}:temp _session_enemy_fn
 data remove storage {ns}:temp _session_enemy_fn
 

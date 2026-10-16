@@ -22,7 +22,9 @@ execute as @a[scores={mgs.mp.map_edit=1}] run function mgs:v5.1.0/maps/editor/gi
 execute store result storage mgs:temp _tp.x int 1 run scoreboard players get #base_x mgs.data
 execute store result storage mgs:temp _tp.y int 1 run scoreboard players get #base_y mgs.data
 execute store result storage mgs:temp _tp.z int 1 run scoreboard players get #base_z mgs.data
-execute as @a[scores={mgs.mp.map_edit=1}] run function mgs:v5.1.0/shared/tp_to_position with storage mgs:temp _tp
+data modify storage mgs:temp _tp.dimension set value "minecraft:overworld"
+data modify storage mgs:temp _tp.dimension set from storage mgs:temp map_edit.map.dimension
+execute as @a[scores={mgs.mp.map_edit=1}] run function mgs:v5.1.0/maps/editor/tp_to_map with storage mgs:temp _tp
 
 tellraw @a[scores={mgs.mp.map_edit=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.editor_session_synced_for_all_players","color":"aqua"}]
 

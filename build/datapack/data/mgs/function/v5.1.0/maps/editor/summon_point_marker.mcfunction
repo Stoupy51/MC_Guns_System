@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/summon_point_marker
 #
+# @executed	at @s
+#
 # @within	mgs:v5.1.0/maps/editor/summon_point_iter with storage mgs:temp _ppos
 #			mgs:v5.1.0/maps/editor/handle_point with storage mgs:temp _pos
 #

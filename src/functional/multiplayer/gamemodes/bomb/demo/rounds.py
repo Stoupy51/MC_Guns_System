@@ -41,11 +41,11 @@ execute if data storage {ns}:multiplayer game{{state:"lobby"}} run return fail
 execute if data storage {ns}:multiplayer game{{state:"ended"}} run return fail
 
 # The decider is announced as such but plays like any round.
-tellraw @a [{MGS_TAG},{{"text":"Round ","color":"gold"}},{{"score":{{"name":"#demo_round","objective":"{ns}.data"}},"color":"yellow"}}]
-execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run tellraw @a [{MGS_TAG},{{"text":"⚡ ","color":"white"}},{{"text":"TIE-BREAK ROUND: most kills defends!","color":"gold","bold":true}}]
-execute if score #demo_attackers {ns}.data matches 1 run tellraw @a [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks both sites | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
-execute if score #demo_attackers {ns}.data matches 2 run tellraw @a [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks both sites | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
-playsound minecraft:block.note_block.harp player @a ~ ~ ~ 1 1.0
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Round ","color":"gold"}},{{"score":{{"name":"#demo_round","objective":"{ns}.data"}},"color":"yellow"}}]
+execute if score #demo_round {ns}.data matches {TIEBREAK_ROUND}.. run tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"⚡ ","color":"white"}},{{"text":"TIE-BREAK ROUND: most kills defends!","color":"gold","bold":true}}]
+execute if score #demo_attackers {ns}.data matches 1 run tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Red","color":"red"}},{{"text":" attacks both sites | "}},{{"text":"Blue","color":"blue"}},{{"text":" defends"}}]
+execute if score #demo_attackers {ns}.data matches 2 run tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Blue","color":"blue"}},{{"text":" attacks both sites | "}},{{"text":"Red","color":"red"}},{{"text":" defends"}}]
+playsound minecraft:block.note_block.harp player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 
 {DemoSites.reset_lines(variant)}
 
@@ -80,7 +80,7 @@ scoreboard players set #demo_round_active {ns}.data 0
 execute if score #demo_attackers {ns}.data matches 1 run scoreboard players add #red {ns}.mp.team 1
 execute if score #demo_attackers {ns}.data matches 2 run scoreboard players add #blue {ns}.mp.team 1
 {RoundXp.result_lines(ns, "#demo_attackers", attackers_won=True, note="destroyed both sites!")}
-playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
+playsound minecraft:entity.player.levelup player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/demo/next_round
 """)
@@ -93,7 +93,7 @@ scoreboard players set #demo_round_active {ns}.data 0
 execute if score #demo_attackers {ns}.data matches 1 run scoreboard players add #blue {ns}.mp.team 1
 execute if score #demo_attackers {ns}.data matches 2 run scoreboard players add #red {ns}.mp.team 1
 {RoundXp.result_lines(ns, "#demo_attackers", attackers_won=False, note="held the sites!")}
-playsound minecraft:entity.player.levelup player @a ~ ~ ~ 1 1.0
+playsound minecraft:entity.player.levelup player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 
 function {ns}:v{version}/multiplayer/gamemodes/demo/next_round
 """)
@@ -125,8 +125,8 @@ function {ns}:v{version}/multiplayer/game_draw
 		variant.sub("swap_sides", f"""
 execute if score #demo_attackers {ns}.data matches 1 run scoreboard players set #demo_attackers {ns}.data 2
 execute unless score #demo_attackers {ns}.data matches 2 run scoreboard players set #demo_attackers {ns}.data 1
-tellraw @a [{MGS_TAG},{{"text":"⚔ ","color":"white"}},{{"text":"Sides swapped!","color":"gold"}}]
-playsound minecraft:block.note_block.xylophone player @a ~ ~ ~ 1 1.0
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"⚔ ","color":"white"}},{{"text":"Sides swapped!","color":"gold"}}]
+playsound minecraft:block.note_block.xylophone player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 """)
 
 		## The team with most kills defends, so this replaces swap_sides and can give one side two attacks in a row.
@@ -143,7 +143,7 @@ scoreboard players set #demo_attackers {ns}.data 1
 execute if score #demo_kills_red {ns}.data > #demo_kills_blue {ns}.data run scoreboard players set #demo_attackers {ns}.data 2
 
 # start_round announces the defenders, so only the tie case is spelled out.
-tellraw @a [{MGS_TAG},{{"text":"Kills: ","color":"gray"}},{{"text":"Red ","color":"red"}},{{"score":{{"name":"#demo_kills_red","objective":"{ns}.data"}},"color":"white"}},{{"text":" - ","color":"gray"}},{{"text":"Blue ","color":"blue"}},{{"score":{{"name":"#demo_kills_blue","objective":"{ns}.data"}},"color":"white"}}]
-execute if score #demo_kills_red {ns}.data = #demo_kills_blue {ns}.data run tellraw @a [{MGS_TAG},{{"text":"Kills are level, so ","color":"yellow"}},{{"text":"Blue","color":"blue"}},{{"text":" defends.","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Kills: ","color":"gray"}},{{"text":"Red ","color":"red"}},{{"score":{{"name":"#demo_kills_red","objective":"{ns}.data"}},"color":"white"}},{{"text":" - ","color":"gray"}},{{"text":"Blue ","color":"blue"}},{{"score":{{"name":"#demo_kills_blue","objective":"{ns}.data"}},"color":"white"}}]
+execute if score #demo_kills_red {ns}.data = #demo_kills_blue {ns}.data run tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Kills are level, so ","color":"yellow"}},{{"text":"Blue","color":"blue"}},{{"text":" defends.","color":"yellow"}}]
 """)
 

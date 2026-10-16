@@ -1,10 +1,10 @@
 
 #> mgs:v5.1.0/zombies/calc_zombie_hp
 #
-# @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
+# @executed	as @e[type=minecraft:wolf,tag=...]
 #
-# @within	mgs:v5.1.0/zombies/types/normal
-#			mgs:v5.1.0/zombies/types/dog
+# @within	mgs:v5.1.0/zombies/types/dog
+#			mgs:v5.1.0/zombies/types/normal
 #
 
 execute if score #zb_round mgs.data matches ..9 run scoreboard players operation #zb_hp mgs.data = #zb_round mgs.data

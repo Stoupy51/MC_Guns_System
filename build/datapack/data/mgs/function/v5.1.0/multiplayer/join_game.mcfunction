@@ -6,6 +6,8 @@
 #			dialog mgs:v5.1.0/multiplayer/setup
 #
 
+execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.1.0/multiplayer/join_game"}
+
 # Require an active game
 execute unless data storage mgs:multiplayer game{state:"active"} unless data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_active_game_to_join","color":"red"}]
 

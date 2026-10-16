@@ -34,11 +34,13 @@ execute store result score #base_z mgs.data run data get storage mgs:temp map_ed
 execute store result storage mgs:temp _tp.x int 1 run scoreboard players get #base_x mgs.data
 execute store result storage mgs:temp _tp.y int 1 run scoreboard players get #base_y mgs.data
 execute store result storage mgs:temp _tp.z int 1 run scoreboard players get #base_z mgs.data
-function mgs:v5.1.0/shared/tp_to_position with storage mgs:temp _tp
+data modify storage mgs:temp _tp.dimension set value "minecraft:overworld"
+data modify storage mgs:temp _tp.dimension set from storage mgs:temp map_edit.map.dimension
+function mgs:v5.1.0/maps/editor/tp_to_map with storage mgs:temp _tp
 
-# Then their model displays.
-function mgs:v5.1.0/maps/editor/summon_existing
-function mgs:v5.1.0/maps/editor/refresh_displays
+# Then their model displays, where the editor now stands.
+execute at @s run function mgs:v5.1.0/maps/editor/summon_existing
+execute at @s run function mgs:v5.1.0/maps/editor/refresh_displays
 
 function mgs:v5.1.0/maps/editor/give_tools
 

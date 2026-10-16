@@ -26,7 +26,7 @@ class SearchAndDestroy(GameModeVariant):
 		version: str = self.version
 
 		self.sub("setup", f"""
-tellraw @a [{MGS_TAG},{{"text":"Search & Destroy! Carry the bomb to a site, or defend both!","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Search & Destroy! Carry the bomb to a site, or defend both!","color":"yellow"}}]
 
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 

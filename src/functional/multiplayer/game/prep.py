@@ -27,6 +27,6 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s 
 # The state is now active and chunks had time to load.
 function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"multiplayer",script:"start"}}
 
-tellraw @a ["","⚔ ",[{{"text":"","color":"green","bold":true}},{{"text":"GO! GO! GO!"}}]]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","⚔ ",[{{"text":"","color":"green","bold":true}},{{"text":"GO! GO! GO!"}}]]
 """)
 

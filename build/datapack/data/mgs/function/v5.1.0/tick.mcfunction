@@ -4,6 +4,10 @@
 # @within	mgs:v5.1.0/load/tick_verification
 #
 
+scoreboard players set #in_zombies_map mgs.data 0
+scoreboard players set #in_multiplayer_map mgs.data 0
+scoreboard players set #in_missions_map mgs.data 0
+
 scoreboard players add #total_tick mgs.data 1
 
 # #tick_delta = real ticks since the previous game tick (about 1 at 20 TPS, 2+ under lag); mode timers subtract it so durations stay wall-clock accurate.

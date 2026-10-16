@@ -53,7 +53,9 @@ def write_multiplayer_sidebar() -> None:
 	write_versioned_function("multiplayer/create_sidebar_team", f"""
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"$(title)",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_limit}]}}
-scoreboard objectives setdisplay sidebar {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.red {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.blue {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.gold {ns}.sidebar
 """)
 
 	# FFA: ranks players by kills (top 10). Also creates the sidebar (start calls it for ffa); runs every second and on kills.
@@ -84,13 +86,17 @@ function {ns}:v{version}/multiplayer/build_sidebar_ffa with storage {ns}:temp
 tag @a remove {ns}.ffa_candidate
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Free For All",color:"gold",bold:true}},contents:$(ffa_sb)}}
-scoreboard objectives setdisplay sidebar {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.red {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.blue {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.gold {ns}.sidebar
 """)
 
 	## Domination: rebuilt on each score tick, since the sidebar cannot express conditionals.
 	write_versioned_function("multiplayer/create_sidebar_dom", f"""
 function {ns}:v{version}/multiplayer/refresh_sidebar_dom
-scoreboard objectives setdisplay sidebar {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.red {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.blue {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.gold {ns}.sidebar
 """)
 
 	# Runs every score tick (5 s) and on captures. Each zone line is exactly two components (label left, owner right):
@@ -110,7 +116,9 @@ function {ns}:v{version}/multiplayer/build_sidebar_dom with storage {ns}:temp do
 	write_versioned_function("multiplayer/build_sidebar_dom", f"""
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Domination",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},$(a),$(b),$(c),{sb_spacer},{sb_limit}]}}
-scoreboard objectives setdisplay sidebar {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.red {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.blue {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.gold {ns}.sidebar
 """)
 
 	## Search & Destroy: the ⏱ line is the round clock, then the fuse once planted. Rebuilt like domination, since the attacking side and bomb state are text.
@@ -120,7 +128,9 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 
 	write_versioned_function("multiplayer/create_sidebar_snd", f"""
 function {ns}:v{version}/multiplayer/refresh_sidebar_snd
-scoreboard objectives setdisplay sidebar {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.red {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.blue {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.gold {ns}.sidebar
 """)
 
 	write_versioned_function("multiplayer/refresh_sidebar_snd", f"""
@@ -137,7 +147,9 @@ function {ns}:v{version}/multiplayer/build_sidebar_snd with storage {ns}:temp sn
 	write_versioned_function("multiplayer/build_sidebar_snd", f"""
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Search & Destroy",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_snd_round},$(atk),$(bomb),{sb_spacer},{sb_snd_limit}]}}
-scoreboard objectives setdisplay sidebar {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.red {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.blue {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.gold {ns}.sidebar
 """)
 
 	## Demolition: site rows are read off the site markers (mgs.demo_state), each intact, planted or destroyed on its own.
@@ -152,7 +164,9 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 
 	write_versioned_function("multiplayer/create_sidebar_demo", f"""
 function {ns}:v{version}/multiplayer/refresh_sidebar_demo
-scoreboard objectives setdisplay sidebar {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.red {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.blue {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.gold {ns}.sidebar
 """)
 
 	write_versioned_function("multiplayer/refresh_sidebar_demo", f"""
@@ -173,7 +187,9 @@ function {ns}:v{version}/multiplayer/build_sidebar_demo with storage {ns}:temp d
 	write_versioned_function("multiplayer/build_sidebar_demo", f"""
 scoreboard players reset * {ns}.sidebar
 $function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Demolition",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_demo_round},[$(atk_label),$(atk_team)],{sb_spacer},$(a),$(b)]}}
-scoreboard objectives setdisplay sidebar {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.red {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.blue {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.gold {ns}.sidebar
 """)
 
 	## Hardpoint: team scores, controlling team, time to move. The seconds and their unit share the right half (two components per line).
@@ -184,6 +200,8 @@ scoreboard objectives setdisplay sidebar {ns}.sidebar
 	write_versioned_function("multiplayer/create_sidebar_hp", f"""
 scoreboard players reset * {ns}.sidebar
 function #bs.sidebar:create {{objective:"{ns}.sidebar",display_name:{{text:"Hardpoint",color:"gold",bold:true}},contents:[{sb_timer},{sb_spacer},{sb_red},{sb_blue},{sb_spacer},{sb_hp_rotate},{sb_spacer},{sb_limit}]}}
-scoreboard objectives setdisplay sidebar {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.red {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.blue {ns}.sidebar
+scoreboard objectives setdisplay sidebar.team.gold {ns}.sidebar
 """)
 

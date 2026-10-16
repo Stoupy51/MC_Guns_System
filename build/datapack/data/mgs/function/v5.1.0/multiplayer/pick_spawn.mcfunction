@@ -1,18 +1,16 @@
 
 #> mgs:v5.1.0/multiplayer/pick_spawn
 #
-# @executed	at @s
-#
-# @within	mgs:v5.1.0/multiplayer/tp_all_to_spawns {type:"general"} [ at @s ]
-#			mgs:v5.1.0/multiplayer/tp_all_to_spawns {type:"red"} [ at @s ]
-#			mgs:v5.1.0/multiplayer/tp_all_to_spawns {type:"blue"} [ at @s ]
-#			mgs:v5.1.0/multiplayer/respawn_tp {type:"general"}
+# @within	mgs:v5.1.0/multiplayer/respawn_tp {type:"general"}
 #			mgs:v5.1.0/multiplayer/respawn_tp {type:"red"}
 #			mgs:v5.1.0/multiplayer/respawn_tp {type:"blue"}
-#			mgs:v5.1.0/multiplayer/gamemodes/snd/start_round {type:"red"} [ as @a[scores={mgs.mp.team=1}] & at @s ]
-#			mgs:v5.1.0/multiplayer/gamemodes/snd/start_round {type:"blue"} [ as @a[scores={mgs.mp.team=2}] & at @s ]
 #			mgs:v5.1.0/multiplayer/gamemodes/demo/start_round {type:"red"} [ as @a[scores={mgs.mp.team=1}] & at @s ]
 #			mgs:v5.1.0/multiplayer/gamemodes/demo/start_round {type:"blue"} [ as @a[scores={mgs.mp.team=2}] & at @s ]
+#			mgs:v5.1.0/multiplayer/gamemodes/snd/start_round {type:"red"} [ as @a[scores={mgs.mp.team=1}] & at @s ]
+#			mgs:v5.1.0/multiplayer/gamemodes/snd/start_round {type:"blue"} [ as @a[scores={mgs.mp.team=2}] & at @s ]
+#			mgs:v5.1.0/multiplayer/tp_all_to_spawns {type:"general"} [ at @s ]
+#			mgs:v5.1.0/multiplayer/tp_all_to_spawns {type:"red"} [ at @s ]
+#			mgs:v5.1.0/multiplayer/tp_all_to_spawns {type:"blue"} [ at @s ]
 #
 # @args		type (string)
 #

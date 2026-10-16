@@ -91,7 +91,7 @@ execute store result score #zb_round {ns}.data run data get storage {ns}:zombies
 scoreboard players add #zb_round {ns}.data {delta - 1}
 execute store result storage {ns}:zombies game.round int 1 run scoreboard players get #zb_round {ns}.data
 function {ns}:v{version}/zombies/admin/force_round_end
-tellraw @a [{MGS_TAG},{{"text":"An operator skipped ahead {delta} round(s).","color":"yellow"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"An operator skipped ahead {delta} round(s).","color":"yellow"}}]
 """)
 
 	## One toggle, so the dialog needs no per-state label.
@@ -106,14 +106,14 @@ function {ns}:v{version}/zombies/freeze_on
 		write_versioned_function(f"zombies/admin/points_add_{amount}", f"""
 execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]
 scoreboard players add @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points {amount}
-tellraw @a [{MGS_TAG},{{"text":"An operator granted {amount} points to everyone.","color":"green"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"An operator granted {amount} points to everyone.","color":"green"}}]
 """)
 
 	write_versioned_function("zombies/admin/points_reset", f"""
 execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]
 scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points 0
 scoreboard players operation @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.xp_pts_prev = @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.points
-tellraw @a [{MGS_TAG},{{"text":"An operator reset everyone's points.","color":"red"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"An operator reset everyone's points.","color":"red"}}]
 """)
 
 	## The real activation functions run, so everything behaves as a real pickup. Some act as the collector and need

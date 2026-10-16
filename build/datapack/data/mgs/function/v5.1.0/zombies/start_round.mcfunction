@@ -1,8 +1,8 @@
 
 #> mgs:v5.1.0/zombies/start_round
 #
-# @within	mgs:v5.1.0/zombies/game_tick
-#			mgs:v5.1.0/zombies/end_prep
+# @within	mgs:v5.1.0/zombies/end_prep
+#			mgs:v5.1.0/zombies/game_tick
 #			mgs:zombies/recover
 #
 
@@ -42,11 +42,11 @@ function #mgs:zombies/on_round_start
 
 function mgs:v5.1.0/zombies/refresh_sidebar
 
-execute if score #zb_dog_round mgs.data matches 0 run tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round_2","color":"red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"red"}, {"translate":"mgs.has_begun"}]]
+execute if score #zb_dog_round mgs.data matches 0 run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round_2","color":"red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"red"}, {"translate":"mgs.has_begun"}]]
 execute if score #zb_dog_round mgs.data matches 0 as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_start_generic ambient @s ~ ~ ~ 0.3 1.0
 
 # Dog rounds have their own announcement and howl instead of the round jingle.
-execute if score #zb_dog_round mgs.data matches 1 run tellraw @a ["",{"text":"","color":"dark_red","bold":true},"🐺 ",{"translate":"mgs.round_2","color":"dark_red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":": ","color":"dark_red"}, {"translate":"mgs.the_hounds_are_loose"}]]
+execute if score #zb_dog_round mgs.data matches 1 run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_red","bold":true},"🐺 ",{"translate":"mgs.round_2","color":"dark_red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":": ","color":"dark_red"}, {"translate":"mgs.the_hounds_are_loose"}]]
 execute if score #zb_dog_round mgs.data matches 1 as @a[scores={mgs.zb.in_game=1}] at @s run playsound minecraft:entity.wolf.howl ambient @s ~ ~ ~ 1.0 0.6
 
 # +2, capped at 4.

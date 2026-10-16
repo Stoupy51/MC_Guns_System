@@ -84,7 +84,7 @@ function #{ns}:zombies/register_mystery_box_item
 
 {GameLifecycle.schedule_preload_complete_line(ns, "zombies")}
 
-tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Loading zombies map...","color":"yellow"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Loading zombies map...","color":"yellow"}}]
 """)
 
 	write_versioned_function("zombies/preload_complete", f"""
@@ -118,8 +118,8 @@ schedule function {ns}:v{version}/zombies/end_prep 200t
 function {ns}:v{version}/zombies/create_sidebar
 
 # Perk wording only for Zonweeb.
-execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}}]
-execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}}]
+execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}}]
+execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}}]
 """)
 
 	write_versioned_function("zombies/end_prep", f"""

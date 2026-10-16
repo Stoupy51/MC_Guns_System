@@ -28,5 +28,5 @@ execute if entity @s[tag=mgs.demo_site_C] run tellraw @a[tag=mgs.xp_earner] [[{"
 execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_d","color":"aqua","bold":true}]
 execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused_at_d","color":"aqua","bold":true},[" ",{"text":"+25 XP","color":"gold"}]]
 tag @a remove mgs.xp_earner
-playsound minecraft:block.note_block.bit player @a ~ ~ ~ 1 1.5
+playsound minecraft:block.note_block.bit player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.5
 

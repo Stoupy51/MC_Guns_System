@@ -21,7 +21,7 @@ scoreboard players add #zb_round {ns}.data 1
 execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
 
 function {ns}:v{version}/zombies/refresh_sidebar
-scoreboard objectives setdisplay sidebar {ns}.zb_sidebar
+scoreboard objectives setdisplay sidebar.team.yellow {ns}.zb_sidebar
 """)
 
 	write_versioned_function("zombies/refresh_sidebar", f"""

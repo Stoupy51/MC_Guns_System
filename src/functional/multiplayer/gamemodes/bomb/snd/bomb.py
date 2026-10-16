@@ -59,7 +59,7 @@ tag @s add {ns}.{EARNER_TAG}
 execute as @e[tag={ns}.snd_obj,limit=1,sort=nearest] at @s run function {ns}:v{version}/multiplayer/gamemodes/snd/place_planted_bomb
 tag @a remove {ns}.{EARNER_TAG}
 
-playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
+playsound minecraft:block.note_block.pling player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 0.5
 """)
 
 		## Run as the site, at it: spawns the planted bomb and names the site.
@@ -103,13 +103,13 @@ function {ns}:v{version}/multiplayer/gamemodes/snd/defenders_win
 
 		variant.sub("bomb_explodes", f"""
 execute at @e[tag={ns}.snd_bomb] run particle minecraft:explosion_emitter ~ ~1 ~ 2 2 2 0 5
-execute at @e[tag={ns}.snd_bomb] run playsound minecraft:entity.generic.explode player @a ~ ~ ~ 2 0.8
+execute at @e[tag={ns}.snd_bomb] run playsound minecraft:entity.generic.explode player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 2 0.8
 
 # Players within 10 blocks die.
 execute at @e[tag={ns}.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run data modify storage {ns}:input with set value {{}}
 execute at @e[tag={ns}.snd_bomb] as @a[distance=..10,gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run function {ns}:v{version}/multiplayer/simulate_death
 
-tellraw @a [{MGS_TAG},{{"text":"💥 ","color":"white"}},{{"text":"BOMB EXPLODED!","color":"red","bold":true}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"💥 ","color":"white"}},{{"text":"BOMB EXPLODED!","color":"red","bold":true}}]
 kill @e[tag={ns}.snd_bomb]
 function {ns}:v{version}/multiplayer/gamemodes/snd/attackers_win
 """)

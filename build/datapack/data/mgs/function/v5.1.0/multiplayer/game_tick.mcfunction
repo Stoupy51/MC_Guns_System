@@ -4,7 +4,7 @@
 # @within	mgs:v5.1.0/tick
 #
 
-function mgs:v5.1.0/shared/use_map_frame {mode:"multiplayer"}
+execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.1.0/multiplayer/game_tick"}
 
 # The XP bar is the progression HUD, so a stray orb would show a level nobody earned; tick_player re-asserts the bar every second.
 kill @e[type=experience_orb]

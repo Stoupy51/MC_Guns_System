@@ -174,13 +174,17 @@ team modify mgs.blue color blue
 team modify mgs.blue friendlyFire false
 team modify mgs.blue nametagVisibility hideForOtherTeams
 team add mgs.ffa
-team modify mgs.ffa color yellow
+team modify mgs.ffa color gold
 team modify mgs.ffa friendlyFire true
 team modify mgs.ffa nametagVisibility never
 team add mgs.zombies
 team modify mgs.zombies color yellow
 team modify mgs.zombies friendlyFire false
 team modify mgs.zombies nametagVisibility hideForOtherTeams
+team add mgs.missions
+team modify mgs.missions color aqua
+team modify mgs.missions friendlyFire false
+team modify mgs.missions nametagVisibility hideForOtherTeams
 team add mgs.mi_mobs
 team modify mgs.mi_mobs color dark_red
 team modify mgs.mi_mobs friendlyFire true

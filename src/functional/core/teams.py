@@ -22,11 +22,12 @@ class TeamDef:
 TEAMS: list[TeamDef] = [
 	TeamDef(suffix="red",     color="red",      friendly_fire=False, nametag_visibility="hideForOtherTeams"),
 	TeamDef(suffix="blue",    color="blue",     friendly_fire=False, nametag_visibility="hideForOtherTeams"),
-	TeamDef(suffix="ffa",     color="yellow",   friendly_fire=True,  nametag_visibility="never"),
+	TeamDef(suffix="ffa",     color="gold",   friendly_fire=True,  nametag_visibility="never"),
 	TeamDef(suffix="zombies", color="yellow",   friendly_fire=False, nametag_visibility="hideForOtherTeams"),
+	TeamDef(suffix="missions", color="aqua",    friendly_fire=False, nametag_visibility="hideForOtherTeams"),
 	TeamDef(suffix="mi_mobs", color="dark_red", friendly_fire=True,  nametag_visibility="always"),
 ]
-""" Every team shared across modes. The escort horde team lives with the escort code (it is AI-only). """
+""" Every team shared across modes. Sidebars show per team color, so the teams of different modes never share a color. The escort horde team lives with the escort code (it is AI-only). """
 
 
 # Functions

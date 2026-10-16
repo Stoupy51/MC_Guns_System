@@ -44,11 +44,13 @@ execute store result score #base_z {ns}.data run data get storage {ns}:temp map_
 execute store result storage {ns}:temp _tp.x int 1 run scoreboard players get #base_x {ns}.data
 execute store result storage {ns}:temp _tp.y int 1 run scoreboard players get #base_y {ns}.data
 execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #base_z {ns}.data
-function {ns}:v{version}/shared/tp_to_position with storage {ns}:temp _tp
+data modify storage {ns}:temp _tp.dimension set value "minecraft:overworld"
+data modify storage {ns}:temp _tp.dimension set from storage {ns}:temp map_edit.map.dimension
+function {ns}:v{version}/maps/editor/tp_to_map with storage {ns}:temp _tp
 
-# Then their model displays.
-function {ns}:v{version}/maps/editor/summon_existing
-function {ns}:v{version}/maps/editor/refresh_displays
+# Then their model displays, where the editor now stands.
+execute at @s run function {ns}:v{version}/maps/editor/summon_existing
+execute at @s run function {ns}:v{version}/maps/editor/refresh_displays
 
 function {ns}:v{version}/maps/editor/give_tools
 
@@ -60,6 +62,8 @@ tellraw @s [{MGS_TAG},{{"text":"Place eggs to add elements. DESTROY egg (hotbar 
 tellraw @s [{MGS_TAG},{{"text":"Need collaborators? ","color":"gray"}},{Dialogs.btn("Invite All Players", f"/function {ns}:v{version}/maps/editor/invite_all", "aqua", "Put all online players into this editor session")}]
 tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{Dialogs.btn("Save & Exit", f"/function {ns}:v{version}/maps/editor/save_exit", "green", "Save changes and exit editor")},{{"text":" or "}},{Dialogs.btn("Exit", f"/function {ns}:v{version}/maps/editor/exit", "red", "Discard changes and exit editor")}]
 """)
+
+	write_versioned_function("maps/editor/tp_to_map", "$execute in $(dimension) run tp @s $(x) $(y) $(z)")
 
 	write_versioned_function("maps/editor/invite_all", f"""
 # The caller must be editing.
@@ -80,7 +84,9 @@ execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/maps/e
 execute store result storage {ns}:temp _tp.x int 1 run scoreboard players get #base_x {ns}.data
 execute store result storage {ns}:temp _tp.y int 1 run scoreboard players get #base_y {ns}.data
 execute store result storage {ns}:temp _tp.z int 1 run scoreboard players get #base_z {ns}.data
-execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/shared/tp_to_position with storage {ns}:temp _tp
+data modify storage {ns}:temp _tp.dimension set value "minecraft:overworld"
+data modify storage {ns}:temp _tp.dimension set from storage {ns}:temp map_edit.map.dimension
+execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/maps/editor/tp_to_map with storage {ns}:temp _tp
 
 tellraw @a[scores={{{ns}.mp.map_edit=1}}] [{MGS_TAG},{{"text":"Editor session synced for all players.","color":"aqua"}}]
 """)

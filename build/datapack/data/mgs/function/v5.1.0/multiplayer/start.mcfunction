@@ -6,6 +6,8 @@
 # @within	dialog mgs:v5.1.0/multiplayer/setup
 #
 
+execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.1.0/multiplayer/start"}
+
 execute if data storage mgs:multiplayer game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_in_progress","color":"red"}]
 execute if data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_preparing","color":"red"}]
 
@@ -146,5 +148,5 @@ execute as @a[scores={mgs.mp.in_game=1}] run scoreboard players operation @s mgs
 # Prep lasts 10 s.
 schedule function mgs:v5.1.0/multiplayer/end_prep 200t
 
-tellraw @a ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.preparing"},"! "],{"translate":"mgs.choose_your_class_game_starts_in_10_seconds","color":"yellow"}]
+tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.preparing"},"! "],{"translate":"mgs.choose_your_class_game_starts_in_10_seconds","color":"yellow"}]
 

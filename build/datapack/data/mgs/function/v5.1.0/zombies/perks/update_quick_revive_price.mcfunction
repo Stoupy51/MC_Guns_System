@@ -1,8 +1,8 @@
 
 #> mgs:v5.1.0/zombies/perks/update_quick_revive_price
 #
-# @within	mgs:v5.1.0/zombies/game_tick
-#			mgs:v5.1.0/zombies/preload_complete
+# @within	mgs:v5.1.0/zombies/preload_complete
+#			mgs:v5.1.0/zombies/game_tick
 #
 
 execute store result score #qr_players mgs.data if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator]

@@ -99,7 +99,7 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} if score #re
 """)
 
 	write_versioned_function("multiplayer/ffa_time_up", f"""
-tellraw @a [{MGS_TAG},{{"text":"Time's up!","color":"gold"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Time's up!","color":"gold"}}]
 
 scoreboard players set #max_kills {ns}.data 0
 scoreboard players operation #max_kills {ns}.data > @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.kills
@@ -108,7 +108,7 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.kills = #max_kil
 """)
 
 	write_versioned_function("multiplayer/game_draw", f"""
-tellraw @a ["","🤝 ",{{"text":"Draw!","color":"gold","bold":true}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","🤝 ",{{"text":"Draw!","color":"gold","bold":true}}]
 function {ns}:v{version}/multiplayer/stop
 """)
 

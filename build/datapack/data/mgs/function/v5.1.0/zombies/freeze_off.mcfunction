@@ -7,5 +7,5 @@
 #
 
 function mgs:v5.1.0/zombies/unfreeze_world
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_unfroze_the_game","color":"aqua"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_unfroze_the_game","color":"aqua"}]
 

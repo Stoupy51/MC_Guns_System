@@ -4,7 +4,7 @@
 # @within	mgs:v5.1.0/missions/start 20t [ scheduled ]
 #
 
-function mgs:v5.1.0/shared/use_map_frame {mode:"missions"}
+execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"missions",fn:"mgs:v5.1.0/missions/preload_complete"}
 
 execute unless data storage mgs:missions game{state:"preparing"} run return fail
 
@@ -39,5 +39,5 @@ execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs
 # Prep lasts 9 s.
 schedule function mgs:v5.1.0/missions/end_prep 180t
 
-tellraw @a ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.preparing_choose_your_class_mission_starts_in_9_seconds","color":"yellow"}]
+tellraw @a[scores={mgs.mi.in_game=1}] ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.preparing_choose_your_class_mission_starts_in_9_seconds","color":"yellow"}]
 

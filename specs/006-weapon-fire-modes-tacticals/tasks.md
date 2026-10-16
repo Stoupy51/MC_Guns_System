@@ -28,7 +28,7 @@ The two stories are independent. Either can ship alone.
 
 - [X] T001 [US1] Document in `src/config/stats/weapons/grenades.py` that `LETHAL_GRENADE_IDS` order defines the `mgs.zb.lethal_type` enum from 0, so its indices are load-bearing and reordering it renumbers live player scores
 - [X] T002 [US1] Make an out-of-range `lethal_type` fall back to the default lethal in `src/functional/zombies/player/inventory/grenades.py`, so a player carrying the old index 2 or 3 gets frags rather than an empty slot (FR-004)
-- [ ] T003 [US1] Verify the fallback with the current list: set `mgs.zb.lethal_type` to 9 by hand, end a round, and confirm the slot refills with frags
+- [X] T003 [US1] Verify the fallback with the current list: set `mgs.zb.lethal_type` to 9 by hand, end a round, and confirm the slot refills with frags
 
 ### Move smoke and flash
 
@@ -40,7 +40,7 @@ The two stories are independent. Either can ship alone.
 
 ### Verify
 
-- [ ] T009 [US1] Buy smoke, then let a round end: smoke in tactical, frags in lethal (SC-001)
+- [X] T009 [US1] Buy smoke, then let a round end: smoke in tactical, frags in lethal (SC-001)
 - [ ] T010 [US1] Buy a monkey bomb while holding smoke and confirm the tactical duplicate check behaves sensibly rather than silently replacing it
 - [ ] T011 [US1] Trigger a Max Ammo and confirm both slots refill
 - [ ] T012 [US1] Go down and recover, and confirm both slots come back correctly
