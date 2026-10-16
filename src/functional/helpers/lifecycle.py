@@ -119,6 +119,7 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 			f'execute if score @s {in_game_objective} matches 1 '
 			f'run return run tellraw @s [{MGS_TAG},{{"text":"{already_in_text}","color":"red"}}]'
 		)
+
 		parts: list[str] = [
 			f'# Require an active game\n{guard_line}',
 			f'# Prevent double-joining\n{double_join_guard}',

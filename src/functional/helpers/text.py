@@ -86,6 +86,7 @@ class Text:
 		prefix, alpha, suffix = m.groups() if m else ("", text, "")
 		if not alpha or (not prefix and not suffix):
 			return {"text": text, **style}
+
 		parts: list[str | JsonDict] = [""]
 		if prefix:
 			parts.append(prefix)
