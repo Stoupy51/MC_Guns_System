@@ -63,8 +63,8 @@ function #bs.raycast:run with storage {ns}:input
 	write_versioned_function("zombies/traps/turret_hit", f"""
 particle minecraft:crit ~ ~1 ~ 0.2 0.3 0.2 0.1 8 force @a[distance=..48]
 
-# 45% of the zombie's max health.
-execute if entity @s[tag={ns}.zombie_round] store result storage {ns}:temp _trap_dmg.amount int 1 run attribute @s minecraft:max_health get 0.45
+# 45% of the zombie's whole health.
+execute if entity @s[tag={ns}.zombie_round] store result storage {ns}:temp _trap_dmg.amount int 0.45 run scoreboard players get @s {ns}.zb.max_hp
 execute if entity @s[tag={ns}.zombie_round] run data modify storage {ns}:temp _trap_dmg.type set value "{ns}:bullet"
 execute if entity @s[tag={ns}.zombie_round] run return run function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp _trap_dmg
 

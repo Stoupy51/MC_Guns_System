@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply_zombie_absorption.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/types/curve.py"
+	],
+	"names": [],
+	"mappings": "AAiD6D;;;;;;;;;;AAC7D;AACA;AACA"
+}

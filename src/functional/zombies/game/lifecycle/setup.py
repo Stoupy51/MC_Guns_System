@@ -47,6 +47,9 @@ scoreboard objectives add {ns}.zb.sb_rank dummy
 
 scoreboard objectives add {ns}.zb.rise_tick dummy
 
+# A zombie's whole health, absorption included, which max_health alone cannot hold past 1024.
+scoreboard objectives add {ns}.zb.max_hp dummy
+
 # totalKillCount, and the baseline snapshot.
 scoreboard objectives add {ns}.total_kills totalKillCount
 scoreboard objectives add {ns}.zb.prev_kills dummy

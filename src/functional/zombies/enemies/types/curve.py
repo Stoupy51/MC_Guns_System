@@ -6,6 +6,7 @@ from stewbeet import Mem, write_versioned_function
 # Functions
 def write_health_curve() -> None:
 	ns: str = Mem.ctx.project_id
+	version: str = Mem.ctx.project_version
 
 	## Treyarch BO1 HP curve: 50 + 100 x round up to round 9 (150 to 950), then 950 x 1.1^(round - 9),
 	## converted with 2/15 (BO 150 HP = 20 HP, a vanilla zombie).
@@ -26,12 +27,29 @@ scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
 scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
 
 # Also catches int overflow on very high rounds.
-execute unless score #zb_hp {ns}.data matches 15..2048 run scoreboard players set #zb_hp {ns}.data 2048
+execute unless score #zb_hp {ns}.data matches 15..3072 run scoreboard players set #zb_hp {ns}.data 3072
 """)
 
-	write_versioned_function("zombies/apply_zombie_hp", """
+	## max_health stops at 1024, so the rest becomes absorption, which max_absorption allows up to 2048.
+	## zb.max_hp keeps the whole, for the damage dealt as a share of it.
+	write_versioned_function("zombies/apply_zombie_hp", f"""
+$scoreboard players set @s {ns}.zb.max_hp $(val)
 $attribute @s minecraft:max_health base set $(val)
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
+function {ns}:v{version}/zombies/absorb_above_cap
+""")
+
+	## Run as a zombie or a dog whose zb.max_hp is set.
+	write_versioned_function("zombies/absorb_above_cap", f"""
+scoreboard players operation #zb_absorb {ns}.data = @s {ns}.zb.max_hp
+scoreboard players remove #zb_absorb {ns}.data 1024
+execute unless score #zb_absorb {ns}.data matches 1.. run return 0
+execute store result storage {ns}:temp _zb_absorb.val int 1 run scoreboard players get #zb_absorb {ns}.data
+function {ns}:v{version}/zombies/apply_zombie_absorption with storage {ns}:temp _zb_absorb
+""")
+	write_versioned_function("zombies/apply_zombie_absorption", """
+$attribute @s minecraft:max_absorption base set $(val)
+$data modify entity @s AbsorptionAmount set value $(val)f
 """)
 
 	## Dogs: $(val) is the amount above a wolf's base 8, as a modifier the taming reset cannot clear (see types/dog).

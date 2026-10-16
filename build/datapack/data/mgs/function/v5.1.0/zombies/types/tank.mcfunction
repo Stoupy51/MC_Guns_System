@@ -23,7 +23,7 @@ execute if score #zb_speed mgs.data matches ..289 run tag @s remove mgs.zb_sprin
 # 300% of the health normal just applied (#zb_hp).
 scoreboard players operation #zb_hp mgs.data *= #300 mgs.data
 scoreboard players operation #zb_hp mgs.data /= #100 mgs.data
-execute if score #zb_hp mgs.data matches 2049.. run scoreboard players set #zb_hp mgs.data 2048
+execute if score #zb_hp mgs.data matches 3073.. run scoreboard players set #zb_hp mgs.data 3072
 execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players get #zb_hp mgs.data
 function mgs:v5.1.0/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
 
