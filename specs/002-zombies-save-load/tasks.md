@@ -1,160 +1,68 @@
 ---
 
-description: "Task list for zombies save and load"
+description: "Task list for zombies suspend, resume, save and load"
 ---
 
-# Tasks: Zombies Save and Load
+# Tasks: Zombies Suspend, Resume, Save and Load
 
 **Input**: [spec.md](spec.md), [plan.md](plan.md)
 
-**Tests**: No automated tests. Constitution principle V: each subsystem gets a named in-game round-trip check, and the feature is not done until the Phase 6 matrix passes in full.
+**Tests**: No automated tests. Each task closes on a quit and reopen, a server restart or a dump comparison.
 
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: US1 save, US2 load, US3 co-op roster
+- **[Story]**: US1 suspend and resume, US2 save and load, US3 roster
 
 ---
 
-## Phase 1: Setup
+## Phase 1: User Story 1 - A run survives disconnects and restarts (Priority: P1)
 
-- [ ] T001 Create `src/functional/zombies/save/` with `__init__.py` exposing `generate_zombies_save()`, and wire it from `src/functional/zombies/__init__.py`
-- [ ] T002 Add the `mgs:zombies_saves` storage and initialize `slots` to `[]` on load in `src/functional/zombies/save/slots.py`
+- [ ] T001 [US1] Reproduce the bug: solo run at round 3, quit and reopen, confirm `zombies/game_over` fires on the first ticks
+- [ ] T002 [US1] Suspend instead of ending when no roster player is online, in `game/lifecycle/tick.py` (FR-001)
+- [ ] T003 [US1] Write `zombies/suspend` on top of `zombies/freeze_on`, with the "PAUSED" display (FR-002)
+- [ ] T004 [US1] Audit every run timer against `#zb_freeze` (round, spawn, power-ups, box move, traps, perks, abilities, bleed-out, Dying Wish, Who's Who, Tombstone) and gate the ones that still tick (FR-002)
+- [ ] T005 [US1] Add `mgs.zb.rejoins` (`custom:leave_game`) and `zombies/rejoin` restoring team, gamemode, sidebar, attributes and post effects (FR-003)
+- [ ] T006 [US1] Resume after a 5 s countdown once a roster player is online, cancelled if they leave again (FR-004)
+- [ ] T007 [US1] Clear stale players: `mgs.zb.in_game=1` with no run in progress (FR-005)
+- [ ] T008 [US1] Admin menu: Pause, Resume and End for a suspended run (FR-006)
+- [ ] T009 [US1] Verify solo quit and reopen mid-round and between rounds (SC-001)
+- [ ] T010 [US1] Verify a co-op restart, one player leaving and coming back, and a downed player leaving (SC-002, US1/AC3, US1/AC4)
+- [ ] T011 [US1] Verify a player offline when the run ended comes back clean (SC-003)
 
----
-
-## Phase 2: Foundational (Blocking Prerequisites)
-
-**Purpose**: The schema and the slot primitives both halves depend on. Writing capture before the schema is how capture and restore drift.
-
-- [ ] T003 Define the slot layout constants and a `SavedScore` dataclass table in `src/functional/zombies/save/schema.py`: one row per objective with its storage key, covering `points`, `kills`, `downs`, `passive`, `ability`, `qr_uses`, `dw_uses`, `lethal_type`
-- [ ] T004 Extend `schema.py` to derive the perk rows from `PERK_DEFINITIONS` in `src/functional/zombies/machines/perks/definitions.py`, so a new perk is captured without touching this feature
-- [ ] T005 Implement slot read, write, overwrite and delete in `src/functional/zombies/save/slots.py`, keyed by index, with a fixed slot count
-- [ ] T006 Add the between-rounds availability score, set in `src/functional/zombies/game/round/completion.py` for the 5s gap and cleared when the next round starts
-
-**Checkpoint**: A slot can be written and read back by hand with `/data`.
+**Checkpoint**: Shippable alone. It fixes the lost runs.
 
 ---
 
-## Phase 3: User Story 1 - Save a run between rounds (Priority: P1) MVP half
+## Phase 2: User Story 2 - Save a run between rounds (Priority: P2)
 
-**Goal**: A run becomes a slot compound that survives a server restart.
-
-**Independent Test**: Save at round 17, then `/data get storage mgs:zombies_saves slots[0]` and check every field against the screen.
-
-### Capture
-
-- [ ] T007 [US1] Capture game meta in `src/functional/zombies/save/capture.py`: map id, variant, round and state from `storage mgs:zombies game`
-- [ ] T008 [US1] Capture per-player scores by iterating the `schema.py` table, one entry per in-game player, with UUID and name
-- [ ] T009 [US1] Capture per-player `max_health` (Juggernog sets base 40, so the raw attribute is not enough on its own)
-- [ ] T010 [US1] Capture each player's whole `Inventory` NBT into their save entry
-- [ ] T011 [P] [US1] Capture power state from `#zb_power` and the Pack-a-Punch unlock flag
-- [ ] T012 [P] [US1] Capture opened door group ids from `src/functional/zombies/objects/doors.py` and the `mgs.spawn_unlocked` groups they granted
-- [ ] T013 [P] [US1] Capture mystery box position, use count and moved flag
-- [ ] T014 [P] [US1] Capture per-player wallbuy purchases and barricade repair state
-- [ ] T015 [US1] Assemble the slot compound and write it through `slots.py`, then run the normal game stop
-
-### Save UI
-
-- [ ] T016 [US1] Add the "Save & Quit" admin-menu entry in `src/functional/zombies/save/ui.py`, gated on the T006 availability score, disabled with a reason during a round
-- [ ] T017 [US1] Build the slot picker dialog following the `zombies/admin/powerups` `register_dialog` pattern, with a name field and an overwrite confirmation on an occupied slot
-
-**Checkpoint**: Runs can be saved. Nothing can load them yet, which is fine.
+- [ ] T012 [US2] Create `src/functional/zombies/save/` with `generate_zombies_save()`
+- [ ] T013 [US2] Write the `SavedScore` and `SavedMapScore` tables in `save/schema.py` from the existing objectives (FR-009)
+- [ ] T014 [US2] Write the slot storage: 5 slots, overwrite with confirmation, delete (FR-013)
+- [ ] T015 [US2] Capture game meta and per-player state, inventories included (FR-008)
+- [ ] T016 [US2] Capture the map state by iterating element entities (FR-008)
+- [ ] T017 [US2] Gate "Save & Quit" on the between-rounds gap, then stop normally (FR-007)
+- [ ] T018 [US2] Verify a save by dumping the slot and comparing with the live state (SC-004, first half)
+- [ ] T019 [US2] Add the silent entry points: door open, power on, Pack-a-Punch unlock, box placement, Der Wunderfizz placement (FR-010)
+- [ ] T020 [US2] Write the load: refuse unknown format and missing map, `zombies/start`, then replay on `preload_complete` (FR-010, FR-012)
+- [ ] T021 [US2] Restore players by UUID through `bs.id` and `restore_inventory`
+- [ ] T022 [US2] Rebuild every restored weapon from its current definition (FR-011)
+- [ ] T023 [US2] Skip and report map elements missing from the current map (US2/AC6)
+- [ ] T024 [US2] UI: Save & Quit in the admin menu, slot list on the setup dialog (FR-014)
+- [ ] T025 [US2] Verify the full round trip at round 17 across another game (SC-004)
+- [ ] T026 [US2] Verify a PaP camo weapon across a pack version bump (SC-005)
+- [ ] T027 [US2] Verify no save during a round or a dog round (SC-006)
 
 ---
 
-## Phase 4: User Story 2 - Load a saved run (Priority: P1) MVP half
+## Phase 3: User Story 3 - Load with a different roster (Priority: P3)
 
-**Goal**: A slot becomes a live game identical to the one that was saved.
-
-**Independent Test**: Save at round 17, restart the server, load, and diff against a pre-save screenshot.
-
-### Load flow
-
-- [ ] T018 [US2] Implement the load entry in `src/functional/zombies/save/restore.py`: validate the saved map id still exists and abort loudly, changing nothing, if it does not
-- [ ] T019 [US2] Run the normal `zombies/start` on the saved map and variant first, so every subsystem initializes the way it always does
-- [ ] T020 [US2] Replay game meta: set `game.round` and the round counter so the next round is the saved round plus one
-
-### Replay, never reconstruct
-
-- [ ] T021 [US2] Replay power by calling `power/turn_on` when saved, not by setting `#zb_power` directly
-- [ ] T022 [US2] Replay each opened door by calling that door's own open function, so the block removal, the linked group and the spawn unlock all happen the way they normally do
-- [ ] T023 [US2] Replay the Pack-a-Punch unlock through its own unlock path
-- [ ] T024 [P] [US2] Replay mystery box position, uses and moved flag
-- [ ] T025 [P] [US2] Replay barricade repair state and per-player wallbuy purchases
-
-### Per-player restore
-
-- [ ] T026 [US2] Match saved players to online players by UUID and restore every score from the `schema.py` table
-- [ ] T027 [US2] Restore perks: set each `mgs.zb.perk.<id>` score, add the matching `mgs.perk.<id>` tag, and run each perk's `commands` so its attributes and special scores are applied rather than only its bookkeeping
-- [ ] T028 [US2] Apply `max_health` before filling health, or a Juggernog player's fill clamps to 20
-- [ ] T029 [US2] Restore the inventory through the existing `zombies/inventory/restore_inventory`, feeding the saved list into `mgs:temp _restore.items`
-- [ ] T030 [US2] Refresh the perk display items and the info paper so the restored state is visible immediately
-
-### Load UI
-
-- [ ] T031 [US2] Add the saved-slot list to the setup dialog next to "Select Map" in `src/functional/zombies/save/ui.py`, showing name, map, round and saved date
-- [ ] T032 [US2] Add slot deletion from the same list
-
-**Checkpoint**: The solo save-load loop works end to end. This is the shippable MVP.
+- [ ] T028 [US3] Keep offline saved players in `pending_players` and restore them on join (FR-015)
+- [ ] T029 [US3] Verify a 3-player save loaded with 2, the third joining later, and a newcomer joining fresh
 
 ---
 
-## Phase 5: User Story 3 - Load a co-op run with a different roster (Priority: P2)
+## Phase 4: Polish
 
-**Goal**: A load never blocks on a missing player.
-
-- [ ] T033 [US3] Skip or park in spectator any saved player who is not online, and log which ones were skipped
-- [ ] T034 [US3] Treat a player who joins and is not in the save as a normal fresh joiner, with no inherited state
-- [ ] T035 [US3] Verify Quick Revive solo pricing recomputes correctly for the loaded roster rather than the saved one
-
----
-
-## Phase 6: Per-subsystem verification matrix
-
-**Purpose**: This is the phase the whole feature was deferred for. Every row is an in-game round trip: set the state, save, restart, load, verify.
-
-- [ ] T036 Round and spawn pacing: the loaded round spawns the right count at the right cadence
-- [ ] T037 Points, kills, downs and the sidebar all match
-- [ ] T038 Perks: every perk's effect is live, not just its icon. Juggernog HP, Speed Cola reload, Stamin-Up move speed, PhD fall immunity
-- [ ] T039 Quick Revive specifically: `qr_uses` restores and the machine blocks or allows rebuy accordingly
-- [ ] T040 Inventory: PaP level, camo, magazine contents, reserve ammo, slot tags, and the lethal/tactical slots
-- [ ] T041 Doors: open doors are open, pathable, and their spawn groups are unlocked. Closed doors are still buyable
-- [ ] T042 Power: every power-gated system (traps, perk machines, the Pack-a-Punch) behaves as it did
-- [ ] T043 Mystery box: correct position, use count, and the next roll costs the right thing
-- [ ] T044 Barricades: repaired boards are repaired, broken ones are broken, and zombies path through them correctly
-- [ ] T045 Traps: cooldowns are clean rather than mid-cycle
-- [ ] T046 Map editor round trip: save, edit the map, then confirm a load against the edited map fails safely rather than half-applying
-
----
-
-## Phase 7: Polish
-
-- [ ] T047 Add save and load to the root `README.md` zombies feature list
-- [ ] T048 `uv run python scripts/verify.py lint` and `uv run python scripts/verify.py validate` pass
-
----
-
-## Dependencies & Execution Order
-
-- **Phase 2** blocks everything. The schema is the contract both halves read
-- **Phase 3 (US1)** and **Phase 4 (US2)** are sequential in practice: there is nothing to load until something saves
-- Within Phase 3, T011 to T014 are independent captures and can be written in parallel
-- Within Phase 4, replay order matters: start, then power, then doors, then per-player. A door replayed before start has nothing to open
-- **Phase 6** depends on Phases 3 and 4 and gates the release
-
----
-
-## Implementation Strategy
-
-Solo first, all the way through Phase 6. Co-op (User Story 3) is a small addition on top of a proven
-loop, and debugging a broken restore with three players is far harder than with one.
-
-Do not ship after Phase 4. A save-load that passes a smoke test and fails Phase 6 is worse than no
-feature: it silently corrupts a run people care about.
-
-## Notes
-
-- Restore is replay. Any task that writes a block or a tag a subsystem owns is doing it wrong
-- Commit per subsystem captured or replayed
-- The `saved_at` gametime is for display only; nothing keys off it
+- [ ] T030 Add suspend and save to the root `README.md` zombies feature list
+- [ ] T031 `uv run python scripts/verify.py lint` and `uv run python scripts/verify.py validate` pass

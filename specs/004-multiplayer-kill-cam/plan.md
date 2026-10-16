@@ -1,35 +1,56 @@
 # Implementation Plan: Multiplayer Final Kill Cam
 
-**Branch**: `004-multiplayer-kill-cam` | **Date**: 2026-08-15 | **Spec**: [spec.md](spec.md)
+**Branch**: `004-multiplayer-kill-cam` | **Date**: 2026-10-16 | **Spec**: [spec.md](spec.md)
 
 ## Summary
 
-Record a 200-tick ring buffer of every player's position and rotation during the final 10 seconds of a
-match, then replay the last kill from the killer's viewpoint before the scoreboard.
+Record a bounded window of every match player's motion near the end of a match, log the kills in it,
+and replay the final killer's chain as a puppet show: one mannequin per player, one spectated camera at
+the killer's eyes.
 
-The design constraint that shapes everything: recording must be invisible in the tick profile until it
-starts. It is gated on a single score compare against the match timer, so for 95% of a match the whole
-feature is one `execute if score` that fails.
+Two decisions shape everything. The window is gated on match point, not on the timer alone, because
+most matches end on the score limit. And a sample never reads player NBT: a marker is teleported to the
+player and read instead, which is what makes 12 players x 20 samples a second affordable.
 
 ## Technical Context
 
 **Language/Version**: Python >=3.14 generating mcfunction through StewBeet
 
-**Primary Dependencies**: beet + StewBeet. The camera-mount pattern is already proven in `src/functional/zombies/player/revive/` (`downed_cam`, an `item_display` with `teleport_duration:1` that the player rides)
+**Primary Dependencies**: beet + StewBeet, Bookshelf (`bs.id` for player ids, `bs.position` for marker-based position and rotation reads)
 
-**Storage**: `storage mgs:kill_cam` for the buffers and the final kill record. Cleared on match start and stop
+**Storage**: `storage mgs:kill_cam` with `frames`, `kills` and `roster` (spec Key Entities). Cleared on match start, stop and window close
 
-**Testing**: In-game. F3+L for SC-001, short FFA matches for the sequence itself
+**Testing**: In game: short FFA and TDM matches, F3+L for SC-001 and SC-002
 
-**Target Platform**: Minecraft Java, at the version pinned in `beet.yml`, multiplayer
+**Target Platform**: Minecraft Java at the version pinned in `beet.yml`, multiplayer
 
-**Project Type**: Minecraft datapack generated from a Python build pipeline
+**Performance Goals**: Zero cost outside the window. Inside: one frame append per tick, built without macros or player NBT reads
 
-**Performance Goals**: Zero measurable cost outside the final 10 seconds. Inside it, one storage append per in-game player per tick
+**Constraints**: No world rewind. Held items are snapshotted at window open. Multiplayer only
 
-**Constraints**: Only positions and rotations are recorded. The replayed world is the post-match world. 200 ticks is the entire budget
+**Scale/Scope**: New package `src/functional/multiplayer/kill_cam/`, hooks in `game/tick.py`, `game/death.py`, `game/start.py`, `game/stop.py` and the three win paths (`team_wins`, `ffa/player_wins`, `game_draw`)
 
-**Scale/Scope**: New package `src/functional/multiplayer/kill_cam/`, plus hooks in `game/tick.py`, `game/death.py`, `game/stop.py` and `game/start.py`
+## Design
+
+### Recording
+
+- `#kc_window` is recomputed once per second from the team scores, the FFA top score and `#mp_timer`. The per-tick recorder is behind `execute if score #kc_window matches 1`.
+- Per player: `tp` a shared marker to the player with their rotation, read `Pos` and `Rotation` from the marker into a sample compound, set the flag bits from scores (`fired` from the weapon cooldown changing this tick, `sneak` and `sprint` from predicates).
+- Samples are appended to `kill_cam:temp frame.s`, then the frame is appended to `frames`. When `frames[0].t` is older than `RECORD_TICKS`, `frames[0]` is removed. One removal per tick keeps the cost flat.
+- On window open, and on a late join while open, the player's roster entry is written: name, `bs.id`, team, mainhand and armor items.
+
+### Kill log
+
+- The multiplayer `on_kill` path, already run as the killer with the victim tagged, appends `{t, killer, victim}` while the window is open.
+- The final chain is computed at match end by walking `kills` backwards (spec FR-005). The result is `chain_start`, `chain_end` and the chain length.
+
+### Playback
+
+- The three win paths call `kill_cam/start` before announcing results. When the chain is empty, `kill_cam/start` returns at once and the results come as today.
+- Viewers: every `mp.in_game` player is tagged `mgs.kc_viewer`, saved position and gamemode go to scores and storage, gamemode spectator, `spectate` the camera.
+- A playback cursor walks `frames` from `chain_start - PRE_ROLL` to `chain_end + POST_ROLL`, one frame per tick. Each frame: teleport each mannequin to its sample (summoned on first appearance with `teleport_duration` set for smoothing), set its pose from the flags, teleport the camera to the killer's sample at eye height, play fire effects, kill the mannequins of victims whose kill tick is reached.
+- Titles: "KILLCAM", the killer's name, the chain length.
+- End: kill every `mgs.kill_cam` entity, restore viewers, clear storage, continue to the results.
 
 ## Constitution Check
 
@@ -37,46 +58,28 @@ feature is one `execute if score` that fails.
 
 | Principle | How this plan satisfies it |
 |---|---|
-| I. Python sources are the only source of truth | The recorder, the replay and the presentation are all generated from `kill_cam/`. |
-| II. Data-driven definitions | Buffer size, record window and playback speed are named constants with docstrings, not numbers repeated across three files. |
-| III. Typed, linted, readable | New package grouped by feature: record, replay, presentation. |
-| IV. Runtime cost is a design constraint | This is the principle the whole design is built around. The recorder is behind one score compare, and User Story 2 exists purely to make that a testable requirement rather than an intention. |
-| V. In-game verification | Every task closes on a played match or an F3+L reading. |
+| I. Python sources are the only source of truth | Recorder, chain logic and playback are generated from `kill_cam/`. |
+| II. Data-driven definitions | Every tunable is a constant in `kill_cam/shared.py` with a docstring (FR-013). |
+| III. Typed, linted, readable | One package grouped by feature: record, chain, playback, present. |
+| IV. Runtime cost is a design constraint | The window gate, the marker read and the single-frame trim exist for US2. |
+| V. In-game verification | Every phase closes on a played match or an F3+L reading. |
 
 ## Project Structure
 
-### Documentation (this feature)
-
 ```text
-specs/004-multiplayer-kill-cam/
-├── spec.md
-├── plan.md              # This file
-└── tasks.md
+src/functional/multiplayer/kill_cam/
+    __init__.py      # generate_kill_cam(), wired from multiplayer/__init__.py
+    shared.py        # tunables and storage paths
+    record.py        # window gate, per-tick sampler, roster snapshot, trim
+    chain.py         # kill log append and final chain resolution
+    playback.py      # viewers, mannequins, camera, cursor, cleanup
+    present.py       # titles and sounds
 ```
-
-### Source Code (repository root)
-
-```text
-src/functional/multiplayer/
-├── kill_cam/                   # New package
-│   ├── __init__.py             # generate_kill_cam(): entry point, wired from multiplayer/__init__.py
-│   ├── shared.py               # RECORD_TICKS, BUFFER_MAX, PLAYBACK_SPEED and the storage paths
-│   ├── record.py               # The gated per-tick sampler and the ring-buffer trim
-│   ├── replay.py               # Camera entity, per-tick playback from the killer's samples, cleanup
-│   └── present.py              # Titles and overlay naming killer and victim
-├── game/tick.py                # Hook: the gate that turns recording on in the last 10 seconds
-├── game/death.py               # Hook: write the final kill record (killer, victim, buffer index)
-├── game/start.py               # Hook: clear the buffers
-└── game/stop.py                # Hook: run the sequence before the scoreboard, then clear the buffers
-```
-
-**Structure Decision**: A dedicated package rather than functions spread across `game/`. Recording,
-playback and presentation are three halves of one mechanism that only make sense together, and none of
-them belongs to the match lifecycle modules they hook into. The lifecycle files get one line each.
 
 ## Complexity Tracking
 
 | Accepted cost | Why | Alternative rejected because |
 |---|---|---|
-| The replay shows the post-match world, not the recorded one | Only positions and rotations are recorded. | Recording the world state is not feasible in a datapack and is far beyond what a kill cam needs. |
-| A per-tick storage append per player during the window | It is the recording. | Sub-sampling to every other tick halves the cost but visibly stutters the camera, which defeats the feature. |
+| Mannequins for every player in the window | Victims must die on screen and teammates must be visible. | A camera-only replay shows a floating view and nobody dying. |
+| Held items frozen at window open | Tracking item changes per tick means reading player NBT. | The rare weapon swap mid-chain is not worth that cost. |
+| No world rewind | Blocks, grenades and objectives are out of reach of a datapack recorder. | Accepted by Call of Duty players as part of how a kill cam looks. |
