@@ -87,8 +87,8 @@ description: "Task list for zombie special types"
 ## Phase 6: Polish
 
 - [ ] T028 Tune the weight table across rounds 10, 20, 40 and 60 so waves stay varied without any one type dominating
-- [ ] T029 Add the special types to the root `README.md` zombies feature list
-- [ ] T030 `uv run python scripts/verify.py lint` and `uv run python scripts/verify.py validate` pass
+- [X] T029 Add the special types to the root `README.md` zombies feature list
+- [X] T030 `uv run python scripts/verify.py lint` and `uv run python scripts/verify.py validate` pass
 
 ---
 
