@@ -10,7 +10,7 @@
 			"path": "../stouputils"
 		},
 		{
-			"path": "../beet"
+			"path": "../../forks/beet"
 		}
 	],
 	"settings": {

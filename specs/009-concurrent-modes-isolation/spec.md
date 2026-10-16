@@ -34,7 +34,7 @@ something from another game.
 | # | Finding | Where | Effect |
 |---|---|---|---|
 | L1 | About 100 `tellraw @a`, `title @a` and `playsound ... @a` without a mode filter. | Mostly `multiplayer/` (bomb modes, rounds, wins), zombies round banners and admin messages, missions start and end | Everyone on the server reads the other games' rounds, wins, bomb plants and join messages. |
-| L2 | Join announcements use `tellraw @a`. | `helpers/lifecycle.py` (`late_join_flow_lines`) | Everyone sees who joined which game. Arguably wanted; to decide. |
+| L2 | Join announcements use `tellraw @a`. | `helpers/lifecycle.py` (`late_join_flow_lines`) | Everyone sees who joined which game. Wanted: they stay server-wide. |
 | L3 | `scoreboard objectives setdisplay sidebar` and `list` are server-wide, and both multiplayer (`mgs.sidebar`) and zombies (`mgs.zb_sidebar`) set them. | `multiplayer/game/sidebar.py`, `multiplayer/game/start.py`, `zombies/game/lifecycle/sidebar.py` | The last mode to refresh its sidebar wins it for the whole server; the other game loses its sidebar. |
 | L4 | Mission enemy AI targets the nearest player within 64 blocks, any mode. | `mob_ai.py` | Only a problem if two arenas are closer than 64 blocks. |
 | L5 | Double join guards only check the mode being joined. | `helpers/lifecycle.py` (`late_join_flow_lines`) | A player can be in a match and a zombies run at once. |
@@ -101,11 +101,12 @@ in the reverse order, then in another order. After each stop, the remaining game
 - **FR-004**: Every `signals/on_kill` and `signals/damage` listener MUST check the acting player's `in_game` for its mode, in addition to the mode state.
 - **FR-005**: `#any_game_active` MUST be derived (any of the three modes active), not set and cleared by each mode.
 - **FR-006**: Stop cleanup (`fx_reset`, stamina, hunger, attributes, gamemode) MUST target only the stopping mode's players.
-- **FR-007**: Broadcasts MUST target the mode's players, and its spectators where it has them. A short list of server-wide announcements (game start, game end) MAY stay on `@a` and MUST be listed in the code.
-- **FR-008**: Gamerules MUST be set to the value needed by the modes still running: a stop restores a global default only when no other mode is active, and zombies time of day MUST be per player or accepted as global (to decide).
+- **FR-007**: Broadcasts MUST target the mode's players, and its spectators where it has them. Join announcements stay on `@a`; any other server-wide announcement (game start, game end) MUST be listed in the code.
+- **FR-008**: Gamerules MUST be set to the value needed by the modes still running: a stop restores a global default only when no other mode is active. Zombies time of day stops being global with FR-012.
 - **FR-009**: Shared respawn objectives (`mp.death_count`, `mp.spectate_timer`) MUST only be reset for the mode's players.
 - **FR-010**: Joining any mode MUST be refused while the player is in another one.
 - **FR-011**: The sidebar MUST be shown per team (`sidebar.team.<color>`) or per mode in a way that does not leak to other modes.
+- **FR-012**: Zombies MUST run in its own dimension (`mgs:zombies`, to add), with a dimension type fixing its time of day, so that `time set` and `advance_time` no longer touch the other modes. Zombies maps move into it.
 
 ### Key Entities
 
@@ -124,5 +125,5 @@ in the reverse order, then in another order. After each stop, the remaining game
 
 - One game per mode at a time is enforced by the existing start guards and stays so.
 - Progression, XP totals and achievements may stay shared across modes.
-- Arenas are far enough apart (64+ blocks) that vanilla AI and sounds do not cross; maps are not checked for it.
+- Multiplayer and Missions arenas share the overworld and are far enough apart (64+ blocks) that vanilla AI and sounds do not cross; maps are not checked for it. Zombies leaves the overworld with FR-012, which removes L4 and positional sound leaks for it, but not `tellraw`, scores, gamerules or entity sweeps, which are server-wide whatever the dimension.
 - The map editor is not used during games and is out of scope.
