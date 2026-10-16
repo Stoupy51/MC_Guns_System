@@ -49,7 +49,7 @@ function mgs:v5.1.0/zombies/perks/lose_all
 gamemode spectator @s
 
 # The spectator rides this item_display for a locked third-person view.
-summon minecraft:item_display ~ ~ ~ {Tags:["mgs.downed_cam","mgs.downed_cam_new","mgs.gm_entity"],teleport_duration:1}
+summon minecraft:item_display ~ ~ ~ {Tags:["mgs.downed_cam","mgs.downed_cam_new","mgs.zombies_entity"],teleport_duration:1}
 
 scoreboard players operation @n[tag=mgs.downed_cam_new] mgs.zb.downed_id = @s mgs.zb.downed_id
 

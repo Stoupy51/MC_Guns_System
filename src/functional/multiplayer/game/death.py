@@ -161,6 +161,7 @@ execute store result score #random_message {ns}.data run random value 1..{len(ki
 	## Dispatched to the gamemode.
 	write_versioned_function("multiplayer/on_kill_signal", f"""
 execute unless data storage {ns}:multiplayer game{{state:"active"}} run return fail
+execute unless score @s {ns}.mp.in_game matches 1 run return fail
 
 {gm_dispatch(ns, version, "on_kill", ret=True)}
 """, tags=[f"{ns}:signals/on_kill"])

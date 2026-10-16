@@ -25,10 +25,10 @@ scoreboard players set #mi_total_enemies {ns}.data 0
 scoreboard players set #mi_has_boundary {ns}.data 0
 scoreboard players set @a {ns}.mi.kills 0
 scoreboard players set @a {ns}.mi.deaths 0
-scoreboard players set @a {ns}.mp.spectate_timer 0
+scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.spectate_timer 0
 
 # deathCount keeps counting outside games: a lobby death would fire missions/on_respawn the moment the state turns active.
-scoreboard players set @a {ns}.mp.death_count 0
+scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.death_count 0
 
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 1
 team join {ns}.blue @a[scores={{{ns}.mi.in_game=1}}]
@@ -42,7 +42,7 @@ gamemode spectator @a[scores={{{ns}.mi.in_game=1}}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
 
-{GameLifecycle.regen_enable_lines(ns)}
+{GameLifecycle.regen_enable_lines(ns, f"@a[scores={{{ns}.mi.in_game=1}}]")}
 
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"missions"}}
 
@@ -116,7 +116,7 @@ execute if score #mi_total_enemies {ns}.data matches ..0 run return run function
 execute if data storage {ns}:missions game.map.start_commands[0] run function {ns}:v{version}/shared/run_start_commands {{mode:"missions"}}
 
 # The state is now active and chunks had time to load.
-function {ns}:v{version}/shared/maps/call_script_at_base {{script:"start"}}
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"missions",script:"start"}}
 
 # Points to the nearest enemy.
 execute as @a[scores={{{ns}.mi.in_game=1}}] run item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}}}]
@@ -133,7 +133,7 @@ data modify storage {ns}:temp _enemy_iter set from storage {ns}:missions game.ma
 execute if data storage {ns}:temp _enemy_iter[0] run function {ns}:v{version}/missions/spawn_enemy_iter
 
 execute as @e[tag={ns}.armed,tag=!{ns}.mission_enemy] run tag @s add {ns}.mission_enemy
-execute as @e[tag={ns}.mission_enemy] run tag @s add {ns}.gm_entity
+execute as @e[tag={ns}.mission_enemy] run tag @s add {ns}.missions_entity
 team join {ns}.mi_mobs @e[tag={ns}.mission_enemy]
 
 execute store result score #mi_total_enemies {ns}.data if entity @e[tag={ns}.mission_enemy]

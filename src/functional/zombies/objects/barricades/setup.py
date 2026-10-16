@@ -85,6 +85,6 @@ execute if data storage {ns}:temp _barricade_iter[0] run function {ns}:v{version
 """)
 
 	write_versioned_function("zombies/barricades/place_at", f"""
-$execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],block_state:"minecraft:air",transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},Tags:["{ns}.barricade_display","{ns}.gm_entity","{ns}._barricade_new_d"]}}
+$execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],block_state:"minecraft:air",transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},Tags:["{ns}.barricade_display","{ns}.zombies_entity","{ns}._barricade_new_d"]}}
 """)
 

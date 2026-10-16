@@ -7,12 +7,7 @@
 #
 
 scoreboard players set #zb_freeze mgs.data 1
-
-execute as @e[tag=mgs.zombie_round] unless data entity @s {NoAI:1b} run function mgs:v5.1.0/zombies/freeze_mob
-
-# The attribute pair the prep countdown uses.
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base set 0
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base set 0
+function mgs:v5.1.0/zombies/freeze_world
 
 title @a[scores={mgs.zb.in_game=1}] times 5 60 10
 title @a[scores={mgs.zb.in_game=1}] title [{"text":"⏸","color":"white"}]

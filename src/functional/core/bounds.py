@@ -34,6 +34,12 @@ scoreboard players operation #bound_z1 {ns}.data += #gm_base_z {ns}.data
 scoreboard players operation #bound_x2 {ns}.data += #gm_base_x {ns}.data
 scoreboard players operation #bound_y2 {ns}.data += #gm_base_y {ns}.data
 scoreboard players operation #bound_z2 {ns}.data += #gm_base_z {ns}.data
+$scoreboard players operation #$(mode)_bound_x1 {ns}.data = #bound_x1 {ns}.data
+$scoreboard players operation #$(mode)_bound_y1 {ns}.data = #bound_y1 {ns}.data
+$scoreboard players operation #$(mode)_bound_z1 {ns}.data = #bound_z1 {ns}.data
+$scoreboard players operation #$(mode)_bound_x2 {ns}.data = #bound_x2 {ns}.data
+$scoreboard players operation #$(mode)_bound_y2 {ns}.data = #bound_y2 {ns}.data
+$scoreboard players operation #$(mode)_bound_z2 {ns}.data = #bound_z2 {ns}.data
 """)
 
 		# Fold the head corner, then recurse over the tail.

@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-16
 
-**Status**: Draft (audit done, nothing built)
+**Status**: B1 to B6, B8 to B10, L5 and L6 built, not tested in game. B7 waits on FR-012; L1, L3 and L4 are open.
 
 **Input**: Can one Multiplayer match, one Missions run and one Zombies run play at the same time on one
 server without interfering: messages, kills, scores, and everything else? Progression and achievements
@@ -28,6 +28,8 @@ something from another game.
 | B6 | Each stop runs `player/fx_reset` and stamina and hunger resets on `@a`. | `helpers/lifecycle.py` (`regen_disable_lines`) | Ending a mode strips scopes, crosshairs and flashes from players of the other modes. |
 | B7 | Gamerules are global: `natural_health_regeneration`, `keep_inventory`, `immediate_respawn`, `advance_time`, `max_entity_cramming`, `spawn_mobs`; zombies also runs `time set 18000`. | `helpers/lifecycle.py`, every `start.py` and `stop.py`, `zombies/enemies/escort/hooks.py` | Ending one mode turns natural regen back on for the others. Zombies freezes the time of day for everyone. |
 | B8 | `mgs.mp.death_count` and `mgs.mp.spectate_timer` are shared, and each start resets them on `@a`. | every `start.py`, `zombies/player/revive/down.py` | A start in one mode can cancel a respawn or spectate timer in progress in another. |
+| B9 | Missions players join the `mgs.blue` team with `mp.team=1`, and the match stop runs `team leave @a[team=mgs.blue]` and resets `mp.team` on `@a`. | `core/player_menus.py`, `missions/game/stop.py`, `multiplayer/game/stop.py` | Ending a match takes mission players out of their team. |
+| B10 | Map scripts are entries of one function tag per script (`#mgs:maps/tick_script`), each guarded only by its own mode's state and map. | `core/commands.py`, `zombies/maps.py`, `multiplayer/maps.py` | The zombies tick runs the match map's tick script too, at the zombies base, and the reverse. |
 
 ### Leaks
 
@@ -38,13 +40,14 @@ something from another game.
 | L3 | `scoreboard objectives setdisplay sidebar` and `list` are server-wide, and both multiplayer (`mgs.sidebar`) and zombies (`mgs.zb_sidebar`) set them. | `multiplayer/game/sidebar.py`, `multiplayer/game/start.py`, `zombies/game/lifecycle/sidebar.py` | The last mode to refresh its sidebar wins it for the whole server; the other game loses its sidebar. |
 | L4 | Mission enemy AI targets the nearest player within 64 blocks, any mode. | `mob_ai.py` | Only a problem if two arenas are closer than 64 blocks. |
 | L5 | Double join guards only check the mode being joined. | `helpers/lifecycle.py` (`late_join_flow_lines`) | A player can be in a match and a zombies run at once. |
+| L6 | Out-of-bounds markers share one tag, `mgs.oob_point`, read by the match and mission ticks. | `core/spawning.py`, `multiplayer/game/tick.py`, `missions/game/tick.py` | A player within 5 blocks of another mode's out-of-bounds marker dies. |
 
 ### Already isolated
 
 - Each mode's own per-player objectives (`mp.*`, `mi.*`, `zb.*`) and fake players (`#mp_*`, `#mi_*`, `#zb_*`).
 - XP listeners check both the mode state and the player's `in_game` (`multiplayer/xp.py`, `missions/xp.py`, `zombies/xp.py`).
 - Simulated deaths route by `in_game` (`main/damage.py`).
-- Teams are per mode (`mgs.red`, `mgs.blue`, `mgs.ffa`, `mgs.zombies`), and a player is in one team at a time.
+- A player is in one team at a time. Missions shares `mgs.blue` with Team Deathmatch, which is harmless once B9 is fixed, since the arenas are apart and teammates cannot hurt each other.
 - Post effects are per player.
 
 ## User Scenarios & Testing *(mandatory)*
@@ -95,8 +98,8 @@ in the reverse order, then in another order. After each stop, the remaining game
 
 ### Functional Requirements
 
-- **FR-001**: Each mode MUST tag its entities with a mode tag (`mgs.mp_entity`, `mgs.mi_entity`, `mgs.zb_entity`), and each stop MUST only kill its own. `mgs.gm_entity` MUST remain for code that needs every game entity, never for a stop's sweep.
-- **FR-002**: Map base and bounds MUST be stored per mode (`#mp_base_*`, `#mi_base_*`, `#zb_base_*`, same for bounds), or reloaded from the mode's storage right before each use.
+- **FR-001**: Each mode MUST tag its entities with a mode tag (`mgs.multiplayer_entity`, `mgs.missions_entity`, `mgs.zombies_entity`), and each stop MUST only kill its own. Dropped guns carry no mode tag and expire on their own timer.
+- **FR-002**: Map base and bounds MUST be stored per mode (`#<mode>_base_*`, `#<mode>_bound_*`), and each entry point of a mode (`game_tick`, `preload_complete`, `stop`) MUST copy them into the working `#gm_base_*` and `#bound_*` first (`shared/use_map_frame`).
 - **FR-003**: No mode MUST write another mode's `in_game` objective.
 - **FR-004**: Every `signals/on_kill` and `signals/damage` listener MUST check the acting player's `in_game` for its mode, in addition to the mode state.
 - **FR-005**: `#any_game_active` MUST be derived (any of the three modes active), not set and cleared by each mode.
@@ -106,6 +109,8 @@ in the reverse order, then in another order. After each stop, the remaining game
 - **FR-009**: Shared respawn objectives (`mp.death_count`, `mp.spectate_timer`) MUST only be reset for the mode's players.
 - **FR-010**: Joining any mode MUST be refused while the player is in another one.
 - **FR-011**: The sidebar MUST be shown per team (`sidebar.team.<color>`) or per mode in a way that does not leak to other modes.
+- **FR-013**: `shared/maps/call_script_at_base` MUST take the calling mode, place the script at that mode's base, and every map script MUST check that mode before running.
+- **FR-014**: Out-of-bounds markers MUST carry their mode tag, and each mode MUST only check its own.
 - **FR-012**: Zombies MUST run in its own dimension (`mgs:zombies`, to add), with a dimension type fixing its time of day, so that `time set` and `advance_time` no longer touch the other modes. Zombies maps move into it.
 
 ### Key Entities

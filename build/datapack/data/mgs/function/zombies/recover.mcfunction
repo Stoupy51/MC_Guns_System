@@ -13,8 +13,8 @@ scoreboard players set #zb_wd_ticks mgs.data 0
 scoreboard players set #zb_dog_pending mgs.data 0
 kill @e[tag=mgs.dog_portal]
 
-# So recovery cannot race a schedule landing a tick later.
-schedule clear mgs:v5.1.0/zombies/start_round
+# So recovery cannot race the countdown landing a tick later.
+scoreboard players set #zb_next_round mgs.data 0
 
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.round_was_frozen_recovering","color":"yellow"}]
 

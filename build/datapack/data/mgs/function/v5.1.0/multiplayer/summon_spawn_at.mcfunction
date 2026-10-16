@@ -12,5 +12,5 @@
 #			yaw (unknown)
 #
 
-$summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.spawn_point","$(tag)","mgs.gm_entity"],data:{yaw:$(yaw)}}
+$summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.spawn_point","$(tag)","mgs.multiplayer_entity"],data:{yaw:$(yaw)}}
 

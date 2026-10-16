@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "use_map_frame.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/commands.py"
+	],
+	"names": [],
+	"mappings": "AAkFmD;;;;;;;;;;;;;;;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

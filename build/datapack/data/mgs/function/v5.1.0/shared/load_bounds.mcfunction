@@ -32,4 +32,10 @@ scoreboard players operation #bound_z1 mgs.data += #gm_base_z mgs.data
 scoreboard players operation #bound_x2 mgs.data += #gm_base_x mgs.data
 scoreboard players operation #bound_y2 mgs.data += #gm_base_y mgs.data
 scoreboard players operation #bound_z2 mgs.data += #gm_base_z mgs.data
+$scoreboard players operation #$(mode)_bound_x1 mgs.data = #bound_x1 mgs.data
+$scoreboard players operation #$(mode)_bound_y1 mgs.data = #bound_y1 mgs.data
+$scoreboard players operation #$(mode)_bound_z1 mgs.data = #bound_z1 mgs.data
+$scoreboard players operation #$(mode)_bound_x2 mgs.data = #bound_x2 mgs.data
+$scoreboard players operation #$(mode)_bound_y2 mgs.data = #bound_y2 mgs.data
+$scoreboard players operation #$(mode)_bound_z2 mgs.data = #bound_z2 mgs.data
 

@@ -183,9 +183,11 @@ tag @a remove {ns}.ww_active
 scoreboard players set @a {ns}.zb.ww.id 0
 data modify storage {ns}:zombies ww_inv set value {{}}
 """)
+	write_versioned_function("zombies/reset_player", f"""
+tag @s remove {ns}.ww_active
+scoreboard players set @s {ns}.zb.ww.id 0
+""")
 	write_versioned_function("zombies/stop", f"""
-tag @a remove {ns}.ww_active
-scoreboard players set @a {ns}.zb.ww.id 0
 data modify storage {ns}:zombies ww_inv set value {{}}
 """)
 

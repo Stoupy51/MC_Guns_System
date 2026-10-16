@@ -65,19 +65,14 @@ schedule function {ns}:v{version}/zombies/stop 100t
 	write_versioned_function("zombies/stop", f"""
 data modify storage {ns}:zombies game.state set value "lobby"
 schedule clear {ns}:v{version}/zombies/end_prep
-schedule clear {ns}:v{version}/zombies/start_round
+scoreboard players set #zb_next_round {ns}.data 0
 
-# The attribute and NoAI restore below is part of the normal cleanup.
+# The attribute and NoAI restore of reset_player is part of the normal cleanup.
 scoreboard players set #zb_freeze {ns}.data 0
+scoreboard players set #zb_resume_timer {ns}.data 0
 tag @e[tag={ns}.zb_frozen_ai] remove {ns}.zb_frozen_ai
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:max_health base reset
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:entity_interaction_range base reset
-effect clear @a[scores={{{ns}.zb.in_game=1}}]
-gamemode adventure @a[scores={{{ns}.zb.in_game=1}},gamemode=spectator]
 kill @e[tag={ns}.zombie_round]
-kill @e[tag={ns}.gm_entity]
+kill @e[tag={ns}.zombies_entity]
 
 execute if score #zb_has_bounds {ns}.data matches 1 run function {ns}:v{version}/shared/remove_forceload
 
@@ -85,24 +80,51 @@ scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.zb_sidebar
 gamerule advance_time true
 
-{GameLifecycle.regen_disable_lines(ns)}
+{GameLifecycle.regen_disable_lines(ns, f"@a[scores={{{ns}.zb.in_game=1}}]")}
 
 tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
-execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{script:"leave"}}
+execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/reset_player
+""")
 
-scoreboard players set @a {ns}.zb.in_game 0
+	## Run as a roster player, at stop or when they come back after their run ended. Feature files append their own lines.
+	write_versioned_function("zombies/reset_player", f"""
+attribute @s minecraft:max_health base reset
+attribute @s minecraft:movement_speed base reset
+attribute @s minecraft:jump_strength base reset
+attribute @s minecraft:entity_interaction_range base reset
+effect clear @s
+gamemode adventure @s[gamemode=spectator]
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"zombies",script:"leave"}}
+
+scoreboard players set @s {ns}.zb.in_game 0
+scoreboard players set @s {ns}.zb.run 0
 # The XP spend tracker is reset too, or the reset reads as points spent (see xp).
-scoreboard players set @a {ns}.zb.points 0
-scoreboard players set @a {ns}.zb.xp_pts_prev 0
-scoreboard players set @a {ns}.zb.xp_spent_acc 0
-scoreboard players set @a {ns}.zb.kills 0
-scoreboard players set @a {ns}.zb.downs 0
-scoreboard players set @a {ns}.zb.passive 0
-scoreboard players set @a {ns}.zb.ability 0
-scoreboard players set @a {ns}.zb.ability_cd 0
-scoreboard players set @a {ns}.zb.prev_kills 0
-scoreboard players set @a {ns}.mp.spectate_timer 0
-tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
+scoreboard players set @s {ns}.zb.points 0
+scoreboard players set @s {ns}.zb.xp_pts_prev 0
+scoreboard players set @s {ns}.zb.xp_spent_acc 0
+scoreboard players set @s {ns}.zb.kills 0
+scoreboard players set @s {ns}.zb.downs 0
+scoreboard players set @s {ns}.zb.passive 0
+scoreboard players set @s {ns}.zb.ability 0
+scoreboard players set @s {ns}.zb.ability_cd 0
+scoreboard players set @s {ns}.zb.prev_kills 0
+scoreboard players set @s {ns}.mp.spectate_timer 0
+tag @s remove {ns}.give_class_menu
+""")
+
+	## A roster player back online. zb.run tells a player of the current run from one whose run ended while they were away.
+	write_versioned_function("zombies/on_rejoin", f"""
+scoreboard players set @s {ns}.zb.rejoins 0
+execute unless score @s {ns}.zb.run matches 1.. run return 0
+
+execute unless score @s {ns}.zb.run = #zb_run {ns}.data run return run function {ns}:v{version}/zombies/clear_stale_player
+execute if data storage {ns}:zombies game{{state:"lobby"}} run return run function {ns}:v{version}/zombies/clear_stale_player
+execute if data storage {ns}:zombies game{{state:"active"}} run function {ns}:v{version}/zombies/rejoin
+""")
+
+	write_versioned_function("zombies/clear_stale_player", f"""
+function {ns}:v{version}/zombies/reset_player
+tellraw @s [{MGS_TAG},{{"text":"The zombies game you were in ended while you were away.","color":"gray"}}]
 """)
 
 	# Fast restart with the same map, variant and roster. Only reachable through /function, so operator-only.

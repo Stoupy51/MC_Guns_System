@@ -59,11 +59,12 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] at @s run function {ns}:v
 $execute positioned $(x) $(y) $(z) run function $(fn)
 """)
 
-		# Usage: {script:"start"}
+		# Usage: {mode:"zombies",script:"start"}. Every map script of the tag runs, and each one checks _base.mode.
 		write_versioned_function("shared/maps/call_script_at_base", f"""
-execute store result storage {ns}:temp _base.x int 1 run scoreboard players get #gm_base_x {ns}.data
-execute store result storage {ns}:temp _base.y int 1 run scoreboard players get #gm_base_y {ns}.data
-execute store result storage {ns}:temp _base.z int 1 run scoreboard players get #gm_base_z {ns}.data
+$execute store result storage {ns}:temp _base.x int 1 run scoreboard players get #$(mode)_base_x {ns}.data
+$execute store result storage {ns}:temp _base.y int 1 run scoreboard players get #$(mode)_base_y {ns}.data
+$execute store result storage {ns}:temp _base.z int 1 run scoreboard players get #$(mode)_base_z {ns}.data
+$data modify storage {ns}:temp _base.mode set value "$(mode)"
 $data modify storage {ns}:temp _base.fn set value "#{ns}:maps/$(script)_script"
 function {ns}:v{version}/shared/call_at_base with storage {ns}:temp _base
 """)
@@ -73,5 +74,24 @@ function {ns}:v{version}/shared/call_at_base with storage {ns}:temp _base
 $execute store result score #gm_base_x {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[0]
 $execute store result score #gm_base_y {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[1]
 $execute store result score #gm_base_z {ns}.data run data get storage {ns}:$(mode) game.map.base_coordinates[2]
+$scoreboard players operation #$(mode)_base_x {ns}.data = #gm_base_x {ns}.data
+$scoreboard players operation #$(mode)_base_y {ns}.data = #gm_base_y {ns}.data
+$scoreboard players operation #$(mode)_base_z {ns}.data = #gm_base_z {ns}.data
 """)
+
+		## Modes run side by side, so each entry point of a mode puts its own base and bounds back first. Usage: {mode:"zombies"}
+		write_versioned_function("shared/use_map_frame", f"""
+$scoreboard players operation #gm_base_x {ns}.data = #$(mode)_base_x {ns}.data
+$scoreboard players operation #gm_base_y {ns}.data = #$(mode)_base_y {ns}.data
+$scoreboard players operation #gm_base_z {ns}.data = #$(mode)_base_z {ns}.data
+$scoreboard players operation #bound_x1 {ns}.data = #$(mode)_bound_x1 {ns}.data
+$scoreboard players operation #bound_y1 {ns}.data = #$(mode)_bound_y1 {ns}.data
+$scoreboard players operation #bound_z1 {ns}.data = #$(mode)_bound_z1 {ns}.data
+$scoreboard players operation #bound_x2 {ns}.data = #$(mode)_bound_x2 {ns}.data
+$scoreboard players operation #bound_y2 {ns}.data = #$(mode)_bound_y2 {ns}.data
+$scoreboard players operation #bound_z2 {ns}.data = #$(mode)_bound_z2 {ns}.data
+""")
+		for entry in ("zombies/game_tick", "zombies/preload_complete", "zombies/stop", "multiplayer/game_tick", "multiplayer/stop", "missions/game_tick", "missions/preload_complete", "missions/stop"):
+			mode: str = entry.split("/")[0]
+			write_versioned_function(entry, f'function {ns}:v{version}/shared/use_map_frame {{mode:"{mode}"}}', prepend=True)
 

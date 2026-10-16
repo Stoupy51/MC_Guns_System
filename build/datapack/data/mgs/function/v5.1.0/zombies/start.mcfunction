@@ -40,34 +40,33 @@ scoreboard players set #zb_points_knife_kill mgs.config 130
 scoreboard players set #zb_mystery_box_price mgs.config 950
 
 team join mgs.zombies @a[scores={mgs.zb.in_game=1}]
+scoreboard players add #zb_run mgs.data 1
+scoreboard players operation @a[scores={mgs.zb.in_game=1}] mgs.zb.run = #zb_run mgs.data
 
 # Kills from before the game do not count.
 execute as @a run scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
 
 # Prevents false triggers.
-scoreboard players set @a mgs.mp.death_count 0
-scoreboard players set @a mgs.mp.spectate_timer 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.mp.death_count 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.mp.spectate_timer 0
 
 # A stale flag would pause the first round.
 scoreboard players set #zb_freeze mgs.data 0
 tag @e[tag=mgs.zb_frozen_ai] remove mgs.zb_frozen_ai
 
-scoreboard players set @a mgs.mp.in_game 0
-scoreboard players set @a mgs.mi.in_game 0
-
 gamerule natural_health_regeneration false
 scoreboard players set #any_game_active mgs.data 1
 
 # hp_prev comes from the `health` criterion; a player whose score is unset syncs on their first health change.
-scoreboard players set @a mgs.last_hit 0
-scoreboard players set @a mgs.hp_prev 0
-execute as @a run scoreboard players operation @s mgs.hp_prev = @s mgs.health
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.last_hit 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.hp_prev 0
+execute as @a[scores={mgs.zb.in_game=1}] run scoreboard players operation @s mgs.hp_prev = @s mgs.health
 
-# Everyone, late joiners included, re-inits at full stamina on their next tick.
-scoreboard players set @a mgs.stam_seen 0
+# Late joiners re-init at full stamina on their next tick.
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.stam_seen 0
 
 # Post effects live in player NBT, so a round that ended badly could still apply them.
-execute as @a run function mgs:v5.1.0/player/fx_reset
+execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 
 gamemode spectator @a[scores={mgs.zb.in_game=1}]
 gamerule immediate_respawn true

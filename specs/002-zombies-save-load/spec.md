@@ -95,10 +95,10 @@ state back.
 **Suspend and resume**
 
 - **FR-001**: The game-over check MUST count only online roster players, and MUST suspend the run instead of ending it when none is online.
-- **FR-002**: Suspension MUST reuse the operator freeze (`zombies/freeze_on`), MUST stop every run timer (round, spawn, power-up, box move, trap, perk, ability, bleed-out, Dying Wish), and MUST be shown as "PAUSED" to anyone online.
-- **FR-003**: A roster player connecting MUST be detected with a `custom:leave_game` counter, and MUST get back their team, gamemode, sidebar, post effects and attributes.
+- **FR-002**: Suspension MUST reuse the operator freeze (`zombies/freeze_world`), MUST stop every run timer (round, spawn, power-up, box move, trap, perk, ability, bleed-out, Dying Wish, the 5 s gap between rounds), and MUST be shown as "PAUSED" to the roster.
+- **FR-003**: A roster player connecting MUST be detected with a `custom:leave_game` counter. Team, gamemode, scores, inventory and attributes persist in the player data, post effects are reset by `player/fx_after_rejoin`, and a player connecting during a freeze is frozen too.
 - **FR-004**: Resuming MUST follow a 5 s countdown, cancelled if every roster player leaves again.
-- **FR-005**: A connecting player with `mgs.zb.in_game=1` and no run in progress MUST have every zombies score, perk tag and zombies item cleared.
+- **FR-005**: A connecting player whose run ended while they were away MUST get the same cleanup as a player online at stop (`zombies/reset_player`). Their `mgs.zb.run` differs from `#zb_run`, or no run is in progress.
 - **FR-006**: Operators MUST be able to pause, resume and end a suspended run from the admin menu.
 
 **Save and load**
@@ -119,7 +119,8 @@ state back.
 ### Key Entities
 
 - **Roster**: Players with `mgs.zb.in_game=1`, online or not. Their scores persist offline; online-ness is read with `@a`.
-- **Suspension**: The run state `"suspended"` in `storage mgs:zombies game.state`, on top of the operator freeze.
+- **Run id**: `#zb_run`, incremented at each start, copied to `mgs.zb.run` of the roster and of late joiners, zeroed by `zombies/reset_player`.
+- **Suspension**: `#zb_freeze` at 2, where 1 is the operator freeze. `game.state` stays `"active"`, so joins and admin actions keep working.
 - **Save slot**: One entry of `mgs:zombies_saves slots[]`.
 - **Schema row**: `SavedScore(objective, key)` for per-player scores, `SavedMapScore(tag, objective, key)` for map element scores.
 
@@ -145,7 +146,7 @@ state back.
 
 ## Assumptions
 
-- US1 needs no new state: suspension is a state value plus the existing freeze.
+- US1 needs no new state: suspension is a value of the existing freeze score.
 - Five slots are enough; no paging in the picker.
 - Saves are per world. Moving a save between worlds is out of scope.
 - The between-rounds rule is permanent: mid-round saving would mean serializing live zombies, grenades, power-ups and downed players.

@@ -12,6 +12,9 @@ def write_round_hooks() -> None:
 # Before vanilla death particles.
 function {ns}:v{version}/zombies/death_watch_tick
 
+execute if score #zb_next_round {ns}.data matches 1.. run scoreboard players remove #zb_next_round {ns}.data 1
+execute if score #zb_next_round {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches ..-1 run function {ns}:v{version}/zombies/start_round
+
 # Recovers a round that stopped advancing (see watchdog_tick).
 function {ns}:v{version}/zombies/watchdog_tick
 
@@ -37,7 +40,7 @@ execute if score #zb_dog_round {ns}.data matches 0 as @a[scores={{{ns}.zb.in_gam
 	write_versioned_function("zombies/stop", f"""
 kill @e[type=minecraft:marker,tag={ns}.death_watch]
 
-# gm_entity cleanup removes the portals, but the counter must be zeroed or the next game's round would never complete.
+# zombies_entity cleanup removes the portals, but the counter must be zeroed or the next game's round would never complete.
 kill @e[type=minecraft:marker,tag={ns}.dog_portal]
 scoreboard players set #zb_dog_pending {ns}.data 0
 """)

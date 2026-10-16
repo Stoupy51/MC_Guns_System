@@ -25,9 +25,11 @@ scoreboard players set #mb_pulls {ns}.data 0
 scoreboard players set #mb_dry_ray_gun {ns}.data 0
 scoreboard players set #mb_move_timer {ns}.data 0
 scoreboard players set #mb_fs_cleanup_pending {ns}.data 0
-scoreboard players reset @a {ns}.mb.pid
 scoreboard players set #mb_pid_counter {ns}.data 0
 tag @e remove {ns}.mb_fs_active
 tag @e remove {ns}.mb_orig_active
+""")
+	write_versioned_function("zombies/reset_player", f"""
+scoreboard players reset @s {ns}.mb.pid
 """)
 

@@ -16,7 +16,7 @@ variants of each subsystem's own functions.
 
 **Primary Dependencies**: beet + StewBeet, Bookshelf (`bs.id` for UUID matching), `register_dialog` for the admin and setup dialogs
 
-**Storage**: `mgs:zombies game.state` gains `"suspended"`. `mgs:zombies_saves slots[]` for slots, `mgs:zombies pending_players[]` for US3
+**Storage**: `#zb_freeze` gains the value 2, `#zb_run` and `mgs.zb.run` identify the run. `mgs:zombies_saves slots[]` for slots, `mgs:zombies pending_players[]` for US3
 
 **Testing**: In game, singleplayer quit and reopen for US1, a dedicated server restart for co-op, a field-by-field dump comparison for US2
 
@@ -32,10 +32,10 @@ variants of each subsystem's own functions.
 
 ### Suspend and resume (US1)
 
-- `game/lifecycle/tick.py`: before the alive count, `execute unless entity @a[scores={mgs.zb.in_game=1}] run return run function zombies/suspend`. The alive count itself is unchanged, since `@a` already excludes offline players: what changes is that zero online players suspends instead of ending.
-- `zombies/suspend`: state `"suspended"`, `zombies/freeze_on` without its operator message, and a check that every timer listed in FR-002 is gated on `#zb_freeze`. The audit of those timers is task T004; any timer that ticks during the operator freeze today is a bug for both features.
-- Connection: `mgs.zb.rejoins` (`custom:leave_game`), checked in `player/tick`. On a non-zero value: when the run is active or suspended and the player is in the roster, `zombies/rejoin` restores team, gamemode, sidebar, attributes and post effects (`player/fx_after_rejoin`); when no run exists, `zombies/clear_stale_player` (FR-005).
-- A suspended run starts the resume countdown as soon as a roster player is online.
+- `game/lifecycle/tick.py`: before `game_tick`, no online roster player runs `zombies/suspend`, which sets `#zb_freeze` to 2 and runs `zombies/freeze_world`, the part of the operator freeze without its message. The alive count is unchanged, since `@a` already excludes offline players.
+- Timers: every one lives in `game_tick` except the Dying Wish timers in `player/tick`, now gated on `#zb_freeze`, and the 5 s gap between rounds, a `schedule` that ran through freezes, now the `#zb_next_round` countdown in `game_tick`.
+- `zombies/suspended_tick` counts 5 s while a roster player is online and runs `zombies/resume`. The admin freeze toggle unfreezes a suspended run, and STOP ends it.
+- Connection: `mgs.zb.rejoins` (`custom:leave_game`), checked in `player/tick` by `zombies/on_rejoin`. A player of the current active run gets `zombies/rejoin`; one whose `mgs.zb.run` is stale, or who comes back to the lobby, gets `zombies/clear_stale_player`, which runs `zombies/reset_player`, the per-player half of `zombies/stop`.
 
 ### Save (US2)
 
@@ -67,9 +67,9 @@ variants of each subsystem's own functions.
 
 ```text
 src/functional/zombies/
-    game/lifecycle/tick.py     # suspend instead of game over, resume countdown
-    game/lifecycle/over.py     # stale player cleanup
-    game/lifecycle/join.py     # rejoin restore
+    game/lifecycle/tick.py     # suspend, resume countdown, rejoin
+    game/lifecycle/over.py     # reset_player, stale player cleanup
+    game/round/                # the countdown between rounds
     menus.py                   # Pause, Resume, Save & Quit, slot list
     save/
         __init__.py            # generate_zombies_save()

@@ -29,7 +29,7 @@ scoreboard players operation #mi_timer {ns}.data += #tick_delta {ns}.data
 # Bounds and OOB for enemies, when the map has a boundary.
 execute if score #mi_has_boundary {ns}.data matches 1 as @e[tag={ns}.mission_enemy] at @s run function {ns}:v{version}/shared/check_bounds
 execute if score #mi_has_boundary {ns}.data matches 1 as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/shared/check_bounds
-execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,distance=..5] run damage @s 10000 out_of_world
+execute as @e[type=player,scores={{{ns}.mi.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s if entity @e[tag={ns}.oob_point,tag={ns}.missions_entity,distance=..5] run damage @s 10000 out_of_world
 
 # Enemies drop their weapon at the corpse; drops live for 30 s.
 function {ns}:v{version}/missions/death_watch_tick
@@ -48,7 +48,7 @@ execute if score #alive {ns}.data matches 1.. if score #mi_compass_phase {ns}.da
 # Around one in-game player (@r would pay a random sort every tick).
 execute at @a[scores={{{ns}.mi.in_game=1}},limit=1] run kill @e[type=experience_orb,distance=..200]
 
-function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"missions",script:"tick"}}
 
 # Reuses #alive from above (a kill from the map tick script is caught a tick later); at least one enemy must have spawned,
 # so a broken spawn never ends the game at once.

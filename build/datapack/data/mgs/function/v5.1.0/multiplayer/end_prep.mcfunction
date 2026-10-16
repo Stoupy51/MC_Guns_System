@@ -13,7 +13,7 @@ effect clear @a[scores={mgs.mp.in_game=1}] blindness
 effect clear @a[scores={mgs.mp.in_game=1}] night_vision
 
 # The state is now active and chunks had time to load.
-function mgs:v5.1.0/shared/maps/call_script_at_base {script:"start"}
+function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"multiplayer",script:"start"}
 
 tellraw @a ["","⚔ ",[{"text":"","color":"green","bold":true},{"translate":"mgs.go_go_go"}]]
 

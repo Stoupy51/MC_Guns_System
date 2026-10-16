@@ -22,8 +22,8 @@ def generate_doors() -> None:
 	version: str = Mem.ctx.project_version
 	deny_not_enough_points: str = ZombiesCommon.deny_not_enough_points_cmd(ns, version, "#door_price")
 	interaction_offset: float = 0.75  # Distance in front of door block to place interaction entities
-	front_door_tags: str = f'["{ns}.door","{ns}.door_front","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
-	back_door_tags: str = f'["{ns}.door","{ns}.door_back","{ns}.gm_entity","bs.entity.interaction","{ns}.door_new"]'
+	front_door_tags: str = f'["{ns}.door","{ns}.door_front","{ns}.zombies_entity","bs.entity.interaction","{ns}.door_new"]'
+	back_door_tags: str = f'["{ns}.door","{ns}.door_back","{ns}.zombies_entity","bs.entity.interaction","{ns}.door_new"]'
 	door_hover_message: str = (
 		f'[{{"text":"🛠 "}},'
 		f'{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"yellow","interpret":true}},'

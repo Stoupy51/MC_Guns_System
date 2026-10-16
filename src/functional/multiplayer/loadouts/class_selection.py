@@ -220,7 +220,7 @@ gamemode adventure @s
 execute if data storage {ns}:multiplayer game.map.respawn_commands[0] at @s run function {ns}:v{version}/shared/run_respawn_commands {{mode:"multiplayer"}}
 
 # Run as the respawning player.
-function {ns}:v{version}/shared/maps/call_script_at_base {{script:"respawn"}}
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"multiplayer",script:"respawn"}}
 """)
 
 	## Sets mp.class to minus mp.default, then applies it.

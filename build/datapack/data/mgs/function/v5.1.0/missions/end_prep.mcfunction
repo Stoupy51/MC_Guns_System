@@ -22,7 +22,7 @@ execute if score #mi_total_enemies mgs.data matches ..0 run return run function 
 execute if data storage mgs:missions game.map.start_commands[0] run function mgs:v5.1.0/shared/run_start_commands {mode:"missions"}
 
 # The state is now active and chunks had time to load.
-function mgs:v5.1.0/shared/maps/call_script_at_base {script:"start"}
+function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"missions",script:"start"}
 
 # Points to the nearest enemy.
 execute as @a[scores={mgs.mi.in_game=1}] run item replace entity @s hotbar.3 with compass[custom_data={mgs:{compass:true}}]

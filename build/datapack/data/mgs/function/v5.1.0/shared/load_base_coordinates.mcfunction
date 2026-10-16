@@ -16,4 +16,7 @@
 $execute store result score #gm_base_x mgs.data run data get storage mgs:$(mode) game.map.base_coordinates[0]
 $execute store result score #gm_base_y mgs.data run data get storage mgs:$(mode) game.map.base_coordinates[1]
 $execute store result score #gm_base_z mgs.data run data get storage mgs:$(mode) game.map.base_coordinates[2]
+$scoreboard players operation #$(mode)_base_x mgs.data = #gm_base_x mgs.data
+$scoreboard players operation #$(mode)_base_y mgs.data = #gm_base_y mgs.data
+$scoreboard players operation #$(mode)_base_z mgs.data = #gm_base_z mgs.data
 

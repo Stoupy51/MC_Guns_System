@@ -6,6 +6,8 @@
 #			dialog mgs:v5.1.0/missions/setup
 #
 
+function mgs:v5.1.0/shared/use_map_frame {mode:"missions"}
+
 data modify storage mgs:missions game.state set value "lobby"
 schedule clear mgs:v5.1.0/missions/end_prep
 execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:movement_speed base reset
@@ -17,27 +19,30 @@ gamemode adventure @a[scores={mgs.mi.in_game=1},gamemode=spectator]
 clear @a[scores={mgs.mi.in_game=1}] compass[custom_data~{mgs:{compass:true}}]
 
 kill @e[tag=mgs.mission_enemy]
-kill @e[tag=mgs.gm_entity]
+kill @e[tag=mgs.missions_entity]
 
 execute if score #mi_has_boundary mgs.data matches 1 run function mgs:v5.1.0/shared/remove_forceload
 
 function #mgs:missions/on_mission_end
 
-gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
+execute if data storage mgs:multiplayer game.state unless data storage mgs:multiplayer game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1
+execute if data storage mgs:missions game.state unless data storage mgs:missions game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1
+execute if data storage mgs:zombies game.state unless data storage mgs:zombies game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1
+execute if score #any_game_active mgs.data matches 0 run gamerule natural_health_regeneration true
 
 # Stop any hunger drain and refill the bar, so nobody is left winded.
-effect clear @a minecraft:hunger
-effect give @a minecraft:saturation 5 20 true
-scoreboard players set @a mgs.stam_out 0
-scoreboard players set @a mgs.stam_seen 0
+effect clear @a[scores={mgs.mi.in_game=1}] minecraft:hunger
+effect give @a[scores={mgs.mi.in_game=1}] minecraft:saturation 5 20 true
+scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.stam_out 0
+scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.stam_seen 0
 
 # Every shader id off, so nothing survives into the lobby.
-execute as @a run function mgs:v5.1.0/player/fx_reset
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
 
-execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {script:"leave"}
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"missions",script:"leave"}
 
 scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 0
 scoreboard players set @a mgs.mi.in_game 0

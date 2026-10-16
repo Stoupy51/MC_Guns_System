@@ -34,10 +34,10 @@ scoreboard players set #mi_total_enemies mgs.data 0
 scoreboard players set #mi_has_boundary mgs.data 0
 scoreboard players set @a mgs.mi.kills 0
 scoreboard players set @a mgs.mi.deaths 0
-scoreboard players set @a mgs.mp.spectate_timer 0
+scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.spectate_timer 0
 
 # deathCount keeps counting outside games: a lobby death would fire missions/on_respawn the moment the state turns active.
-scoreboard players set @a mgs.mp.death_count 0
+scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.death_count 0
 
 scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 1
 team join mgs.blue @a[scores={mgs.mi.in_game=1}]
@@ -55,15 +55,15 @@ gamerule natural_health_regeneration false
 scoreboard players set #any_game_active mgs.data 1
 
 # hp_prev comes from the `health` criterion; a player whose score is unset syncs on their first health change.
-scoreboard players set @a mgs.last_hit 0
-scoreboard players set @a mgs.hp_prev 0
-execute as @a run scoreboard players operation @s mgs.hp_prev = @s mgs.health
+scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.last_hit 0
+scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.hp_prev 0
+execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.hp_prev = @s mgs.health
 
-# Everyone, late joiners included, re-inits at full stamina on their next tick.
-scoreboard players set @a mgs.stam_seen 0
+# Late joiners re-init at full stamina on their next tick.
+scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.stam_seen 0
 
 # Post effects live in player NBT, so a round that ended badly could still apply them.
-execute as @a run function mgs:v5.1.0/player/fx_reset
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 
 function mgs:v5.1.0/shared/load_base_coordinates {mode:"missions"}
 

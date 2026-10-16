@@ -4,9 +4,11 @@
 # @within	mgs:v5.1.0/tick
 #
 
+function mgs:v5.1.0/shared/use_map_frame {mode:"zombies"}
+
 function mgs:v5.1.0/zombies/revive/tick
 
-function mgs:v5.1.0/shared/maps/call_script_at_base {script:"tick"}
+function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"zombies",script:"tick"}
 
 execute if score #zb_to_spawn mgs.data matches 1.. run function mgs:v5.1.0/zombies/spawn_tick
 
@@ -67,6 +69,9 @@ execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5
 
 # Before vanilla death particles.
 function mgs:v5.1.0/zombies/death_watch_tick
+
+execute if score #zb_next_round mgs.data matches 1.. run scoreboard players remove #zb_next_round mgs.data 1
+execute if score #zb_next_round mgs.data matches 0 if score #zb_to_spawn mgs.data matches ..-1 run function mgs:v5.1.0/zombies/start_round
 
 # Recovers a round that stopped advancing (see watchdog_tick).
 function mgs:v5.1.0/zombies/watchdog_tick

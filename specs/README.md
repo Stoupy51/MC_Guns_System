@@ -4,12 +4,12 @@ One directory per feature, in the Spec Kit layout (`spec.md` -> `plan.md` -> `ta
 
 | Feature | State |
 |---|---|
-| [002-zombies-save-load](002-zombies-save-load/) | Specced: suspend and resume (P1, fixes lost runs), then save slots |
+| [002-zombies-save-load](002-zombies-save-load/) | Suspend and resume (P1) built, untested in game; save slots specced |
 | [003-zombie-special-types](003-zombie-special-types/) | Built; T001 and T003 (package move) and the in-game checks open |
 | [004-multiplayer-kill-cam](004-multiplayer-kill-cam/) | Specced: final kill chain replayed with mannequins |
 | [006-weapon-fire-modes-tacticals](006-weapon-fire-modes-tacticals/) | Built, in-game checks open (T003, T009 to T013, T020) |
 | [008-original-fire-modes](008-original-fire-modes/) | Built, in-game checks open (T014 to T017) |
-| [009-concurrent-modes-isolation](009-concurrent-modes-isolation/) | Audit and requirements, nothing built |
+| [009-concurrent-modes-isolation](009-concurrent-modes-isolation/) | Breaks fixed except B7, untested in game; broadcasts, sidebar and the zombies dimension open |
 
 Working on one of these: run `/speckit-tasks` to regenerate its task list from the current code,
 or `/speckit-converge` to have the remaining work appended after a partial implementation.

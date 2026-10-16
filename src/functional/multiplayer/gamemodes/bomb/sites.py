@@ -62,8 +62,8 @@ execute if data storage {ns}:temp _{key}_iter[0] run function {ns}:v{version}/mu
 
 		## The floating letter marks the site for both sides, and names it in chat when the bomb goes down there.
 		variant.sub("summon_obj_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.{key}_obj","{ns}.gm_entity","{ns}.{key}_site_$(label)"]}}
-$summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.{key}_label","{ns}.gm_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"white"}},{{"text":"$(label)","color":"yellow","bold":true}}],transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.{key}_obj","{ns}.multiplayer_entity","{ns}.{key}_site_$(label)"]}}
+$summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.{key}_label","{ns}.multiplayer_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"white"}},{{"text":"$(label)","color":"yellow","bold":true}}],transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 $execute positioned $(x) $(y) $(z) run setblock ~ ~ ~ chest
 $execute positioned $(x) $(y) $(z) run setblock ~ ~1 ~ barrier
 """)
@@ -100,7 +100,7 @@ execute if entity @s[tag={ns}.spawn_blue] run scoreboard players add #{key}_near
 		""" Return the lines that restore the world where the sites were and remove their entities.
 
 		The `fill` has to run while the markers are still alive, which is why every mode's `cleanup` runs
-		before `multiplayer/stop` sweeps `gm_entity` (see game/stop.py).
+		before `multiplayer/stop` sweeps `multiplayer_entity` (see game/stop.py).
 		"""
 		ns, key = variant.ns, variant.key
 		return f"""execute at @e[tag={ns}.{key}_obj] run fill ~ ~ ~ ~ ~1 ~ air

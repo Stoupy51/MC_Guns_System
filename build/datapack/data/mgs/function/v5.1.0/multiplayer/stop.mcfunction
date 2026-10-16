@@ -7,6 +7,8 @@
 #			dialog mgs:v5.1.0/multiplayer/setup
 #
 
+function mgs:v5.1.0/shared/use_map_frame {mode:"multiplayer"}
+
 data modify storage mgs:multiplayer game.state set value "lobby"
 schedule clear mgs:v5.1.0/multiplayer/end_prep
 execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base reset
@@ -17,7 +19,7 @@ effect clear @a[scores={mgs.mp.in_game=1}] blindness
 effect clear @a[scores={mgs.mp.in_game=1}] night_vision
 gamemode adventure @a[scores={mgs.mp.in_game=1},gamemode=spectator]
 
-# Mode cleanup before the gm_entity sweep: S&D restores its sites with `execute at @e[tag=snd_obj] run fill`,
+# Mode cleanup before the multiplayer_entity sweep: S&D restores its sites with `execute at @e[tag=snd_obj] run fill`,
 # which needs the markers to still exist.
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run function mgs:v5.1.0/multiplayer/gamemodes/ffa/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"tdm"} run function mgs:v5.1.0/multiplayer/gamemodes/tdm/cleanup
@@ -25,20 +27,23 @@ execute if data storage mgs:multiplayer game{gamemode:"dom"} run function mgs:v5
 execute if data storage mgs:multiplayer game{gamemode:"hp"} run function mgs:v5.1.0/multiplayer/gamemodes/hp/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"snd"} run function mgs:v5.1.0/multiplayer/gamemodes/snd/cleanup
 execute if data storage mgs:multiplayer game{gamemode:"demo"} run function mgs:v5.1.0/multiplayer/gamemodes/demo/cleanup
-kill @e[tag=mgs.gm_entity]
+kill @e[tag=mgs.multiplayer_entity]
 function #mgs:multiplayer/on_game_end
 
-gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
+execute if data storage mgs:multiplayer game.state unless data storage mgs:multiplayer game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1
+execute if data storage mgs:missions game.state unless data storage mgs:missions game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1
+execute if data storage mgs:zombies game.state unless data storage mgs:zombies game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1
+execute if score #any_game_active mgs.data matches 0 run gamerule natural_health_regeneration true
 
 # Stop any hunger drain and refill the bar, so nobody is left winded.
-effect clear @a minecraft:hunger
-effect give @a minecraft:saturation 5 20 true
-scoreboard players set @a mgs.stam_out 0
-scoreboard players set @a mgs.stam_seen 0
+effect clear @a[scores={mgs.mp.in_game=1}] minecraft:hunger
+effect give @a[scores={mgs.mp.in_game=1}] minecraft:saturation 5 20 true
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.stam_out 0
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.stam_seen 0
 
 # Every shader id off, so nothing survives into the lobby.
-execute as @a run function mgs:v5.1.0/player/fx_reset
+execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 
 # Team scores mean nothing in FFA; player_wins announces the winner.
 tellraw @a ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.game_over"},"! "]]
@@ -52,16 +57,14 @@ tag @a remove mgs.stat_cand
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove mgs.sidebar
 scoreboard objectives setdisplay list
-team leave @a[team=mgs.red]
-team leave @a[team=mgs.blue]
-team leave @a[team=mgs.ffa]
+team leave @a[scores={mgs.mp.in_game=1}]
 
 # The state is still active or preparing here.
-execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {script:"leave"}
+execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"multiplayer",script:"leave"}
 
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.team 0
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.spectate_timer 0
 scoreboard players set @a mgs.mp.in_game 0
-scoreboard players set @a mgs.mp.team 0
-scoreboard players set @a mgs.mp.spectate_timer 0
 scoreboard players set #mp_has_boundary mgs.data 0
 tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 

@@ -1,4 +1,4 @@
-""" The game tick, the admin pause and routing a death into the downed state. """
+""" The game tick, the admin pause, the suspension of a run nobody is online for, and routing a death into the downed state. """
 # Imports
 from stewbeet import Mem, write_tick_file, write_versioned_function
 
@@ -12,16 +12,18 @@ def write_zombies_tick() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
+	# #zb_freeze swaps in the freeze tick: 1 for the admin pause, 2 for a suspended run. Every zombies timer lives in game_tick,
+	# so skipping it pauses the round. Offline players keep their scores, so the roster survives a restart.
 	write_tick_file(f"""
-# #zb_freeze (admin menu) swaps in the freeze tick: every zombies timer lives in game_tick, so skipping it pauses the round.
-execute if data storage {ns}:zombies game{{state:"active"}} unless score #zb_freeze {ns}.data matches 1 run function {ns}:v{version}/zombies/game_tick
-execute if data storage {ns}:zombies game{{state:"active"}} if score #zb_freeze {ns}.data matches 1 run function {ns}:v{version}/zombies/freeze_tick
+execute if data storage {ns}:zombies game{{state:"active"}} unless score #zb_freeze {ns}.data matches 1.. unless entity @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/suspend
+execute if data storage {ns}:zombies game{{state:"active"}} unless score #zb_freeze {ns}.data matches 1.. run function {ns}:v{version}/zombies/game_tick
+execute if data storage {ns}:zombies game{{state:"active"}} if score #zb_freeze {ns}.data matches 1.. run function {ns}:v{version}/zombies/freeze_tick
 """)
 
 	write_versioned_function("zombies/game_tick", f"""
 function {ns}:v{version}/zombies/revive/tick
 
-function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"zombies",script:"tick"}}
 
 execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_tick
 
@@ -83,16 +85,22 @@ kill @e[type=experience_orb]
 	# Mobs already NoAI (rising, escorted) carry zb_frozen_ai, so unfreezing cannot wake them early.
 	write_versioned_function("zombies/freeze_on", f"""
 scoreboard players set #zb_freeze {ns}.data 1
-
-execute as @e[tag={ns}.zombie_round] unless data entity @s {{NoAI:1b}} run function {ns}:v{version}/zombies/freeze_mob
-
-# The attribute pair the prep countdown uses.
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base set 0
-execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base set 0
+function {ns}:v{version}/zombies/freeze_world
 
 {TitleTimes.FREEZE.cmd(f'@a[scores={{{ns}.zb.in_game=1}}]')}
 title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"⏸","color":"white"}}]
 tellraw @a [{MGS_TAG},{{"text":"An operator froze the game.","color":"aqua"}}]
+""")
+
+	write_versioned_function("zombies/freeze_world", f"""
+execute as @e[tag={ns}.zombie_round] unless data entity @s {{NoAI:1b}} run function {ns}:v{version}/zombies/freeze_mob
+execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/freeze_player
+""")
+
+	# The attribute pair the prep countdown uses.
+	write_versioned_function("zombies/freeze_player", """
+attribute @s minecraft:movement_speed base set 0
+attribute @s minecraft:jump_strength base set 0
 """)
 
 	write_versioned_function("zombies/freeze_mob", f"""
@@ -101,23 +109,56 @@ data merge entity @s {{NoAI:1b}}
 """)
 
 	write_versioned_function("zombies/freeze_off", f"""
-scoreboard players set #zb_freeze {ns}.data 0
+function {ns}:v{version}/zombies/unfreeze_world
+tellraw @a [{MGS_TAG},{{"text":"An operator unfroze the game.","color":"aqua"}}]
+""")
 
-# Only the mobs freeze_on put to sleep.
+	write_versioned_function("zombies/unfreeze_world", f"""
+scoreboard players set #zb_freeze {ns}.data 0
+scoreboard players set #zb_resume_timer {ns}.data 0
+
+# Only the mobs freeze_world put to sleep.
 execute as @e[tag={ns}.zb_frozen_ai] run data merge entity @s {{NoAI:0b}}
 tag @e[tag={ns}.zb_frozen_ai] remove {ns}.zb_frozen_ai
 
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_strength base reset
+""")
 
-tellraw @a [{MGS_TAG},{{"text":"An operator unfroze the game.","color":"aqua"}}]
+	write_versioned_function("zombies/suspend", f"""
+scoreboard players set #zb_freeze {ns}.data 2
+function {ns}:v{version}/zombies/freeze_world
+tellraw @a [{MGS_TAG},{{"text":"Zombies game paused: nobody in it is online.","color":"aqua"}}]
 """)
 
 	## Every timer is paused; remind players why.
 	write_versioned_function("zombies/freeze_tick", f"""
+execute if score #zb_freeze {ns}.data matches 2 run return run function {ns}:v{version}/zombies/suspended_tick
 scoreboard players add #zb_freeze_msg {ns}.data 1
 execute if score #zb_freeze_msg {ns}.data matches 20.. run scoreboard players set #zb_freeze_msg {ns}.data 0
 execute if score #zb_freeze_msg {ns}.data matches 0 run title @a[scores={{{ns}.zb.in_game=1}}] actionbar [{{"text":"⏸ ","color":"white"}},{{"text":"GAME FROZEN","color":"aqua","bold":true}}]
+""")
+
+	## Resumes 5 s after a roster player is back; the count restarts if they all leave again.
+	write_versioned_function("zombies/suspended_tick", f"""
+execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run return run scoreboard players set #zb_resume_timer {ns}.data 0
+scoreboard players add #zb_resume_timer {ns}.data 1
+scoreboard players set #zb_resume_left {ns}.data 119
+scoreboard players operation #zb_resume_left {ns}.data -= #zb_resume_timer {ns}.data
+scoreboard players operation #zb_resume_left {ns}.data /= #20 {ns}.data
+title @a[scores={{{ns}.zb.in_game=1}}] actionbar [{{"text":"⏸ ","color":"white"}},{{"text":"PAUSED","color":"aqua","bold":true}},{{"text":", resuming in ","color":"gray"}},{{"score":{{"name":"#zb_resume_left","objective":"{ns}.data"}},"color":"white"}}]
+execute if score #zb_resume_timer {ns}.data matches 100.. run function {ns}:v{version}/zombies/resume
+""")
+
+	write_versioned_function("zombies/resume", f"""
+function {ns}:v{version}/zombies/unfreeze_world
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The game resumes!","color":"green"}}]
+""")
+
+	## Run as a roster player back in the run they left, which kept the rest of their state.
+	write_versioned_function("zombies/rejoin", f"""
+execute if score #zb_freeze {ns}.data matches 1.. run function {ns}:v{version}/zombies/freeze_player
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s"}},{{"text":" is back in the game.","color":"green"}}]
 """)
 
 	write_versioned_function("zombies/on_respawn", f"""
@@ -129,10 +170,11 @@ function {ns}:v{version}/zombies/revive/on_down
 """)
 
 	write_versioned_function("player/tick", f"""
+execute if score @s {ns}.zb.rejoins matches 1.. run function {ns}:v{version}/zombies/on_rejoin
 execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.mp.death_count matches 1.. run function {ns}:v{version}/zombies/on_respawn
 
 # Dying Wish: escalating cooldown and berserk timer.
-execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.zb.dw_cd matches 1.. run scoreboard players remove @s {ns}.zb.dw_cd 1
-execute if data storage {ns}:zombies game{{state:"active"}} if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.zb.dw_timer matches 1.. run function {ns}:v{version}/zombies/perks/dying_wish_tick
+execute if data storage {ns}:zombies game{{state:"active"}} unless score #zb_freeze {ns}.data matches 1.. if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.zb.dw_cd matches 1.. run scoreboard players remove @s {ns}.zb.dw_cd 1
+execute if data storage {ns}:zombies game{{state:"active"}} unless score #zb_freeze {ns}.data matches 1.. if score @s {ns}.zb.in_game matches 1.. if score @s {ns}.zb.dw_timer matches 1.. run function {ns}:v{version}/zombies/perks/dying_wish_tick
 """)
 

@@ -33,7 +33,7 @@ scoreboard players set #blue mgs.mp.team 0
 scoreboard players set #mp_has_boundary mgs.data 0
 scoreboard players set @a mgs.mp.kills 0
 scoreboard players set @a mgs.mp.deaths 0
-scoreboard players set @a mgs.mp.death_count 0
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.death_count 0
 
 # Per-match XP for the after-action line; lifetime totals stay.
 scoreboard players set @a mgs.mp.xp_session 0
@@ -55,21 +55,21 @@ execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:waypoint_rec
 gamerule immediate_respawn true
 gamerule keep_inventory true
 
-scoreboard players set @a mgs.mp.spectate_timer 0
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.spectate_timer 0
 
 gamerule natural_health_regeneration false
 scoreboard players set #any_game_active mgs.data 1
 
 # hp_prev comes from the `health` criterion; a player whose score is unset syncs on their first health change.
-scoreboard players set @a mgs.last_hit 0
-scoreboard players set @a mgs.hp_prev 0
-execute as @a run scoreboard players operation @s mgs.hp_prev = @s mgs.health
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.last_hit 0
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.hp_prev 0
+execute as @a[scores={mgs.mp.in_game=1}] run scoreboard players operation @s mgs.hp_prev = @s mgs.health
 
-# Everyone, late joiners included, re-inits at full stamina on their next tick.
-scoreboard players set @a mgs.stam_seen 0
+# Late joiners re-init at full stamina on their next tick.
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.stam_seen 0
 
 # Post effects live in player NBT, so a round that ended badly could still apply them.
-execute as @a run function mgs:v5.1.0/player/fx_reset
+execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 
 function mgs:v5.1.0/shared/load_base_coordinates {mode:"multiplayer"}
 

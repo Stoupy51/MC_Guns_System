@@ -18,7 +18,8 @@ tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold"
 tellraw @a[scores={mgs.zb.in_game=0}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round_2","color":"green"},{"score":{"name":"#completed_round","objective":"mgs.data"},"color":"gold","bold":true},{"translate":"mgs.complete_next_round_in_5_seconds","color":"green"}]
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_end_generic ambient @s ~ ~ ~ 0.3 1.0
 
-schedule function mgs:v5.1.0/zombies/start_round 5s
+# Counted down in game_tick, so a freeze or a suspension holds it.
+scoreboard players set #zb_next_round mgs.data 100
 
 function mgs:v5.1.0/zombies/revive/round_respawn
 

@@ -10,6 +10,8 @@ runs as the clicker, so it wraps the action in `execute as @a[scores={bs.id=<N>}
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ..helpers.lifecycle import GameLifecycle
+
 
 # Functions
 def write_player_menus() -> None:
@@ -113,6 +115,7 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 
 	# Run as the target. In a live game the late-join flow runs first, then the chosen team overrides its auto-assign.
 	write_versioned_function("players/mp_to_red", f"""
+{GameLifecycle.other_mode_guard_lines(ns, "mp")}
 execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer game{{state:"active"}} run function {ns}:v{version}/multiplayer/join_game
 execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer game{{state:"preparing"}} run function {ns}:v{version}/multiplayer/join_game
 scoreboard players set @s {ns}.mp.in_game 1
@@ -122,6 +125,7 @@ tellraw @s ["",{{"text":"Assigned to ","color":"white"}},{{"text":"Red Team","co
 """)
 
 	write_versioned_function("players/mp_to_blue", f"""
+{GameLifecycle.other_mode_guard_lines(ns, "mp")}
 execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer game{{state:"active"}} run function {ns}:v{version}/multiplayer/join_game
 execute if score @s {ns}.mp.in_game matches 0 if data storage {ns}:multiplayer game{{state:"preparing"}} run function {ns}:v{version}/multiplayer/join_game
 scoreboard players set @s {ns}.mp.in_game 1
@@ -139,6 +143,7 @@ tellraw @s [{{"text":"Removed from the game","color":"gray"}}]
 """)
 
 	write_versioned_function("players/zb_join", f"""
+{GameLifecycle.other_mode_guard_lines(ns, "zb")}
 execute if score @s {ns}.zb.in_game matches 0 if data storage {ns}:zombies game{{state:"active"}} run function {ns}:v{version}/zombies/join_game
 execute if score @s {ns}.zb.in_game matches 0 if data storage {ns}:zombies game{{state:"preparing"}} run function {ns}:v{version}/zombies/join_game
 scoreboard players set @s {ns}.zb.in_game 1
@@ -154,6 +159,7 @@ tellraw @s [{{"text":"Removed from the zombies game","color":"gray"}}]
 """)
 
 	write_versioned_function("players/mi_join", f"""
+{GameLifecycle.other_mode_guard_lines(ns, "mi")}
 execute if score @s {ns}.mi.in_game matches 0 if data storage {ns}:missions game{{state:"active"}} run function {ns}:v{version}/missions/join_game
 execute if score @s {ns}.mi.in_game matches 0 if data storage {ns}:missions game{{state:"preparing"}} run function {ns}:v{version}/missions/join_game
 scoreboard players set @s {ns}.mi.in_game 1

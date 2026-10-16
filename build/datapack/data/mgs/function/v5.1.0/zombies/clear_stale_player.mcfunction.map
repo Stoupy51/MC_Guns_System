@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "clear_stale_player.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/over.py"
+	],
+	"names": [],
+	"mappings": "AA4HwD;;;;;;;;AACxD;AACA;AACA"
+}

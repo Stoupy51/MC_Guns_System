@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/zombies/spawn_dog [ as @n[tag=mgs.zb_near,sort=random] & at @s ]
 #
 
-summon minecraft:marker ~ ~ ~ {Tags:["mgs.dog_portal","mgs.gm_entity"]}
+summon minecraft:marker ~ ~ ~ {Tags:["mgs.dog_portal","mgs.zombies_entity"]}
 
 scoreboard players set @n[tag=mgs.dog_portal,tag=!mgs.dog_portal_armed] mgs.zb.rise_tick 30
 

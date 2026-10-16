@@ -88,7 +88,7 @@ execute if score #mp_timer {ns}.data matches ..0 run scoreboard players set #mp_
 scoreboard players add @s {ns}.mp.kills 1
 """)
 
-		## Runs before the gm_entity sweep of multiplayer/stop, so the world is restored from the site markers while they exist.
+		## Runs before the multiplayer_entity sweep of multiplayer/stop, so the world is restored from the site markers while they exist.
 		self.sub("cleanup", f"""
 schedule clear {ns}:v{version}/multiplayer/gamemodes/demo/start_round
 {BombSites.cleanup_lines(self)}

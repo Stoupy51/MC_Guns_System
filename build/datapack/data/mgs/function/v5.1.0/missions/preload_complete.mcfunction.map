@@ -3,8 +3,9 @@
 	"file": "preload_complete.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
+		"src/functional/core/commands.py",
 		"src/functional/missions/game/start.py"
 	],
 	"names": [],
-	"mappings": "AAkEuD;;;;;;AACvD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": ";;;;;;AA+FmC;AC7BoB;AACvD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

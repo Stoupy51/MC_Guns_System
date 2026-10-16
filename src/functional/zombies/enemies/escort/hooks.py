@@ -41,7 +41,7 @@ gamerule spawn_wandering_traders false
 gamerule spawn_mobs false
 """)
 
-	# The gm_entity sweep in stop kills the traders.
+	# The zombies_entity sweep in stop kills the traders.
 	write_versioned_function("zombies/stop", f"""
 scoreboard players set #zb_escort_count {ns}.data 0
 """)

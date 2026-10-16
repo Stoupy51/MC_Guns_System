@@ -13,8 +13,12 @@ execute unless data storage mgs:zombies game{state:"active"} run return run tell
 # Prevent double-joining
 execute if score @s mgs.zb.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_are_already_in_the_zombies_game","color":"red"}]
 
+execute if score @s mgs.mp.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.leave_your_current_game_first","color":"red"}]
+execute if score @s mgs.mi.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.leave_your_current_game_first","color":"red"}]
+
 # Tag as in-game and reset stats
 scoreboard players set @s mgs.zb.in_game 1
+scoreboard players operation @s mgs.zb.run = #zb_run mgs.data
 team join mgs.zombies @s
 # The XP spend tracker is reset too, or the reset reads as points spent (see xp).
 scoreboard players set @s mgs.zb.points 500
@@ -46,7 +50,7 @@ scoreboard players operation @s mgs.zb.prev_kills = @s mgs.total_kills
 function mgs:v5.1.0/zombies/respawn_tp
 
 # Call map join script (executed as the joining player)
-function mgs:v5.1.0/shared/maps/call_script_at_base {script:"join"}
+function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"zombies",script:"join"}
 
 # Announce
 tellraw @a ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"dark_green"}],[{"text":" ","color":"dark_green"}, {"translate":"mgs.joined_the_zombies_game"}]]

@@ -53,7 +53,7 @@ execute store result score #tick_mod {ns}.data run scoreboard players get #total
 scoreboard players operation #tick_mod {ns}.data %= #6 {ns}.data
 execute if score #tick_mod {ns}.data matches 0 if entity @a[scores={{{ns}.mp.in_game=1,{ns}.special.tracker=1..}}] run function {ns}:v{version}/multiplayer/perks/tracker_tick
 
-function {ns}:v{version}/shared/maps/call_script_at_base {{script:"tick"}}
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"multiplayer",script:"tick"}}
 """)
 
 	## One pass over the live players: a footprint at each one's feet.
@@ -135,7 +135,7 @@ execute unless score @s {ns}.mp.bphase matches 0..3 run function {ns}:v{version}
 execute if score #mp_has_boundary {ns}.data matches 1 if score @s {ns}.mp.bphase = #bounds_phase {ns}.data run function {ns}:v{version}/multiplayer/check_bounds
 
 # Skipped if the coordinate check just eliminated @s, or the death would count twice.
-execute if entity @s[gamemode=!spectator] if entity @e[tag={ns}.oob_point,distance=..5] run function {ns}:v{version}/multiplayer/bounds_kill
+execute if entity @s[gamemode=!spectator] if entity @e[tag={ns}.oob_point,tag={ns}.multiplayer_entity,distance=..5] run function {ns}:v{version}/multiplayer/bounds_kill
 """)
 
 	## Round-robin over the 4 phases; the score persists, so only players leaving mid-game can unbalance them.

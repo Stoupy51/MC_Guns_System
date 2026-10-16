@@ -50,7 +50,7 @@ item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_2
 	# Players cannot be data-modified, so each entry goes through a one-slot shuttle item_display and `item replace` into its original slot.
 	write_versioned_function("zombies/inventory/restore_inventory", f"""
 clear @s
-summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.inv_restore","{ns}.gm_entity"]}}
+summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.inv_restore","{ns}.zombies_entity"]}}
 execute if data storage {ns}:temp _restore.items[0] run function {ns}:v{version}/zombies/inventory/restore_loop
 kill @e[type=minecraft:item_display,tag={ns}.inv_restore]
 data remove storage {ns}:temp _restore

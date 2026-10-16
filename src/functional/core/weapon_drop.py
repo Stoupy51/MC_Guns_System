@@ -81,7 +81,7 @@ execute if score #drop_spawned {ns}.data matches 0 run function {ns}:v{version}/
 scoreboard players set #drop_spawned {ns}.data 1
 
 # Lying flat (90° around X), with a random yaw so a batch of drops does not all face one way.
-summon minecraft:item_display ~ ~0.05 ~ {{Tags:["{ns}.dropped_gun","{ns}.gm_entity","{ns}.drop_new"],item_display:"ground",transformation:{{left_rotation:[0.7071068f,0f,0f,0.7071068f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
+summon minecraft:item_display ~ ~0.05 ~ {{Tags:["{ns}.dropped_gun","{ns}.drop_new"],item_display:"ground",transformation:{{left_rotation:[0.7071068f,0f,0f,0.7071068f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
 data modify entity @n[tag={ns}.drop_new] item set from storage {ns}:temp _dropw
 execute store result storage {ns}:temp _drop_yaw float 1 run random value -180..179
 data modify entity @n[tag={ns}.drop_new] Rotation[0] set from storage {ns}:temp _drop_yaw
@@ -89,7 +89,7 @@ scoreboard players set @n[tag={ns}.drop_new] {ns}.drop_timer 600
 tag @n[tag={ns}.drop_new] remove {ns}.drop_new
 
 # Pickup hitbox (Bookshelf right-click).
-summon minecraft:interaction ~ ~ ~ {{width:0.9f,height:0.6f,response:true,Tags:["{ns}.drop_int","{ns}.gm_entity","bs.entity.interaction","{ns}.drop_new"]}}
+summon minecraft:interaction ~ ~ ~ {{width:0.9f,height:0.6f,response:true,Tags:["{ns}.drop_int","bs.entity.interaction","{ns}.drop_new"]}}
 scoreboard players set @n[tag={ns}.drop_new] {ns}.drop_timer 600
 execute as @n[tag={ns}.drop_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/shared/drops/pickup",executor:"source"}}
 tag @n[tag={ns}.drop_new] remove {ns}.drop_new
@@ -229,8 +229,8 @@ $item replace entity @s inventory.$(slot) from entity @n[tag={ns}.drop_mag_helpe
 """)
 
 		## Zero delay, owner-locked, at the picker.
-		write_versioned_function("shared/drops/give_item", f"""
-$summon minecraft:item ~ ~0.2 ~ {{Item:$(Item),Owner:$(Owner),PickupDelay:0s,Tags:["{ns}.gm_entity"]}}
+		write_versioned_function("shared/drops/give_item", """
+$summon minecraft:item ~ ~0.2 ~ {Item:$(Item),Owner:$(Owner),PickupDelay:0s}
 """)
 
 		## The old gun becomes the new drop, with a fresh timer.
