@@ -6,6 +6,8 @@
 # @within	mgs:v5.1.0/multiplayer/game_tick [ at @s ]
 #
 
+execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.1.0/multiplayer/actual_respawn"}
+
 spectate @s
 
 function mgs:v5.1.0/multiplayer/respawn_tp

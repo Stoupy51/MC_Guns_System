@@ -4,7 +4,7 @@
 # @within	mgs:v5.1.0/tick
 #
 
-function mgs:v5.1.0/shared/use_map_frame {mode:"missions"}
+execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"missions",fn:"mgs:v5.1.0/missions/game_tick"}
 
 # 3 s respawn countdown in real time; range checks, since a 2+ tick delta can jump over an exact 0.
 execute as @a[scores={mgs.mi.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players operation @s mgs.mp.spectate_timer -= #tick_delta mgs.data

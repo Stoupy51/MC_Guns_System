@@ -21,8 +21,8 @@ class FreeForAll(GameModeVariant):
 # Only red and blue leave: players stay on {ns}.ffa, which hides nametags and enables friendly fire.
 team leave @a[team={ns}.red]
 team leave @a[team={ns}.blue]
-scoreboard players set @a {ns}.mp.team 0
-tellraw @a [{MGS_TAG},{{"text":"Free-For-All! Everyone for themselves!","color":"yellow"}}]
+scoreboard players set @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.team 0
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Free-For-All! Everyone for themselves!","color":"yellow"}}]
 """)
 
 		self.sub("tick", f"""
@@ -34,8 +34,8 @@ execute as @a if score @s {ns}.mp.kills >= #score_limit {ns}.data run function {
 # FFA has no team score for multiplayer/xp/on_game_end, so the winner is marked here.
 tag @s add {ns}.{WINNER_TAG}
 
-tellraw @a ["","🏆 ",{Text.player(ns, "@s", color="gold", bold="true")}," ",{{"text":"wins!","color":"gold","bold":true}}]
-tellraw @a ["","  ",{{"text":"Score: ","color":"gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"yellow"}}," ",{{"text":"kills","color":"gray"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","🏆 ",{Text.player(ns, "@s", color="gold", bold="true")}," ",{{"text":"wins!","color":"gold","bold":true}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","  ",{{"text":"Score: ","color":"gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"yellow"}}," ",{{"text":"kills","color":"gray"}}]
 
 function {ns}:v{version}/multiplayer/stop
 """)

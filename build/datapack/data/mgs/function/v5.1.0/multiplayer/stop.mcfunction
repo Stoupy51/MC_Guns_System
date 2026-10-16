@@ -7,7 +7,7 @@
 #			dialog mgs:v5.1.0/multiplayer/setup
 #
 
-function mgs:v5.1.0/shared/use_map_frame {mode:"multiplayer"}
+execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.1.0/multiplayer/stop"}
 
 data modify storage mgs:multiplayer game.state set value "lobby"
 schedule clear mgs:v5.1.0/multiplayer/end_prep
@@ -46,15 +46,17 @@ scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.stam_seen 0
 execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 
 # Team scores mean nothing in FFA; player_wins announces the winner.
-tellraw @a ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.game_over"},"! "]]
-execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run tellraw @a ["",{"translate":"mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
+tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.game_over"},"! "]]
+execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run tellraw @a[scores={mgs.mp.in_game=1}] ["",{"translate":"mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
 
 # Best first; the bare selector shows the team colour, which still applies before the team leave below.
 tag @a[scores={mgs.mp.in_game=1}] add mgs.stat_cand
 function mgs:v5.1.0/multiplayer/announce_stats_iter
 tag @a remove mgs.stat_cand
 
-scoreboard objectives setdisplay sidebar
+scoreboard objectives setdisplay sidebar.team.red
+scoreboard objectives setdisplay sidebar.team.blue
+scoreboard objectives setdisplay sidebar.team.gold
 scoreboard objectives remove mgs.sidebar
 scoreboard objectives setdisplay list
 team leave @a[scores={mgs.mp.in_game=1}]

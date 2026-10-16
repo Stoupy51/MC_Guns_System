@@ -11,5 +11,5 @@ execute store result score #zb_round mgs.data run data get storage mgs:zombies g
 scoreboard players add #zb_round mgs.data 0
 execute store result storage mgs:zombies game.round int 1 run scoreboard players get #zb_round mgs.data
 function mgs:v5.1.0/zombies/admin/force_round_end
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_skipped_ahead_1_rounds","color":"yellow"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_skipped_ahead_1_rounds","color":"yellow"}]
 

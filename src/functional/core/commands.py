@@ -1,6 +1,17 @@
 """ Shared start/respawn command iteration and map-script tag helpers. """
 # Imports
-from stewbeet import Mem, write_tag, write_versioned_function
+from stewbeet import Mem, write_tag, write_tick_file, write_versioned_function
+
+# Constants
+MAP_ENTRIES: dict[str, tuple[str, ...]] = {
+	"zombies": ("start", "preload_complete", "end_prep", "game_tick", "freeze_tick", "join_game", "respawn_tp", "stop"),
+	"multiplayer": (
+		"start", "end_prep", "prep_tick", "game_tick", "join_game", "respawn_tp", "actual_respawn",
+		"gamemodes/demo/start_round", "gamemodes/snd/start_round", "stop",
+	),
+	"missions": ("start", "preload_complete", "end_prep", "prep_tick", "game_tick", "join_game", "respawn_tp", "actual_respawn", "stop"),
+}
+""" Each mode's functions the server or a player calls from outside its map: they run in the map's dimension, with its base and bounds. """
 
 
 # Functions
@@ -91,7 +102,29 @@ $scoreboard players operation #bound_x2 {ns}.data = #$(mode)_bound_x2 {ns}.data
 $scoreboard players operation #bound_y2 {ns}.data = #$(mode)_bound_y2 {ns}.data
 $scoreboard players operation #bound_z2 {ns}.data = #$(mode)_bound_z2 {ns}.data
 """)
-		for entry in ("zombies/game_tick", "zombies/preload_complete", "zombies/stop", "multiplayer/game_tick", "multiplayer/stop", "missions/game_tick", "missions/preload_complete", "missions/stop"):
-			mode: str = entry.split("/")[0]
-			write_versioned_function(entry, f'function {ns}:v{version}/shared/use_map_frame {{mode:"{mode}"}}', prepend=True)
+
+		## Runs an entry point of a mode in the dimension of its selected map, with its base and bounds.
+		## #in_<mode>_map stops the nested entries (a stop from a tick) from entering again. Usage: {mode:"zombies",fn:"..."}
+		write_versioned_function("shared/enter_map", f"""
+$scoreboard players set #in_$(mode)_map {ns}.data 1
+$function {ns}:v{version}/shared/use_map_frame {{mode:"$(mode)"}}
+$data modify storage {ns}:temp _enter set value {{mode:"$(mode)",fn:"$(fn)",dimension:"minecraft:overworld"}}
+$data modify storage {ns}:temp _enter.map_id set from storage {ns}:$(mode) game.map_id
+function {ns}:v{version}/shared/enter_map_dimension with storage {ns}:temp _enter
+function {ns}:v{version}/shared/enter_map_run with storage {ns}:temp _enter
+$scoreboard players set #in_$(mode)_map {ns}.data 0
+""")
+		write_versioned_function("shared/enter_map_dimension", f"""
+$data modify storage {ns}:temp _enter.dimension set from storage {ns}:maps $(mode)[{{id:"$(map_id)"}}].dimension
+""")
+		write_versioned_function("shared/enter_map_run", "$execute in $(dimension) run function $(fn)")
+
+		# A function that failed halfway must not leave its mode marked as entered.
+		write_tick_file("\n".join(f"scoreboard players set #in_{mode}_map {ns}.data 0" for mode in MAP_ENTRIES), prepend=True)
+		for mode, entries in MAP_ENTRIES.items():
+			for entry in entries:
+				write_versioned_function(f"{mode}/{entry}", (
+					f"execute unless score #in_{mode}_map {ns}.data matches 1 run return run "
+					f'function {ns}:v{version}/shared/enter_map {{mode:"{mode}",fn:"{ns}:v{version}/{mode}/{entry}"}}'
+				), prepend=True)
 

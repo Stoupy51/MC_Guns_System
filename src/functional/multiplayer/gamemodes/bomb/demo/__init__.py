@@ -30,7 +30,7 @@ class Demolition(GameModeVariant):
 		version: str = self.version
 
 		self.sub("setup", f"""
-tellraw @a [{MGS_TAG},{{"text":"Demolition! Destroy BOTH bomb sites, or hold them until time runs out.","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"Demolition! Destroy BOTH bomb sites, or hold them until time runs out.","color":"yellow"}}]
 
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 

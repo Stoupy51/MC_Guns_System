@@ -3,8 +3,9 @@
 	"file": "end_prep.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
+		"src/functional/core/commands.py",
 		"src/functional/multiplayer/game/prep.py"
 	],
 	"names": [],
-	"mappings": "AAuBkD;;;;;;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": ";;;;;;AA8HK;ACvG6C;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

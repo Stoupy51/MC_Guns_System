@@ -1,14 +1,9 @@
 
 #> mgs:v5.1.0/shared/use_map_frame
 #
-# @within	mgs:v5.1.0/zombies/game_tick {mode:"zombies"}
-#			mgs:v5.1.0/zombies/preload_complete {mode:"zombies"}
-#			mgs:v5.1.0/zombies/stop {mode:"zombies"}
-#			mgs:v5.1.0/multiplayer/game_tick {mode:"multiplayer"}
-#			mgs:v5.1.0/multiplayer/stop {mode:"multiplayer"}
-#			mgs:v5.1.0/missions/game_tick {mode:"missions"}
-#			mgs:v5.1.0/missions/preload_complete {mode:"missions"}
-#			mgs:v5.1.0/missions/stop {mode:"missions"}
+# @executed	as the player & at current position
+#
+# @within	mgs:v5.1.0/shared/enter_map {mode:"$(mode)"}
 #
 # @args		mode (string)
 #

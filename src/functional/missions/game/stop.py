@@ -31,7 +31,7 @@ function #{ns}:missions/on_mission_end
 
 {GameLifecycle.regen_disable_lines(ns, f"@a[scores={{{ns}.mi.in_game=1}}]")}
 
-tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
+tellraw @a[scores={{{ns}.mi.in_game=1}}] [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
 execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"missions",script:"leave"}}
 
@@ -55,7 +55,7 @@ tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 		f"""
 scoreboard players set @s {ns}.mi.in_game 1
 scoreboard players set @s {ns}.mp.team 1
-team join {ns}.blue @s
+team join {ns}.missions @s
 scoreboard players set @s {ns}.mi.kills 0
 scoreboard players set @s {ns}.mi.deaths 0
 scoreboard players set @s {ns}.mp.death_count 0

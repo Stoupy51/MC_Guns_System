@@ -4,6 +4,8 @@
 # @within	mgs:v5.1.0/missions/preload_complete 180t [ scheduled ]
 #
 
+execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"missions",fn:"mgs:v5.1.0/missions/end_prep"}
+
 execute unless data storage mgs:missions game{state:"preparing"} run return fail
 data modify storage mgs:missions game.state set value "active"
 execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:movement_speed base reset
@@ -15,7 +17,7 @@ effect clear @a[scores={mgs.mi.in_game=1}] night_vision
 function mgs:v5.1.0/missions/spawn_all_enemies
 
 # A mission with no enemies would complete at once (empty map or broken enemy functions).
-execute if score #mi_total_enemies mgs.data matches ..0 run tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_enemies_could_be_spawned_check_the_maps_enemy_markers_functio","color":"red"}]
+execute if score #mi_total_enemies mgs.data matches ..0 run tellraw @a[scores={mgs.mi.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_enemies_could_be_spawned_check_the_maps_enemy_markers_functio","color":"red"}]
 execute if score #mi_total_enemies mgs.data matches ..0 run return run function mgs:v5.1.0/missions/stop
 
 # After the enemies spawn.
@@ -30,5 +32,5 @@ execute as @a[scores={mgs.mi.in_game=1}] run item replace entity @s hotbar.3 wit
 # Counts up.
 scoreboard players set #mi_timer mgs.data 0
 
-tellraw @a ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.go_go_go_kill_all_enemies"}]
+tellraw @a[scores={mgs.mi.in_game=1}] ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.go_go_go_kill_all_enemies"}]
 

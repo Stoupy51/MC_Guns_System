@@ -4,7 +4,7 @@
 # @within	mgs:v5.1.0/zombies/start 20t [ scheduled ]
 #
 
-function mgs:v5.1.0/shared/use_map_frame {mode:"zombies"}
+execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.1.0/zombies/preload_complete"}
 
 execute unless data storage mgs:zombies game{state:"preparing"} run return fail
 
@@ -40,8 +40,8 @@ schedule function mgs:v5.1.0/zombies/end_prep 200t
 function mgs:v5.1.0/zombies/create_sidebar
 
 # Perk wording only for Zonweeb.
-execute if data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_10_seconds","color":"yellow"}]
-execute unless data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_round_1_starts_in_10_seconds","color":"yellow"}]
+execute if data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_10_seconds","color":"yellow"}]
+execute unless data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_round_1_starts_in_10_seconds","color":"yellow"}]
 
 function mgs:v5.1.0/zombies/escort/setup_lure_center
 

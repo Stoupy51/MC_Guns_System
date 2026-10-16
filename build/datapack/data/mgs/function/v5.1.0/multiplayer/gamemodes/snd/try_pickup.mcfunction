@@ -21,5 +21,5 @@ tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mg
 tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s"}],[{"text":" ","color":"gold"}, {"translate":"mgs.picked_up_the_bomb"}],[" ",{"text":"+2 XP","color":"gold"}]]
 execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/mp/award_bomb_pickup
 tag @a remove mgs.xp_earner
-playsound minecraft:item.armor.equip_chain player @a ~ ~ ~ 1 1.2
+playsound minecraft:item.armor.equip_chain player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.2
 

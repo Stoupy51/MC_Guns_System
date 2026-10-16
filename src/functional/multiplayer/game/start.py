@@ -118,6 +118,6 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s 
 # Prep lasts 10 s.
 schedule function {ns}:v{version}/multiplayer/end_prep 200t
 
-tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Preparing"}},"! "],{{"text":"Choose your class! Game starts in 10 seconds!","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Preparing"}},"! "],{{"text":"Choose your class! Game starts in 10 seconds!","color":"yellow"}}]
 """)
 

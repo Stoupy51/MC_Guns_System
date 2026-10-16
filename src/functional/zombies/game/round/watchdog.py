@@ -44,7 +44,7 @@ kill @e[tag={ns}.dog_portal]
 # So recovery cannot race the countdown landing a tick later.
 scoreboard players set #zb_next_round {ns}.data 0
 
-tellraw @a [{MGS_TAG},{{"text":"Round was frozen, recovering.","color":"yellow"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Round was frozen, recovering.","color":"yellow"}}]
 
 # round_complete ran (it parks #zb_to_spawn at -1) but start_round never landed.
 execute if score #zb_to_spawn {ns}.data matches ..-1 run return run function {ns}:v{version}/zombies/start_round

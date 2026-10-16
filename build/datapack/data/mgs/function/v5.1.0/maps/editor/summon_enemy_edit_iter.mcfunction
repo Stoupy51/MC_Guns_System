@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/summon_enemy_edit_iter
 #
+# @executed	at @s
+#
 # @within	mgs:v5.1.0/maps/editor/summon_existing/missions
 #			mgs:v5.1.0/maps/editor/summon_enemy_edit_iter
 #

@@ -14,5 +14,5 @@ team join mgs.mi_mobs @e[tag=mgs.mission_enemy]
 
 execute store result score #mi_total_enemies mgs.data if entity @e[tag=mgs.mission_enemy]
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"score":{"name":"#mi_total_enemies","objective":"mgs.data"},"color":"yellow"}," ",{"translate":"mgs.enemies_spawned","color":"gray"}]
+tellraw @a[scores={mgs.mi.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"score":{"name":"#mi_total_enemies","objective":"mgs.data"},"color":"yellow"}," ",{"translate":"mgs.enemies_spawned","color":"gray"}]
 

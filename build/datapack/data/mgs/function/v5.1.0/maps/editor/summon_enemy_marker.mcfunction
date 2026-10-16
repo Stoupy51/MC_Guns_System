@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/summon_enemy_marker
 #
+# @executed	at @s
+#
 # @within	mgs:v5.1.0/maps/editor/summon_enemy_edit_iter with storage mgs:temp _epos
 #			mgs:v5.1.0/maps/editor/handle_enemy with storage mgs:temp _pos
 #

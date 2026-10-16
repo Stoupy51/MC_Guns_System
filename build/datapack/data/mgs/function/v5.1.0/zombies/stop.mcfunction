@@ -8,7 +8,7 @@
 #			dialog mgs:v5.1.0/zombies/setup
 #
 
-function mgs:v5.1.0/shared/use_map_frame {mode:"zombies"}
+execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.1.0/zombies/stop"}
 
 data modify storage mgs:zombies game.state set value "lobby"
 schedule clear mgs:v5.1.0/zombies/end_prep
@@ -23,7 +23,7 @@ kill @e[tag=mgs.zombies_entity]
 
 execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.1.0/shared/remove_forceload
 
-scoreboard objectives setdisplay sidebar
+scoreboard objectives setdisplay sidebar.team.yellow
 scoreboard objectives remove mgs.zb_sidebar
 gamerule advance_time true
 
@@ -42,7 +42,7 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.stam_seen 0
 # Every shader id off, so nothing survives into the lobby.
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/zombies/reset_player
 
 kill @e[type=minecraft:marker,tag=mgs.death_watch]

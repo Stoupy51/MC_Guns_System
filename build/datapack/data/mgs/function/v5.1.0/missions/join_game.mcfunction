@@ -7,6 +7,8 @@
 #			dialog mgs:v5.1.0/missions/setup
 #
 
+execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"missions",fn:"mgs:v5.1.0/missions/join_game"}
+
 # Require an active game
 execute unless data storage mgs:missions game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_active_mission_to_join","color":"red"}]
 
@@ -19,7 +21,7 @@ execute if score @s mgs.zb.in_game matches 1 run return run tellraw @s [[{"text"
 # Tag as in-game and reset stats
 scoreboard players set @s mgs.mi.in_game 1
 scoreboard players set @s mgs.mp.team 1
-team join mgs.blue @s
+team join mgs.missions @s
 scoreboard players set @s mgs.mi.kills 0
 scoreboard players set @s mgs.mi.deaths 0
 scoreboard players set @s mgs.mp.death_count 0

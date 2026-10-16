@@ -118,7 +118,7 @@ tag @a[tag={ns}.demo_atk,predicate={ns}:v{version}/is_sneaking,gamemode=!spectat
 
 {BombVisuals.announce_site_lines(variant, "BOMB PLANTED AT {letter}!", xp_key="bomb_plant")}
 tag @a remove {ns}.{EARNER_TAG}
-playsound minecraft:block.note_block.pling player @a ~ ~ ~ 1 0.5
+playsound minecraft:block.note_block.pling player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 0.5
 """)
 
 		## Run as a planted site, at it. Keyed on demo_owner, so each site says who may defuse it and the two stay independent.
@@ -157,7 +157,7 @@ kill @e[tag={ns}.demo_bomb_hud,distance=..2]
 
 {BombVisuals.announce_site_lines(variant, "BOMB DEFUSED AT {letter}!", color="aqua", xp_key="bomb_defuse")}
 tag @a remove {ns}.{EARNER_TAG}
-playsound minecraft:block.note_block.bit player @a ~ ~ ~ 1 1.5
+playsound minecraft:block.note_block.bit player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.5
 """)
 
 		## Run as a planted site, at it.
@@ -191,7 +191,7 @@ tag @a[tag={ns}.demo_atk,gamemode=!spectator] add {ns}.{EARNER_TAG}
 {Xp.give("mp", "site_destroyed", f"@a[tag={ns}.{EARNER_TAG}]")}
 
 particle minecraft:explosion_emitter ~ ~1 ~ 2 2 2 0 5
-playsound minecraft:entity.generic.explode player @a ~ ~ ~ 2 0.8
+playsound minecraft:entity.generic.explode player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 2 0.8
 execute as @a[distance=..{BLAST_RANGE},gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run data modify storage {ns}:input with set value {{}}
 execute as @a[distance=..{BLAST_RANGE},gamemode=!creative,gamemode=!spectator,scores={{{ns}.mp.in_game=1..}}] run function {ns}:v{version}/multiplayer/simulate_death
 
@@ -208,7 +208,7 @@ tag @a remove {ns}.{EARNER_TAG}
 
 # Time to reach the other site.
 scoreboard players add #demo_timer {ns}.data {TIME_BONUS}
-tellraw @a [{MGS_TAG},{{"text":"⏱ ","color":"white"}},{{"text":"+{TIME_BONUS // 20}s on the clock","color":"gold"}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"⏱ ","color":"white"}},{{"text":"+{TIME_BONUS // 20}s on the clock","color":"gold"}}]
 
 # Attackers win once nothing is left standing, in the decider too.
 execute unless entity @e[tag={ns}.demo_obj,scores={{{ns}.demo_state=..1}}] run function {ns}:v{version}/multiplayer/gamemodes/demo/attackers_win

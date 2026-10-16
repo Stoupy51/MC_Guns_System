@@ -4,7 +4,7 @@
 # @within	mgs:v5.1.0/tick
 #
 
-function mgs:v5.1.0/shared/use_map_frame {mode:"zombies"}
+execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.1.0/zombies/game_tick"}
 
 function mgs:v5.1.0/zombies/revive/tick
 

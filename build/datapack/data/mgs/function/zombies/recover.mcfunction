@@ -16,7 +16,7 @@ kill @e[tag=mgs.dog_portal]
 # So recovery cannot race the countdown landing a tick later.
 scoreboard players set #zb_next_round mgs.data 0
 
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.round_was_frozen_recovering","color":"yellow"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.round_was_frozen_recovering","color":"yellow"}]
 
 # round_complete ran (it parks #zb_to_spawn at -1) but start_round never landed.
 execute if score #zb_to_spawn mgs.data matches ..-1 run return run function mgs:v5.1.0/zombies/start_round

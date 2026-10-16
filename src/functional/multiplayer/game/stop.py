@@ -15,7 +15,7 @@ def write_multiplayer_stop() -> None:
 
 	## The line ends with the match XP, including the win or loss bonus that multiplayer/xp/on_game_end (in the on_game_end tag) adds first.
 	mp_stat_line: str = (
-		f'tellraw @a ["","  ",{Text.player(ns, "@s")},{{"text":" ➤ ","color":"dark_gray"}},'
+		f'tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","  ",{Text.player(ns, "@s")},{{"text":" ➤ ","color":"dark_gray"}},'
 		f'{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"green"}},'
 		'{"text":" kills","color":"gray"},{"text":" · ","color":"dark_gray"},'
 		f'{{"score":{{"name":"@s","objective":"{ns}.mp.deaths"}},"color":"red"}},'
@@ -47,13 +47,15 @@ function #{ns}:multiplayer/on_game_end
 {GameLifecycle.regen_disable_lines(ns, f"@a[scores={{{ns}.mp.in_game=1}}]")}
 
 # Team scores mean nothing in FFA; player_wins announces the winner.
-tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]
-execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run tellraw @a ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]
+execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run tellraw @a[scores={{{ns}.mp.in_game=1}}] ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
 # Best first; the bare selector shows the team colour, which still applies before the team leave below.
 {mp_ranked_stats}
 
-scoreboard objectives setdisplay sidebar
+scoreboard objectives setdisplay sidebar.team.red
+scoreboard objectives setdisplay sidebar.team.blue
+scoreboard objectives setdisplay sidebar.team.gold
 scoreboard objectives remove {ns}.sidebar
 scoreboard objectives setdisplay list
 team leave @a[scores={{{ns}.mp.in_game=1}}]

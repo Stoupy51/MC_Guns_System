@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/maps/editor/summon_existing
 #
-# @within	mgs:v5.1.0/maps/editor/enter
+# @executed	at @s
+#
+# @within	mgs:v5.1.0/maps/editor/enter [ at @s ]
 #
 
 # Base coordinates marker, in every mode.

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "enter_map.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/commands.py"
+	],
+	"names": [],
+	"mappings": "AA2G+C;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

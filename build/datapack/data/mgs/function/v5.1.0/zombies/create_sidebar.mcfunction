@@ -14,5 +14,5 @@ scoreboard players add #zb_round mgs.data 1
 execute store result score #zb_alive mgs.data if entity @e[tag=mgs.zombie_round]
 
 function mgs:v5.1.0/zombies/refresh_sidebar
-scoreboard objectives setdisplay sidebar mgs.zb_sidebar
+scoreboard objectives setdisplay sidebar.team.yellow mgs.zb_sidebar
 

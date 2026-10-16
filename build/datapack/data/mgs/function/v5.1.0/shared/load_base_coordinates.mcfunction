@@ -1,14 +1,16 @@
 
 #> mgs:v5.1.0/shared/load_base_coordinates
 #
-# @within	mgs:v5.1.0/shared/summon_oob {mode:"$(mode)"}
-#			mgs:v5.1.0/zombies/start {mode:"zombies"}
+# @executed	as the player & at current position
+#
+# @within	mgs:v5.1.0/zombies/start {mode:"zombies"}
 #			mgs:v5.1.0/multiplayer/start {mode:"multiplayer"}
+#			mgs:v5.1.0/missions/start {mode:"missions"}
+#			mgs:v5.1.0/shared/summon_oob {mode:"$(mode)"}
 #			mgs:v5.1.0/multiplayer/gamemodes/dom/setup {mode:"multiplayer"}
 #			mgs:v5.1.0/multiplayer/gamemodes/hp/setup {mode:"multiplayer"}
 #			mgs:v5.1.0/multiplayer/gamemodes/snd/setup {mode:"multiplayer"}
 #			mgs:v5.1.0/multiplayer/gamemodes/demo/setup {mode:"multiplayer"}
-#			mgs:v5.1.0/missions/start {mode:"missions"}
 #
 # @args		mode (string)
 #

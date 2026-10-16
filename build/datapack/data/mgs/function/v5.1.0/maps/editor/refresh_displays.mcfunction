@@ -1,7 +1,9 @@
 
 #> mgs:v5.1.0/maps/editor/refresh_displays
 #
-# @within	mgs:v5.1.0/maps/editor/enter
+# @executed	at @s
+#
+# @within	mgs:v5.1.0/maps/editor/enter [ at @s ]
 #			mgs:v5.1.0/maps/editor/handle_zb_object
 #			mgs:v5.1.0/maps/editor/handle_destroy
 #			mgs:v5.1.0/maps/editor/displays/sync

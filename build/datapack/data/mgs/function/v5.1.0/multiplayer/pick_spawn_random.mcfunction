@@ -1,8 +1,6 @@
 
 #> mgs:v5.1.0/multiplayer/pick_spawn_random
 #
-# @executed	at @s
-#
 # @within	mgs:v5.1.0/multiplayer/pick_spawn
 #
 

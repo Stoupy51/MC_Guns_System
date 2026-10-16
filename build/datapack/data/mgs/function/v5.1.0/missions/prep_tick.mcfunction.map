@@ -3,8 +3,9 @@
 	"file": "prep_tick.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
+		"src/functional/core/commands.py",
 		"src/functional/missions/game/start.py"
 	],
 	"names": [],
-	"mappings": "AAoGgD;;;;;;AAChD;AACA;AACA"
+	"mappings": ";;;;;;AA8HK;AC1B2C;AAChD;AACA;AACA"
 }

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tp_to_map.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/enter.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AAiEmD"
+}

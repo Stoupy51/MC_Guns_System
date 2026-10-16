@@ -1,10 +1,10 @@
 
 #> mgs:v5.1.0/zombies/pick_spawn
 #
-# @executed	at @s
+# @executed	as the player & at current position
 #
-# @within	mgs:v5.1.0/zombies/tp_all_to_spawns [ at @s ]
-#			mgs:v5.1.0/zombies/respawn_tp
+# @within	mgs:v5.1.0/zombies/respawn_tp
+#			mgs:v5.1.0/zombies/tp_all_to_spawns [ at @s ]
 #
 
 tag @s add mgs.spawn_pending

@@ -22,7 +22,6 @@ function #{ns}:zombies/on_round_end
 # Split because only the roster earned the survival XP; the signal above set #xp_gain.
 execute store result score #completed_round {ns}.data run data get storage {ns}:zombies game.round
 tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! Next round in 5 seconds...","color":"green"}},{Xp.suffix("zb", "round_survived")}]
-tellraw @a[scores={{{ns}.zb.in_game=0}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! Next round in 5 seconds...","color":"green"}}]
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_end_generic ambient @s ~ ~ ~ 0.3 1.0
 
 # Counted down in game_tick, so a freeze or a suspension holds it.

@@ -177,7 +177,7 @@ execute if score #kino_tp_state {ns}.data matches 5 if score #kino_tp_timer {ns}
 # State 6: cooldown, then idle.
 execute if score #kino_tp_state {ns}.data matches 6 run scoreboard players operation #kino_prev_t {ns}.data = #kino_tp_cd {ns}.data
 execute if score #kino_tp_state {ns}.data matches 6 run scoreboard players operation #kino_tp_cd {ns}.data -= #tick_delta {ns}.data
-execute if score #kino_tp_state {ns}.data matches 6 if score #kino_prev_t {ns}.data matches 2.. if score #kino_tp_cd {ns}.data matches ..1 run tellraw @a [{MGS_TAG},{{"text":"The teleporter is ready to use again.","color":"green"}}]
+execute if score #kino_tp_state {ns}.data matches 6 if score #kino_prev_t {ns}.data matches 2.. if score #kino_tp_cd {ns}.data matches ..1 run tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The teleporter is ready to use again.","color":"green"}}]
 execute if score #kino_tp_state {ns}.data matches 6 if score #kino_tp_cd {ns}.data matches ..0 run scoreboard players set #kino_tp_state {ns}.data 0
 """)
 

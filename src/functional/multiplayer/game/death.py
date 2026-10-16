@@ -174,8 +174,8 @@ execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:
 """)
 
 	write_versioned_function("multiplayer/team_wins", f"""
-$tellraw @a ["","🏆 ",{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
-tellraw @a ["",[{{"text":"","color":"gray"}},"  ",{{"text":"Final Score - Red"}},": "],{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},[{{"text":"","color":"gray"}}," ",{{"text":"vs Blue"}},": "],{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
+$tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","🏆 ",{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}}] ["",[{{"text":"","color":"gray"}},"  ",{{"text":"Final Score - Red"}},": "],{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},[{{"text":"","color":"gray"}}," ",{{"text":"vs Blue"}},": "],{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
 
 function {ns}:v{version}/multiplayer/stop
 """)

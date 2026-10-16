@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/summon_zb_marker
 #
+# @executed	at @s
+#
 # @within	mgs:v5.1.0/maps/editor/summon_zb_object_iter with storage mgs:temp _zbpos
 #			mgs:v5.1.0/maps/editor/handle_zb_object with storage mgs:temp _zbpos
 #

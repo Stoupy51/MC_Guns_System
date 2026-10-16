@@ -31,7 +31,7 @@ scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.spectate_timer 0
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.death_count 0
 
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 1
-team join {ns}.blue @a[scores={{{ns}.mi.in_game=1}}]
+team join {ns}.missions @a[scores={{{ns}.mi.in_game=1}}]
 
 tag @a[scores={{{ns}.mi.in_game=1}}] add {ns}.give_class_menu
 
@@ -61,7 +61,7 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/
 
 {GameLifecycle.schedule_preload_complete_line(ns, "missions")}
 
-tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Loading mission area...","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mi.in_game=1}}] ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Loading mission area...","color":"yellow"}}]
 """)
 
 	write_versioned_function("missions/preload_complete", f"""
@@ -94,7 +94,7 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s 
 # Prep lasts 9 s.
 schedule function {ns}:v{version}/missions/end_prep 180t
 
-tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Preparing! Choose your class! Mission starts in 9 seconds!","color":"yellow"}}]
+tellraw @a[scores={{{ns}.mi.in_game=1}}] ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"Preparing! Choose your class! Mission starts in 9 seconds!","color":"yellow"}}]
 """)
 
 	## Re-applies a class changed during prep.
@@ -109,7 +109,7 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s 
 function {ns}:v{version}/missions/spawn_all_enemies
 
 # A mission with no enemies would complete at once (empty map or broken enemy functions).
-execute if score #mi_total_enemies {ns}.data matches ..0 run tellraw @a [{MGS_TAG},{{"text":"No enemies could be spawned. Check the map's enemy markers/functions in the editor.","color":"red"}}]
+execute if score #mi_total_enemies {ns}.data matches ..0 run tellraw @a[scores={{{ns}.mi.in_game=1}}] [{MGS_TAG},{{"text":"No enemies could be spawned. Check the map's enemy markers/functions in the editor.","color":"red"}}]
 execute if score #mi_total_enemies {ns}.data matches ..0 run return run function {ns}:v{version}/missions/stop
 
 # After the enemies spawn.
@@ -124,7 +124,7 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run item replace entity @s hotbar.3 
 # Counts up.
 scoreboard players set #mi_timer {ns}.data 0
 
-tellraw @a ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"GO! GO! GO! Kill all enemies!"}}]
+tellraw @a[scores={{{ns}.mi.in_game=1}}] ["",{{"text":"","color":"aqua","bold":true}},"🎯 ",{{"text":"GO! GO! GO! Kill all enemies!"}}]
 """)
 
 	write_versioned_function("missions/spawn_all_enemies", f"""
@@ -138,7 +138,7 @@ team join {ns}.mi_mobs @e[tag={ns}.mission_enemy]
 
 execute store result score #mi_total_enemies {ns}.data if entity @e[tag={ns}.mission_enemy]
 
-tellraw @a [{MGS_TAG},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"yellow"}}," ",{{"text":"enemies spawned!","color":"gray"}}]
+tellraw @a[scores={{{ns}.mi.in_game=1}}] [{MGS_TAG},{{"score":{{"name":"#mi_total_enemies","objective":"{ns}.data"}},"color":"yellow"}}," ",{{"text":"enemies spawned!","color":"gray"}}]
 """)
 
 	write_versioned_function("missions/spawn_enemy_iter", f"""

@@ -13,7 +13,7 @@ execute if score #zb_power mgs.data matches 1 run return run function mgs:v5.1.0
 scoreboard players set #zb_power mgs.data 1
 
 execute as @e[tag=mgs.power_switch] at @s run particle minecraft:electric_spark ~ ~1 ~ 0.5 0.5 0.5 0.1 20
-execute as @e[tag=mgs.power_switch] at @s run playsound minecraft:entity.firework_rocket.twinkle_far ambient @a ~ ~ ~ 2 1
+execute as @e[tag=mgs.power_switch] at @s run playsound minecraft:entity.firework_rocket.twinkle_far ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 2 1
 
 # Displays switch to the lit model.
 execute as @e[tag=mgs.power_switch_disp] run data modify entity @s item.components."minecraft:item_model" set value "mgs:power_switch_on"

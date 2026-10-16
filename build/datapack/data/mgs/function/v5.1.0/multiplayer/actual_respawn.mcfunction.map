@@ -3,8 +3,9 @@
 	"file": "actual_respawn.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
+		"src/functional/core/commands.py",
 		"src/functional/multiplayer/loadouts/class_selection.py"
 	],
 	"names": [],
-	"mappings": "AA8MwD;;;;;;;;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": ";;;;;;;;AA8HK;ACgFmD;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

@@ -9,6 +9,6 @@
 # Only red and blue leave: players stay on mgs.ffa, which hides nametags and enables friendly fire.
 team leave @a[team=mgs.red]
 team leave @a[team=mgs.blue]
-scoreboard players set @a mgs.mp.team 0
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.free_for_all_everyone_for_themselves","color":"yellow"}]
+scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.team 0
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.free_for_all_everyone_for_themselves","color":"yellow"}]
 

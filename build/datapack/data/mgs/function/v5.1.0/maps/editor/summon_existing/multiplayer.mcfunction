@@ -1,6 +1,8 @@
 
 #> mgs:v5.1.0/maps/editor/summon_existing/multiplayer
 #
+# @executed	at @s
+#
 # @within	mgs:v5.1.0/maps/editor/summon_existing
 #
 

@@ -15,7 +15,7 @@ tag @a[tag=mgs.demo_atk,gamemode=!spectator] add mgs.xp_earner
 execute as @a[tag=mgs.xp_earner] run function mgs:v5.1.0/progression/mp/award_site_destroyed
 
 particle minecraft:explosion_emitter ~ ~1 ~ 2 2 2 0 5
-playsound minecraft:entity.generic.explode player @a ~ ~ ~ 2 0.8
+playsound minecraft:entity.generic.explode player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 2 0.8
 execute as @a[distance=..8.0,gamemode=!creative,gamemode=!spectator,scores={mgs.mp.in_game=1..}] run data modify storage mgs:input with set value {}
 execute as @a[distance=..8.0,gamemode=!creative,gamemode=!spectator,scores={mgs.mp.in_game=1..}] run function mgs:v5.1.0/multiplayer/simulate_death
 
@@ -39,7 +39,7 @@ tag @a remove mgs.xp_earner
 
 # Time to reach the other site.
 scoreboard players add #demo_timer mgs.data 1200
-tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⏱ ","color":"white"},[{"text":"+60","color":"gold"}, {"translate":"mgs.s_on_the_clock"}]]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⏱ ","color":"white"},[{"text":"+60","color":"gold"}, {"translate":"mgs.s_on_the_clock"}]]
 
 # Attackers win once nothing is left standing, in the decider too.
 execute unless entity @e[tag=mgs.demo_obj,scores={mgs.demo_state=..1}] run function mgs:v5.1.0/multiplayer/gamemodes/demo/attackers_win

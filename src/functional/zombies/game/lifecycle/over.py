@@ -17,7 +17,7 @@ def write_zombies_over() -> None:
 	version: str = Mem.ctx.project_version
 
 	zb_stat_line: str = (
-		f'tellraw @a ["","  ","🎖 ",{Text.player(ns, "@s", side="zb")}," | Kills: ",'
+		f'tellraw @a[scores={{{ns}.zb.in_game=1}}] ["","  ","🎖 ",{Text.player(ns, "@s", side="zb")}," | Kills: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.kills"}},"color":"green"}}," | Downs: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.downs"}},"color":"red"}}," | Points: ",'
 		f'{{"score":{{"name":"@s","objective":"{ns}.zb.points"}},"color":"gold"}}]'
@@ -42,14 +42,13 @@ execute store result score #final_round {ns}.data run data get storage {ns}:zomb
 function {ns}:v{version}/zombies/xp/on_game_over
 
 # The Final Round line is split because only the roster earned the bonus.
-tellraw @a ["","\\n",{{"text":"GAME OVER","color":"dark_red","bold":true}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] ["","\\n",{{"text":"GAME OVER","color":"dark_red","bold":true}}]
 tellraw @a[scores={{{ns}.zb.in_game=1}}] ["","  ","🧟 ",{{"text":"Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}},{Xp.suffix("zb", "game_over")}]
-tellraw @a[scores={{{ns}.zb.in_game=0}}] ["","  ","🧟 ",{{"text":"Final Round: ","color":"gray"}},{{"score":{{"name":"#final_round","objective":"{ns}.data"}},"color":"red","bold":true}}]
 
 # Best first; the bare selector component renders the team colour.
 {zb_ranked_stats}
 
-tellraw @a ""
+tellraw @a[scores={{{ns}.zb.in_game=1}}] ""
 
 function #{ns}:zombies/on_game_end
 
@@ -57,7 +56,7 @@ stopsound @a
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/game_over ambient @s ~ ~ ~ 0.3 1.0
 
 # suggest_command only runs at permission level 2, so the restart is operator-only.
-tellraw @a ["",{MGS_TAG}," ",{Dialogs.btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "green", "Restart with the same map, variant and players (operators only)")}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{MGS_TAG}," ",{Dialogs.btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "green", "Restart with the same map, variant and players (operators only)")}]
 
 schedule function {ns}:v{version}/zombies/stop 100t
 """)
@@ -76,13 +75,13 @@ kill @e[tag={ns}.zombies_entity]
 
 execute if score #zb_has_bounds {ns}.data matches 1 run function {ns}:v{version}/shared/remove_forceload
 
-scoreboard objectives setdisplay sidebar
+scoreboard objectives setdisplay sidebar.team.yellow
 scoreboard objectives remove {ns}.zb_sidebar
 gamerule advance_time true
 
 {GameLifecycle.regen_disable_lines(ns, f"@a[scores={{{ns}.zb.in_game=1}}]")}
 
-tellraw @a [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Zombies game ended.","color":"red"}}]
 execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/reset_player
 """)
 
@@ -144,7 +143,7 @@ function {ns}:v{version}/zombies/stop
 # stop kept game.map_id and the variant.
 scoreboard players set @a[tag={ns}.zb_restart] {ns}.zb.in_game 1
 tag @a[tag={ns}.zb_restart] remove {ns}.zb_restart
-tellraw @a [{MGS_TAG},{{"text":"An operator restarted the game.","color":"yellow"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"An operator restarted the game.","color":"yellow"}}]
 function {ns}:v{version}/zombies/start
 """)
 

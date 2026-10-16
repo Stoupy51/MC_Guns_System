@@ -89,7 +89,7 @@ function {ns}:v{version}/zombies/freeze_world
 
 {TitleTimes.FREEZE.cmd(f'@a[scores={{{ns}.zb.in_game=1}}]')}
 title @a[scores={{{ns}.zb.in_game=1}}] title [{{"text":"⏸","color":"white"}}]
-tellraw @a [{MGS_TAG},{{"text":"An operator froze the game.","color":"aqua"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"An operator froze the game.","color":"aqua"}}]
 """)
 
 	write_versioned_function("zombies/freeze_world", f"""
@@ -110,7 +110,7 @@ data merge entity @s {{NoAI:1b}}
 
 	write_versioned_function("zombies/freeze_off", f"""
 function {ns}:v{version}/zombies/unfreeze_world
-tellraw @a [{MGS_TAG},{{"text":"An operator unfroze the game.","color":"aqua"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"An operator unfroze the game.","color":"aqua"}}]
 """)
 
 	write_versioned_function("zombies/unfreeze_world", f"""
@@ -128,7 +128,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] run attribute @s minecraft:jump_stre
 	write_versioned_function("zombies/suspend", f"""
 scoreboard players set #zb_freeze {ns}.data 2
 function {ns}:v{version}/zombies/freeze_world
-tellraw @a [{MGS_TAG},{{"text":"Zombies game paused: nobody in it is online.","color":"aqua"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Zombies game paused: nobody in it is online.","color":"aqua"}}]
 """)
 
 	## Every timer is paused; remind players why.

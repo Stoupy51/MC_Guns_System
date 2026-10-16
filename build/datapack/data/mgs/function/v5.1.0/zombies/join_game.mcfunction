@@ -7,6 +7,8 @@
 #			dialog mgs:v5.1.0/zombies/setup
 #
 
+execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.1.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.1.0/zombies/join_game"}
+
 # Require an active game
 execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_active_zombies_game_to_join","color":"red"}]
 
