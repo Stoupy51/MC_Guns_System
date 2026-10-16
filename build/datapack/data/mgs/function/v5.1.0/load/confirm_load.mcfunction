@@ -235,6 +235,8 @@ scoreboard objectives add mgs.zb.rejoins custom:leave_game
 
 # Index into LETHAL_GRENADE_IDS (0 = frag), so an emptied lethal slot refills the bought type (see inventory).
 scoreboard objectives add mgs.zb.lethal_type dummy
+# Index into TACTICAL_GRENADE_IDS plus one, 0 for none, so Max Ammo gives back an emptied tactical slot.
+scoreboard objectives add mgs.zb.tactical_type dummy
 
 # zb.passive: 0 none, 1 points x1.2, 2 power-ups x1.5. zb.ability: 0 none, 1 coward, 2 guardian.
 # zb.ability_cd: rounds of cooldown left (0 = ready).

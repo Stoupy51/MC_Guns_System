@@ -91,7 +91,7 @@ scoreboard players set @s {ns}.zb.rise_tick 20
 """)
 
 	# The Missions gun AI: a random weapon, a visible name, and shots at the nearest player (mob/tick).
-	# The Max Ammo it always drops is in on_zombie_dying.
+	# Its 5% Max Ammo drop is in on_zombie_dying.
 	armed_setup: str = f'$function {ns}:v{version}/mob/default/on_new {{entity:"Zombie",level:$(level),active_time:60,sleep_time:40}}'
 	for zombie in SPECIAL_TYPES:
 		write_versioned_function(f"zombies/types/{zombie.type_id}", f"""

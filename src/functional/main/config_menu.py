@@ -70,6 +70,8 @@ def write_config_menu() -> None:
 		Dialogs.dialog_show_btn(f"{ns}:config/grenade_power", "Grenade Explosion Power", "Server-wide grenade explosion power", "gold"),
 		Dialogs.dialog_show_btn(f"{ns}:config/max_ammo", "Max Ammo Mode", "How the Max Ammo powerup refills weapons", "aqua"),
 		Dialogs.dialog_show_btn(f"{ns}:config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", "yellow"),
+		Dialogs.dialog_run_btn("🏠 Set Lobby Here", f"/function {ns}:v{version}/lobby/set", "Players return here, with this rotation and dimension, when their game ends", "green"),
+		Dialogs.dialog_run_btn("🏠 Clear Lobby", f"/function {ns}:v{version}/lobby/clear", "Players stay where their game ends", "red"),
 	])
 	register_category("config/personal", "⚡ Personal Cheats", [
 		Dialogs.dialog_show_btn(f"{ns}:config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", "red"),

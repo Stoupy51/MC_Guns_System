@@ -62,6 +62,7 @@ team leave @a[scores={{{ns}.mp.in_game=1}}]
 
 # The state is still active or preparing here.
 execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"multiplayer",script:"leave"}}
+execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/lobby/return
 
 scoreboard players set @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.team 0
 scoreboard players set @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.spectate_timer 0

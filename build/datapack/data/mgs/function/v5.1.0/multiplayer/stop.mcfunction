@@ -63,6 +63,7 @@ team leave @a[scores={mgs.mp.in_game=1}]
 
 # The state is still active or preparing here.
 execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"multiplayer",script:"leave"}
+execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.1.0/lobby/return
 
 scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.team 0
 scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.spectate_timer 0

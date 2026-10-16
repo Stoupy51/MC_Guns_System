@@ -34,6 +34,7 @@ function #{ns}:missions/on_mission_end
 tellraw @a[scores={{{ns}.mi.in_game=1}}] [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
 execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"missions",script:"leave"}}
+execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/lobby/return
 
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 0
 scoreboard players set @a {ns}.mi.in_game 0

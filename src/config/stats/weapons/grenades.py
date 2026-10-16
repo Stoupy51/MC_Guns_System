@@ -97,4 +97,9 @@ LETHAL_GRENADE_IDS: list[str] = ["frag_grenade", "semtex"]
 
 The order is the `{ns}.zb.lethal_type` enum, stored in live player scores: reordering renumbers them, and an index past the end refills frags.
 """
+TACTICAL_GRENADE_IDS: list[str] = ["smoke_grenade", "flash_grenade", "monkey_bomb"]
+""" Zombies tactical slot (hotbar.6), given back by Max Ammo once emptied.
+
+`{ns}.zb.tactical_type` holds the index plus one, 0 for none: reordering renumbers live player scores.
+"""
 

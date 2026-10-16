@@ -77,7 +77,7 @@ execute if score #zb_has_bounds {ns}.data matches 1 run function {ns}:v{version}
 
 scoreboard objectives setdisplay sidebar.team.yellow
 scoreboard objectives remove {ns}.zb_sidebar
-gamerule advance_time true
+time resume
 
 {GameLifecycle.regen_disable_lines(ns, f"@a[scores={{{ns}.zb.in_game=1}}]")}
 
@@ -94,9 +94,11 @@ attribute @s minecraft:entity_interaction_range base reset
 effect clear @s
 gamemode adventure @s[gamemode=spectator]
 function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"zombies",script:"leave"}}
+function {ns}:v{version}/lobby/return
 
 scoreboard players set @s {ns}.zb.in_game 0
 scoreboard players set @s {ns}.zb.run 0
+scoreboard players set @s {ns}.zb.tactical_type 0
 # The XP spend tracker is reset too, or the reset reads as points spent (see xp).
 scoreboard players set @s {ns}.zb.points 0
 scoreboard players set @s {ns}.zb.xp_pts_prev 0

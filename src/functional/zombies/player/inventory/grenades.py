@@ -8,7 +8,7 @@ from stewbeet import (
 	write_versioned_function,
 )
 
-from .....config.stats.weapons.grenades import LETHAL_GRENADE_IDS
+from .....config.stats.weapons.grenades import LETHAL_GRENADE_IDS, TACTICAL_GRENADE_IDS
 from .shared import SlotPredicates, slot_predicates
 
 
@@ -56,6 +56,27 @@ function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",grou
 	write_versioned_function("zombies/inventory/record_lethal_type", f"""
 scoreboard players set @s {ns}.zb.lethal_type 0
 {lethal_record_lines}
+""")
+
+	# Run on a wall-buy or a Mystery Box tactical, with the bought weapon_id.
+	tactical_record_lines: str = "\n".join(
+		f'execute if data storage {ns}:temp {{_tactical_id:"{gid}"}} run scoreboard players set @s {ns}.zb.tactical_type {i + 1}'
+		for i, gid in enumerate(TACTICAL_GRENADE_IDS)
+	)
+	write_versioned_function("zombies/inventory/record_tactical_type", f"""
+scoreboard players set @s {ns}.zb.tactical_type 0
+$data modify storage {ns}:temp _tactical_id set value "$(weapon_id)"
+{tactical_record_lines}
+""")
+
+	tactical_loot_lines: str = "\n".join(
+		f"execute if score @s {ns}.zb.tactical_type matches {i + 1} run loot replace entity @s hotbar.6 loot {ns}:i/{gid}"
+		for i, gid in enumerate(TACTICAL_GRENADE_IDS)
+	)
+	write_versioned_function("zombies/inventory/give_tactical_type", f"""
+{tactical_loot_lines}
+item modify entity @s hotbar.6 {ns}:v{version}/grenade/set_count_3
+function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.6",group:"hotbar",index:6}}
 """)
 
 	inv_changed_adv: JsonDict = {

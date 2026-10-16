@@ -25,7 +25,7 @@ execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.1.0/share
 
 scoreboard objectives setdisplay sidebar.team.yellow
 scoreboard objectives remove mgs.zb_sidebar
-gamerule advance_time true
+time resume
 
 scoreboard players set #any_game_active mgs.data 0
 execute if data storage mgs:multiplayer game.state unless data storage mgs:multiplayer game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1

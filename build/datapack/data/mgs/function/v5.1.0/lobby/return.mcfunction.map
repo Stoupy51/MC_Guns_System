@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "return.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/teleport.py"
+	],
+	"names": [],
+	"mappings": "AAiC2C;;;;;;;;;;AAC3C;AACA"
+}
