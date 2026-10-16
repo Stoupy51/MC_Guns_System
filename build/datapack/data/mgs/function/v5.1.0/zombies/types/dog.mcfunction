@@ -13,12 +13,14 @@ data modify entity @s DeathTime set value -16s
 
 # Same HP as the round's zombie: dogs threaten through speed and damage.
 function mgs:v5.1.0/zombies/calc_zombie_hp
+scoreboard players operation @s mgs.zb.max_hp = #zb_hp mgs.data
 
 # A modifier, not a base value: every save/load round-trip (any /data modify or `store result entity`) runs
 # TamableAnimal.setTame(false, true), which resets the MAX_HEALTH base of an untamed wolf to 8.
 scoreboard players remove #zb_hp mgs.data 8
 execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players get #zb_hp mgs.data
 function mgs:v5.1.0/zombies/apply_dog_hp with storage mgs:temp _zb_hp
+function mgs:v5.1.0/zombies/absorb_above_cap
 
 # Always above the zombie cap (0.32): a dog pack cannot be outrun.
 execute if score #zb_round mgs.data matches ..9 run attribute @s minecraft:movement_speed base set 0.36

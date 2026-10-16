@@ -12,6 +12,8 @@
 # @args		val (unknown)
 #
 
+$scoreboard players set @s mgs.zb.max_hp $(val)
 $attribute @s minecraft:max_health base set $(val)
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
+function mgs:v5.1.0/zombies/absorb_above_cap
 

@@ -16,7 +16,7 @@ class ZombieType:
 	type_id: Literal["fast", "tank", "armed", "aura"]
 	speed_percent: int
 	health_percent: int
-	""" Of the BO health curve, still capped at 2048. """
+	""" Of the BO health curve, still capped at 3072 (see apply_zombie_hp). """
 	scale: float
 	""" Body size, so the type reads from across a room. """
 	first_round: int
@@ -110,7 +110,7 @@ execute if score #zb_speed {ns}.data matches ..289 run tag @s remove {ns}.zb_spr
 # {zombie.health_percent}% of the health normal just applied (#zb_hp).
 scoreboard players operation #zb_hp {ns}.data *= #{zombie.health_percent} {ns}.data
 scoreboard players operation #zb_hp {ns}.data /= #100 {ns}.data
-execute if score #zb_hp {ns}.data matches 2049.. run scoreboard players set #zb_hp {ns}.data 2048
+execute if score #zb_hp {ns}.data matches 3073.. run scoreboard players set #zb_hp {ns}.data 3072
 execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
 function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
 

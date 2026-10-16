@@ -67,7 +67,7 @@ $execute as @e[tag={ns}.zombie_round,distance=..$(radius)] run function {ns}:v{v
 
 	## Run as a zombie: max health fraction from the macro, brief stun.
 	write_versioned_function("zombies/perks/electric_cherry_hit", f"""
-$execute store result storage {ns}:temp _ec_dmg.amount int 1 run attribute @s minecraft:max_health get $(scale)
+$execute store result storage {ns}:temp _ec_dmg.amount int $(scale) run scoreboard players get @s {ns}.zb.max_hp
 data modify storage {ns}:temp _ec_dmg.type set value "minecraft:lightning_bolt"
 particle minecraft:electric_spark ~ ~1 ~ 0.3 0.5 0.3 0.1 12
 effect give @s minecraft:slowness 60 3 true

@@ -21,7 +21,7 @@ $execute as @e[tag={ns}.zombie_round,distance=..$(radius)] run function {ns}:v{v
 effect give @s minecraft:slowness 5 5 true
 effect give @s minecraft:weakness 5 2 true
 particle minecraft:item{{item:"minecraft:cobweb"}} ~ ~0.5 ~ 0.3 0.5 0.3 0.05 8
-execute store result storage {ns}:temp _ww_dmg.amount int 1 run attribute @s minecraft:max_health get 0.15
+execute store result storage {ns}:temp _ww_dmg.amount int 0.15 run scoreboard players get @s {ns}.zb.max_hp
 data modify storage {ns}:temp _ww_dmg.type set value "minecraft:generic"
 function {ns}:v{version}/zombies/traps/apply_trap_damage with storage {ns}:temp _ww_dmg
 """)
