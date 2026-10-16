@@ -33,6 +33,10 @@ This value may be reduced at longer distances based on the decay parameter. """
 DECAY: str = "decay"
 """ Rate at which damage decreases over distance using multiplication.
 For instance, a value of 0.95 means damage decreases to 59.9% damage at 10 blocks distance. """
+ZOMBIES_DAMAGE: str = "zombies_damage"
+""" Damage multiplier while the shooter is in a Zombies run, 1 when absent. Zombie health scales with the round, so slow guns need it to stay useful. """
+ZOMBIES_HEADSHOT: str = "zombies_headshot"
+""" Headshot multiplier while the shooter is in a Zombies run, replacing the default 2 at the centre of the head. """
 ACCURACY_BASE: str = "acc_base"
 """ Base accuracy of the weapon when standing still.
 Lower values indicate better accuracy (smaller spread of bullets). """

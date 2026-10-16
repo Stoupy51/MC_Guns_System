@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from .....config.stats.keys import DECAY
+from .....config.stats.keys import DECAY, ZOMBIES_DAMAGE, ZOMBIES_HEADSHOT
 
 
 # Functions
@@ -131,7 +131,14 @@ data modify storage {ns}:input with set value {{target:"@s", amount:0.0f, attack
 execute if entity @n[tag={ns}.ticking,type=player] run data modify storage {ns}:input with.attacker set value "@p[tag={ns}.ticking]"
 execute store result score #damage {ns}.data run data get storage {ns}:temp damage 10
 execute if score @n[tag={ns}.ticking] {ns}.special.double_tap matches 1.. run scoreboard players operation #damage {ns}.data *= #2 {ns}.data
+execute if score @n[tag={ns}.ticking] {ns}.zb.in_game matches 1 if data storage {ns}:gun all.stats.{ZOMBIES_DAMAGE} run function {ns}:v{version}/raycast/apply_zombies_damage
 function {ns}:v{version}/raycast/apply_decay
+""")
+
+	write_versioned_function("raycast/apply_zombies_damage", f"""
+execute store result score #zb_damage_mult {ns}.data run data get storage {ns}:gun all.stats.{ZOMBIES_DAMAGE} 100
+scoreboard players operation #damage {ns}.data *= #zb_damage_mult {ns}.data
+scoreboard players operation #damage {ns}.data /= #100 {ns}.data
 """)
 
 	write_versioned_function("raycast/apply_decay", f"""
@@ -185,8 +192,9 @@ scoreboard players operation #distance {ns}.data = $math.isqrt bs.out
 # 0.5 block.
 execute if score #distance {ns}.data matches 501.. run scoreboard players set #distance {ns}.data 500
 
-# 2000 - distance x 2.
+# 2000 - distance x 2, or the weapon's Zombies multiplier instead of 2000.
 scoreboard players set #headshot_multiplier {ns}.data 2000
+execute if score @n[tag={ns}.ticking] {ns}.zb.in_game matches 1 if data storage {ns}:gun all.stats.{ZOMBIES_HEADSHOT} store result score #headshot_multiplier {ns}.data run data get storage {ns}:gun all.stats.{ZOMBIES_HEADSHOT} 1000
 scoreboard players operation #distance {ns}.data *= #2 {ns}.data
 scoreboard players operation #headshot_multiplier {ns}.data -= #distance {ns}.data
 
