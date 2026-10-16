@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "record_tactical_type.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/inventory/grenades.py"
+	],
+	"names": [],
+	"mappings": "AAiEoE;;;;;;;;;;;AACpE;AACA;AACA;AACA;AACA;AACA"
+}

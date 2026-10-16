@@ -56,8 +56,8 @@ kill @n[type=minecraft:marker,tag={ns}.death_watch,distance=..1]
 # Dogs never roll the drop table: a dog round only drops the Max Ammo of its last hound.
 execute unless entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/powerups/check_drop
 
-# Armed zombies always drop a Max Ammo, whatever killed them.
-execute if entity @s[tag={ns}.zb_armed] run function {ns}:v{version}/zombies/max_ammo_at_self
+# Armed zombies have a 5% chance to drop a Max Ammo, whatever killed them, on top of the usual roll.
+execute if entity @s[tag={ns}.zb_armed] if predicate {{type:"minecraft:random_chance",chance:0.05}} run function {ns}:v{version}/zombies/max_ammo_at_self
 
 # Dogs: "was this the last one" needs an exact count.
 execute if entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/dog_death

@@ -41,8 +41,8 @@ The two stories are independent. Either can ship alone.
 ### Verify
 
 - [X] T009 [US1] Buy smoke, then let a round end: smoke in tactical, frags in lethal (SC-001)
-- [ ] T010 [US1] Buy a monkey bomb while holding smoke and confirm the tactical duplicate check behaves sensibly rather than silently replacing it
-- [ ] T011 [US1] Trigger a Max Ammo and confirm both slots refill
+- [X] T010 [US1] Buy a monkey bomb while holding smoke and confirm the tactical duplicate check behaves sensibly rather than silently replacing it
+- [X] T011 [US1] Trigger a Max Ammo and confirm both slots refill
 - [ ] T012 [US1] Go down and recover, and confirm both slots come back correctly
 - [ ] T013 [US1] Play a full game with no empty lethal or tactical slot at any point (SC-002)
 

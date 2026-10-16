@@ -74,8 +74,9 @@ gamemode spectator @a[scores={mgs.zb.in_game=1}]
 gamerule immediate_respawn true
 gamerule keep_inventory true
 gamerule max_entity_cramming 96
-gamerule advance_time false
+# The clock of the map's dimension: the overworld's for an overworld map, its own in mgs:zombies.
 time set 18000
+time pause
 
 # The first round is 1.
 data modify storage mgs:zombies game.round set value 0

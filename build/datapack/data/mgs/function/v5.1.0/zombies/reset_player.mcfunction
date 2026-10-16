@@ -14,9 +14,11 @@ attribute @s minecraft:entity_interaction_range base reset
 effect clear @s
 gamemode adventure @s[gamemode=spectator]
 function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"zombies",script:"leave"}
+function mgs:v5.1.0/lobby/return
 
 scoreboard players set @s mgs.zb.in_game 0
 scoreboard players set @s mgs.zb.run 0
+scoreboard players set @s mgs.zb.tactical_type 0
 # The XP spend tracker is reset too, or the reset reads as points spent (see xp).
 scoreboard players set @s mgs.zb.points 0
 scoreboard players set @s mgs.zb.xp_pts_prev 0

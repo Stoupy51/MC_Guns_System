@@ -1,6 +1,7 @@
 """ Zombies mode entry point; submodules run in dependency order. """
 # Imports
 from .common import ZombiesCommon
+from .dimension import generate_zombies_dimension
 from .display_helpers import generate_display_helpers
 from .enemies.escort import generate_zombies_escort
 from .enemies.monkey_bomb import generate_monkey_bomb
@@ -33,6 +34,7 @@ from .xp import generate_zombies_xp
 def main() -> None:
 	ZombiesCommon.write_deny_functions()
 	bonus_main()
+	generate_zombies_dimension()
 	generate_zombies_maps()
 	generate_zombies_menus()
 	generate_zombies_game()

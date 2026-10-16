@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-16
 
-**Status**: B1 to B6, B8 to B10, L1, L3, L5, L6 and FR-012 built. Played with two clients: a match stopped beside a zombies run in the Nether left the run whole, and no message crossed. B7 waits on a dimension with its own clock; L4 and the tab list (`setdisplay list`, server-wide) are open.
+**Status**: B1 to B10, L1, L3, L5, L6, FR-012 and FR-015 built. Played with two clients: a match stopped beside a zombies run in another dimension left the run whole, and no message crossed. L4 and the tab list (`setdisplay list`, server-wide) are open.
 
 **Input**: Can one Multiplayer match, one Missions run and one Zombies run play at the same time on one
 server without interfering: messages, kills, scores, and everything else? Progression and achievements
@@ -105,13 +105,14 @@ in the reverse order, then in another order. After each stop, the remaining game
 - **FR-005**: `#any_game_active` MUST be derived (any of the three modes active), not set and cleared by each mode.
 - **FR-006**: Stop cleanup (`fx_reset`, stamina, hunger, attributes, gamemode) MUST target only the stopping mode's players.
 - **FR-007**: Broadcasts MUST target the mode's players, and its spectators where it has them. Join announcements stay on `@a`; any other server-wide announcement (game start, game end) MUST be listed in the code.
-- **FR-008**: Gamerules MUST be set to the value needed by the modes still running: a stop restores a global default only when no other mode is active. Zombies time of day stops being global with FR-012.
+- **FR-008**: Gamerules MUST be set to the value needed by the modes still running: a stop restores a global default only when no other mode is active. Zombies time of day follows the clock of its map's dimension (FR-012).
 - **FR-009**: Shared respawn objectives (`mp.death_count`, `mp.spectate_timer`) MUST only be reset for the mode's players.
 - **FR-010**: Joining any mode MUST be refused while the player is in another one.
 - **FR-011**: The sidebar MUST be shown per team color (`sidebar.team.<color>`): red, blue and gold for matches, yellow for zombies.
 - **FR-013**: `shared/maps/call_script_at_base` MUST take the calling mode, place the script at that mode's base, and every map script MUST check that mode before running.
 - **FR-014**: Out-of-bounds markers MUST carry their mode tag, and each mode MUST only check its own.
-- **FR-012**: A map MUST carry the dimension it is in (`dimension` in its data, recorded by the map editor on save, overworld when absent), for every mode. Each entry point of a mode (`shared/enter_map`, `MAP_ENTRIES` in `core/commands.py`) MUST run in that dimension, so summons, teleports and forceloads land there. A Zombies map in a dimension of its own keeps `time set` and `advance_time` from reaching the other modes only if that dimension has its own clock; adding such a dimension is a separate step.
+- **FR-012**: A map MUST carry the dimension it is in (`dimension` in its data, recorded by the map editor on save, overworld when absent), for every mode. Each entry point of a mode (`shared/enter_map`, `MAP_ENTRIES` in `core/commands.py`) MUST run in that dimension, so summons, teleports and forceloads land there. Zombies sets and pauses the clock of that dimension (`time set`, `time pause`), so a map in `mgs:zombies`, which has its own clock, keeps the overworld's time running.
+- **FR-015**: A player whose game ends MUST return to the lobby set from the config menu (position, rotation and dimension), when one is set.
 
 ### Key Entities
 

@@ -93,7 +93,7 @@ outside, and compare shots to kill.
 - **FR-002**: Type selection MUST happen in `zombies/do_spawn_zombie`, which currently hardcodes `_zpos.type` to `"normal"`, and MUST be driven by round-gated weights rather than by copy-pasted round checks.
 - **FR-003**: `types/fast` MUST raise base `movement_speed` above the round's normal value and lower the health the BO curve produced.
 - **FR-004**: `types/tank` MUST raise health well above the round's normal value and lower base `movement_speed`, without exceeding the 2048 health cap in `calc_zombie_hp`.
-- **FR-005**: `types/armed` MUST attack at range on a cooldown and MUST drop a guaranteed ammo power-up on death.
+- **FR-005**: `types/armed` MUST attack at range on a cooldown and MUST drop a Max Ammo on death with a 5% chance, on top of the usual drop roll.
 - **FR-006**: A new `types/aura` MUST apply damage resistance to zombies within a radius, refreshed on a tick interval rather than every tick.
 - **FR-007**: Every special type MUST carry `mgs.zombie_round`, so alive counts, round completion, traps, barricades, nukes and the stuck rescue apply with no extra wiring, exactly as dogs do.
 - **FR-008**: Every special type MUST be visually distinguishable from a normal zombie before it acts.

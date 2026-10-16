@@ -39,8 +39,9 @@ function {ns}:v{version}/ammo/compute_reserve
 
 	# Grenades use the item count, not a magazine, so the passes above never refill them.
 	write_versioned_function("zombies/bonus/max_ammo_grenades", f"""
-# Tactical slot (hotbar.6: monkey bombs, smoke, flash): back to 3, never granted from an empty slot (tacticals only come from the Mystery Box or a wall-buy).
+# Tactical slot (hotbar.6: monkey bombs, smoke, flash): back to 3, or 3 of the last bought type once emptied.
 execute if items entity @s hotbar.6 *[custom_data~{{{ns}:{{gun:true}}}}] run item modify entity @s hotbar.6 {ns}:v{version}/grenade/set_count_3
+execute unless items entity @s hotbar.6 * if score @s {ns}.zb.tactical_type matches 1.. run function {ns}:v{version}/zombies/inventory/give_tactical_type
 
 # Lethal slot (hotbar.7): back to 4.
 execute if items entity @s hotbar.7 *[custom_data~{{{ns}:{{gun:true}}}}] run return run item modify entity @s hotbar.7 {ns}:v{version}/grenade/set_count_4

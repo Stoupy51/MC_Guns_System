@@ -73,14 +73,14 @@ function {ns}:v{version}/zombies/wallbuys/msg_purchased
 	## (denied when full, before charging), anything else buys a full stack of the bought type.
 	for kind_name, eq_slot, eq_count in (("lethal", 7, 4), ("tactical", 6, 3)):
 		widows_gate: str = ""
-		record_line: str = ""
+		# An emptied slot refills the recorded type: a lethal on round end and Max Ammo, a tactical on Max Ammo.
+		record_line: str = f"function {ns}:v{version}/zombies/inventory/record_tactical_type with storage {ns}:temp _wb_weapon\n"
 		if kind_name == "lethal":
 			# Widow's Wine owners keep web grenades: any lethal buy refills webs instead (buy_lethal_web).
 			widows_gate = (
 				f"execute if score @s {ns}.special.widows_wine matches 1 run "
 				f"return run function {ns}:v{version}/zombies/wallbuys/buy_lethal_web with storage {ns}:temp _wb_weapon\n"
 			)
-			# An emptied lethal slot refills this type on round end and Max Ammo; tacticals are refill-only.
 			record_line = f"function {ns}:v{version}/zombies/inventory/record_lethal_type\n"
 		write_versioned_function(f"zombies/wallbuys/buy_{kind_name}", f"""
 {widows_gate}# Same equipment already in the slot: refill flow
@@ -133,6 +133,7 @@ $execute if items entity @s hotbar.6 *[custom_data~{{{ns}:{{$(weapon_id):true}}}
 $loot replace entity @s hotbar.6 loot {ns}:i/$(weapon_id)
 item modify entity @s hotbar.6 {ns}:v{version}/grenade/set_count_3
 function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.6",group:"hotbar",index:6}}
+$function {ns}:v{version}/zombies/inventory/record_tactical_type {{weapon_id:"$(weapon_id)"}}
 scoreboard players set #wb_purchase_mode {ns}.data 1
 """)
 

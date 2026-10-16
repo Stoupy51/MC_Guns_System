@@ -43,6 +43,7 @@ execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 tellraw @a[scores={mgs.mi.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
 
 execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"missions",script:"leave"}
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.1.0/lobby/return
 
 scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 0
 scoreboard players set @a mgs.mi.in_game 0
