@@ -35,7 +35,7 @@ scoreboard objectives add {ns}.mb.buyer dummy
 	pool_weights: list[int] = []
 	pool_ids: list[str] = []
 	for weapon in (*PRIMARY_WEAPONS, *SECONDARY_WEAPONS):
-		weight: int = WEAPON_STATS.get(weapon.item_id, {}).get("stats", {}).get(WEIGHT, 5)
+		weight: int = WEAPON_STATS.get(weapon.item_id, {}).get("stats", {}).get(WEIGHT, 1)
 		if weight == 0:
 			continue  # Weight 0 = excluded from mystery box
 		pool_ids.append(weapon.item_id)

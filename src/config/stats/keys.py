@@ -74,8 +74,8 @@ BASE_WEAPON: str = "base_weapon"
 Determines which weapon model and animations to use as a foundation.
 Used for weapons that share the same base model but have different stats or attachments. """
 WEIGHT: str = "weight"
-""" Mystery box weight determining how frequently this weapon can appear.
-Higher values mean more common (scale 1-10: 1=very rare, 10=very common). """
+""" Mystery box weight relative to the other weapons, 0 to keep it out of the box.
+Every weapon is 1, so each is as likely as the others, as in Black Ops. """
 SPEED_MULTIPLY_BASE: str = "speed_multiply_base"
 """ Optional movement speed multiplier applied while the weapon is held.
 Uses the attribute operation `add_multiplied_base` on movement_speed.

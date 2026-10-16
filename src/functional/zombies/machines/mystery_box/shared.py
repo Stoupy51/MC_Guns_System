@@ -14,8 +14,8 @@ MOVE_DESCEND_TICKS: int = 70
 MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + MOVE_DESCEND_TICKS
 """ 280. """
 
-# The monkey is not in the weapon catalog, so its weight is set here (fairly common, BO style).
-MONKEY_BOMB_WEIGHT: int = 5
+MONKEY_BOMB_WEIGHT: int = 1
+""" The monkey is not in the weapon catalog, so its box weight is set here, equal to every weapon's. """
 
 RAY_GUN_DRY_PULLS: int = 5
 """ Pulls without a Ray Gun after which it counts double, until round 25 (BO1 `default_ray_gun_weighting_func`). """
