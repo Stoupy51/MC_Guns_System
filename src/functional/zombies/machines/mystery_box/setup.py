@@ -5,7 +5,7 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 from .....config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from .....config.stats.keys import WEIGHT
 from .....database.items import CONSUMABLE_MAGAZINES, WEAPON_STATS
-from .shared import MONKEY_BOMB_WEIGHT
+from .shared import MONKEY_BOMB_WEIGHT, RAY_GUN_DRY_PULLS
 
 
 # Functions
@@ -33,10 +33,12 @@ scoreboard objectives add {ns}.mb.buyer dummy
 
 	pool_entries: list[str] = []
 	pool_weights: list[int] = []
+	pool_ids: list[str] = []
 	for weapon in (*PRIMARY_WEAPONS, *SECONDARY_WEAPONS):
 		weight: int = WEAPON_STATS.get(weapon.item_id, {}).get("stats", {}).get(WEIGHT, 5)
 		if weight == 0:
 			continue  # Weight 0 = excluded from mystery box
+		pool_ids.append(weapon.item_id)
 		consumable: str = "1b" if weapon.magazine_id in CONSUMABLE_MAGAZINES else "0b"
 		pool_entries.append(
 			f'{{weapon_id:"{weapon.item_id}",'
@@ -81,5 +83,12 @@ function {ns}:v{version}/zombies/wallbuys/give_tactical {{weapon_id:"monkey_bomb
 	write_versioned_function("zombies/mystery_box/ensure_default_pool", f"""
 data modify storage {ns}:zombies mystery_box_pool set value [{default_pool_entries}]
 data modify storage {ns}:zombies mystery_box_weights set value [{default_pool_weights}]
+""")
+
+	ray_gun_index: int = pool_ids.index("ray_gun")
+	ray_gun_weight: int = pool_weights[ray_gun_index]
+	write_versioned_function("zombies/mystery_box/weigh_ray_gun", f"""
+data modify storage {ns}:zombies mystery_box_weights[{ray_gun_index}] set value {ray_gun_weight}
+execute if score #zb_round {ns}.data matches ..24 if score #mb_dry_ray_gun {ns}.data matches {RAY_GUN_DRY_PULLS + 1}.. run data modify storage {ns}:zombies mystery_box_weights[{ray_gun_index}] set value {2 * ray_gun_weight}
 """)
 

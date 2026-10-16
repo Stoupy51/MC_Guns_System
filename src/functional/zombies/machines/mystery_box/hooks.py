@@ -22,6 +22,7 @@ kill @e[tag={ns}.mb_presence]
 kill @e[tag={ns}.mb_disabled]
 kill @e[tag={ns}.mb_temp]
 scoreboard players set #mb_pulls {ns}.data 0
+scoreboard players set #mb_dry_ray_gun {ns}.data 0
 scoreboard players set #mb_move_timer {ns}.data 0
 scoreboard players set #mb_fs_cleanup_pending {ns}.data 0
 scoreboard players reset @a {ns}.mb.pid
