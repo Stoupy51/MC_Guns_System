@@ -1,9 +1,12 @@
-""" Per-type enemy setup and the Treyarch health curve behind it. """
+""" The zombie types: the normal reference, and the Zonweeb special types scaled from it. """
 # Imports
 from dataclasses import dataclass
 from typing import Literal
 
 from stewbeet import Mem, write_versioned_function
+
+from .curve import write_health_curve
+from .dog import write_dog_type
 
 
 # Classes
@@ -40,6 +43,8 @@ AURA_RADIUS: int = 6
 def write_enemy_types() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	write_health_curve()
+	write_dog_type()
 
 	# Each enemy type takes {level:"1".."4"}.
 
@@ -83,65 +88,6 @@ attribute @s minecraft:knockback_resistance base set 1024
 
 # 20 ticks to rise 2 blocks.
 scoreboard players set @s {ns}.zb.rise_tick 20
-""")
-
-	## Treyarch BO1 HP curve: 50 + 100 x round up to round 9 (150 to 950), then 950 x 1.1^(round - 9),
-	## converted with 2/15 (BO 150 HP = 20 HP, a vanilla zombie).
-	write_versioned_function("zombies/calc_zombie_hp", f"""
-execute if score #zb_round {ns}.data matches ..9 run scoreboard players operation #zb_hp {ns}.data = #zb_round {ns}.data
-execute if score #zb_round {ns}.data matches ..9 run scoreboard players operation #zb_hp {ns}.data *= #100 {ns}.data
-execute if score #zb_round {ns}.data matches ..9 run scoreboard players add #zb_hp {ns}.data 50
-
-execute if score #zb_round {ns}.data matches 10.. run scoreboard players operation #zb_exp_round {ns}.data = #zb_round {ns}.data
-execute if score #zb_round {ns}.data matches 10.. run scoreboard players remove #zb_exp_round {ns}.data 9
-
-execute if score #zb_round {ns}.data matches 10.. run data modify storage bs:in math.pow.x set value 1.1f
-execute if score #zb_round {ns}.data matches 10.. store result storage bs:in math.pow.y float 1 run scoreboard players get #zb_exp_round {ns}.data
-execute if score #zb_round {ns}.data matches 10.. run function #bs.math:pow
-execute if score #zb_round {ns}.data matches 10.. store result score #zb_hp {ns}.data run data get storage bs:out math.pow 950
-
-scoreboard players operation #zb_hp {ns}.data *= #2 {ns}.data
-scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
-
-# Also catches int overflow on very high rounds.
-execute unless score #zb_hp {ns}.data matches 15..2048 run scoreboard players set #zb_hp {ns}.data 2048
-""")
-
-	write_versioned_function("zombies/apply_zombie_hp", """
-$attribute @s minecraft:max_health base set $(val)
-execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
-""")
-
-	## Dogs: $(val) is the amount above a wolf's base 8, as a modifier the taming reset cannot clear (see types/dog).
-	write_versioned_function("zombies/apply_dog_hp", f"""
-$attribute @s minecraft:max_health modifier add {ns}:dog_hp $(val) add_value
-execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
-""")
-
-	write_versioned_function("zombies/types/dog", f"""
-tag @s add {ns}.zb_scaled
-data modify entity @s DeathTime set value -16s
-
-# Same HP as the round's zombie: dogs threaten through speed and damage.
-function {ns}:v{version}/zombies/calc_zombie_hp
-
-# A modifier, not a base value: every save/load round-trip (any /data modify or `store result entity`) runs
-# TamableAnimal.setTame(false, true), which resets the MAX_HEALTH base of an untamed wolf to 8.
-scoreboard players remove #zb_hp {ns}.data 8
-execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp {ns}.data
-function {ns}:v{version}/zombies/apply_dog_hp with storage {ns}:temp _zb_hp
-
-# Always above the zombie cap (0.32): a dog pack cannot be outrun.
-execute if score #zb_round {ns}.data matches ..9 run attribute @s minecraft:movement_speed base set 0.36
-execute if score #zb_round {ns}.data matches 10..19 run attribute @s minecraft:movement_speed base set 0.40
-execute if score #zb_round {ns}.data matches 20.. run attribute @s minecraft:movement_speed base set 0.44
-
-# Below zombie melee (15.0), since dogs reach you far more often.
-attribute @s minecraft:attack_damage base set 12.0
-attribute @s minecraft:knockback_resistance base set 1024
-
-# 1.5x a vanilla wolf, which also enlarges the hitbox.
-attribute @s minecraft:scale base set 1.5
 """)
 
 	# The Missions gun AI: a random weapon, a visible name, and shots at the nearest player (mob/tick).

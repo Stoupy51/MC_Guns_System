@@ -4,7 +4,7 @@ from itertools import accumulate
 
 from stewbeet import Mem, write_versioned_function
 
-from .enemies import SPECIAL_TYPES
+from ...enemies.types import SPECIAL_TYPES
 
 
 # Functions

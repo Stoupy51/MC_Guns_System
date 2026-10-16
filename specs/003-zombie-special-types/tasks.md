@@ -18,7 +18,7 @@ description: "Task list for zombie special types"
 
 ## Phase 1: Setup
 
-- [ ] T001 Move `src/functional/zombies/game/round/enemies.py` into the `src/functional/zombies/enemies/types/` package from plan.md, moving code only, and confirm `uv run python scripts/verify.py check` is empty before adding anything
+- [X] T001 Move `src/functional/zombies/game/round/enemies.py` into the `src/functional/zombies/enemies/types/` package from plan.md, moving code only, and confirm `uv run python scripts/verify.py check` is empty before adding anything
 
 ---
 
@@ -27,7 +27,7 @@ description: "Task list for zombie special types"
 **Purpose**: The type table and the spawn roll. Every type after this is a table row plus one module.
 
 - [X] T002 Define a `ZombieType` dataclass (in `game/round/enemies.py` until T001 moves it to `src/functional/zombies/enemies/types/table.py`) with one explicit keyword-argument constructor call per type: id, distinguishing tag, speed factor, health factor, first round, spawn weight
-- [ ] T003 Extract the BO health curve into `types/curve.py` (`calc_zombie_hp`, `apply_zombie_hp`, `apply_dog_hp`) and have every type call it instead of restating it
+- [X] T003 Extract the BO health curve into `types/curve.py` (`calc_zombie_hp`, `apply_zombie_hp`, `apply_dog_hp`) and have every type call it instead of restating it
 - [X] T004 Replace the hardcoded `data modify storage {ns}:temp _zpos.type set value "normal"` in `src/functional/zombies/game/round/spawning.py` with a weighted roll generated from the `types.py` table
 - [X] T005 Gate the roll on the Zonweeb variant, so the Vanilla variant always rolls `normal` (FR-001), and skip it entirely on dog rounds (FR-009)
 - [ ] T006 Verify the gate before any type exists: a Zonweeb game and a Vanilla game both still spawn only normal zombies, and nothing regressed

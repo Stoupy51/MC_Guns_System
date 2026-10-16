@@ -2,8 +2,8 @@
 
 Wave-based round progression with zombie spawning, scaling, and round completion.  """
 # Imports
+from ...enemies.types import write_enemy_types
 from .completion import write_round_completion
-from .enemies import write_enemy_types
 from .hooks import write_round_hooks
 from .lifecycle import write_enemy_lifecycle
 from .spawning import write_round_spawning

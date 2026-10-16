@@ -3,8 +3,8 @@
 	"file": "dog.mcfunction",
 	"sourceRoot": "../../../../../../../..",
 	"sources": [
-		"src/functional/zombies/game/round/enemies.py"
+		"src/functional/zombies/enemies/types/dog.py"
 	],
 	"names": [],
-	"mappings": "AAwH+C;;;;;;;;;;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAU+C;;;;;;;;;;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

@@ -3,8 +3,8 @@
 	"file": "normal.mcfunction",
 	"sourceRoot": "../../../../../../../..",
 	"sources": [
-		"src/functional/zombies/game/round/enemies.py"
+		"src/functional/zombies/enemies/types/__init__.py"
 	],
 	"names": [],
-	"mappings": "AA8CkD;;;;;;;;;;;;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAmDkD;;;;;;;;;;;;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }
