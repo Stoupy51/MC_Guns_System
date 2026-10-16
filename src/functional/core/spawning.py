@@ -42,7 +42,7 @@ $execute unless data storage {ns}:$(mode) game{{state:"active"}} run tag @s add 
 			extra_spawn_tags: Extra tag suffixes (without the ``<ns>.`` prefix); zombies passes ``("new_spawn",)``.
 		"""
 		ns: str = Mem.ctx.project_id
-		tags: str = f'"{ns}.spawn_point","$(tag)","{ns}.gm_entity"'
+		tags: str = f'"{ns}.spawn_point","$(tag)","{ns}.{mode}_entity"'
 		for tag in extra_spawn_tags:
 			tags += f',"{ns}.{tag}"'
 		write_versioned_function(f"{mode}/summon_spawn_at", f"""
@@ -151,6 +151,7 @@ execute if entity @e[tag={ns}.spawn_point,tag={ns}.{spawn_tag}] run function {ns
 $function {ns}:v{version}/shared/load_base_coordinates {{mode:"$(mode)"}}
 
 $data modify storage {ns}:temp _oob_iter set from storage {ns}:$(mode) game.map.out_of_bounds
+$data modify storage {ns}:temp _oob_pos.mode set value "$(mode)"
 execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/shared/summon_oob_iter
 """)
 
@@ -170,6 +171,6 @@ execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/shar
 """)
 
 			write_versioned_function("shared/summon_oob_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.gm_entity"]}}
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.$(mode)_entity"]}}
 """)
 

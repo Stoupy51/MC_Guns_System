@@ -6,7 +6,7 @@
 # @within	mgs:v5.1.0/zombies/perks/check_guardian [ at @s ]
 #
 
-summon minecraft:iron_golem ~ ~ ~ {Tags:["mgs.guardian_golem","mgs.gm_entity"],PlayerCreated:0b,CustomName:{"translate":"mgs.guardian","color":"green"}}
+summon minecraft:iron_golem ~ ~ ~ {Tags:["mgs.guardian_golem","mgs.zombies_entity"],PlayerCreated:0b,CustomName:{"translate":"mgs.guardian","color":"green"}}
 
 scoreboard players set @s mgs.zb.ability_cd 1
 

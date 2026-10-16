@@ -21,7 +21,7 @@ execute store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players set @s mgs.zb.stuck_ticks 0
 
 # Invisible pathfinding taxi (see the escort module docstring for each NBT choice).
-summon minecraft:wandering_trader ~ ~ ~ {Tags:["mgs.zb_escort","mgs.gm_entity","mgs.zb_escort_new","global.ignore","global.ignore.kill"],Silent:1b,Invulnerable:1b,PersistenceRequired:1b,DespawnDelay:0,CanPickUpLoot:0b,DeathLootTable:"minecraft:empty",Offers:{Recipes:[]},active_effects:[{id:"minecraft:invisibility",duration:-1,show_particles:0b}]}
+summon minecraft:wandering_trader ~ ~ ~ {Tags:["mgs.zb_escort","mgs.zombies_entity","mgs.zb_escort_new","global.ignore","global.ignore.kill"],Silent:1b,Invulnerable:1b,PersistenceRequired:1b,DespawnDelay:0,CanPickUpLoot:0b,DeathLootTable:"minecraft:empty",Offers:{Recipes:[]},active_effects:[{id:"minecraft:invisibility",duration:-1,show_particles:0b}]}
 
 team join mgs.horde @n[tag=mgs.zb_escort_new]
 

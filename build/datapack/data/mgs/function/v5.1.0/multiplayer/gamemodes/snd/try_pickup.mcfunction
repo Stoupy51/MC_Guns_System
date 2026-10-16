@@ -13,7 +13,7 @@ tag @s add mgs.snd_carrier
 kill @e[tag=mgs.snd_loose]
 
 # The label follows by teleport (an entity cannot ride a player) and marks where the bomb drops if the carrier dies.
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.snd_carrier_label","mgs.gm_entity"],billboard:"vertical",teleport_duration:1,text:[{"text":"💣","color":"white"}],transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:false}
+summon minecraft:text_display ~ ~ ~ {Tags:["mgs.snd_carrier_label","mgs.multiplayer_entity"],billboard:"vertical",teleport_duration:1,text:[{"text":"💣","color":"white"}],transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:false}
 
 tag @a remove mgs.xp_earner
 tag @s add mgs.xp_earner

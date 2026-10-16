@@ -4,6 +4,8 @@
 # @within	mgs:v5.1.0/missions/start 20t [ scheduled ]
 #
 
+function mgs:v5.1.0/shared/use_map_frame {mode:"missions"}
+
 execute unless data storage mgs:missions game{state:"preparing"} run return fail
 
 gamemode adventure @a[scores={mgs.mi.in_game=1}]

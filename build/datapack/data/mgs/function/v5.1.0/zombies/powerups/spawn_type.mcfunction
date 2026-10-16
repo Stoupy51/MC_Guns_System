@@ -24,14 +24,14 @@
 #			label (string)
 #
 
-$summon minecraft:item $(x) $(y) $(z) {Tags:["mgs.pu_item","mgs.pu_item_new","mgs.gm_entity"],PickupDelay:32767,Invulnerable:1b,Item:{id:"$(item)",count:1,components:{"minecraft:custom_data":{mgs:{powerup_uid:$(uid)}}}}}
+$summon minecraft:item $(x) $(y) $(z) {Tags:["mgs.pu_item","mgs.pu_item_new","mgs.zombies_entity"],PickupDelay:32767,Invulnerable:1b,Item:{id:"$(item)",count:1,components:{"minecraft:custom_data":{mgs:{powerup_uid:$(uid)}}}}}
 $scoreboard players set @n[type=minecraft:item,tag=mgs.pu_item_new] mgs.zb.pu.type $(type_num)
 scoreboard players set @n[type=minecraft:item,tag=mgs.pu_item_new] mgs.zb.pu.timer 530
 tag @n[type=minecraft:item,tag=mgs.pu_item_new] remove mgs.pu_item_new
 
 # Live count gating the per-item scans in game_tick. pu_item is Invulnerable, so it only dies through tracked paths.
 scoreboard players add #pu_active mgs.data 1
-$execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {Tags:["mgs.pu_text","mgs.gm_entity"],text:$(label),billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}
+$execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {Tags:["mgs.pu_text","mgs.zombies_entity"],text:$(label),billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}
 
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/item/spawn ambient @s ~ ~ ~ 0.7 1.0
 

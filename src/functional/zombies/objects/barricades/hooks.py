@@ -32,11 +32,13 @@ execute if data storage {ns}:zombies game.map.barricades[0] run function {ns}:v{
 scoreboard players set @a {ns}.zb.barricade_repairs 0
 """, tags=[f"{ns}:zombies/on_round_start"])
 
-	## gm_entity cleanup removes the entities; only tags on living ones remain.
+	## zombies_entity cleanup removes the entities; only tags on living ones remain.
 	write_versioned_function("zombies/stop", f"""
 tag @e[tag={ns}.barricade_removing] remove {ns}.barricade_removing
-tag @a[tag={ns}.barricade_repairing] remove {ns}.barricade_repairing
-scoreboard players reset @a {ns}.zb.barricade_repairs
+""")
+	write_versioned_function("zombies/reset_player", f"""
+tag @s remove {ns}.barricade_repairing
+scoreboard players reset @s {ns}.zb.barricade_repairs
 """)
 
 	## Carpenter.

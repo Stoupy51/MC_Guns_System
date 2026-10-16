@@ -23,15 +23,17 @@ kill @e[tag={ns}.tombstone]
 data modify storage {ns}:zombies tombstone_inv set value {{}}
 """)
 
+	write_versioned_function("zombies/reset_player", f"""
+scoreboard players set @s {ns}.zb.downed 0
+scoreboard players set @s {ns}.zb.bleed 0
+scoreboard players set @s {ns}.zb.revive_p 0
+scoreboard players set @s {ns}.zb.qr_uses 0
+scoreboard players set @s {ns}.zb.downed_id 0
+tag @s remove {ns}.downed_spectator
+tag @s remove {ns}.zb_qr_armed
+""")
 	write_versioned_function("zombies/stop", f"""
-scoreboard players set @a {ns}.zb.downed 0
-scoreboard players set @a {ns}.zb.bleed 0
-scoreboard players set @a {ns}.zb.revive_p 0
-scoreboard players set @a {ns}.zb.qr_uses 0
-scoreboard players set @a {ns}.zb.downed_id 0
 scoreboard players set #downed_id_next {ns}.data 0
-tag @a remove {ns}.downed_spectator
-tag @a remove {ns}.zb_qr_armed
 kill @e[tag={ns}.downed_mannequin]
 kill @e[tag={ns}.downed_hud]
 kill @e[tag={ns}.downed_cam]

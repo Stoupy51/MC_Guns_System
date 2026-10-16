@@ -8,21 +8,18 @@
 #			dialog mgs:v5.1.0/zombies/setup
 #
 
+function mgs:v5.1.0/shared/use_map_frame {mode:"zombies"}
+
 data modify storage mgs:zombies game.state set value "lobby"
 schedule clear mgs:v5.1.0/zombies/end_prep
-schedule clear mgs:v5.1.0/zombies/start_round
+scoreboard players set #zb_next_round mgs.data 0
 
-# The attribute and NoAI restore below is part of the normal cleanup.
+# The attribute and NoAI restore of reset_player is part of the normal cleanup.
 scoreboard players set #zb_freeze mgs.data 0
+scoreboard players set #zb_resume_timer mgs.data 0
 tag @e[tag=mgs.zb_frozen_ai] remove mgs.zb_frozen_ai
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:max_health base reset
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:movement_speed base reset
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:jump_strength base reset
-execute as @a[scores={mgs.zb.in_game=1}] run attribute @s minecraft:entity_interaction_range base reset
-effect clear @a[scores={mgs.zb.in_game=1}]
-gamemode adventure @a[scores={mgs.zb.in_game=1},gamemode=spectator]
 kill @e[tag=mgs.zombie_round]
-kill @e[tag=mgs.gm_entity]
+kill @e[tag=mgs.zombies_entity]
 
 execute if score #zb_has_bounds mgs.data matches 1 run function mgs:v5.1.0/shared/remove_forceload
 
@@ -30,38 +27,27 @@ scoreboard objectives setdisplay sidebar
 scoreboard objectives remove mgs.zb_sidebar
 gamerule advance_time true
 
-gamerule natural_health_regeneration true
 scoreboard players set #any_game_active mgs.data 0
+execute if data storage mgs:multiplayer game.state unless data storage mgs:multiplayer game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1
+execute if data storage mgs:missions game.state unless data storage mgs:missions game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1
+execute if data storage mgs:zombies game.state unless data storage mgs:zombies game{state:"lobby"} run scoreboard players set #any_game_active mgs.data 1
+execute if score #any_game_active mgs.data matches 0 run gamerule natural_health_regeneration true
 
 # Stop any hunger drain and refill the bar, so nobody is left winded.
-effect clear @a minecraft:hunger
-effect give @a minecraft:saturation 5 20 true
-scoreboard players set @a mgs.stam_out 0
-scoreboard players set @a mgs.stam_seen 0
+effect clear @a[scores={mgs.zb.in_game=1}] minecraft:hunger
+effect give @a[scores={mgs.zb.in_game=1}] minecraft:saturation 5 20 true
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.stam_out 0
+scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.stam_seen 0
 
 # Every shader id off, so nothing survives into the lobby.
-execute as @a run function mgs:v5.1.0/player/fx_reset
+execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/player/fx_reset
 
 tellraw @a [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
-execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/shared/maps/call_script_at_base {script:"leave"}
-
-scoreboard players set @a mgs.zb.in_game 0
-# The XP spend tracker is reset too, or the reset reads as points spent (see xp).
-scoreboard players set @a mgs.zb.points 0
-scoreboard players set @a mgs.zb.xp_pts_prev 0
-scoreboard players set @a mgs.zb.xp_spent_acc 0
-scoreboard players set @a mgs.zb.kills 0
-scoreboard players set @a mgs.zb.downs 0
-scoreboard players set @a mgs.zb.passive 0
-scoreboard players set @a mgs.zb.ability 0
-scoreboard players set @a mgs.zb.ability_cd 0
-scoreboard players set @a mgs.zb.prev_kills 0
-scoreboard players set @a mgs.mp.spectate_timer 0
-tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
+execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.1.0/zombies/reset_player
 
 kill @e[type=minecraft:marker,tag=mgs.death_watch]
 
-# gm_entity cleanup removes the portals, but the counter must be zeroed or the next game's round would never complete.
+# zombies_entity cleanup removes the portals, but the counter must be zeroed or the next game's round would never complete.
 kill @e[type=minecraft:marker,tag=mgs.dog_portal]
 scoreboard players set #zb_dog_pending mgs.data 0
 
@@ -72,16 +58,14 @@ kill @e[tag=mgs.mb_presence]
 kill @e[tag=mgs.mb_disabled]
 kill @e[tag=mgs.mb_temp]
 scoreboard players set #mb_pulls mgs.data 0
+scoreboard players set #mb_dry_ray_gun mgs.data 0
 scoreboard players set #mb_move_timer mgs.data 0
 scoreboard players set #mb_fs_cleanup_pending mgs.data 0
-scoreboard players reset @a mgs.mb.pid
 scoreboard players set #mb_pid_counter mgs.data 0
 tag @e remove mgs.mb_fs_active
 tag @e remove mgs.mb_orig_active
 
 tag @e[tag=mgs.barricade_removing] remove mgs.barricade_removing
-tag @a[tag=mgs.barricade_repairing] remove mgs.barricade_repairing
-scoreboard players reset @a mgs.zb.barricade_repairs
 
 kill @e[type=minecraft:item,tag=mgs.pu_item]
 kill @e[type=minecraft:text_display,tag=mgs.pu_text]
@@ -109,38 +93,6 @@ bossbar remove mgs:pu_bonfire_sale
 bossbar remove mgs:pu_insta_kill
 bossbar remove mgs:pu_double_points
 bossbar remove mgs:pu_unlimited_ammo
-
-execute as @a[team=mgs.zombies] run attribute @s minecraft:max_health base reset
-execute as @a[team=mgs.zombies] run attribute @s minecraft:movement_speed modifier remove mgs:stamin_up
-execute as @a[team=mgs.zombies] run attribute @s minecraft:fall_damage_multiplier base reset
-execute as @a[team=mgs.zombies] run attribute @s minecraft:attack_damage modifier remove mgs:widows_wine
-execute as @a[team=mgs.zombies] run attribute @s minecraft:attack_damage modifier remove mgs:dying_wish
-tag @a[team=mgs.zombies] remove mgs.dying_wish_active
-scoreboard players set @a[team=mgs.zombies] mgs.zb.dw_uses 0
-scoreboard players set @a[team=mgs.zombies] mgs.zb.dw_cd 0
-scoreboard players set @a[team=mgs.zombies] mgs.zb.dw_timer 0
-scoreboard players set @a[team=mgs.zombies] mgs.stam_bonus 0
-tag @a[team=mgs.zombies] remove mgs.perk.speed_cola
-tag @a[team=mgs.zombies] remove mgs.perk.double_tap
-tag @a[team=mgs.zombies] remove mgs.perk.quick_revive
-scoreboard players set @a[team=mgs.zombies] mgs.special.instant_kill 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.infinite_ammo 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.double_points 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.quick_reload 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.quick_swap 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.double_tap 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.phd_flopper 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.deadshot 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.timeslip 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.electric_cherry 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.widows_wine 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.juggernaut 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.scavenger 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.flak_jacket 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.tracker 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.tactical_mask 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.overkill 0
-scoreboard players set @a[team=mgs.zombies] mgs.special.quick_fix 0
 
 # Every known score holder, offline players included.
 scoreboard players reset * mgs.zb.perk.juggernog
@@ -178,18 +130,9 @@ kill @e[tag=mgs.wf_bear]
 scoreboard players set #wf_uses mgs.data 0
 scoreboard players set #wf_move_timer mgs.data 0
 
-tag @a remove mgs.ww_active
-scoreboard players set @a mgs.zb.ww.id 0
 data modify storage mgs:zombies ww_inv set value {}
 
-scoreboard players set @a mgs.zb.downed 0
-scoreboard players set @a mgs.zb.bleed 0
-scoreboard players set @a mgs.zb.revive_p 0
-scoreboard players set @a mgs.zb.qr_uses 0
-scoreboard players set @a mgs.zb.downed_id 0
 scoreboard players set #downed_id_next mgs.data 0
-tag @a remove mgs.downed_spectator
-tag @a remove mgs.zb_qr_armed
 kill @e[tag=mgs.downed_mannequin]
 kill @e[tag=mgs.downed_hud]
 kill @e[tag=mgs.downed_cam]

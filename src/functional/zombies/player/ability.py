@@ -121,7 +121,7 @@ execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.ability=2,{ns}.zb.ability_cd=0}
 """)
 
 	write_versioned_function("zombies/perks/trigger_guardian", f"""
-summon minecraft:iron_golem ~ ~ ~ {{Tags:["{ns}.guardian_golem","{ns}.gm_entity"],PlayerCreated:0b,CustomName:{{"text":"Guardian","color":"green"}}}}
+summon minecraft:iron_golem ~ ~ ~ {{Tags:["{ns}.guardian_golem","{ns}.zombies_entity"],PlayerCreated:0b,CustomName:{{"text":"Guardian","color":"green"}}}}
 
 scoreboard players set @s {ns}.zb.ability_cd 1
 

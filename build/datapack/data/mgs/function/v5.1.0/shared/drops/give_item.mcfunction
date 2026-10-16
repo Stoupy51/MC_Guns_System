@@ -9,5 +9,5 @@
 #			Owner (unknown)
 #
 
-$summon minecraft:item ~ ~0.2 ~ {Item:$(Item),Owner:$(Owner),PickupDelay:0s,Tags:["mgs.gm_entity"]}
+$summon minecraft:item ~ ~0.2 ~ {Item:$(Item),Owner:$(Owner),PickupDelay:0s}
 

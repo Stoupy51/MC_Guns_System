@@ -25,7 +25,8 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","b
 tellraw @a[scores={{{ns}.zb.in_game=0}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"green"}},{{"score":{{"name":"#completed_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" complete! Next round in 5 seconds...","color":"green"}}]
 execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_end_generic ambient @s ~ ~ ~ 0.3 1.0
 
-schedule function {ns}:v{version}/zombies/start_round 5s
+# Counted down in game_tick, so a freeze or a suspension holds it.
+scoreboard players set #zb_next_round {ns}.data 100
 
 function {ns}:v{version}/zombies/revive/round_respawn
 """)

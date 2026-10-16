@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "unfreeze_world.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/tick.py"
+	],
+	"names": [],
+	"mappings": "AAmHoD;;;;;;;;;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

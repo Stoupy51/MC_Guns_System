@@ -1,8 +1,8 @@
 
 #> mgs:v5.1.0/multiplayer/announce_stats_iter
 #
-# @within	mgs:v5.1.0/multiplayer/announce_stats_iter
-#			mgs:v5.1.0/multiplayer/stop
+# @within	mgs:v5.1.0/multiplayer/stop
+#			mgs:v5.1.0/multiplayer/announce_stats_iter
 #
 
 execute unless entity @a[tag=mgs.stat_cand] run return 0

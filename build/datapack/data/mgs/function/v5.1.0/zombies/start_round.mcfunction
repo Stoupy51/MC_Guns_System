@@ -1,8 +1,8 @@
 
 #> mgs:v5.1.0/zombies/start_round
 #
-# @within	mgs:v5.1.0/zombies/end_prep
-#			mgs:v5.1.0/zombies/round_complete 5s [ scheduled ]
+# @within	mgs:v5.1.0/zombies/game_tick
+#			mgs:v5.1.0/zombies/end_prep
 #			mgs:zombies/recover
 #
 

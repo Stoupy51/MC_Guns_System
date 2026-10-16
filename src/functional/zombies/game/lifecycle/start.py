@@ -36,22 +36,21 @@ scoreboard players set #zb_points_knife_kill {ns}.config 130
 scoreboard players set #zb_mystery_box_price {ns}.config 950
 
 team join {ns}.zombies @a[scores={{{ns}.zb.in_game=1}}]
+scoreboard players add #zb_run {ns}.data 1
+scoreboard players operation @a[scores={{{ns}.zb.in_game=1}}] {ns}.zb.run = #zb_run {ns}.data
 
 # Kills from before the game do not count.
 execute as @a run scoreboard players operation @s {ns}.zb.prev_kills = @s {ns}.total_kills
 
 # Prevents false triggers.
-scoreboard players set @a {ns}.mp.death_count 0
-scoreboard players set @a {ns}.mp.spectate_timer 0
+scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.mp.death_count 0
+scoreboard players set @a[scores={{{ns}.zb.in_game=1}}] {ns}.mp.spectate_timer 0
 
 # A stale flag would pause the first round.
 scoreboard players set #zb_freeze {ns}.data 0
 tag @e[tag={ns}.zb_frozen_ai] remove {ns}.zb_frozen_ai
 
-scoreboard players set @a {ns}.mp.in_game 0
-scoreboard players set @a {ns}.mi.in_game 0
-
-{GameLifecycle.regen_enable_lines(ns)}
+{GameLifecycle.regen_enable_lines(ns, f"@a[scores={{{ns}.zb.in_game=1}}]")}
 
 gamemode spectator @a[scores={{{ns}.zb.in_game=1}}]
 gamerule immediate_respawn true
@@ -129,6 +128,6 @@ execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @
 function {ns}:v{version}/zombies/start_round
 
 # The state is now active and chunks had time to load.
-function {ns}:v{version}/shared/maps/call_script_at_base {{script:"start"}}
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"zombies",script:"start"}}
 """)
 

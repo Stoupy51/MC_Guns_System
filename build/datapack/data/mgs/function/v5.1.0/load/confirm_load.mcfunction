@@ -224,6 +224,11 @@ scoreboard objectives add mgs.zb.points dummy
 scoreboard objectives add mgs.zb.kills dummy
 scoreboard objectives add mgs.zb.downs dummy
 
+# zb.run: the #zb_run a player plays in, 0 once zombies/reset_player cleaned them. A player offline when their run
+# ended keeps theirs, which is how zombies/on_rejoin tells them apart from one coming back to the run.
+scoreboard objectives add mgs.zb.run dummy
+scoreboard objectives add mgs.zb.rejoins custom:leave_game
+
 # Index into LETHAL_GRENADE_IDS (0 = frag), so an emptied lethal slot refills the bought type (see inventory).
 scoreboard objectives add mgs.zb.lethal_type dummy
 

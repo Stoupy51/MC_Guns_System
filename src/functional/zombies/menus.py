@@ -97,7 +97,7 @@ tellraw @a [{MGS_TAG},{{"text":"An operator skipped ahead {delta} round(s).","co
 	## One toggle, so the dialog needs no per-state label.
 	write_versioned_function("zombies/admin/freeze_toggle", f"""
 execute unless data storage {ns}:zombies game{{state:"active"}} run return run tellraw @s [{MGS_TAG},{{"text":"No zombies game is active.","color":"red"}}]
-execute if score #zb_freeze {ns}.data matches 1 run return run function {ns}:v{version}/zombies/freeze_off
+execute if score #zb_freeze {ns}.data matches 1.. run return run function {ns}:v{version}/zombies/freeze_off
 function {ns}:v{version}/zombies/freeze_on
 """)
 

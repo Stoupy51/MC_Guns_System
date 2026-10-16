@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "resume.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/tick.py"
+	],
+	"names": [],
+	"mappings": "AAwJ4C;;;;;;AAC5C;AACA;AACA"
+}

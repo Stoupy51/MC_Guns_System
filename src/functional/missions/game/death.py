@@ -86,6 +86,6 @@ item replace entity @s hotbar.3 with compass[custom_data={{{ns}:{{compass:true}}
 execute if data storage {ns}:missions game.map.respawn_commands[0] at @s run function {ns}:v{version}/shared/run_respawn_commands {{mode:"missions"}}
 
 # Run as the respawning player.
-function {ns}:v{version}/shared/maps/call_script_at_base {{script:"respawn"}}
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"missions",script:"respawn"}}
 """)
 

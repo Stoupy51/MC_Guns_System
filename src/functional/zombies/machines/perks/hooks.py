@@ -108,10 +108,8 @@ execute if score #qr_price_tick {ns}.data matches 20.. run scoreboard players se
 execute if score #qr_price_tick {ns}.data matches 0 run function {ns}:v{version}/zombies/perks/update_quick_revive_price
 """)
 
-	# stop already zeroed zb.in_game, so the zombies team identifies the players.
+	write_versioned_function("zombies/reset_player", perk_effects_teardown(ns, "@s"))
 	write_versioned_function("zombies/stop", f"""
-{perk_effects_teardown(ns, f"@a[team={ns}.zombies]")}
-
 # Every known score holder, offline players included.
 {perk_reset_all_players}
 {perkpaid_reset_all_players}

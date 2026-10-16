@@ -38,13 +38,13 @@ effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
 gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
 
-# Mode cleanup before the gm_entity sweep: S&D restores its sites with `execute at @e[tag=snd_obj] run fill`,
+# Mode cleanup before the multiplayer_entity sweep: S&D restores its sites with `execute at @e[tag=snd_obj] run fill`,
 # which needs the markers to still exist.
 {gm_dispatch(ns, version, "cleanup")}
-kill @e[tag={ns}.gm_entity]
+kill @e[tag={ns}.multiplayer_entity]
 function #{ns}:multiplayer/on_game_end
 
-{GameLifecycle.regen_disable_lines(ns)}
+{GameLifecycle.regen_disable_lines(ns, f"@a[scores={{{ns}.mp.in_game=1}}]")}
 
 # Team scores mean nothing in FFA; player_wins announces the winner.
 tellraw @a ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]
@@ -56,16 +56,14 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run tellraw 
 scoreboard objectives setdisplay sidebar
 scoreboard objectives remove {ns}.sidebar
 scoreboard objectives setdisplay list
-team leave @a[team={ns}.red]
-team leave @a[team={ns}.blue]
-team leave @a[team={ns}.ffa]
+team leave @a[scores={{{ns}.mp.in_game=1}}]
 
 # The state is still active or preparing here.
-execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{script:"leave"}}
+execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"multiplayer",script:"leave"}}
 
+scoreboard players set @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.team 0
+scoreboard players set @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.spectate_timer 0
 scoreboard players set @a {ns}.mp.in_game 0
-scoreboard players set @a {ns}.mp.team 0
-scoreboard players set @a {ns}.mp.spectate_timer 0
 scoreboard players set #mp_has_boundary {ns}.data 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
 """)

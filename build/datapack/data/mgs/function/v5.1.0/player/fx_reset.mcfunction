@@ -6,12 +6,12 @@
 # @within	mgs:v5.1.0/load/confirm_load [ as @a ]
 #			mgs:v5.1.0/player/fx_after_death
 #			mgs:v5.1.0/player/fx_after_rejoin
-#			mgs:v5.1.0/zombies/start [ as @a ]
-#			mgs:v5.1.0/zombies/stop [ as @a ]
-#			mgs:v5.1.0/multiplayer/start [ as @a ]
-#			mgs:v5.1.0/multiplayer/stop [ as @a ]
-#			mgs:v5.1.0/missions/start [ as @a ]
-#			mgs:v5.1.0/missions/stop [ as @a ]
+#			mgs:v5.1.0/zombies/stop [ as @a[scores={mgs.zb.in_game=1}] ]
+#			mgs:v5.1.0/multiplayer/stop [ as @a[scores={mgs.mp.in_game=1}] ]
+#			mgs:v5.1.0/missions/stop [ as @a[scores={mgs.mi.in_game=1}] ]
+#			mgs:v5.1.0/zombies/start [ as @a[scores={mgs.zb.in_game=1}] ]
+#			mgs:v5.1.0/multiplayer/start [ as @a[scores={mgs.mp.in_game=1}] ]
+#			mgs:v5.1.0/missions/start [ as @a[scores={mgs.mi.in_game=1}] ]
 #
 
 scoreboard players set #hurt_was mgs.data 0

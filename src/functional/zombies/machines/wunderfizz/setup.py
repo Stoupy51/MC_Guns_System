@@ -99,7 +99,7 @@ execute if data storage {ns}:temp _wf_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/wunderfizz/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.wunderfizz_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.wf_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.wunderfizz_machine","{ns}.zombies_entity","bs.entity.interaction","{ns}.wf_new"]}}
 """)
 
 	## Displays are persistent and linked to their spot by id, so roaming is a model swap.

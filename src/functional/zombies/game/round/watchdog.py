@@ -10,7 +10,7 @@ def write_watchdog() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	# A round advances through spawn, die, round_complete, 5 s, start_round, and any link can go missing (failed load, schedule dropped on /reload, desynced counter).
+	# A round advances through spawn, die, round_complete, 5 s, start_round, and any link can go missing (failed load, desynced counter).
 	# The watchdog looks for what they share: nothing alive, nothing queued and nothing changing for longer than the 5 s handoff.
 	write_versioned_function("zombies/watchdog_tick", f"""
 # Any spawn, kill or portal strike moves it.
@@ -41,8 +41,8 @@ scoreboard players set #zb_wd_ticks {ns}.data 0
 scoreboard players set #zb_dog_pending {ns}.data 0
 kill @e[tag={ns}.dog_portal]
 
-# So recovery cannot race a schedule landing a tick later.
-schedule clear {ns}:v{version}/zombies/start_round
+# So recovery cannot race the countdown landing a tick later.
+scoreboard players set #zb_next_round {ns}.data 0
 
 tellraw @a [{MGS_TAG},{{"text":"Round was frozen, recovering.","color":"yellow"}}]
 

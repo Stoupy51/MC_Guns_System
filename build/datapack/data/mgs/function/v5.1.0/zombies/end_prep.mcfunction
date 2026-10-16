@@ -15,5 +15,5 @@ effect clear @a[scores={mgs.zb.in_game=1}] night_vision
 function mgs:v5.1.0/zombies/start_round
 
 # The state is now active and chunks had time to load.
-function mgs:v5.1.0/shared/maps/call_script_at_base {script:"start"}
+function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"zombies",script:"start"}
 

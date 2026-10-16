@@ -26,7 +26,7 @@ scoreboard players set #blue {ns}.mp.team 0
 scoreboard players set #mp_has_boundary {ns}.data 0
 scoreboard players set @a {ns}.mp.kills 0
 scoreboard players set @a {ns}.mp.deaths 0
-scoreboard players set @a {ns}.mp.death_count 0
+scoreboard players set @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.death_count 0
 
 # Per-match XP for the after-action line; lifetime totals stay.
 scoreboard players set @a {ns}.mp.xp_session 0
@@ -48,9 +48,9 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:waypoint_
 gamerule immediate_respawn true
 gamerule keep_inventory true
 
-scoreboard players set @a {ns}.mp.spectate_timer 0
+scoreboard players set @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.spectate_timer 0
 
-{GameLifecycle.regen_enable_lines(ns)}
+{GameLifecycle.regen_enable_lines(ns, f"@a[scores={{{ns}.mp.in_game=1}}]")}
 
 function {ns}:v{version}/shared/load_base_coordinates {{mode:"multiplayer"}}
 

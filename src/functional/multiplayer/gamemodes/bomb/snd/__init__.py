@@ -147,7 +147,7 @@ tag @s remove {ns}.snd_alive
 gamemode spectator @s
 """)
 
-		## Runs before the gm_entity sweep of multiplayer/stop: the world is restored from the marker positions, so the markers must still exist.
+		## Runs before the multiplayer_entity sweep of multiplayer/stop: the world is restored from the marker positions, so the markers must still exist.
 		self.sub("cleanup", f"""
 schedule clear {ns}:v{version}/multiplayer/gamemodes/snd/start_round
 {BombSites.cleanup_lines(self)}

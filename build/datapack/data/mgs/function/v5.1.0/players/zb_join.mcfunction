@@ -7,6 +7,8 @@
 #			dialog mgs:v5.1.0/zombies/setup
 #
 
+execute if score @s mgs.mp.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.leave_your_current_game_first","color":"red"}]
+execute if score @s mgs.mi.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.leave_your_current_game_first","color":"red"}]
 execute if score @s mgs.zb.in_game matches 0 if data storage mgs:zombies game{state:"active"} run function mgs:v5.1.0/zombies/join_game
 execute if score @s mgs.zb.in_game matches 0 if data storage mgs:zombies game{state:"preparing"} run function mgs:v5.1.0/zombies/join_game
 scoreboard players set @s mgs.zb.in_game 1

@@ -12,6 +12,6 @@ def generate_display_helpers() -> None:
 
 	# Run as the entity, at it. $(tag), $(item_id), $(item_model), $(yaw).
 	write_versioned_function("zombies/display/summon_machine_display", f"""
-$summon minecraft:item_display ~ ~1.0 ~ {{Rotation:[$(yaw)f,0f],Tags:["$(tag)","{ns}.gm_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"$(item_id)",count:1,components:{{"minecraft:item_model":"$(item_model)"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.25f,1.25f,1.25f]}}}}
+$summon minecraft:item_display ~ ~1.0 ~ {{Rotation:[$(yaw)f,0f],Tags:["$(tag)","{ns}.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"$(item_id)",count:1,components:{{"minecraft:item_model":"$(item_model)"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.25f,1.25f,1.25f]}}}}
 """)
 

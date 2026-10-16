@@ -18,6 +18,7 @@ def write_zombies_join() -> None:
 		"You are already in the zombies game!",
 		f"""
 scoreboard players set @s {ns}.zb.in_game 1
+scoreboard players operation @s {ns}.zb.run = #zb_run {ns}.data
 team join {ns}.zombies @s
 # The XP spend tracker is reset too, or the reset reads as points spent (see xp).
 scoreboard players set @s {ns}.zb.points 500

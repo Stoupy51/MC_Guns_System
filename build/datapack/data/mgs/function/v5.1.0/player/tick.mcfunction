@@ -95,11 +95,12 @@ execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=s
 execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.mi.in_game matches 1 run function mgs:v5.1.0/player/stamina_tick
 execute if score #any_game_active mgs.data matches 1 unless entity @s[gamemode=spectator] if score @s mgs.zb.in_game matches 1 run function mgs:v5.1.0/player/stamina_tick
 
+execute if score @s mgs.zb.rejoins matches 1.. run function mgs:v5.1.0/zombies/on_rejoin
 execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.mp.death_count matches 1.. run function mgs:v5.1.0/zombies/on_respawn
 
 # Dying Wish: escalating cooldown and berserk timer.
-execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_cd matches 1.. run scoreboard players remove @s mgs.zb.dw_cd 1
-execute if data storage mgs:zombies game{state:"active"} if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_timer matches 1.. run function mgs:v5.1.0/zombies/perks/dying_wish_tick
+execute if data storage mgs:zombies game{state:"active"} unless score #zb_freeze mgs.data matches 1.. if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_cd matches 1.. run scoreboard players remove @s mgs.zb.dw_cd 1
+execute if data storage mgs:zombies game{state:"active"} unless score #zb_freeze mgs.data matches 1.. if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_timer matches 1.. run function mgs:v5.1.0/zombies/perks/dying_wish_tick
 
 execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{class_menu:true}}] run function mgs:v5.1.0/multiplayer/select_class
 scoreboard players set @s mgs.class_menu 0

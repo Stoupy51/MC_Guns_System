@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_rejoin.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/over.py"
+	],
+	"names": [],
+	"mappings": "AAmH+C;;;;;;;;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA"
+}

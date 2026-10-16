@@ -1,0 +1,15 @@
+{
+	"version": 3,
+	"file": "reset_player.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/over.py",
+		"src/functional/zombies/machines/mystery_box/hooks.py",
+		"src/functional/zombies/objects/barricades/hooks.py",
+		"src/functional/zombies/machines/perks/hooks.py",
+		"src/functional/zombies/player/whos_who.py",
+		"src/functional/zombies/player/revive/hooks.py"
+	],
+	"names": [],
+	"mappings": "AAyFkD;;;;;;;;;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AChFA;ACMkD;AAClD;AACA;AACA;ACqEC;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AC2EiD;AAClD;AACA;AClKkD;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

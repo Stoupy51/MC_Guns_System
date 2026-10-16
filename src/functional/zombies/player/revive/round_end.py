@@ -43,7 +43,7 @@ function {ns}:v{version}/zombies/inventory/give_respawn_loadout
 function {ns}:v{version}/zombies/perks/tombstone_on_respawn
 
 # Run as the respawning player.
-function {ns}:v{version}/shared/maps/call_script_at_base {{script:"respawn"}}
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"zombies",script:"respawn"}}
 
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":" has respawned!","color":"gray"}}]
 """)

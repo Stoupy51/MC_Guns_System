@@ -36,6 +36,18 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 """.strip()
 
 	@staticmethod
+	def other_mode_guard_lines(ns: str, prefix: str) -> str:
+		""" Return the lines refusing a player who is in another mode, run as that player.
+
+		Args:
+			prefix: The joined mode's score prefix ("mp", "mi" or "zb").
+		"""
+		return "\n".join(
+			f'execute if score @s {ns}.{other}.in_game matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"Leave your current game first!","color":"red"}}]'
+			for other in ("mp", "mi", "zb") if other != prefix
+		)
+
+	@staticmethod
 	def schedule_preload_complete_line(ns: str, mode: str) -> str:
 		""" Return the preload-complete schedule command for a mode. """
 		version: str = Mem.ctx.project_version
@@ -110,6 +122,7 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 		parts: list[str] = [
 			f'# Require an active game\n{guard_line}',
 			f'# Prevent double-joining\n{double_join_guard}',
+			GameLifecycle.other_mode_guard_lines(ns, in_game_objective.split(".")[1]),
 			f'# Tag as in-game and reset stats\n{init_lines.strip()}',
 			'# Setup player\ngamemode adventure @s',
 		]
@@ -128,7 +141,7 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 			parts.append(post_class_lines.strip())
 		parts.extend([
 			f'# Teleport to spawn\nfunction {respawn_function}',
-			f'# Call map join script (executed as the joining player)\nfunction {ns}:v{version}/shared/maps/call_script_at_base {{script:"join"}}',
+			f'# Call map join script (executed as the joining player)\nfunction {ns}:v{version}/shared/maps/call_script_at_base {{mode:"{storage}",script:"join"}}',
 			f'# Announce\ntellraw @a ["",{Text.player(ns, "@s", side=xp_side, color=announce_color)},{{"text":" {announce_text}","color":"{announce_color}"}}]',
 		])
 		return "\n\n".join(parts)
@@ -151,38 +164,49 @@ data modify storage {ns}:{mode} game.map set from storage {ns}:temp map_load.res
 		return "\n\n".join(parts)
 
 	@staticmethod
-	def regen_enable_lines(ns: str) -> str:
-		""" Lines to add at game start: disable natural regen, activate custom regen system. """
+	def regen_enable_lines(ns: str, players: str) -> str:
+		""" Lines to add at game start: disable natural regen, activate custom regen system.
+
+		Args:
+			players: Selector of the starting mode's players, so the players of a game already running keep their state.
+		"""
 		return f"""
 gamerule natural_health_regeneration false
 scoreboard players set #any_game_active {ns}.data 1
 
 # hp_prev comes from the `health` criterion; a player whose score is unset syncs on their first health change.
-scoreboard players set @a {ns}.last_hit 0
-scoreboard players set @a {ns}.hp_prev 0
-execute as @a run scoreboard players operation @s {ns}.hp_prev = @s {ns}.health
+scoreboard players set {players} {ns}.last_hit 0
+scoreboard players set {players} {ns}.hp_prev 0
+execute as {players} run scoreboard players operation @s {ns}.hp_prev = @s {ns}.health
 
-# Everyone, late joiners included, re-inits at full stamina on their next tick.
-scoreboard players set @a {ns}.stam_seen 0
+# Late joiners re-init at full stamina on their next tick.
+scoreboard players set {players} {ns}.stam_seen 0
 
 # Post effects live in player NBT, so a round that ended badly could still apply them.
-execute as @a run function {ns}:v{Mem.ctx.project_version}/player/fx_reset
+execute as {players} run function {ns}:v{Mem.ctx.project_version}/player/fx_reset
 """.strip()
 
 	@staticmethod
-	def regen_disable_lines(ns: str) -> str:
-		""" Lines to add at game stop: re-enable natural regen, deactivate custom regen system. """
+	def regen_disable_lines(ns: str, players: str) -> str:
+		""" Lines to add at game stop, once the mode's state is "lobby": natural regen comes back when no mode is left running.
+
+		Args:
+			players: Selector of the stopping mode's players, read before their in_game score is cleared.
+		"""
 		return f"""
-gamerule natural_health_regeneration true
 scoreboard players set #any_game_active {ns}.data 0
+execute if data storage {ns}:multiplayer game.state unless data storage {ns}:multiplayer game{{state:"lobby"}} run scoreboard players set #any_game_active {ns}.data 1
+execute if data storage {ns}:missions game.state unless data storage {ns}:missions game{{state:"lobby"}} run scoreboard players set #any_game_active {ns}.data 1
+execute if data storage {ns}:zombies game.state unless data storage {ns}:zombies game{{state:"lobby"}} run scoreboard players set #any_game_active {ns}.data 1
+execute if score #any_game_active {ns}.data matches 0 run gamerule natural_health_regeneration true
 
 # Stop any hunger drain and refill the bar, so nobody is left winded.
-effect clear @a minecraft:hunger
-effect give @a minecraft:saturation 5 20 true
-scoreboard players set @a {ns}.stam_out 0
-scoreboard players set @a {ns}.stam_seen 0
+effect clear {players} minecraft:hunger
+effect give {players} minecraft:saturation 5 20 true
+scoreboard players set {players} {ns}.stam_out 0
+scoreboard players set {players} {ns}.stam_seen 0
 
 # Every shader id off, so nothing survives into the lobby.
-execute as @a run function {ns}:v{Mem.ctx.project_version}/player/fx_reset
+execute as {players} run function {ns}:v{Mem.ctx.project_version}/player/fx_reset
 """.strip()
 

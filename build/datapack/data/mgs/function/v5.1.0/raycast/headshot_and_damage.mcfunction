@@ -38,8 +38,9 @@ scoreboard players operation #distance mgs.data = $math.isqrt bs.out
 # 0.5 block.
 execute if score #distance mgs.data matches 501.. run scoreboard players set #distance mgs.data 500
 
-# 2000 - distance x 2.
+# 2000 - distance x 2, or the weapon's Zombies multiplier instead of 2000.
 scoreboard players set #headshot_multiplier mgs.data 2000
+execute if score @n[tag=mgs.ticking] mgs.zb.in_game matches 1 if data storage mgs:gun all.stats.zombies_headshot store result score #headshot_multiplier mgs.data run data get storage mgs:gun all.stats.zombies_headshot 1000
 scoreboard players operation #distance mgs.data *= #2 mgs.data
 scoreboard players operation #headshot_multiplier mgs.data -= #distance mgs.data
 

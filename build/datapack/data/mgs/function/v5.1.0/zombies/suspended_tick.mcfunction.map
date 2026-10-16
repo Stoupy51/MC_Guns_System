@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "suspended_tick.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/tick.py"
+	],
+	"names": [],
+	"mappings": "AA8IoD;;;;;;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

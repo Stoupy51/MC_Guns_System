@@ -23,17 +23,17 @@ gamemode adventure @a[scores={{{ns}.mi.in_game=1}},gamemode=spectator]
 clear @a[scores={{{ns}.mi.in_game=1}}] compass[custom_data~{{{ns}:{{compass:true}}}}]
 
 kill @e[tag={ns}.mission_enemy]
-kill @e[tag={ns}.gm_entity]
+kill @e[tag={ns}.missions_entity]
 
 execute if score #mi_has_boundary {ns}.data matches 1 run function {ns}:v{version}/shared/remove_forceload
 
 function #{ns}:missions/on_mission_end
 
-{GameLifecycle.regen_disable_lines(ns)}
+{GameLifecycle.regen_disable_lines(ns, f"@a[scores={{{ns}.mi.in_game=1}}]")}
 
 tellraw @a [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
-execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{script:"leave"}}
+execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"missions",script:"leave"}}
 
 scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 0
 scoreboard players set @a {ns}.mi.in_game 0

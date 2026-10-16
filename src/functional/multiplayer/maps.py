@@ -33,7 +33,8 @@ execute unless data storage {ns}:maps multiplayer[{{id:"highrise"}}] run data mo
 
 	# Each script guards on the map, then delegates; registered to the shared function tags.
 	guard_mp_hijacked: str = (
-		f'execute if data storage {ns}:multiplayer game{{state:"active"}}'
+		f'execute if data storage {ns}:temp _base{{mode:"multiplayer"}}'
+		f' if data storage {ns}:multiplayer game{{state:"active"}}'
 		f' if data storage {ns}:multiplayer game{{map_id:"hijacked"}}'
 	)
 	for script in ["start", "tick", "join", "leave", "respawn"]:

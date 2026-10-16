@@ -4,6 +4,8 @@
 # @within	mgs:v5.1.0/tick
 #
 
+function mgs:v5.1.0/shared/use_map_frame {mode:"multiplayer"}
+
 # The XP bar is the progression HUD, so a stray orb would show a level nobody earned; tick_player re-asserts the bar every second.
 kill @e[type=experience_orb]
 
@@ -52,5 +54,5 @@ execute store result score #tick_mod mgs.data run scoreboard players get #total_
 scoreboard players operation #tick_mod mgs.data %= #6 mgs.data
 execute if score #tick_mod mgs.data matches 0 if entity @a[scores={mgs.mp.in_game=1,mgs.special.tracker=1..}] run function mgs:v5.1.0/multiplayer/perks/tracker_tick
 
-function mgs:v5.1.0/shared/maps/call_script_at_base {script:"tick"}
+function mgs:v5.1.0/shared/maps/call_script_at_base {mode:"multiplayer",script:"tick"}
 

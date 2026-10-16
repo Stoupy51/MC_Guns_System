@@ -19,7 +19,7 @@ execute store result storage mgs:temp rv_y_hud double 0.001 run scoreboard playe
 data remove storage mgs:temp _body_at
 
 # Glowing, so the squad finds a body on the floor in a horde before it bleeds out.
-summon minecraft:mannequin ~ ~1.5 ~ {Invulnerable:1b,Glowing:1b,pose:"swimming",hide_description:true,Tags:["mgs.downed_mannequin","mgs.downed_new","mgs.gm_entity"]}
+summon minecraft:mannequin ~ ~1.5 ~ {Invulnerable:1b,Glowing:1b,pose:"swimming",hide_description:true,Tags:["mgs.downed_mannequin","mgs.downed_new","mgs.zombies_entity"]}
 
 scoreboard players operation @n[tag=mgs.downed_new] mgs.zb.downed_id = @s mgs.zb.downed_id
 
@@ -36,7 +36,7 @@ execute unless data storage mgs:temp rv_name run data modify storage mgs:temp rv
 item replace entity @n[tag=mgs.downed_new] weapon.mainhand with minecraft:air
 
 # see_through, so the name reads through walls and zombies.
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.downed_hud","mgs.downed_hud_new","mgs.gm_entity"],billboard:"vertical",shadow:1b,see_through:1b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"text":"...","color":"yellow"},{"text":" ↓","color":"yellow"}]}
+summon minecraft:text_display ~ ~ ~ {Tags:["mgs.downed_hud","mgs.downed_hud_new","mgs.zombies_entity"],billboard:"vertical",shadow:1b,see_through:1b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"text":"...","color":"yellow"},{"text":" ↓","color":"yellow"}]}
 function mgs:v5.1.0/zombies/revive/set_hud_name with storage mgs:temp
 
 scoreboard players operation @n[tag=mgs.downed_hud_new] mgs.zb.downed_id = @s mgs.zb.downed_id

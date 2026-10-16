@@ -123,7 +123,7 @@ $data modify storage {ns}:temp _pk_disp.item_model set value "{ns}:perk_machine_
 """)
 
 	write_versioned_function("zombies/perks/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.perk_machine","{ns}.gm_entity","bs.entity.interaction","{ns}.pk_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.perk_machine","{ns}.zombies_entity","bs.entity.interaction","{ns}.pk_new"]}}
 """)
 
 	write_versioned_function("zombies/perks/store_data", f"""

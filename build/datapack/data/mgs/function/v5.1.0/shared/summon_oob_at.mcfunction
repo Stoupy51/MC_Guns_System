@@ -6,7 +6,8 @@
 # @args		x (unknown)
 #			y (unknown)
 #			z (unknown)
+#			mode (unknown)
 #
 
-$summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.oob_point","mgs.gm_entity"]}
+$summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.oob_point","mgs.$(mode)_entity"]}
 

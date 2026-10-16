@@ -13,7 +13,7 @@
 # follow_range also sets the pathfinding region (range + 16) and node budget (range x 16); 40 keeps repaths cheap.
 # step_height 1.0 makes 1-block rises walkable nodes instead of jump nodes that stall on stairs and slabs.
 # zb_new names this zombie for the lines below: up to 20 rise at once from round 20, so @n[tag=zb_rising] can pick another.
-summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.gm_entity","mgs.nukable","mgs.zb_rising","mgs.zb_new"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.gm_entity"]}],attributes:[{id:"minecraft:follow_range",base:40.0d},{id:"minecraft:step_height",base:1.0d}]}
+summon minecraft:zombie ~ ~-2 ~ {Tags:["mgs.zombie_round","mgs.zombies_entity","mgs.nukable","mgs.zb_rising","mgs.zb_new"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{id:"minecraft:marker",Tags:["mgs.death_watch","mgs.zombies_entity"]}],attributes:[{id:"minecraft:follow_range",base:40.0d},{id:"minecraft:step_height",base:1.0d}]}
 
 $execute as @n[tag=mgs.zb_new] run function mgs:v5.1.0/zombies/types/$(type) {level:"$(level)"}
 

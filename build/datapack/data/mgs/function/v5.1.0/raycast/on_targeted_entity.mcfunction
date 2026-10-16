@@ -20,5 +20,6 @@ data modify storage mgs:input with set value {target:"@s", amount:0.0f, attacker
 execute if entity @n[tag=mgs.ticking,type=player] run data modify storage mgs:input with.attacker set value "@p[tag=mgs.ticking]"
 execute store result score #damage mgs.data run data get storage mgs:temp damage 10
 execute if score @n[tag=mgs.ticking] mgs.special.double_tap matches 1.. run scoreboard players operation #damage mgs.data *= #2 mgs.data
+execute if score @n[tag=mgs.ticking] mgs.zb.in_game matches 1 if data storage mgs:gun all.stats.zombies_damage run function mgs:v5.1.0/raycast/apply_zombies_damage
 function mgs:v5.1.0/raycast/apply_decay
 

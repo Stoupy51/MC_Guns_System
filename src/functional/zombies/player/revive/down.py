@@ -58,7 +58,7 @@ function {ns}:v{version}/zombies/perks/lose_all
 gamemode spectator @s
 
 # The spectator rides this item_display for a locked third-person view.
-summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.downed_cam","{ns}.downed_cam_new","{ns}.gm_entity"],teleport_duration:1}}
+summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.downed_cam","{ns}.downed_cam_new","{ns}.zombies_entity"],teleport_duration:1}}
 
 scoreboard players operation @n[tag={ns}.downed_cam_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
 
@@ -92,7 +92,7 @@ execute store result storage {ns}:temp rv_y_hud double 0.001 run scoreboard play
 data remove storage {ns}:temp _body_at
 
 # Glowing, so the squad finds a body on the floor in a horde before it bleeds out.
-summon minecraft:mannequin ~ ~1.5 ~ {{Invulnerable:1b,Glowing:1b,pose:"swimming",hide_description:true,Tags:["{ns}.downed_mannequin","{ns}.downed_new","{ns}.gm_entity"]}}
+summon minecraft:mannequin ~ ~1.5 ~ {{Invulnerable:1b,Glowing:1b,pose:"swimming",hide_description:true,Tags:["{ns}.downed_mannequin","{ns}.downed_new","{ns}.zombies_entity"]}}
 
 scoreboard players operation @n[tag={ns}.downed_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id
 
@@ -109,7 +109,7 @@ execute unless data storage {ns}:temp rv_name run data modify storage {ns}:temp 
 item replace entity @n[tag={ns}.downed_new] weapon.mainhand with minecraft:air
 
 # see_through, so the name reads through walls and zombies.
-summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.downed_hud","{ns}.downed_hud_new","{ns}.gm_entity"],billboard:"vertical",shadow:1b,see_through:1b,teleport_duration:1,transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},text:[{{"text":"...","color":"yellow"}},{{"text":" ↓","color":"yellow"}}]}}
+summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.downed_hud","{ns}.downed_hud_new","{ns}.zombies_entity"],billboard:"vertical",shadow:1b,see_through:1b,teleport_duration:1,transformation:{{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},text:[{{"text":"...","color":"yellow"}},{{"text":" ↓","color":"yellow"}}]}}
 function {ns}:v{version}/zombies/revive/set_hud_name with storage {ns}:temp
 
 scoreboard players operation @n[tag={ns}.downed_hud_new] {ns}.zb.downed_id = @s {ns}.zb.downed_id

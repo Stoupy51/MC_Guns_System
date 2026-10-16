@@ -4,6 +4,8 @@
 # @within	mgs:v5.1.0/zombies/start 20t [ scheduled ]
 #
 
+function mgs:v5.1.0/shared/use_map_frame {mode:"zombies"}
+
 execute unless data storage mgs:zombies game{state:"preparing"} run return fail
 
 gamemode adventure @a[scores={mgs.zb.in_game=1}]
