@@ -2,7 +2,7 @@
 # Imports
 from abc import ABC, abstractmethod
 
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 
 # Classes
@@ -31,7 +31,7 @@ class GameModeVariant(ABC):
 		""" The shared versioned path prefix for this variant's functions. """
 		return f"multiplayer/gamemodes/{self.key}"
 
-	def sub(self, name: str, body: str) -> None:
+	def sub(self, name: str, body: McFunction) -> None:
 		""" Write one of this variant's functions at ``<prefix>/<name>``. """
 		write_versioned_function(f"{self.prefix}/{name}", body)
 
