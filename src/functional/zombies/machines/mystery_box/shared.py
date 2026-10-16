@@ -17,6 +17,9 @@ MOVE_TOTAL_TICKS: int = MOVE_BEAR_TICKS + MOVE_ASCEND_TICKS + MOVE_WAIT_TICKS + 
 # The monkey is not in the weapon catalog, so its weight is set here (fairly common, BO style).
 MONKEY_BOMB_WEIGHT: int = 5
 
+RAY_GUN_DRY_PULLS: int = 5
+""" Pulls without a Ray Gun after which it counts double, until round 25 (BO1 `default_ray_gun_weighting_func`). """
+
 MB_SCALE: float = 2.4
 """ Uniform scale of the two item_displays a presence box is made of.
 The chest model is full-width, so 2.4 makes the box about 2.4 blocks across.

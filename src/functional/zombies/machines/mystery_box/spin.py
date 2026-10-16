@@ -106,11 +106,15 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buye
 
 	## Run as the buyer: re-roll against the weapons they own.
 	write_versioned_function("zombies/mystery_box/pick_for_buyer", f"""
+function {ns}:v{version}/zombies/mystery_box/weigh_ray_gun
 function {ns}:v{version}/zombies/mystery_box/pick_random_result
 scoreboard players set #mb_reroll {ns}.data 0
 function {ns}:v{version}/zombies/mystery_box/reroll_owned
 # No result (empty pool, or everything owned after the re-rolls) counts as owned, so the buyer is refunded.
 execute unless data storage {ns}:zombies mystery_box.result.weapon_id run scoreboard players set #mb_owned {ns}.data 1
+
+scoreboard players add #mb_dry_ray_gun {ns}.data 1
+execute if data storage {ns}:zombies mystery_box.result{{weapon_id:"ray_gun"}} run scoreboard players set #mb_dry_ray_gun {ns}.data 0
 """)
 
 	## #this_buyer comes from show_result_one.
