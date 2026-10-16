@@ -3,8 +3,8 @@
 	"file": "set_speed.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/zombies/game/round/enemies.py"
+		"src/functional/zombies/enemies/types/__init__.py"
 	],
 	"names": [],
-	"mappings": "AA8K+C;;;;;;;;;;;;;AAC/C;AACA"
+	"mappings": "AAwH+C;;;;;;;;;;;;;AAC/C;AACA"
 }

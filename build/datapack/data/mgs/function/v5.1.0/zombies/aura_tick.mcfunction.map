@@ -3,8 +3,8 @@
 	"file": "aura_tick.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/zombies/game/round/enemies.py"
+		"src/functional/zombies/enemies/types/__init__.py"
 	],
 	"names": [],
-	"mappings": "AAmL+C;;;;;;;;AAC/C;AACA;AACA"
+	"mappings": "AA6H+C;;;;;;;;AAC/C;AACA;AACA"
 }
