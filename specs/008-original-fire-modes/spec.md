@@ -118,6 +118,6 @@ The M16A4 fires its three rounds two ticks apart and the FAMAS on three consecut
 ## Assumptions
 
 - Changing mode stays on dropping the gun (Q). The original used a double tap on Q because a single tap reloaded; here reloading has its own input, so a single drop is enough.
-- The guns' other stats are out of scope. The audit also found the Sten (base, walk, sprint and jump spread, switch time, kick) and the M500 (base, crouched, sprint and jump spread, switch time, kick) differing from the original; they are treated as deliberate rebalancing until stated otherwise.
+- The guns' other stats are out of scope. The Sten and M500 spread, switch time, kick and casing match the original, with their PaP values at the same ratio to the base as the other guns.
 - The ray gun is new to this pack and keeps its single automatic mode.
 - Snipers, the M500 and the M590 keep their current behaviour; giving the M500 and M590 an explicit `pump` mode must not change how they fire.
