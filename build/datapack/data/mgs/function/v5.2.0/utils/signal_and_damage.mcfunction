@@ -1,0 +1,20 @@
+
+#> mgs:v5.2.0/utils/signal_and_damage
+#
+# @executed	at @s
+#
+# @within	mgs:v5.2.0/raycast/apply_damage
+#			mgs:v5.2.0/projectile/explode [ as @n[tag=...] ]
+#			mgs:v5.2.0/projectile/damage_entity
+#
+
+# Missions needs the state check: mi.in_game is an opt-in flag already set in the lobby.
+execute store result score #incoming_dmg mgs.data run data get storage mgs:input with.amount 10
+execute store result score #victim_hp mgs.data run data get entity @s Health 10
+execute if entity @s[type=player,scores={mgs.mp.in_game=1..}] if score #incoming_dmg mgs.data >= #victim_hp mgs.data run return run function mgs:v5.2.0/multiplayer/simulate_death
+execute if data storage mgs:missions game{state:"active"} if entity @s[type=player,scores={mgs.mi.in_game=1..}] if score #incoming_dmg mgs.data >= #victim_hp mgs.data run return run function mgs:v5.2.0/missions/simulate_death
+
+# Otherwise normal damage and signals.
+function mgs:v5.2.0/utils/damage with storage mgs:input with
+function #mgs:signals/damage with storage mgs:input with
+

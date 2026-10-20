@@ -1,0 +1,14 @@
+
+#> mgs:v5.2.0/zombies/wallbuys/get_display_name
+#
+# @executed	as @n[tag=mgs.wb_new]
+#
+# @within	mgs:v5.2.0/zombies/wallbuys/on_right_click
+#			mgs:v5.2.0/zombies/wallbuys/on_hover
+#
+
+data modify storage mgs:temp _wb_display_name set from storage mgs:temp _wb_weapon.item_name
+
+# A custom map name wins.
+execute unless data storage mgs:temp _wb_weapon{name:""} if data storage mgs:temp _wb_weapon.name run data modify storage mgs:temp _wb_display_name set from storage mgs:temp _wb_weapon.name
+

@@ -6,5 +6,5 @@
 # @args		entity (unknown)
 #
 
-$execute summon $(entity) run function mgs:v5.1.0/mob/default/on_new {entity:"$(entity)",level:4,active_time:72000,sleep_time:1}
+$execute summon $(entity) run function mgs:v5.2.0/mob/default/on_new {entity:"$(entity)",level:4,active_time:72000,sleep_time:1}
 

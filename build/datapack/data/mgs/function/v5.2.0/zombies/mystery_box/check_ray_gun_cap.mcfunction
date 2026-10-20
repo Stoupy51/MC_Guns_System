@@ -1,0 +1,14 @@
+
+#> mgs:v5.2.0/zombies/mystery_box/check_ray_gun_cap
+#
+# @within	mgs:v5.2.0/zombies/mystery_box/check_owned_result
+#
+
+execute unless data storage mgs:zombies mystery_box.result{weapon_id:"ray_gun"} run return fail
+
+scoreboard players set #mb_ray_gun_owners mgs.data 0
+execute as @a[scores={mgs.zb.in_game=1}] if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"ray_gun"}}}] run scoreboard players add #mb_ray_gun_owners mgs.data 1
+execute as @a[scores={mgs.zb.in_game=1}] if items entity @s hotbar.2 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"ray_gun"}}}] run scoreboard players add #mb_ray_gun_owners mgs.data 1
+execute as @a[scores={mgs.zb.in_game=1}] if items entity @s hotbar.3 *[custom_data~{mgs:{gun:true,stats:{base_weapon:"ray_gun"}}}] run scoreboard players add #mb_ray_gun_owners mgs.data 1
+execute if score #mb_ray_gun_owners mgs.data matches 2.. run scoreboard players set #mb_owned mgs.data 1
+

@@ -24,6 +24,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.1.0/progression/adv/mp/headshots/reward_4"
+		"function": "mgs:v5.2.0/progression/adv/mp/headshots/reward_4"
 	}
 }

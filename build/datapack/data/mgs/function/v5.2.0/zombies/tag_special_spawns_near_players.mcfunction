@@ -1,0 +1,18 @@
+
+#> mgs:v5.2.0/zombies/tag_special_spawns_near_players
+#
+# @executed	as @e[tag=...,limit=24,sort=random] & at @s
+#
+# @within	mgs:v5.2.0/zombies/on_stuck_zombie
+#			mgs:v5.2.0/zombies/spawn_dog
+#
+
+scoreboard players set #zb_near_found mgs.data 0
+
+execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run function mgs:v5.2.0/zombies/tag_special_near_32
+
+execute if score #zb_near_found mgs.data matches 0 as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run function mgs:v5.2.0/zombies/tag_special_near_64
+
+# `store success` so #zb_near_found also reflects the fallback.
+execute if score #zb_near_found mgs.data matches 0 store success score #zb_near_found mgs.data run tag @e[tag=mgs.spawn_special,tag=mgs.spawn_unlocked] add mgs.zb_near
+
