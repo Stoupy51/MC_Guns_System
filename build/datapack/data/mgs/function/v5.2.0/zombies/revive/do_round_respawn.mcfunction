@@ -1,9 +1,10 @@
 
 #> mgs:v5.2.0/zombies/revive/do_round_respawn
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=spectator]
+# @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.2.0/zombies/revive/round_respawn [ as @a[scores={mgs.zb.in_game=1},gamemode=spectator] ]
+# @within	mgs:v5.2.0/zombies/rejoin
+#			mgs:v5.2.0/zombies/revive/round_respawn [ as @a[scores={mgs.zb.in_game=1},gamemode=spectator] ]
 #
 
 # Still downed: tear that state down, or the mannequin, HUD and camera would be orphaned.

@@ -19,6 +19,25 @@ def write_downed_tick() -> None:
 
 	write_versioned_function("zombies/revive/tick", f"""
 execute as @a[tag={ns}.downed_spectator,scores={{{ns}.zb.in_game=1}}] at @s run function {ns}:v{version}/zombies/revive/downed_tick
+
+# Every second, bodies whose owner is gone.
+scoreboard players operation #rv_sweep_mod {ns}.data = #total_tick {ns}.data
+scoreboard players operation #rv_sweep_mod {ns}.data %= #20 {ns}.data
+execute if score #rv_sweep_mod {ns}.data matches 0 as @e[type=minecraft:mannequin,tag={ns}.downed_mannequin] run function {ns}:v{version}/zombies/revive/orphan_check
+""")
+
+	## Run as a body. Only the owner's own ticks revive or bleed it, so with the owner offline (or out of the game) it would stay forever and look revivable.
+	## The owner is whoever holds its id as zb.downed_id (normal down) or zb.ww.id (Who's Who).
+	write_versioned_function("zombies/revive/orphan_check", f"""
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+scoreboard players set #rv_owner_here {ns}.data 0
+execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.downed_id = #my_downed_id {ns}.data run scoreboard players set #rv_owner_here {ns}.data 1
+execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.zb.ww.id = #my_downed_id {ns}.data run scoreboard players set #rv_owner_here {ns}.data 1
+execute if score #rv_owner_here {ns}.data matches 1 run return 0
+
+execute as @e[tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
+execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
+kill @s
 """)
 
 	## Run as the downed spectating player.

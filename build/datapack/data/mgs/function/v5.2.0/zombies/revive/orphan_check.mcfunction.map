@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "orphan_check.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/tick.py"
+	],
+	"names": [],
+	"mappings": "AA8ByD;;;;;;;;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

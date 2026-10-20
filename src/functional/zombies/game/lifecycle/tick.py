@@ -159,6 +159,12 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"The game resumes!"
 	write_versioned_function("zombies/rejoin", f"""
 execute if score #zb_freeze {ns}.data matches 1.. run function {ns}:v{version}/zombies/freeze_player
 tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"selector":"@s"}},{{"text":" is back in the game.","color":"green"}}]
+
+# A body is removed while its owner is away (revive/orphan_check). A downed player then comes back as at a round end, a doppelganger without a body forfeits it.
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+execute if entity @s[tag={ns}.downed_spectator] unless entity @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] run function {ns}:v{version}/zombies/revive/do_round_respawn
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.ww.id
+execute if entity @s[tag={ns}.ww_active] unless entity @e[type=minecraft:mannequin,tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] run function {ns}:v{version}/zombies/whos_who/forfeit
 """)
 
 	write_versioned_function("zombies/on_respawn", f"""
