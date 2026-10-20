@@ -199,7 +199,7 @@ kill @s
 	write_versioned_function("zombies/summon_dog_at", f"""
 # Delivered at ground level with AI on, so no rise and no zb_rising; the strike removes the scratch tag zb_dog_new.
 # step_height 1.0 as in summon_zombie_at; Wolf.applyTamingSideEffects only resets MAX_HEALTH, so a base value is safe here.
-summon minecraft:wolf ~ ~ ~ {{Tags:["{ns}.zombie_round","{ns}.zb_dog","{ns}.zb_dog_new","{ns}.zombies_entity","{ns}.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.zombies_entity"]}}],attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
+summon minecraft:wolf ~ ~0.2 ~ {{Tags:["{ns}.zombie_round","{ns}.zb_dog","{ns}.zb_dog_new","{ns}.zombies_entity","{ns}.nukable"],variant:"minecraft:black",PersistenceRequired:true,DeathLootTable:"minecraft:empty",Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.zombies_entity"]}}],attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
 
 execute as @n[tag={ns}.zb_dog_new] run function {ns}:v{version}/zombies/types/dog
 
@@ -220,7 +220,7 @@ scoreboard players set @n[tag={ns}.zb_dog_new] {ns}.zb.stuck_dist 4
 # follow_range also sets the pathfinding region (range + 16) and node budget (range x 16); 40 keeps repaths cheap.
 # step_height 1.0 makes 1-block rises walkable nodes instead of jump nodes that stall on stairs and slabs.
 # zb_new names this zombie for the lines below: up to 20 rise at once from round 20, so @n[tag=zb_rising] can pick another.
-summon minecraft:zombie ~ ~-2 ~ {{Tags:["{ns}.zombie_round","{ns}.zombies_entity","{ns}.nukable","{ns}.zb_rising","{ns}.zb_new"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.zombies_entity"]}}],attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
+summon minecraft:zombie ~ ~-1.8 ~ {{Tags:["{ns}.zombie_round","{ns}.zombies_entity","{ns}.nukable","{ns}.zb_rising","{ns}.zb_new"],CanPickUpLoot:false,PersistenceRequired:true,DeathLootTable:"minecraft:empty",NoAI:1b,Silent:1b,Passengers:[{{id:"minecraft:marker",Tags:["{ns}.death_watch","{ns}.zombies_entity"]}}],attributes:[{{id:"minecraft:follow_range",base:40.0d}},{{id:"minecraft:step_height",base:1.0d}}]}}
 
 $execute as @n[tag={ns}.zb_new] run function {ns}:v{version}/zombies/types/$(type) {{level:"$(level)"}}
 

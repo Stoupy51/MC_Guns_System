@@ -1,7 +1,7 @@
 
 #> mgs:v5.2.0/zombies/revive/clear_downed_state
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=spectator]
+# @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.2.0/zombies/revive/do_round_respawn
 #

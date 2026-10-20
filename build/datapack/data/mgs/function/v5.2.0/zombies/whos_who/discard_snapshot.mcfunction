@@ -1,7 +1,7 @@
 
 #> mgs:v5.2.0/zombies/whos_who/discard_snapshot
 #
-# @executed	at @s
+# @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.2.0/zombies/whos_who/forfeit with storage mgs:temp _ww_id
 #

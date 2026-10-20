@@ -1,9 +1,10 @@
 
 #> mgs:v5.2.0/zombies/whos_who/forfeit
 #
-# @executed	at @s
+# @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.2.0/zombies/whos_who/bleed_out
+# @within	mgs:v5.2.0/zombies/rejoin
+#			mgs:v5.2.0/zombies/whos_who/bleed_out
 #			mgs:v5.2.0/zombies/revive/on_down
 #			mgs:v5.2.0/zombies/revive/full_death
 #
