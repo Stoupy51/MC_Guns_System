@@ -21,6 +21,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.1.0/progression/adv/zb/pack_a_punch/reward_2"
+		"function": "mgs:v5.2.0/progression/adv/zb/pack_a_punch/reward_2"
 	}
 }

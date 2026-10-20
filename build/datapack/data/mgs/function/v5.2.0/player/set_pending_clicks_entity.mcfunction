@@ -1,0 +1,12 @@
+
+#> mgs:v5.2.0/player/set_pending_clicks_entity
+#
+# @executed	as the player & at current position
+#
+# @within	advancement mgs:v5.2.0/right_click_entity
+#
+
+# Revoked, then the normal click path runs (it revokes its own).
+advancement revoke @s only mgs:v5.2.0/right_click_entity
+function mgs:v5.2.0/player/set_pending_clicks
+

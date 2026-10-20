@@ -1,8 +1,8 @@
 
 #> mgs:zombies/recover
 #
-# @within	mgs:v5.1.0/zombies/watchdog_tick
-#			dialog mgs:v5.1.0/zombies/admin
+# @within	mgs:v5.2.0/zombies/watchdog_tick
+#			dialog mgs:v5.2.0/zombies/admin
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_zombies_game_is_active","color":"red"}]
@@ -19,10 +19,10 @@ scoreboard players set #zb_next_round mgs.data 0
 tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.round_was_frozen_recovering","color":"yellow"}]
 
 # round_complete ran (it parks #zb_to_spawn at -1) but start_round never landed.
-execute if score #zb_to_spawn mgs.data matches ..-1 run return run function mgs:v5.1.0/zombies/start_round
+execute if score #zb_to_spawn mgs.data matches ..-1 run return run function mgs:v5.2.0/zombies/start_round
 
 # Empty map, nothing queued, round never closed.
 kill @e[tag=mgs.zombie_round]
 scoreboard players set #zb_to_spawn mgs.data 0
-function mgs:v5.1.0/zombies/round_complete
+function mgs:v5.2.0/zombies/round_complete
 

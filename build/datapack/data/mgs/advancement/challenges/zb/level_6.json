@@ -27,6 +27,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.1.0/progression/adv/zb/level/reward_6"
+		"function": "mgs:v5.2.0/progression/adv/zb/level/reward_6"
 	}
 }

@@ -12,7 +12,7 @@ def write_stuck_and_bounds() -> None:
 
 	write_versioned_function("zombies/stuck_zombie_check", f"""
 # Run as a non-rising zombie_round, every 20 ticks on up to 24 random ones. Progress resets the timer.
-# Timeout: 400 ticks without moving (100 once already rescued), 300 if it moves without getting closer.
+# Timeout: 400 ticks without moving (100 once already rescued), 300 if it moves without getting closer, less when far.
 
 # Distance bucket to the nearest alive player, 4 (very far) to 0 (adjacent).
 scoreboard players set #cur_dist_bucket {ns}.data 4
@@ -52,6 +52,10 @@ execute if score #stuck_moved {ns}.data matches 0 if entity @s[tag={ns}.zb_rescu
 
 # With 2 zombies left the timeout drops to 5 s, so a hard-to-reach zombie is rescued quickly.
 execute if score #zb_alive {ns}.data matches ..2 if score #stuck_threshold {ns}.data matches 101.. run scoreboard players set #stuck_threshold {ns}.data 100
+
+# The farther from every player, the shorter the wait: 7.5 s beyond 96 blocks, 10 s beyond 64.
+execute if score #cur_dist_bucket {ns}.data matches 4 if score #stuck_threshold {ns}.data matches 151.. run scoreboard players set #stuck_threshold {ns}.data 150
+execute if score #cur_dist_bucket {ns}.data matches 3 if score #stuck_threshold {ns}.data matches 201.. run scoreboard players set #stuck_threshold {ns}.data 200
 
 scoreboard players operation #stuck_delta {ns}.data = #total_tick {ns}.data
 scoreboard players operation #stuck_delta {ns}.data -= @s {ns}.zb.stuck_ticks

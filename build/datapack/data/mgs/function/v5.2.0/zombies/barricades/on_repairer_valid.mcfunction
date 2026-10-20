@@ -1,0 +1,13 @@
+
+#> mgs:v5.2.0/zombies/barricades/on_repairer_valid
+#
+# @executed	at @s
+#
+# @within	mgs:v5.2.0/zombies/barricades/handle_repair
+#
+
+# Run as the repairing player.
+scoreboard players set #barricade_repair_valid mgs.data 1
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🔧 ","color":"white"},{"translate":"mgs.repairing_barricade","color":"aqua"},{"score":{"name":"#barricade_rp_cur","objective":"mgs.data"},"color":"yellow"},{"text":"/30","color":"gray"}],priority:"conditional",freeze:2}
+function #smithed.actionbar:message
+

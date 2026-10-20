@@ -1,0 +1,58 @@
+
+#> mgs:v5.2.0/multiplayer/editor/hub
+#
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.2.0/player/config/process
+#			mgs:v5.2.0/multiplayer/editor/start
+#			mgs:v5.2.0/multiplayer/editor/pick_primary
+#			mgs:v5.2.0/multiplayer/editor/pick_secondary
+#			mgs:v5.2.0/multiplayer/editor/pick_overkill_secondary
+#			mgs:v5.2.0/multiplayer/editor/remove_primary
+#			mgs:v5.2.0/multiplayer/editor/remove_secondary
+#			mgs:v5.2.0/multiplayer/editor/pick_primary_camo
+#			mgs:v5.2.0/multiplayer/editor/pick_secondary_camo
+#			mgs:v5.2.0/multiplayer/editor/pick_equip1_camo
+#			mgs:v5.2.0/multiplayer/editor/pick_equip2_camo
+#			mgs:v5.2.0/multiplayer/editor/pick_knife_camo
+#			mgs:v5.2.0/multiplayer/editor/show_primary_mags_dialog
+#			mgs:v5.2.0/multiplayer/editor/show_secondary_mags_dialog
+#			mgs:v5.2.0/multiplayer/editor/pick_primary_mags
+#			mgs:v5.2.0/multiplayer/editor/pick_secondary_mags
+#			mgs:v5.2.0/multiplayer/editor/pick_equip_slot1
+#			mgs:v5.2.0/multiplayer/editor/pick_equip_slot2
+#			mgs:v5.2.0/multiplayer/editor/save
+#			mgs:v5.2.0/multiplayer/custom/edit
+#
+
+# Fields added after a state was stored (in mgs:editor, or embedded in older loadouts) are filled in:
+# hub_row_knife is a macro, and a missing $(knife_camo_name) would fail the row.
+execute unless data storage mgs:temp editor.knife_camo run data modify storage mgs:temp editor.knife_camo set value ""
+execute unless data storage mgs:temp editor.knife_camo_name run data modify storage mgs:temp editor.knife_camo_name set value "Default"
+
+function mgs:v5.2.0/multiplayer/editor/recompute_points
+scoreboard players set #pts_used mgs.data 10
+scoreboard players operation #pts_used mgs.data -= @s mgs.mp.edit_points
+execute store result storage mgs:temp _hub.pts int 1 run scoreboard players get @s mgs.mp.edit_points
+execute store result storage mgs:temp _hub.used int 1 run scoreboard players get #pts_used mgs.data
+execute store result storage mgs:temp _hub.perks int 1 run data get storage mgs:temp editor.perks
+
+function mgs:v5.2.0/multiplayer/editor/hub_base with storage mgs:temp _hub
+function mgs:v5.2.0/multiplayer/editor/hub_row_primary with storage mgs:temp editor
+execute if data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udce6 ",{text:"Primary Mags \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.pick_a_primary_weapon_first",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
+execute unless data storage mgs:temp editor{primary:""} run function mgs:v5.2.0/multiplayer/editor/hub_row_primary_mags with storage mgs:temp editor
+function mgs:v5.2.0/multiplayer/editor/hub_row_secondary with storage mgs:temp editor
+execute if data storage mgs:temp editor{secondary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udce6 ",{text:"Secondary Mags \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.pick_a_secondary_weapon_first",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
+execute unless data storage mgs:temp editor{secondary:""} run function mgs:v5.2.0/multiplayer/editor/hub_row_secondary_mags with storage mgs:temp editor
+function mgs:v5.2.0/multiplayer/editor/hub_row_knife with storage mgs:temp editor
+function mgs:v5.2.0/multiplayer/editor/hub_row_equip1 with storage mgs:temp editor
+function mgs:v5.2.0/multiplayer/editor/hub_row_equip2 with storage mgs:temp editor
+function mgs:v5.2.0/multiplayer/editor/hub_row_perks with storage mgs:temp _hub
+
+# Grayed out until a primary is picked.
+execute if data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udcbe ",{text:"Save \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.a_primary_weapon_is_required",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
+execute unless data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udcbe ",{translate:"mgs.save_as_public",color:"green",bold:true}],tooltip:{translate:"mgs.everyone_can_see_and_use_this_loadout"},action:{type:"run_command",command:"/trigger mgs.player.config set 350"}}
+execute unless data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udcbe ",{translate:"mgs.save_as_private",color:"yellow",bold:true}],tooltip:{translate:"mgs.only_you_can_see_and_use_this_loadout"},action:{type:"run_command",command:"/trigger mgs.player.config set 351"}}
+
+function mgs:v5.2.0/multiplayer/show_dialog with storage mgs:temp
+

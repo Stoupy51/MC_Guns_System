@@ -21,6 +21,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.1.0/progression/adv/zb/box/reward_8"
+		"function": "mgs:v5.2.0/progression/adv/zb/box/reward_8"
 	}
 }

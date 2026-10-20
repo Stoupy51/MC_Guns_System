@@ -1,0 +1,46 @@
+
+#> mgs:v5.2.0/multiplayer/gamemodes/demo/site_destroyed
+#
+# @executed	as @e[tag=mgs.demo_obj,scores={mgs.demo_state=1}] & at @s
+#
+# @within	mgs:v5.2.0/multiplayer/gamemodes/demo/site_fuse_tick
+#
+
+scoreboard players set @s mgs.demo_state 2
+scoreboard players set @s mgs.demo_prog 0
+
+# The attackers are paid before the blast, whose simulate_death would turn the planter into a spectator.
+tag @a remove mgs.xp_earner
+tag @a[tag=mgs.demo_atk,gamemode=!spectator] add mgs.xp_earner
+execute as @a[tag=mgs.xp_earner] run function mgs:v5.2.0/progression/mp/award_site_destroyed
+
+particle minecraft:explosion_emitter ~ ~1 ~ 2 2 2 0 5
+playsound minecraft:entity.generic.explode player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 2 0.8
+execute as @a[distance=..8.0,gamemode=!creative,gamemode=!spectator,scores={mgs.mp.in_game=1..}] run data modify storage mgs:input with set value {}
+execute as @a[distance=..8.0,gamemode=!creative,gamemode=!spectator,scores={mgs.mp.in_game=1..}] run function mgs:v5.2.0/multiplayer/simulate_death
+
+# No chest to plant on: rubble and a struck-out label.
+kill @e[tag=mgs.demo_bomb,distance=..2]
+kill @e[tag=mgs.demo_bomb_vis,distance=..2]
+kill @e[tag=mgs.demo_bomb_hud,distance=..2]
+setblock ~ ~ ~ air
+summon minecraft:block_display ~ ~ ~ {Tags:["mgs.demo_rubble","mgs.multiplayer_entity"],block_state:"minecraft:polished_blackstone",transformation:{translation:[-0.3f,0.0f,-0.3f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.6f,0.2f,0.6f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
+summon minecraft:text_display ~ ~ ~ {Tags:["mgs.demo_wreck","mgs.multiplayer_entity"],billboard:"vertical",text:[{"text":"💥 ","color":"white"},{"translate":"mgs.destroyed","color":"dark_gray"}],transformation:{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
+
+execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_a_destroyed","color":"red","bold":true}]
+execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_a_destroyed","color":"red","bold":true},[" ",{"text":"+20 XP","color":"gold"}]]
+execute if entity @s[tag=mgs.demo_site_B] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_b_destroyed","color":"red","bold":true}]
+execute if entity @s[tag=mgs.demo_site_B] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_b_destroyed","color":"red","bold":true},[" ",{"text":"+20 XP","color":"gold"}]]
+execute if entity @s[tag=mgs.demo_site_C] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_c_destroyed","color":"red","bold":true}]
+execute if entity @s[tag=mgs.demo_site_C] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_c_destroyed","color":"red","bold":true},[" ",{"text":"+20 XP","color":"gold"}]]
+execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_d_destroyed","color":"red","bold":true}]
+execute if entity @s[tag=mgs.demo_site_D] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_d_destroyed","color":"red","bold":true},[" ",{"text":"+20 XP","color":"gold"}]]
+tag @a remove mgs.xp_earner
+
+# Time to reach the other site.
+scoreboard players add #demo_timer mgs.data 1200
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⏱ ","color":"white"},[{"text":"+60","color":"gold"}, {"translate":"mgs.s_on_the_clock"}]]
+
+# Attackers win once nothing is left standing, in the decider too.
+execute unless entity @e[tag=mgs.demo_obj,scores={mgs.demo_state=..1}] run function mgs:v5.2.0/multiplayer/gamemodes/demo/attackers_win
+
