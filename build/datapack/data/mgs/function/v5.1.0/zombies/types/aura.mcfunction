@@ -28,4 +28,6 @@ execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players ge
 function mgs:v5.1.0/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
 
 attribute @s minecraft:scale base set 1.15
+item replace entity @s armor.head with minecraft:dragon_head
+data modify entity @s drop_chances.head set value 0f
 

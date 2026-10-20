@@ -17,7 +17,7 @@ execute if score #do_pap_sound mgs.data matches 1 run data modify storage mgs:te
 data modify storage mgs:temp fire_sound.self set from storage mgs:temp fire_sound.others
 execute if score #do_pap_sound mgs.data matches 0 run data modify storage mgs:temp fire_sound.self set from storage mgs:gun all.stats.fire_modes[0].fire_sound
 execute if score #do_pap_sound mgs.data matches 1 run data modify storage mgs:temp fire_sound.self set from storage mgs:gun all.stats.fire_modes[0].pap_fire_sound
-function mgs:v5.1.0/sound/fire with storage mgs:temp fire_sound
+execute if data storage mgs:temp fire_sound.others run function mgs:v5.1.0/sound/fire with storage mgs:temp fire_sound
 
 # Sniper rifles.
 execute if data storage mgs:gun all.sounds.cycle run function mgs:v5.1.0/sound/cycle with storage mgs:gun all.sounds
