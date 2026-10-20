@@ -1,121 +1,13 @@
 {
 	"parent": "mgs:item/m9_autumn",
 	"display": {
-		"thirdperson_righthand": {
-			"rotation": [
-				0,
-				90,
-				0
-			],
-			"scale": [
-				0.28,
-				0.28,
-				0.28
-			],
-			"translation": [
-				0,
-				0,
-				0.75
-			]
-		},
-		"head": {
-			"scale": [
-				0.56,
-				0.56,
-				0.56
-			]
-		},
-		"thirdperson_lefthand": {
-			"rotation": [
-				90,
-				90,
-				45
-			],
-			"scale": [
-				0.28,
-				0.28,
-				0.28
-			],
-			"translation": [
-				-2,
-				-2,
-				6
-			]
-		},
-		"gui": {
-			"rotation": [
-				0,
-				0,
-				40
-			],
-			"scale": [
-				0.46,
-				0.46,
-				0.46
-			],
-			"translation": [
-				-1,
-				0,
-				0
-			]
-		},
-		"firstperson_lefthand": {
-			"translation": [
-				12,
-				-2,
-				0
-			],
-			"scale": [
-				0,
-				0,
-				0
-			]
-		},
-		"firstperson_righthand": {
-			"rotation": [
-				0,
-				90,
-				0
-			],
-			"scale": [
-				0.275,
-				0.35,
-				0.35
-			],
-			"translation": [
-				-8.960149253731343,
-				6.290149253731342,
-				5.5
-			]
-		},
-		"fixed": {
-			"rotation": [
-				0,
-				180,
-				0
-			],
-			"scale": [
-				0.56,
-				0.56,
-				0.56
-			],
-			"translation": [
-				2.25,
-				1.75,
-				-1.75
-			]
-		},
-		"ground": {
-			"translation": [
-				0,
-				3,
-				0
-			],
-			"scale": [
-				0.28,
-				0.28,
-				0.28
-			]
-		}
+		"thirdperson_righthand": {"rotation": [0,90,0],"scale": [0.28,0.28,0.28],"translation": [0,0,0.75]},
+		"head": {"scale": [0.56,0.56,0.56]},
+		"thirdperson_lefthand": {"rotation": [90,90,45],"scale": [0.28,0.28,0.28],"translation": [-2,-2,6]},
+		"gui": {"rotation": [0,0,40],"scale": [0.46,0.46,0.46],"translation": [-1,0,0]},
+		"firstperson_lefthand": {"translation": [12,-2,0],"scale": [0,0,0]},
+		"firstperson_righthand": {"rotation": [0,90,0],"scale": [0.275,0.35,0.35],"translation": [-8.960149253731343,6.290149253731342,5.5]},
+		"fixed": {"rotation": [0,180,0],"scale": [0.56,0.56,0.56],"translation": [2.25,1.75,-1.75]},
+		"ground": {"translation": [0,3,0],"scale": [0.28,0.28,0.28]}
 	}
 }

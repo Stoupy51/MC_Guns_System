@@ -1,96 +1,13 @@
 {
 	"parent": "mgs:item/ak47_1_red_polymer_stripes",
 	"display": {
-		"thirdperson_righthand": {
-			"rotation": [
-				0,
-				90,
-				0
-			],
-			"translation": [
-				-0.75,
-				0.5,
-				-1.5
-			]
-		},
-		"head": {
-			"scale": [
-				2,
-				2,
-				2
-			]
-		},
-		"thirdperson_lefthand": {
-			"rotation": [
-				0,
-				-90,
-				-170
-			],
-			"translation": [
-				-2,
-				-4.5,
-				7
-			]
-		},
-		"gui": {
-			"rotation": [
-				0,
-				0,
-				45
-			],
-			"translation": [
-				-1.2,
-				0,
-				0
-			]
-		},
-		"firstperson_lefthand": {
-			"translation": [
-				2,
-				3.75,
-				-0.5
-			],
-			"scale": [
-				0,
-				0,
-				0
-			]
-		},
-		"firstperson_righthand": {
-			"rotation": [
-				0,
-				90,
-				0
-			],
-			"scale": [
-				2,
-				2,
-				2
-			],
-			"translation": [
-				-8.960149253731343,
-				2.8297492537313413,
-				0
-			]
-		},
-		"fixed": {
-			"translation": [
-				0,
-				3,
-				-2
-			],
-			"scale": [
-				-2,
-				2,
-				-2
-			]
-		},
-		"ground": {
-			"translation": [
-				0,
-				1.5,
-				0
-			]
-		}
+		"thirdperson_righthand": {"rotation": [0,90,0],"translation": [-0.75,0.5,-1.5]},
+		"head": {"scale": [2,2,2]},
+		"thirdperson_lefthand": {"rotation": [0,-90,-170],"translation": [-2,-4.5,7]},
+		"gui": {"rotation": [0,0,45],"translation": [-1.2,0,0]},
+		"firstperson_lefthand": {"translation": [2,3.75,-0.5],"scale": [0,0,0]},
+		"firstperson_righthand": {"rotation": [0,90,0],"scale": [2,2,2],"translation": [-8.960149253731343,2.8297492537313413,0]},
+		"fixed": {"translation": [0,3,-2],"scale": [-2,2,-2]},
+		"ground": {"translation": [0,1.5,0]}
 	}
 }

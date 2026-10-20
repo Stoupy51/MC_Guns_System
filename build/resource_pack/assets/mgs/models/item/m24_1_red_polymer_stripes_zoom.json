@@ -1,116 +1,13 @@
 {
 	"parent": "mgs:item/m24_1_red_polymer_stripes",
 	"display": {
-		"thirdperson_righthand": {
-			"rotation": [
-				0,
-				90,
-				0
-			],
-			"scale": [
-				0.75,
-				0.75,
-				0.75
-			],
-			"translation": [
-				-0.5,
-				1.25,
-				-5.75
-			]
-		},
-		"head": {
-			"scale": [
-				1.5,
-				1.5,
-				1.5
-			]
-		},
-		"thirdperson_lefthand": {
-			"rotation": [
-				164,
-				-90,
-				0
-			],
-			"scale": [
-				0.75,
-				0.75,
-				0.75
-			],
-			"translation": [
-				-1.75,
-				-4.75,
-				11
-			]
-		},
-		"gui": {
-			"rotation": [
-				0,
-				0,
-				45
-			],
-			"scale": [
-				0.75,
-				0.75,
-				0.75
-			],
-			"translation": [
-				0.5,
-				3.25,
-				0
-			]
-		},
-		"firstperson_lefthand": {
-			"scale": [
-				0,
-				0,
-				0
-			]
-		},
-		"firstperson_righthand": {
-			"rotation": [
-				0,
-				90,
-				0
-			],
-			"scale": [
-				1.5,
-				1.5,
-				1.5
-			],
-			"translation": [
-				-8.960149253731343,
-				5.06724925373134,
-				-6.5
-			]
-		},
-		"fixed": {
-			"rotation": [
-				0,
-				-180,
-				0
-			],
-			"scale": [
-				1.5,
-				1.5,
-				1.5
-			],
-			"translation": [
-				-5,
-				0,
-				-2.5
-			]
-		},
-		"ground": {
-			"translation": [
-				0,
-				1.5,
-				0
-			],
-			"scale": [
-				0.75,
-				0.75,
-				0.75
-			]
-		}
+		"thirdperson_righthand": {"rotation": [0,90,0],"scale": [0.75,0.75,0.75],"translation": [-0.5,1.25,-5.75]},
+		"head": {"scale": [1.5,1.5,1.5]},
+		"thirdperson_lefthand": {"rotation": [164,-90,0],"scale": [0.75,0.75,0.75],"translation": [-1.75,-4.75,11]},
+		"gui": {"rotation": [0,0,45],"scale": [0.75,0.75,0.75],"translation": [0.5,3.25,0]},
+		"firstperson_lefthand": {"scale": [0,0,0]},
+		"firstperson_righthand": {"rotation": [0,90,0],"scale": [1.5,1.5,1.5],"translation": [-8.960149253731343,5.06724925373134,-6.5]},
+		"fixed": {"rotation": [0,-180,0],"scale": [1.5,1.5,1.5],"translation": [-5,0,-2.5]},
+		"ground": {"translation": [0,1.5,0],"scale": [0.75,0.75,0.75]}
 	}
 }
