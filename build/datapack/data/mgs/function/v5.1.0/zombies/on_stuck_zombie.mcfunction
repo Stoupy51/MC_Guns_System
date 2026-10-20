@@ -18,6 +18,10 @@ execute unless entity @s[tag=mgs.zb_dog] unless entity @s[tag=mgs.zb_escort_fail
 execute unless entity @s[tag=mgs.zb_dog] run function mgs:v5.1.0/zombies/tag_spawns_near_players
 execute if entity @s[tag=mgs.zb_dog] run function mgs:v5.1.0/zombies/tag_special_spawns_near_players
 
+# A spawn with an activation box stays out of reach until a player stands in it, as for a new spawn.
+execute as @e[tag=mgs.zb_near] if data entity @s data.abox run function mgs:v5.1.0/zombies/filter_spawn_abox
+execute store success score #zb_near_found mgs.data if entity @e[tag=mgs.zb_near]
+
 # Never the spawn it last used, unless it is the only candidate.
 scoreboard players operation #zb_last_sid mgs.data = @s mgs.zb.spawn.sid
 execute as @e[tag=mgs.zb_near] if score @s mgs.zb.spawn.sid = #zb_last_sid mgs.data run tag @s add mgs.zb_near_prev
