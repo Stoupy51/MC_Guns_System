@@ -3,7 +3,8 @@
 #
 # @executed	as @e[tag=mgs.zb_near]
 #
-# @within	mgs:v5.1.0/zombies/spawn_zombie [ as @e[tag=mgs.zb_near] ]
+# @within	mgs:v5.1.0/zombies/on_stuck_zombie [ as @e[tag=mgs.zb_near] ]
+#			mgs:v5.1.0/zombies/spawn_zombie [ as @e[tag=mgs.zb_near] ]
 #			mgs:v5.1.0/zombies/spawn_dog [ as @e[tag=mgs.zb_near] ]
 #
 

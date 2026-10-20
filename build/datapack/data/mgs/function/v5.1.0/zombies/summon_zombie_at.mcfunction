@@ -20,6 +20,10 @@ $execute as @n[tag=mgs.zb_new] run function mgs:v5.1.0/zombies/types/$(type) {le
 # Allied with escort traders, so traders do not flee the horde and zombies do not attack them (see escort).
 team join mgs.horde @n[tag=mgs.zb_new]
 
+# Shown on the players' locator bar.
+attribute @n[tag=mgs.zb_new] minecraft:waypoint_transmit_range base set 256
+waypoint modify @n[tag=mgs.zb_new] color green
+
 execute as @n[tag=mgs.zb_new] run scoreboard players operation @s mgs.zb.stuck_ticks = #total_tick mgs.data
 execute as @n[tag=mgs.zb_new] store result score @s mgs.zb.stuck_x run data get entity @s Pos[0]
 execute as @n[tag=mgs.zb_new] store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]
