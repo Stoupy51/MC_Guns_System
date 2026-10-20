@@ -1,111 +1,13 @@
 {
 	"parent": "mgs:item/aug_3_autumn",
 	"display": {
-		"thirdperson_righthand": {
-			"rotation": [
-				0,
-				90,
-				0
-			],
-			"scale": [
-				0.5,
-				0.5,
-				0.5
-			],
-			"translation": [
-				-0.75,
-				1,
-				0
-			]
-		},
-		"head": {
-			"scale": [
-				2,
-				2,
-				2
-			]
-		},
-		"thirdperson_lefthand": {
-			"rotation": [
-				0,
-				-90,
-				-165
-			],
-			"scale": [
-				0.5,
-				0.5,
-				0.5
-			],
-			"translation": [
-				-1.5,
-				-5.5,
-				10
-			]
-		},
-		"gui": {
-			"rotation": [
-				0,
-				0,
-				45
-			],
-			"scale": [
-				0.5,
-				0.5,
-				0.5
-			],
-			"translation": [
-				-1,
-				1.5,
-				0
-			]
-		},
-		"firstperson_lefthand": {
-			"scale": [
-				0,
-				0,
-				0
-			]
-		},
-		"firstperson_righthand": {
-			"rotation": [
-				0,
-				90,
-				0
-			],
-			"scale": [
-				0.33,
-				1,
-				1
-			],
-			"translation": [
-				-8.960149253731343,
-				4.534569253731343,
-				4.75
-			]
-		},
-		"fixed": {
-			"translation": [
-				0,
-				4.25,
-				-2.75
-			],
-			"scale": [
-				-1,
-				1,
-				-1
-			]
-		},
-		"ground": {
-			"translation": [
-				0,
-				2,
-				0
-			],
-			"scale": [
-				0.5,
-				0.5,
-				0.5
-			]
-		}
+		"thirdperson_righthand": {"rotation": [0,90,0],"scale": [0.5,0.5,0.5],"translation": [-0.75,1,0]},
+		"head": {"scale": [2,2,2]},
+		"thirdperson_lefthand": {"rotation": [0,-90,-165],"scale": [0.5,0.5,0.5],"translation": [-1.5,-5.5,10]},
+		"gui": {"rotation": [0,0,45],"scale": [0.5,0.5,0.5],"translation": [-1,1.5,0]},
+		"firstperson_lefthand": {"scale": [0,0,0]},
+		"firstperson_righthand": {"rotation": [0,90,0],"scale": [0.33,1,1],"translation": [-8.960149253731343,4.534569253731343,4.75]},
+		"fixed": {"translation": [0,4.25,-2.75],"scale": [-1,1,-1]},
+		"ground": {"translation": [0,2,0],"scale": [0.5,0.5,0.5]}
 	}
 }

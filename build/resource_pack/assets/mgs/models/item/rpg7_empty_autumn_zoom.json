@@ -1,121 +1,13 @@
 {
 	"parent": "mgs:item/rpg7_empty_autumn",
 	"display": {
-		"thirdperson_righthand": {
-			"rotation": [
-				0,
-				90,
-				0
-			],
-			"translation": [
-				0,
-				2.5,
-				2.5
-			],
-			"scale": [
-				0.8,
-				0.8,
-				0.8
-			]
-		},
-		"thirdperson_lefthand": {
-			"rotation": [
-				0,
-				-90,
-				190
-			],
-			"translation": [
-				-1.25,
-				-5,
-				9
-			],
-			"scale": [
-				0.8,
-				0.8,
-				0.8
-			]
-		},
-		"firstperson_righthand": {
-			"rotation": [
-				90,
-				122,
-				-90
-			],
-			"translation": [
-				-7.708299132761548,
-				8.24159179305502,
-				0.5
-			],
-			"scale": [
-				1.6,
-				1.6,
-				1.6
-			]
-		},
-		"firstperson_lefthand": {
-			"translation": [
-				2,
-				3,
-				-2
-			],
-			"scale": [
-				0,
-				0,
-				0
-			]
-		},
-		"ground": {
-			"translation": [
-				0,
-				4,
-				0
-			],
-			"scale": [
-				0.8,
-				0.8,
-				0.8
-			]
-		},
-		"gui": {
-			"rotation": [
-				0,
-				0,
-				45
-			],
-			"translation": [
-				0.5,
-				3,
-				0
-			],
-			"scale": [
-				0.8,
-				0.8,
-				0.8
-			]
-		},
-		"head": {
-			"scale": [
-				1.6,
-				1.6,
-				1.6
-			]
-		},
-		"fixed": {
-			"rotation": [
-				0,
-				180,
-				0
-			],
-			"translation": [
-				0,
-				3.5,
-				-2.5
-			],
-			"scale": [
-				1.6,
-				1.6,
-				1.6
-			]
-		}
+		"thirdperson_righthand": {"rotation": [0,90,0],"translation": [0,2.5,2.5],"scale": [0.8,0.8,0.8]},
+		"thirdperson_lefthand": {"rotation": [0,-90,190],"translation": [-1.25,-5,9],"scale": [0.8,0.8,0.8]},
+		"firstperson_righthand": {"rotation": [90,122,-90],"translation": [-7.708299132761548,8.24159179305502,0.5],"scale": [1.6,1.6,1.6]},
+		"firstperson_lefthand": {"translation": [2,3,-2],"scale": [0,0,0]},
+		"ground": {"translation": [0,4,0],"scale": [0.8,0.8,0.8]},
+		"gui": {"rotation": [0,0,45],"translation": [0.5,3,0],"scale": [0.8,0.8,0.8]},
+		"head": {"scale": [1.6,1.6,1.6]},
+		"fixed": {"rotation": [0,180,0],"translation": [0,3.5,-2.5],"scale": [1.6,1.6,1.6]}
 	}
 }
