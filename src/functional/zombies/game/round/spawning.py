@@ -205,6 +205,8 @@ execute as @n[tag={ns}.zb_dog_new] run function {ns}:v{version}/zombies/types/do
 
 # Allied with escort traders (see escort).
 team join {ns}.horde @n[tag={ns}.zb_dog_new]
+attribute @n[tag={ns}.zb_dog_new] minecraft:waypoint_transmit_range base set 256
+waypoint modify @n[tag={ns}.zb_dog_new] color green
 
 execute as @n[tag={ns}.zb_dog_new] run scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 execute as @n[tag={ns}.zb_dog_new] store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
@@ -224,6 +226,10 @@ $execute as @n[tag={ns}.zb_new] run function {ns}:v{version}/zombies/types/$(typ
 
 # Allied with escort traders, so traders do not flee the horde and zombies do not attack them (see escort).
 team join {ns}.horde @n[tag={ns}.zb_new]
+
+# Shown on the players' locator bar.
+attribute @n[tag={ns}.zb_new] minecraft:waypoint_transmit_range base set 256
+waypoint modify @n[tag={ns}.zb_new] color green
 
 execute as @n[tag={ns}.zb_new] run scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 execute as @n[tag={ns}.zb_new] store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
