@@ -35,6 +35,9 @@ FLASH_TINT: list[float] = [1.0, 0.8, 0.5]
 PAP_TINT: list[float] = [0.6, 0.0, 1.0]
 """ Pack-a-Punch purple, same uses. """
 
+PAP_OBSERVER_ALPHA: float = 0.15
+""" Opacity of the particle other players see for a Pack-a-Punch shot: the purple one is a full-screen blind at point blank. """
+
 OBSERVER_MUZZLE: str = "^-0.35 ^-0.3 ^1"
 """ Where other players see the flash particle, from the shooter's eyes: the third-person gun is held right and low. """
 
@@ -212,7 +215,7 @@ def write_functions(ns: str) -> None:
 execute store success score #has_pap_level {ns}.data if data storage {ns}:gun all.stats.pap_level
 execute if score #has_pap_level {ns}.data matches 1 unless data storage {ns}:gun all.stats.grenade_type run function {ns}:v{version}/player/apply_pap_flash
 execute if score #has_pap_level {ns}.data matches 0 unless data storage {ns}:gun all.stats.grenade_type run function {ns}:v{version}/player/apply_flash
-execute if score #has_pap_level {ns}.data matches 1 unless data storage {ns}:gun all.stats.grenade_type at @s anchored eyes run particle flash{{color:{[*PAP_TINT, 1.0]}}} {OBSERVER_MUZZLE} 0 0 0 0 1 force @a[distance=0.01..48]
+execute if score #has_pap_level {ns}.data matches 1 unless data storage {ns}:gun all.stats.grenade_type at @s anchored eyes run particle flash{{color:{[*PAP_TINT, PAP_OBSERVER_ALPHA]}}} {OBSERVER_MUZZLE} 0 0 0 0 1 force @a[distance=0.01..48]
 execute if score #has_pap_level {ns}.data matches 0 unless data storage {ns}:gun all.stats.grenade_type at @s anchored eyes run particle flash{{color:{[*FLASH_TINT, 1.0]}}} {OBSERVER_MUZZLE} 0 0 0 0 1 force @a[distance=0.01..48]
 """)
 
