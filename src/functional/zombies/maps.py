@@ -43,8 +43,8 @@ scoreboard players set #kino_met_count {ns}.data 0
 execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~ ~2 ~2 cobblestone
 
 ## Teleporter
-execute positioned ~-57 ~-1 ~9 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.teleporter_theater","bs.entity.interaction"],width:1.0f,height:2.0f}}
-execute positioned ~ ~ ~ run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.teleporter_lobby","bs.entity.interaction"],width:1.0f,height:1.0f}}
+execute positioned ~-57 ~-1 ~9 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.teleporter","{ns}.kino.teleporter_theater","bs.entity.interaction"],width:1.0f,height:2.0f}}
+execute positioned ~ ~ ~ run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.teleporter","{ns}.kino.teleporter_lobby","bs.entity.interaction"],width:1.0f,height:1.0f}}
 
 ## Meteorites
 execute positioned ~-12 ~0 ~-5 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.meteorite_1","bs.entity.interaction"],width:1.1f,height:2.1f}}
@@ -52,6 +52,7 @@ execute positioned ~-58 ~-2 ~-22 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino
 execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.meteorite_3","bs.entity.interaction"],width:1.1f,height:2.1f}}
 
 execute as @e[tag={ns}.kino] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/maps/zombies/kino_der_toten/on_right_click",executor:"target"}}
+execute as @e[tag={ns}.kino.teleporter] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/on_hover",executor:"source"}}
 """)
 
 	# tick
@@ -97,6 +98,34 @@ execute if score #kino_tp_state {ns}.data matches 0 run return run function {ns}
 execute if score #kino_tp_state {ns}.data matches 2 at @s run return run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/activate
 # States 1 and 3 to 6 (linking, active, returning, cooldown): deny.
 execute on target at @s run {deny_recharging}
+""")
+
+	# teleporter/on_hover
+	def hover_line(states: str, text: str, color: str, pad: str = "", suffix: str = "") -> str:
+		pad_check: str = f" if entity @n[tag=bs.interaction.target,tag={ns}.kino.teleporter_{pad}]" if pad else ""
+		return (
+			f'execute if score #kino_tp_state {ns}.data matches {states}{pad_check} run data modify storage smithed.actionbar:input message set value '
+			f'{{json:[{{"text":"⚡ ","color":"white"}},{{"text":"Teleporter","color":"yellow"}},{{"text":" - {text}","color":"{color}"}}{suffix}],priority:"conditional",freeze:5}}'
+		)
+	seconds_left: str = f',{{"score":{{"name":"#kino_tp_sec","objective":"{ns}.data"}},"color":"white"}},{{"text":"s","color":"gray"}}'
+	write_versioned_function("maps/zombies/kino_der_toten/teleporter/on_hover", f"""
+# Run as the player looking at a pad. Whole seconds left of the timer of the current state, rounded up.
+scoreboard players operation #kino_tp_sec {ns}.data = #kino_tp_timer {ns}.data
+execute if score #kino_tp_state {ns}.data matches 6 run scoreboard players operation #kino_tp_sec {ns}.data = #kino_tp_cd {ns}.data
+scoreboard players add #kino_tp_sec {ns}.data 19
+scoreboard players operation #kino_tp_sec {ns}.data /= #20 {ns}.data
+
+{hover_line("0", "Click to start the link", "gray", "theater")}
+{hover_line("0", "Start the link at the theater pad", "gray", "lobby")}
+{hover_line("1", "Waiting for the lobby pad", "gold", "theater")}
+{hover_line("1", "Click to complete the link", "green", "lobby")}
+{hover_line("2", "Linked, click to teleport", "green", "theater")}
+{hover_line("2", "Linked, use the theater pad", "green", "lobby")}
+{hover_line("3", "Teleporting...", "aqua")}
+{hover_line("4", "In use: ", "aqua", suffix=seconds_left)}
+{hover_line("5", "Returning: ", "aqua", suffix=seconds_left)}
+{hover_line("6", "Recharging: ", "red", suffix=seconds_left)}
+function #smithed.actionbar:message
 """)
 
 	# teleporter/start_link
