@@ -65,6 +65,10 @@ execute if score #stuck_delta {ns}.data >= #stuck_threshold {ns}.data run functi
 execute unless entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/tag_spawns_near_players
 execute if entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/tag_special_spawns_near_players
 
+# A spawn with an activation box stays out of reach until a player stands in it, as for a new spawn.
+execute as @e[tag={ns}.zb_near] if data entity @s data.abox run function {ns}:v{version}/zombies/filter_spawn_abox
+execute store success score #zb_near_found {ns}.data if entity @e[tag={ns}.zb_near]
+
 # Never the spawn it last used, unless it is the only candidate.
 scoreboard players operation #zb_last_sid {ns}.data = @s {ns}.zb.spawn.sid
 execute as @e[tag={ns}.zb_near] if score @s {ns}.zb.spawn.sid = #zb_last_sid {ns}.data run tag @s add {ns}.zb_near_prev
