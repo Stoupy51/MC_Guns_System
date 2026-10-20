@@ -28,5 +28,7 @@ execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players ge
 function mgs:v5.1.0/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
 
 attribute @s minecraft:scale base set 1.0
+item replace entity @s armor.head with minecraft:piglin_head
+data modify entity @s drop_chances.head set value 0f
 $function mgs:v5.1.0/mob/default/on_new {entity:"Zombie",level:$(level),active_time:60,sleep_time:40}
 

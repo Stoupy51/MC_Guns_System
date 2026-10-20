@@ -101,7 +101,7 @@ execute if score #do_pap_sound {ns}.data matches 1 run data modify storage {ns}:
 data modify storage {ns}:temp fire_sound.self set from storage {ns}:temp fire_sound.others
 execute if score #do_pap_sound {ns}.data matches 0 run data modify storage {ns}:temp fire_sound.self set from storage {ns}:gun all.stats.{FIRE_MODES}[0].fire_sound
 execute if score #do_pap_sound {ns}.data matches 1 run data modify storage {ns}:temp fire_sound.self set from storage {ns}:gun all.stats.{FIRE_MODES}[0].pap_fire_sound
-function {ns}:v{version}/sound/fire with storage {ns}:temp fire_sound
+execute if data storage {ns}:temp fire_sound.others run function {ns}:v{version}/sound/fire with storage {ns}:temp fire_sound
 
 # Sniper rifles.
 execute if data storage {ns}:gun all.sounds.cycle run function {ns}:v{version}/sound/cycle with storage {ns}:gun all.sounds
