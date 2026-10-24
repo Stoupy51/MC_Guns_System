@@ -11,6 +11,10 @@ in the Zonweeb variant.
 The cheap half (fast, tank) is pure attribute work on a curve that already exists. The expensive half
 (armed, aura) needs new per-entity behavior and is where the tick budget goes.
 
+The chicken jockey round sits beside the dog round rather than in the weight table: a round flag set in
+`start_round`, a spawn branch in `do_spawn_zombie`, and a death link between rider and chicken that
+reuses the `death_watch` marker the horde already carries.
+
 ## Technical Context
 
 **Language/Version**: Python >=3.14 generating mcfunction through StewBeet
@@ -25,7 +29,7 @@ The cheap half (fast, tank) is pure attribute work on a curve that already exist
 
 **Project Type**: Minecraft datapack generated from a Python build pipeline
 
-**Performance Goals**: Fast and tank add zero tick cost. The aura adds one radius scan per aura zombie per interval, and there is at most one alive. The armed zombie adds one line-of-sight check per armed zombie per cooldown
+**Performance Goals**: Fast and tank add zero tick cost. The aura adds one radius scan per aura zombie per interval, and there is at most one alive. The armed zombie adds one line-of-sight check per armed zombie per cooldown. The jockey adds no tick function: its death link rides the existing `death_watch_tick`, one more `death_watch` marker per chicken
 
 **Constraints**: Zonweeb variant only. Health must stay under the 2048 cap in `calc_zombie_hp`. Types must not spawn in dog rounds
 
@@ -69,9 +73,12 @@ src/functional/zombies/enemies/               # Existing enemy behaviours: escor
     ├── fast.py                 # types/fast
     ├── tank.py                 # types/tank
     ├── armed.py                # types/armed plus its ranged attack tick and guaranteed ammo drop
-    └── aura.py                 # types/aura plus its radius resistance tick
+    ├── aura.py                 # types/aura plus its radius resistance tick
+    └── jockey.py               # types/jockey: the chicken, its invisible baby rider, the shared health and the death link
 
-src/functional/zombies/game/round/spawning.py    # do_spawn_zombie: weight roll replaces the hardcoded "normal"
+src/functional/zombies/game/round/start.py       # #zb_jockey_round, scheduled like #zb_dog_round and yielding to it
+src/functional/zombies/game/round/spawning.py    # do_spawn_zombie: weight roll replaces the hardcoded "normal"; jockey rounds branch to types/jockey
+src/functional/zombies/game/round/lifecycle.py   # on_zombie_dying: a dying rider or chicken kills its partner, paid once
 src/functional/zombies/rewards/powerups/drops.py # Armed zombie's guaranteed ammo drop hooks in here
 ```
 
@@ -84,4 +91,5 @@ the 300-line rule and buries the interesting per-type logic in a wall of attribu
 | Accepted cost | Why | Alternative rejected because |
 |---|---|---|
 | The aura runs a radius scan while alive | It is the only way an aura can work, and it is capped at one instance on an interval. | A per-zombie "am I near an aura" check inverts the scan onto every zombie in the horde, which is strictly worse. |
+| A jockey is two entities linked at death | The chicken is the visible target and the rider drives it, so both must exist, and either must be able to end the pair. Only the rider carries `mgs.zombie_round`, which keeps every count, payout and nuke at one per jockey. | Making the chicken invulnerable leaves the player shooting at an enemy that cannot die. Counting both doubles the wave. |
 | The armed zombie needs bespoke ranged logic | A datapack cannot add a vanilla AI goal, so the behavior has to be driven from a tick function. | Reusing the normal melee zombie makes it an armed zombie in name only. |

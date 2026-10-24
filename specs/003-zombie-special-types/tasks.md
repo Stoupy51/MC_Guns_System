@@ -12,7 +12,7 @@ description: "Task list for zombie special types"
 ## Format: `[ID] [P?] [Story] Description`
 
 - **[P]**: Can run in parallel (different files, no dependencies)
-- **[Story]**: US1 fast and tank, US2 armed, US3 aura
+- **[Story]**: US1 fast and tank, US2 armed, US3 aura, US4 chicken jockey round
 
 ---
 
@@ -84,7 +84,23 @@ description: "Task list for zombie special types"
 
 ---
 
-## Phase 6: Polish
+## Phase 6: User Story 4 - The chicken jockey round (Priority: P4)
+
+**Goal**: A Zonweeb round where every enemy is an invisible zombie riding a chicken, and either death kills both.
+
+**Independent Test**: Zonweeb game, jump to a jockey round, kill one jockey through its chicken and one through its rider.
+
+- [ ] T031 [US4] Check in `../minecraft-decompiled` how a mob rider steers a chicken (`getControllingPassenger`, the chicken's travel speed and slow fall) and whether the rider's `movement_speed` or the chicken's drives the pair, before choosing which attribute the round scales
+- [ ] T032 [US4] Schedule `#zb_jockey_round` in `start_round` next to `#zb_dog_round`: Zonweeb only, every 10 rounds from round 8 as a starting point, and never on a dog round (FR-012)
+- [ ] T033 [US4] Implement `types/jockey` in `types/jockey.py`: a chicken carrying an invisible baby zombie with no equipment and hidden effect particles, spawned from ordinary zombie spawns, with the chicken's health set to the rider's (FR-013, FR-016)
+- [ ] T034 [US4] Give `mgs.zombie_round` to the rider only, and a `death_watch` passenger to the chicken too, so both deaths reach `on_zombie_dying` (FR-015)
+- [ ] T035 [US4] Link the deaths in `on_zombie_dying`: a dying chicken kills its rider and credits the kill to the chicken's killer, a dying rider kills its chicken, and a same-tick double death pays once (FR-014)
+- [ ] T036 [US4] Make the stuck rescue, traps, nukes and barricades handle the pair as one enemy (FR-017)
+- [ ] T037 [US4] Verify SC-007 and SC-008, and that a rider's head can still be hit over its chicken
+
+---
+
+## Phase 7: Polish
 
 - [ ] T028 Tune the weight table across rounds 10, 20, 40 and 60 so waves stay varied without any one type dominating
 - [X] T029 Add the special types to the root `README.md` zombies feature list
@@ -97,6 +113,7 @@ description: "Task list for zombie special types"
 - **Phase 2** blocks every type. Nothing can spawn until the dispatch exists
 - T007 blocks T008 and T009: they scale against the reference it establishes
 - **Phase 3, 4 and 5** are independent of each other once Phase 2 is done, and are ordered by cost
+- **Phase 6** depends only on the dog round machinery; T031 blocks the rest of it
 - T028 depends on all shipped types existing
 
 ### Parallel Opportunities

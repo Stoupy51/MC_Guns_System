@@ -36,6 +36,9 @@
 #			mgs:v5.2.0/multiplayer/marketplace/browse_likes with storage mgs:temp
 #			mgs:v5.2.0/multiplayer/map_select with storage mgs:temp
 #			mgs:v5.2.0/missions/map_select with storage mgs:temp
+#			mgs:v5.2.0/maps/editor/settings with storage mgs:temp
+#			mgs:v5.2.0/maps/editor/export with storage mgs:temp
+#			mgs:v5.2.0/maps/editor/delete_confirm with storage mgs:temp
 #
 # @args		dialog (unknown)
 #

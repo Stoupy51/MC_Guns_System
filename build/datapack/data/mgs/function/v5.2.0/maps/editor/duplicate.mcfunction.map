@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "duplicate.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/manage.py"
+	],
+	"names": [],
+	"mappings": "AAsEmD;;;;;;;;;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

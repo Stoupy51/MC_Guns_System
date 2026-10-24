@@ -9,7 +9,6 @@ from stewbeet import (
 	write_versioned_function,
 )
 
-from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs
 from ..map_editor_defs import EDITOR_MODES
 from .shared import SEP
@@ -113,8 +112,16 @@ scoreboard players add #map_menu_idx {ns}.data 1
 execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/maps/editor/menu_entry
 """)
 
+	map_args: str = "{idx:$(idx),mode:$(mode)}"
+	row_btns: str = '," ",'.join((
+		Dialogs.btn("Edit", f"/function {ns}:v{version}/maps/editor/enter {map_args}", "yellow", "Edit this map"),
+		Dialogs.btn("Settings", f"/function {ns}:v{version}/maps/editor/settings {map_args}", "aqua", "Name, description and dimension", action="run_command"),
+		Dialogs.btn("Duplicate", f"/function {ns}:v{version}/maps/editor/duplicate {map_args}", "green", "Copy this map under a new id", action="run_command"),
+		Dialogs.btn("Export", f"/function {ns}:v{version}/maps/editor/export {map_args}", "light_purple", "Show this map's data, ready to copy", action="run_command"),
+		Dialogs.btn("Delete", f"/function {ns}:v{version}/maps/editor/delete_confirm {map_args}", "red", "Delete this map", action="run_command"),
+	))
 	write_versioned_function("maps/editor/menu_entry_display", f"""
-$tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}}," ",[{{"text":"[","color":"yellow","click_event":{{"action":"suggest_command","command":"/function {ns}:v{version}/maps/editor/enter {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Edit this map"}}}},{{"text":"Edit"}},"]"]," ",[{{"text":"[","color":"red","click_event":{{"action":"suggest_command","command":"/function {ns}:v{version}/maps/editor/delete {{idx:$(idx),mode:$(mode)}}"}},"hover_event":{{"action":"show_text","value":"Delete this map"}}}},{{"text":"Delete"}},"]"]]
+$tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","color":"gray"}}," ",{row_btns}]
 """)
 
 	for mode_key, mode_info in EDITOR_MODES.items():
@@ -129,17 +136,9 @@ tellraw @s {SEP}
 tellraw @s {{"text":"Run this command to create a new map:","color":"yellow"}}
 tellraw @s [{{"text":"","color":"aqua","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:maps {sk} append value {{{create_snbt}}}"}}}},"/data modify storage {ns}:maps {sk} append value {{...}}"]
 tellraw @s ["  ",{{"text":"⬆ Click to paste the command, then edit the id/name/description.","color":"gray","italic":true}}]
-tellraw @s ["  ",{{"text":"dimension: minecraft:overworld, {ns}:zombies or any other. Saving in the editor sets it to the dimension you save from.","color":"gray","italic":true}}]
+tellraw @s ["  ",{{"text":"dimension: minecraft:overworld, {ns}:zombies or any other, also changed later from Settings in the map list.","color":"gray","italic":true}}]
 tellraw @s ""
 tellraw @s ["  ",{back_btn}]
 tellraw @s {SEP}
-""")
-
-	write_versioned_function("maps/editor/delete", f"""
-$data remove storage {ns}:maps $(mode)[$(idx)]
-tellraw @s [{MGS_TAG},{{"text":"Map deleted.","color":"red"}}]
-
-# The list of the same mode again.
-$function {ns}:v{version}/maps/editor/list/$(mode)
 """)
 

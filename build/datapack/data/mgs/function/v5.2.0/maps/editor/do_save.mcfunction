@@ -14,8 +14,8 @@ data modify storage mgs:temp _session_enemy_fn set from storage mgs:temp map_edi
 execute store result storage mgs:temp map_edit.idx int 1 run scoreboard players get @s mgs.mp.map_idx
 function mgs:v5.2.0/maps/editor/load_map_data with storage mgs:temp map_edit
 
-# The map lives in the dimension it is edited in.
-data modify storage mgs:temp map_edit.map.dimension set from entity @s Dimension
+# Only a map without a dimension takes the editor's; otherwise it stays what Settings set.
+execute unless data storage mgs:temp map_edit.map.dimension run data modify storage mgs:temp map_edit.map.dimension set from entity @s Dimension
 
 execute if data storage mgs:temp _session_enemy_fn run data modify storage mgs:temp map_edit.map.default_enemy_function set from storage mgs:temp _session_enemy_fn
 data remove storage mgs:temp _session_enemy_fn

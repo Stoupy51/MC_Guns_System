@@ -77,6 +77,28 @@ outside, and compare shots to kill.
 3. **Given** an aura zombie, **When** the player looks at the horde, **Then** it stands out clearly enough to prioritize.
 4. **Given** any round, **When** a wave spawns, **Then** at most one aura zombie is alive per wave.
 
+---
+
+### User Story 4 - The chicken jockey round (Priority: P4)
+
+Some Zonweeb rounds are a chicken jockey wave: every enemy is an invisible zombie riding a chicken, so
+the player sees a flock of chickens charging at them. Killing either the chicken or its rider kills both.
+
+**Why this priority**: It is a whole round rather than one more type in the mix, the same shape as a dog
+round, and the death link between two entities is the one new mechanic. It depends on nothing in the
+other stories beyond the round machinery that dog rounds already prove out.
+
+**Independent Test**: Zonweeb game, jump to a jockey round, shoot a chicken and confirm its rider dies
+with it, then shoot a rider and confirm its chicken dies with it.
+
+**Acceptance Scenarios**:
+
+1. **Given** a Zonweeb game reaching a jockey round, **When** the wave spawns, **Then** every enemy is a zombie riding a chicken, and the zombie cannot be seen.
+2. **Given** a jockey, **When** its chicken dies, **Then** its zombie dies in the same tick.
+3. **Given** a jockey, **When** its zombie dies, **Then** its chicken dies in the same tick.
+4. **Given** a jockey killed through either entity, **When** the kill is counted, **Then** it counts once for the round, gives the killer the points of one zombie kill, and makes one power-up roll.
+5. **Given** a Vanilla game, **When** any round starts, **Then** it is never a jockey round.
+
 ### Edge Cases
 
 - The escort taxi derives its speed from the zombie's base `movement_speed`, so a fast or tank zombie changes how its own escort moves. The relationship must stay correct at both ends of the range.
@@ -84,6 +106,12 @@ outside, and compare shots to kill.
 - The 10% walker roll at round 15+ already varies speed inside `types/normal`. A fast type on top of it must not produce a "fast walker" that is slower than a normal zombie.
 - The aura's per-tick scan is the one real performance risk in this feature. It runs while the aura zombie is alive, in the middle of a horde.
 - Special types must be excluded from dog rounds, which spawn from the special spawn markers.
+- A jockey is two entities but one enemy. If both carried `mgs.zombie_round`, alive counts and round completion would see twice the wave and a nuke would pay twice.
+- A nuke, a trap or an explosion can kill the chicken and the zombie in the same tick. The death link must not run the kill twice, pay twice, or try to kill an entity that is already dying.
+- Invisibility hides the zombie's body but not its equipment, so a jockey zombie must wear nothing, and the armor look of the special types must never land on it.
+- The rider steers the chicken, but the chicken's own speed and its slow fall decide how the pair actually moves. Jumps, stairs and barricade windows must still be passable, and the stuck rescue must move the pair together.
+- Gun hits land on whichever hitbox the ray meets first. A rider that is only reachable through its chicken would make headshots impossible.
+- A jockey round cannot fall on a dog round; when both schedules land on the same round, the dog round wins.
 
 ## Requirements *(mandatory)*
 
@@ -100,6 +128,12 @@ outside, and compare shots to kill.
 - **FR-009**: Special types MUST NOT spawn during dog rounds.
 - **FR-010**: At most one aura zombie MUST be alive at a time.
 - **FR-011**: The TODO comments on the stub types MUST be removed as each type lands, not left beside a working implementation.
+- **FR-012**: A jockey round MUST only happen in the Zonweeb variant, on its own schedule, and never on a dog round.
+- **FR-013**: During a jockey round every spawn MUST be an invisible zombie riding a chicken, from the ordinary zombie spawns. The zombie's invisibility MUST show no particles.
+- **FR-014**: When either entity of a jockey dies, the other MUST die in the same tick, whatever killed the first one.
+- **FR-015**: Only the zombie of a jockey MUST carry `mgs.zombie_round`, so a jockey counts once for alive counts, round completion, points and power-up rolls. A kill through the chicken MUST be credited as a kill of its zombie, to the same player.
+- **FR-016**: The chicken MUST have the same health as its zombie, so neither target is the obvious one to shoot.
+- **FR-017**: Traps, nukes, barricades and the stuck rescue MUST treat a jockey as one enemy: a rescue moves both, and a nuke pays once.
 
 ### Key Entities
 
@@ -116,6 +150,8 @@ outside, and compare shots to kill.
 - **SC-004**: Tank health never exceeds the 2048 cap, checked at round 50 and beyond.
 - **SC-005**: The aura's per-tick cost does not measurably move MSPT with a full horde on screen, measured with F3+L before and after.
 - **SC-006**: No shipped type keeps its TODO comment.
+- **SC-007**: In a jockey round, killing 10 chickens and 10 riders leaves no orphan chicken or zombie, and the round counter drops by exactly 20.
+- **SC-008**: A nuke during a jockey round pays exactly once per jockey.
 
 ## Assumptions
 
@@ -124,3 +160,5 @@ outside, and compare shots to kill.
 - The armed zombie's ranged attack is achievable with existing datapack tools (a periodic raycast or projectile from the zombie) rather than needing a vanilla AI goal, which a datapack cannot add.
 - The aura grants resistance through an attribute modifier or a brief effect, applied on an interval, not a per-tick reapplication.
 - Special spawn markers stay reserved for dog rounds and future minibosses. Special types spawn from ordinary zombie spawns.
+- The jockey is a round, not a fifth type in the weight table: mixed into an ordinary wave, it would read as a stray chicken.
+- The jockey zombie is a baby zombie, as in vanilla, so the pair is the size players expect. Whether vanilla lets the rider steer the chicken at the round's zombie speed is checked in the 26.3 sources before anything is built.
