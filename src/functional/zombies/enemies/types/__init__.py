@@ -19,8 +19,8 @@ class ZombieType:
 	""" Of the BO health curve, still capped at 3072 (see apply_zombie_hp). """
 	scale: float
 	""" Body size, so the type reads from across a room. """
-	head: str
-	""" Skull worn on the head, so the type reads from a distance whatever the body size. """
+	armor: str
+	""" Material prefix of the full armor set worn ("minecraft:golden" for golden_helmet...), so the type reads from a distance. """
 	first_round: int
 	weight: int
 	""" Percent of the spawns from first_round on. """
@@ -30,10 +30,10 @@ class ZombieType:
 
 # Constants
 SPECIAL_TYPES: list[ZombieType] = [
-	ZombieType(type_id="fast",  speed_percent=125, health_percent=50,  scale=0.85, head="minecraft:creeper_head", first_round=5,  weight=15),
-	ZombieType(type_id="tank",  speed_percent=75,  health_percent=300, scale=1.25, head="minecraft:wither_skeleton_skull", first_round=10, weight=8),
-	ZombieType(type_id="armed", speed_percent=100, health_percent=100, scale=1.0,  head="minecraft:piglin_head", first_round=15, weight=5),
-	ZombieType(type_id="aura",  speed_percent=90,  health_percent=200, scale=1.15, head="minecraft:dragon_head", first_round=20, weight=3, unique=True),
+	ZombieType(type_id="fast",  speed_percent=125, health_percent=50,  scale=0.85, armor="minecraft:chainmail",  first_round=5,  weight=15),
+	ZombieType(type_id="tank",  speed_percent=75,  health_percent=300, scale=1.25, armor="minecraft:netherite",  first_round=10, weight=8),
+	ZombieType(type_id="armed", speed_percent=100, health_percent=100, scale=1.0,  armor="minecraft:iron",       first_round=15, weight=5),
+	ZombieType(type_id="aura",  speed_percent=90,  health_percent=200, scale=1.15, armor="minecraft:golden",     first_round=20, weight=3, unique=True),
 ]
 """ Rolled in this order at spawn (zombies/do_spawn_zombie): the weights stack into consecutive ranges of 1..100. """
 
@@ -93,6 +93,11 @@ attribute @s minecraft:knockback_resistance base set 1024
 	# Its 5% Max Ammo drop is in on_zombie_dying.
 	armed_setup: str = f'$function {ns}:v{version}/mob/default/on_new {{entity:"Zombie",level:$(level),active_time:60,sleep_time:40}}'
 	for zombie in SPECIAL_TYPES:
+		# No armor points, which would cut every hit and undo health_percent; unbreakable so hits never strip it.
+		armor_lines: str = "\n".join(
+			f"item replace entity @s armor.{slot} with {zombie.armor}_{piece}[attribute_modifiers=[],unbreakable={{}}]"
+			for slot, piece in (("head", "helmet"), ("chest", "chestplate"), ("legs", "leggings"), ("feet", "boots"))
+		)
 		write_versioned_function(f"zombies/types/{zombie.type_id}", f"""
 scoreboard players set #zb_no_walker {ns}.data 1
 $function {ns}:v{version}/zombies/types/normal {{level:"$(level)"}}
@@ -114,8 +119,8 @@ execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players g
 function {ns}:v{version}/zombies/apply_zombie_hp with storage {ns}:temp _zb_hp
 
 attribute @s minecraft:scale base set {zombie.scale}
-item replace entity @s armor.head with {zombie.head}
-data modify entity @s drop_chances.head set value 0f
+{armor_lines}
+data modify entity @s drop_chances set value {{head:0f,chest:0f,legs:0f,feet:0f}}
 {armed_setup if zombie.type_id == "armed" else ""}
 """)
 
