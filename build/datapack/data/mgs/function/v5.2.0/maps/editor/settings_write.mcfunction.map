@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "settings_write.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/manage.py"
+	],
+	"names": [],
+	"mappings": "AAgEwD;;;;;;;;;AACxD;AACA;AACA"
+}

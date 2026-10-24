@@ -8,6 +8,8 @@
 #			string in mgs:v5.2.0/maps/editor/list/zombies
 #			string in mgs:v5.2.0/maps/editor/list/missions
 #			string in mgs:v5.2.0/maps/editor/create/multiplayer
+#			mgs:v5.2.0/maps/editor/settings_write
+#			mgs:v5.2.0/maps/editor/duplicate
 #			mgs:v5.2.0/maps/editor/delete
 #
 

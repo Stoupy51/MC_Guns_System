@@ -10,7 +10,7 @@ tellraw @s {"text":"============================================","color":"dark_
 tellraw @s {"translate":"mgs.run_this_command_to_create_a_new_map","fallback":"Run this command to create a new map:","color":"yellow"}
 tellraw @s [{"text":"","color":"aqua","click_event":{"action":"suggest_command","command":"/data modify storage mgs:maps multiplayer append value {id:'my_map',name:'My Map',description:'A new map',dimension:'minecraft:overworld',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]}"}},"/data modify storage mgs:maps multiplayer append value {...}"]
 tellraw @s ["  ",{"translate":"mgs.click_to_paste_the_command_then_edit_the_id_name_description","fallback":"⬆ Click to paste the command, then edit the id/name/description.","color":"gray","italic":true}]
-tellraw @s ["  ",{"translate":"mgs.dimension_minecraft_overworld_mgs_zombies_or_any_other_saving_in","fallback":"dimension: minecraft:overworld, mgs:zombies or any other. Saving in the editor sets it to the dimension you save from.","color":"gray","italic":true}]
+tellraw @s ["  ",{"translate":"mgs.dimension_minecraft_overworld_mgs_zombies_or_any_other_also_chan","fallback":"dimension: minecraft:overworld, mgs:zombies or any other, also changed later from Settings in the map list.","color":"gray","italic":true}]
 tellraw @s ""
 tellraw @s ["  ",[{"text": "[", "color": "yellow", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.2.0/maps/editor/list/multiplayer"}, "hover_event": {"action": "show_text", "value": "Back to map list"}}, "\u25c0 Back", "]"]]
 tellraw @s {"text":"============================================","color":"dark_gray"}

@@ -3,8 +3,8 @@
 	"file": "delete.mcfunction",
 	"sourceRoot": "../../../../../../../..",
 	"sources": [
-		"src/functional/map_editor/menu.py"
+		"src/functional/map_editor/manage.py"
 	],
 	"names": [],
-	"mappings": "AAyIgD;;;;;;;;;AAChD;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAkHgD;;;;;;;;;AAChD;AACA;AACA;AACA;AACA"
 }

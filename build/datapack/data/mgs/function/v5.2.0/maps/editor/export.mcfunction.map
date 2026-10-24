@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "export.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/manage.py"
+	],
+	"names": [],
+	"mappings": "AAwFgD;AAChD;;;;;;;;;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}
