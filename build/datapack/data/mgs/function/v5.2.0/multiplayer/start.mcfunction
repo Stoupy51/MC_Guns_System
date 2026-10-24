@@ -8,16 +8,16 @@
 
 execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.2.0/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.2.0/multiplayer/start"}
 
-execute if data storage mgs:multiplayer game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_in_progress","color":"red"}]
-execute if data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.game_already_preparing","color":"red"}]
+execute if data storage mgs:multiplayer game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.game_already_in_progress","fallback":"Game already in progress!","color":"red"}]
+execute if data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.game_already_preparing","fallback":"Game already preparing!","color":"red"}]
 
 # Players join a side through Manage Players or + Join.
-execute unless entity @a[scores={mgs.mp.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_players_have_joined_a_team_use_manage_players_first","color":"red"}]
+execute unless entity @a[scores={mgs.mp.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_players_have_joined_a_team_use_manage_players_first","fallback":"No players have joined a team. Use Manage Players first.","color":"red"}]
 
-execute if data storage mgs:multiplayer game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_map","color":"red"}]
+execute if data storage mgs:multiplayer game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_map","fallback":"No map selected! Use the setup menu to select a map.","color":"red"}]
 
 function mgs:v5.2.0/multiplayer/load_map_from_storage with storage mgs:multiplayer game
-execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_not_found_select_a_valid_map","color":"red"}]
+execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.map_not_found_select_a_valid_map","fallback":"Map not found! Select a valid map.","color":"red"}]
 
 data modify storage mgs:multiplayer game.map set from storage mgs:temp map_load.result
 
@@ -148,5 +148,5 @@ execute as @a[scores={mgs.mp.in_game=1}] run scoreboard players operation @s mgs
 # Prep lasts 10 s.
 schedule function mgs:v5.2.0/multiplayer/end_prep 200t
 
-tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.preparing"},"! "],{"translate":"mgs.choose_your_class_game_starts_in_10_seconds","color":"yellow"}]
+tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.preparing","fallback":"Preparing"},"! "],{"translate":"mgs.choose_your_class_game_starts_in_10_seconds","fallback":"Choose your class! Game starts in 10 seconds!","color":"yellow"}]
 

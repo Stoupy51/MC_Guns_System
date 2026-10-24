@@ -5,10 +5,12 @@
 			"id": "minecraft:diamond_helmet"
 		},
 		"title": {
-			"translate": "mgs.contender"
+			"translate": "mgs.contender",
+			"fallback": "Contender"
 		},
 		"description": {
-			"translate": "mgs.win_20_matches"
+			"translate": "mgs.win_20_matches",
+			"fallback": "Win 20 matches"
 		},
 		"frame": "task",
 		"show_toast": true,

@@ -5,10 +5,12 @@
 			"id": "minecraft:barrel"
 		},
 		"title": {
-			"translate": "mgs.feeling_lucky"
+			"translate": "mgs.feeling_lucky",
+			"fallback": "Feeling Lucky"
 		},
 		"description": {
-			"translate": "mgs.collect_10_weapons_from_the_box"
+			"translate": "mgs.collect_10_weapons_from_the_box",
+			"fallback": "Collect 10 weapons from the box"
 		},
 		"frame": "task",
 		"show_toast": true,

@@ -41,7 +41,7 @@
 								},
 								"minecraft:item_name": [
 									{
-										"translate": "mgs.svd_mk4_4x_scope",
+										"translate": "mgs.svd_mk4_4x_scope","fallback": "SVD (Mk4 (4x Scope))",
 										"color": "gold",
 										"italic": false
 									}
@@ -244,7 +244,7 @@
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								],
 								"minecraft:item_model": "mgs:svd_4_autumn"

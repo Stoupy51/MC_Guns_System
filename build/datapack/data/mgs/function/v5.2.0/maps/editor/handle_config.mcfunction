@@ -10,12 +10,12 @@
 execute unless data storage mgs:temp map_edit.map.default_enemy_function run data modify storage mgs:temp map_edit.map.default_enemy_function set value "mgs:mob/default/level_1 {\"entity\":\"pillager\"}"
 
 tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] {"text":"============================================","color":"dark_gray"}
-tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] [{"text":"","color":"white","bold":true},"  ⚙ ",{"translate":"mgs.enemy_configuration"}]
+tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] [{"text":"","color":"white","bold":true},"  ⚙ ",{"translate":"mgs.enemy_configuration","fallback":"Enemy Configuration"}]
 tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] {"text":"============================================","color":"dark_gray"}
-tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["  ",{"translate":"mgs.default_function","color":"gray"},{"storage":"mgs:temp","nbt":"map_edit.map.default_enemy_function","color":"white"}]
+tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["  ",{"translate":"mgs.default_function","fallback":"Default Function: ","color":"gray"},{"storage":"mgs:temp","nbt":"map_edit.map.default_enemy_function","color":"white"}]
 data modify storage mgs:temp _cfg.default_fn set from storage mgs:temp map_edit.map.default_enemy_function
 function mgs:v5.2.0/maps/editor/handle_config_default_btn with storage mgs:temp _cfg
-tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["  ",{"translate":"mgs.edit_the_function_path_above_then_run_the_command","color":"dark_gray","italic":true}]
+tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["  ",{"translate":"mgs.edit_the_function_path_above_then_run_the_command","fallback":"ℹ Edit the function path above, then run the command.","color":"dark_gray","italic":true}]
 
 execute if entity @e[tag=mgs.element.enemy,distance=..10] run data modify storage mgs:temp _cfg.default_fn set from storage mgs:temp map_edit.map.default_enemy_function
 execute if entity @e[tag=mgs.element.enemy,distance=..10] run data modify storage mgs:temp _cfg.nearest_fn set from entity @n[tag=mgs.element.enemy,distance=..10] data.function

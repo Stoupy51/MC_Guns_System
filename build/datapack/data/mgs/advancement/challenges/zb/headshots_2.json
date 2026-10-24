@@ -5,10 +5,12 @@
 			"id": "minecraft:zombie_head"
 		},
 		"title": {
-			"translate": "mgs.skull_cracker"
+			"translate": "mgs.skull_cracker",
+			"fallback": "Skull Cracker"
 		},
 		"description": {
-			"translate": "mgs.land_100_headshot_kills"
+			"translate": "mgs.land_100_headshot_kills",
+			"fallback": "Land 100 headshot kills"
 		},
 		"frame": "task",
 		"show_toast": true,

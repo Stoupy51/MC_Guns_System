@@ -10,7 +10,7 @@
 # Roster: players still in game, else the snapshot game_over took. Tagged so it survives the stop below.
 execute if entity @a[scores={mgs.zb.in_game=1}] run tag @a[scores={mgs.zb.in_game=1}] add mgs.zb_restart
 execute unless entity @a[scores={mgs.zb.in_game=1}] run tag @a[tag=mgs.zb_last_roster] add mgs.zb_restart
-execute unless entity @a[tag=mgs.zb_restart] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.nothing_to_restart_no_players_from_the_last_game","color":"red"}]
+execute unless entity @a[tag=mgs.zb_restart] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.nothing_to_restart_no_players_from_the_last_game","fallback":"Nothing to restart: no players from the last game.","color":"red"}]
 
 # Before tearing anything down.
 execute if data storage mgs:zombies game{map_id:""} run return run function mgs:v5.2.0/zombies/restart_no_map
@@ -22,6 +22,6 @@ function mgs:v5.2.0/zombies/stop
 # stop kept game.map_id and the variant.
 scoreboard players set @a[tag=mgs.zb_restart] mgs.zb.in_game 1
 tag @a[tag=mgs.zb_restart] remove mgs.zb_restart
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_restarted_the_game","color":"yellow"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.an_operator_restarted_the_game","fallback":"An operator restarted the game.","color":"yellow"}]
 function mgs:v5.2.0/zombies/start
 

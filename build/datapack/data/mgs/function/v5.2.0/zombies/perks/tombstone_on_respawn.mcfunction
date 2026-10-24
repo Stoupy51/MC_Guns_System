@@ -12,5 +12,5 @@ scoreboard players set @e[tag=mgs.tombstone,predicate=mgs:v5.2.0/zombies/revive/
 scoreboard players set @e[tag=mgs.tombstone,predicate=mgs:v5.2.0/zombies/revive/downed_id_match] mgs.zb.ts.timer 1200
 title @s times 5 40 15
 title @s title ["🪦"]
-title @s subtitle [{"translate":"mgs.return_to_your","color":"gold"},{"text":"🪦","color":"white"},{"translate":"mgs.within_60s_to_recover_your_gear","color":"gold"}]
+title @s subtitle [{"translate":"mgs.return_to_your","fallback":"Return to your ","color":"gold"},{"text":"🪦","color":"white"},{"translate":"mgs.within_60s_to_recover_your_gear","fallback":" within 60s to recover your gear!","color":"gold"}]
 

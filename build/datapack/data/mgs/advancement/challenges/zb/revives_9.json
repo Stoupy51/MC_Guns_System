@@ -5,10 +5,12 @@
 			"id": "minecraft:beacon"
 		},
 		"title": {
-			"translate": "mgs.second_chances"
+			"translate": "mgs.second_chances",
+			"fallback": "Second Chances"
 		},
 		"description": {
-			"translate": "mgs.revive_100_teammates"
+			"translate": "mgs.revive_100_teammates",
+			"fallback": "Revive 100 teammates"
 		},
 		"frame": "goal",
 		"show_toast": true,

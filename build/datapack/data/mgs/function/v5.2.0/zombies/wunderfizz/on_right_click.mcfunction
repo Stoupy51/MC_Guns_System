@@ -15,10 +15,10 @@ execute at @n[tag=bs.interaction.target] if entity @n[type=item_display,tag=mgs.
 execute if score #wf_usable mgs.data matches 0 run return fail
 
 # The active machine can be roaming.
-execute if score #wf_move_timer mgs.data matches 1.. if entity @e[tag=bs.interaction.target,tag=mgs.wf_active] run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.der_wunderfizz_is_moving_2","color":"yellow"}'}
+execute if score #wf_move_timer mgs.data matches 1.. if entity @e[tag=bs.interaction.target,tag=mgs.wf_active] run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.der_wunderfizz_is_moving_2","fallback":"Der Wunderfizz is moving...","color":"yellow"}'}
 
 execute store result score #wf_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.wf.power
-execute if score #wf_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.this_der_wunderfizz_requires_power","color":"red"}'}
+execute if score #wf_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.this_der_wunderfizz_requires_power","fallback":"This Der Wunderfizz requires power.","color":"red"}'}
 
 # Scores carry into the dispatched function.
 scoreboard players operation #wf_mid mgs.data = @n[tag=bs.interaction.target] mgs.zb.wf.id

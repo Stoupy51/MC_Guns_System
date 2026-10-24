@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/best_round_1
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'[{"translate":"mgs.round","color":"yellow"}, " 5"]',description:'[{"translate":"mgs.clear_round","color":"gray"}, " 5"]',xp:15,branch:"zb",chain:"best_round",tier:1}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'[{"translate":"mgs.round","fallback":"Round","color":"yellow"}, " 5"]',description:'[{"translate":"mgs.clear_round","fallback":"Clear round","color":"gray"}, " 5"]',xp:15,branch:"zb",chain:"best_round",tier:1}
 

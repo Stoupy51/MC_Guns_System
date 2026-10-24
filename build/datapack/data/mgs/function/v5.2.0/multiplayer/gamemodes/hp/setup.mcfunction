@@ -6,7 +6,7 @@
 # @within	mgs:v5.2.0/multiplayer/start
 #
 
-tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.hardpoint_control_the_zone_to_score","color":"yellow"}]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.hardpoint_control_the_zone_to_score","fallback":"Hardpoint! Control the zone to score!","color":"yellow"}]
 
 function mgs:v5.2.0/shared/load_base_coordinates {mode:"multiplayer"}
 

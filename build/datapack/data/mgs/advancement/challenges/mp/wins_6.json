@@ -5,10 +5,12 @@
 			"id": "minecraft:netherite_helmet"
 		},
 		"title": {
-			"translate": "mgs.favourite"
+			"translate": "mgs.favourite",
+			"fallback": "Favourite"
 		},
 		"description": {
-			"translate": "mgs.win_35_matches"
+			"translate": "mgs.win_35_matches",
+			"fallback": "Win 35 matches"
 		},
 		"frame": "task",
 		"show_toast": true,

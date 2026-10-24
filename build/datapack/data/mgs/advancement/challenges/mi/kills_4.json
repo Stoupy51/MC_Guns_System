@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.clearing_house"
+			"translate": "mgs.clearing_house",
+			"fallback": "Clearing House"
 		},
 		"description": {
-			"translate": "mgs.kill_1000_enemies_in_missions"
+			"translate": "mgs.kill_1000_enemies_in_missions",
+			"fallback": "Kill 1,000 enemies in missions"
 		},
 		"frame": "task",
 		"show_toast": true,

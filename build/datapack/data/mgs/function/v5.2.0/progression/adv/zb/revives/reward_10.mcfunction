@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/revives_10
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.death_denied","color":"yellow"}',description:'{"translate":"mgs.revive_150_teammates","color":"gray"}',xp:340,branch:"zb",chain:"revives",tier:10}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.death_denied","fallback":"Death Denied","color":"yellow"}',description:'{"translate":"mgs.revive_150_teammates","fallback":"Revive 150 teammates","color":"gray"}',xp:340,branch:"zb",chain:"revives",tier:10}
 

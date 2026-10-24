@@ -24,7 +24,7 @@ execute if score #blue mgs.mp.team >= #snd_win_threshold mgs.data run return run
 scoreboard players add #snd_round mgs.data 1
 execute if score #snd_round mgs.data matches 4 if score #snd_attackers mgs.data matches 1 run scoreboard players set #snd_attackers mgs.data 2
 execute if score #snd_round mgs.data matches 4 if score #snd_attackers mgs.data matches 2 run scoreboard players set #snd_attackers mgs.data 1
-execute if score #snd_round mgs.data matches 4 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⚔ ","color":"white"},{"translate":"mgs.sides_swapped","color":"gold"}]
+execute if score #snd_round mgs.data matches 4 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"⚔ ","color":"white"},{"translate":"mgs.sides_swapped","fallback":"Sides swapped!","color":"gold"}]
 execute if score #snd_round mgs.data matches 4 run playsound minecraft:block.note_block.xylophone player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.0
 # 3 s later.
 schedule function mgs:v5.2.0/multiplayer/gamemodes/snd/start_round 60t

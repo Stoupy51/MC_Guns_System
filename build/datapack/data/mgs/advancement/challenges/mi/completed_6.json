@@ -5,10 +5,12 @@
 			"id": "minecraft:golden_helmet"
 		},
 		"title": {
-			"translate": "mgs.team_leader"
+			"translate": "mgs.team_leader",
+			"fallback": "Team Leader"
 		},
 		"description": {
-			"translate": "mgs.complete_35_missions"
+			"translate": "mgs.complete_35_missions",
+			"fallback": "Complete 35 missions"
 		},
 		"frame": "task",
 		"show_toast": true,

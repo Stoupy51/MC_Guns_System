@@ -5,10 +5,12 @@
 			"id": "minecraft:soul_lantern"
 		},
 		"title": {
-			"translate": "mgs.alone_in_the_dark"
+			"translate": "mgs.alone_in_the_dark",
+			"fallback": "Alone In The Dark"
 		},
 		"description": {
-			"translate": "mgs.reach_round_20_with_nobody_else_in_the_game"
+			"translate": "mgs.reach_round_20_with_nobody_else_in_the_game",
+			"fallback": "Reach round 20 with nobody else in the game"
 		},
 		"frame": "challenge",
 		"show_toast": true,

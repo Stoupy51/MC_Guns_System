@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.pushing_through"
+			"translate": "mgs.pushing_through",
+			"fallback": "Pushing Through"
 		},
 		"description": {
-			"translate": "mgs.kill_250_enemies_in_missions"
+			"translate": "mgs.kill_250_enemies_in_missions",
+			"fallback": "Kill 250 enemies in missions"
 		},
 		"frame": "task",
 		"show_toast": true,

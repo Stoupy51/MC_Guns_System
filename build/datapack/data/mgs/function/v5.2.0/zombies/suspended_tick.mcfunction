@@ -9,6 +9,6 @@ scoreboard players add #zb_resume_timer mgs.data 1
 scoreboard players set #zb_resume_left mgs.data 119
 scoreboard players operation #zb_resume_left mgs.data -= #zb_resume_timer mgs.data
 scoreboard players operation #zb_resume_left mgs.data /= #20 mgs.data
-title @a[scores={mgs.zb.in_game=1}] actionbar [{"text":"⏸ ","color":"white"},{"translate":"mgs.paused","color":"aqua","bold":true},[{"text":", ","color":"gray"}, {"translate":"mgs.resuming_in"}],{"score":{"name":"#zb_resume_left","objective":"mgs.data"},"color":"white"}]
+title @a[scores={mgs.zb.in_game=1}] actionbar [{"text":"⏸ ","color":"white"},{"translate":"mgs.paused","fallback":"PAUSED","color":"aqua","bold":true},[{"text":", ","color":"gray"}, {"translate":"mgs.resuming_in","fallback":"resuming in "}],{"score":{"name":"#zb_resume_left","objective":"mgs.data"},"color":"white"}]
 execute if score #zb_resume_timer mgs.data matches 100.. run function mgs:v5.2.0/zombies/resume
 

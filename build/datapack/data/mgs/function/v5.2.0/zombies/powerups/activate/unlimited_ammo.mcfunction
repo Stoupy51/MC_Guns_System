@@ -9,7 +9,7 @@
 
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.infinite_ammo 600
 bossbar remove mgs:pu_unlimited_ammo
-bossbar add mgs:pu_unlimited_ammo {"translate":"mgs.unlimited_ammo","bold":true,"color":"green"}
+bossbar add mgs:pu_unlimited_ammo {"translate":"mgs.unlimited_ammo","fallback":"Unlimited Ammo","bold":true,"color":"green"}
 bossbar set mgs:pu_unlimited_ammo max 600
 bossbar set mgs:pu_unlimited_ammo value 600
 bossbar set mgs:pu_unlimited_ammo color green

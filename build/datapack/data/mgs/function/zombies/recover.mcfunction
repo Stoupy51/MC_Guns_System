@@ -5,7 +5,7 @@
 #			dialog mgs:v5.2.0/zombies/admin
 #
 
-execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_zombies_game_is_active","color":"red"}]
+execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_zombies_game_is_active","fallback":"No zombies game is active.","color":"red"}]
 
 scoreboard players set #zb_wd_ticks mgs.data 0
 
@@ -16,7 +16,7 @@ kill @e[tag=mgs.dog_portal]
 # So recovery cannot race the countdown landing a tick later.
 scoreboard players set #zb_next_round mgs.data 0
 
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.round_was_frozen_recovering","color":"yellow"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.round_was_frozen_recovering","fallback":"Round was frozen, recovering.","color":"yellow"}]
 
 # round_complete ran (it parks #zb_to_spawn at -1) but start_round never landed.
 execute if score #zb_to_spawn mgs.data matches ..-1 run return run function mgs:v5.2.0/zombies/start_round

@@ -5,10 +5,12 @@
 			"id": "minecraft:red_bed"
 		},
 		"title": {
-			"translate": "mgs.get_up"
+			"translate": "mgs.get_up",
+			"fallback": "Get Up"
 		},
 		"description": {
-			"translate": "mgs.revive_a_teammate"
+			"translate": "mgs.revive_a_teammate",
+			"fallback": "Revive a teammate"
 		},
 		"frame": "task",
 		"show_toast": true,

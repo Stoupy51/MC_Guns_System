@@ -8,6 +8,6 @@
 
 execute unless data storage mgs:zombies game{variant:"zonweeb"} run return fail
 scoreboard players set @s mgs.zb.passive 1
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.passive_set","color":"gray"},{"translate":"mgs.x1_2_points","color":"gold"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.passive_set","fallback":"Passive set: ","color":"gray"},{"translate":"mgs.x1_2_points","fallback":"x1.2 Points","color":"gold"}]
 function mgs:v5.2.0/zombies/ability_menu
 

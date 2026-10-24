@@ -5,10 +5,12 @@
 			"id": "minecraft:compass"
 		},
 		"title": {
-			"translate": "mgs.missions"
+			"translate": "mgs.missions",
+			"fallback": "Missions"
 		},
 		"description": {
-			"translate": "mgs.challenges_for_co_op_missions_pays_multiplayer_xp"
+			"translate": "mgs.challenges_for_co_op_missions_pays_multiplayer_xp",
+			"fallback": "Challenges for co-op missions. Pays Multiplayer XP"
 		},
 		"frame": "task",
 		"show_toast": false,

@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/level_9
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'[{"translate":"mgs.zombies_rank","color":"yellow"}, " 150"]',description:'[{"translate":"mgs.reach_zombies_level","color":"gray"}, " 150"]',xp:425,branch:"zb",chain:"level",tier:9}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'[{"translate":"mgs.zombies_rank","fallback":"Zombies Rank","color":"yellow"}, " 150"]',description:'[{"translate":"mgs.reach_zombies_level","fallback":"Reach Zombies level","color":"gray"}, " 150"]',xp:425,branch:"zb",chain:"level",tier:9}
 

@@ -4,7 +4,7 @@
 # @within	mgs:v5.2.0/multiplayer/time_up
 #
 
-tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.times_up","color":"gold"}]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.times_up","fallback":"Time's up!","color":"gold"}]
 
 scoreboard players set #max_kills mgs.data 0
 scoreboard players operation #max_kills mgs.data > @a[scores={mgs.mp.in_game=1}] mgs.mp.kills

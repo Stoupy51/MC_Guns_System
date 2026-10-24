@@ -6,6 +6,6 @@
 # @within	mgs:v5.2.0/zombies/mystery_box/hover_at_box
 #
 
-data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 ","color":"white"},{"translate":"mgs.mystery_box","color":"light_purple"},{"text":" - ","color":"gray"},{"translate":"mgs.click_to_collect","color":"green"}],priority:"conditional",freeze:5}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"🎲 ","color":"white"},{"translate":"mgs.mystery_box","fallback":"Mystery Box","color":"light_purple"},{"text":" - ","color":"gray"},{"translate":"mgs.click_to_collect","fallback":"Click to collect!","color":"green"}],priority:"conditional",freeze:5}
 function #smithed.actionbar:message
 

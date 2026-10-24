@@ -21,6 +21,6 @@
 #			obj (string)
 #
 
-$tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],[{"translate":"mgs.you_dont_have_enough_points","color":"red"}, " ("],{"score":{"name":"$(score)","objective":"$(obj)"},"color":"yellow"},[{"text":" ","color":"red"}, {"translate":"mgs.needed"}, ")."]]
+$tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],[{"translate":"mgs.you_dont_have_enough_points","fallback":"You don't have enough points","color":"red"}, " ("],{"score":{"name":"$(score)","objective":"$(obj)"},"color":"yellow"},[{"text":" ","color":"red"}, {"translate":"mgs.needed","fallback":"needed"}, ")."]]
 playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 

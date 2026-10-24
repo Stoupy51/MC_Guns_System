@@ -4,6 +4,7 @@
 # @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
 #
 # @within	mgs:v5.2.0/zombies/do_spawn_zombie with storage mgs:temp _zpos
+#			mgs:v5.2.0/zombies/do_spawn_zombie with storage mgs:temp _zpos [ positioned ~ ~4 ~ ]
 #
 # @args		type (unknown)
 #			level (unknown)
@@ -24,7 +25,6 @@ team join mgs.horde @n[tag=mgs.zb_new]
 attribute @n[tag=mgs.zb_new] minecraft:waypoint_transmit_range base set 256
 waypoint modify @n[tag=mgs.zb_new] color green
 
-execute as @n[tag=mgs.zb_new] run scoreboard players operation @s mgs.zb.stuck_ticks = #total_tick mgs.data
 execute as @n[tag=mgs.zb_new] store result score @s mgs.zb.stuck_x run data get entity @s Pos[0]
 execute as @n[tag=mgs.zb_new] store result score @s mgs.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players set @n[tag=mgs.zb_new] mgs.zb.stuck_dist 4

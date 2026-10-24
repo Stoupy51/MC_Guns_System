@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/pack_a_punch_9
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.hundred_punches","color":"yellow"}',description:'{"translate":"mgs.upgrade_100_weapons","color":"gray"}',xp:275,branch:"zb",chain:"pack_a_punch",tier:9}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.hundred_punches","fallback":"Hundred Punches","color":"yellow"}',description:'{"translate":"mgs.upgrade_100_weapons","fallback":"Upgrade 100 weapons","color":"gray"}',xp:275,branch:"zb",chain:"pack_a_punch",tier:9}
 

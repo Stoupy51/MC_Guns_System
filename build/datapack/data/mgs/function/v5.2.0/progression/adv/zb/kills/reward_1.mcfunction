@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/kills_1
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.undead_cleanup","color":"yellow"}',description:'{"translate":"mgs.kill_100_zombies","color":"gray"}',xp:10,branch:"zb",chain:"kills",tier:1}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.undead_cleanup","fallback":"Undead Cleanup","color":"yellow"}',description:'{"translate":"mgs.kill_100_zombies","fallback":"Kill 100 zombies","color":"gray"}',xp:10,branch:"zb",chain:"kills",tier:1}
 

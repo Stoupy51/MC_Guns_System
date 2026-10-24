@@ -5,10 +5,12 @@
 			"id": "minecraft:emerald_block"
 		},
 		"title": {
-			"translate": "mgs.nothing_saved"
+			"translate": "mgs.nothing_saved",
+			"fallback": "Nothing Saved"
 		},
 		"description": {
-			"translate": "mgs.spend_600000_points"
+			"translate": "mgs.spend_600000_points",
+			"fallback": "Spend 600,000 points"
 		},
 		"frame": "task",
 		"show_toast": true,

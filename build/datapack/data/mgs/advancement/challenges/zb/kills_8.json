@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.body_count"
+			"translate": "mgs.body_count",
+			"fallback": "Body Count"
 		},
 		"description": {
-			"translate": "mgs.kill_20000_zombies"
+			"translate": "mgs.kill_20000_zombies",
+			"fallback": "Kill 20,000 zombies"
 		},
 		"frame": "goal",
 		"show_toast": true,

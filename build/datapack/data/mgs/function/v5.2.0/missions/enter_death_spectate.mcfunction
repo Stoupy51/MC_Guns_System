@@ -19,6 +19,6 @@ execute unless score @s mgs.mi.died_here matches 1 run function mgs:v5.2.0/missi
 
 title @s times 0 70 10
 title @s title ["☠"]
-title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
+title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","fallback":"Respawning in 3 seconds...","color":"gray"}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s
 

@@ -5,10 +5,12 @@
 			"id": "minecraft:totem_of_undying"
 		},
 		"title": {
-			"translate": "mgs.no_casualties"
+			"translate": "mgs.no_casualties",
+			"fallback": "No Casualties"
 		},
 		"description": {
-			"translate": "mgs.complete_a_mission_without_dying_once"
+			"translate": "mgs.complete_a_mission_without_dying_once",
+			"fallback": "Complete a mission without dying once"
 		},
 		"frame": "challenge",
 		"show_toast": true,

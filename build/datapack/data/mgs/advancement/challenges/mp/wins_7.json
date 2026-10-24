@@ -5,10 +5,12 @@
 			"id": "minecraft:golden_apple"
 		},
 		"title": {
-			"translate": "mgs.dominant"
+			"translate": "mgs.dominant",
+			"fallback": "Dominant"
 		},
 		"description": {
-			"translate": "mgs.win_50_matches"
+			"translate": "mgs.win_50_matches",
+			"fallback": "Win 50 matches"
 		},
 		"frame": "task",
 		"show_toast": true,

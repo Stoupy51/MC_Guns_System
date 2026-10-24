@@ -5,10 +5,12 @@
 			"id": "minecraft:gold_ingot"
 		},
 		"title": {
-			"translate": "mgs.loose_wallet"
+			"translate": "mgs.loose_wallet",
+			"fallback": "Loose Wallet"
 		},
 		"description": {
-			"translate": "mgs.spend_100000_points"
+			"translate": "mgs.spend_100000_points",
+			"fallback": "Spend 100,000 points"
 		},
 		"frame": "task",
 		"show_toast": true,

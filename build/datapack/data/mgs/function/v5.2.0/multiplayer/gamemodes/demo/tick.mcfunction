@@ -12,7 +12,7 @@ execute if score #demo_sb_tick mgs.data matches 0 run function mgs:v5.2.0/multip
 execute unless score #demo_round_active mgs.data matches 1 run return 0
 
 # Before the site channels, so a plant in progress overwrites it with its progress.
-title @a[tag=mgs.demo_atk,gamemode=!spectator] actionbar [{"text":"💣 ","color":"white"},{"translate":"mgs.you_are_carrying_a_bomb_sneak_at_a_site_to_plant","color":"gold"}]
+title @a[tag=mgs.demo_atk,gamemode=!spectator] actionbar [{"text":"💣 ","color":"white"},{"translate":"mgs.you_are_carrying_a_bomb_sneak_at_a_site_to_plant","fallback":"You are carrying a bomb - sneak at a site to plant","color":"gold"}]
 
 # Channels, then fuses, then the clock: a plant completing this tick must stop the clock before it can reach 0,
 # or the defenders would win a round off a bomb that is already down.

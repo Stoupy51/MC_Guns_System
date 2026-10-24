@@ -5,10 +5,12 @@
 			"id": "minecraft:netherite_chestplate"
 		},
 		"title": {
-			"translate": "mgs.legend_of_the_op"
+			"translate": "mgs.legend_of_the_op",
+			"fallback": "Legend Of The Op"
 		},
 		"description": {
-			"translate": "mgs.complete_100_missions"
+			"translate": "mgs.complete_100_missions",
+			"fallback": "Complete 100 missions"
 		},
 		"frame": "goal",
 		"show_toast": true,

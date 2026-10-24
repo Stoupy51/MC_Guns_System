@@ -5,10 +5,12 @@
 			"id": "minecraft:iron_chestplate"
 		},
 		"title": {
-			"translate": "mgs.career_soldier"
+			"translate": "mgs.career_soldier",
+			"fallback": "Career Soldier"
 		},
 		"description": {
-			"translate": "mgs.complete_50_missions"
+			"translate": "mgs.complete_50_missions",
+			"fallback": "Complete 50 missions"
 		},
 		"frame": "task",
 		"show_toast": true,

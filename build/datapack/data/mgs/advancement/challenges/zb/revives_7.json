@@ -5,10 +5,12 @@
 			"id": "minecraft:glistering_melon_slice"
 		},
 		"title": {
-			"translate": "mgs.lifeline"
+			"translate": "mgs.lifeline",
+			"fallback": "Lifeline"
 		},
 		"description": {
-			"translate": "mgs.revive_50_teammates"
+			"translate": "mgs.revive_50_teammates",
+			"fallback": "Revive 50 teammates"
 		},
 		"frame": "task",
 		"show_toast": true,

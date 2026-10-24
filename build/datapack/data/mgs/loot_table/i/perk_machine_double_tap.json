@@ -22,13 +22,13 @@
 								},
 								"minecraft:item_model": "mgs:perk_machine_double_tap",
 								"minecraft:item_name": {
-									"translate": "mgs.perk_machine_double_tap"
+									"translate": "mgs.perk_machine_double_tap","fallback": "Perk Machine Double Tap"
 								},
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								]
 							}

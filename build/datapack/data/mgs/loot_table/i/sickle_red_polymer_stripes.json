@@ -27,19 +27,19 @@
 								},
 								"minecraft:item_name": [
 									{
-										"translate": "mgs.sickle",
+										"translate": "mgs.sickle","fallback": "Sickle",
 										"color": "gold",
 										"italic": false
 									}
 								],
 								"minecraft:lore": [
 									[
-										[{"translate":"mgs.one_hit_kills_until_round","color": "gray","italic": false}, " 11"]
+										[{"translate": "mgs.one_hit_kills_until_round","fallback": "One-hit kills until ~round","color": "gray","italic": false}, " 11"]
 									],
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								],
 								"minecraft:attribute_modifiers": [

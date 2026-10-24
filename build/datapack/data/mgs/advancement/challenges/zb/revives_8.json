@@ -5,10 +5,12 @@
 			"id": "minecraft:enchanted_golden_apple"
 		},
 		"title": {
-			"translate": "mgs.nobody_dies_today"
+			"translate": "mgs.nobody_dies_today",
+			"fallback": "Nobody Dies Today"
 		},
 		"description": {
-			"translate": "mgs.revive_75_teammates"
+			"translate": "mgs.revive_75_teammates",
+			"fallback": "Revive 75 teammates"
 		},
 		"frame": "goal",
 		"show_toast": true,

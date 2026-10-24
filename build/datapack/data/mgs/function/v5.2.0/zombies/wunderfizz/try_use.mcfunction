@@ -19,7 +19,7 @@ tag @s remove mgs.pool_target
 
 # Nothing available: refund.
 execute if score #pool_chosen mgs.data matches ..-1 run scoreboard players operation @s mgs.zb.points += #wf_price mgs.data
-execute if score #pool_chosen mgs.data matches ..-1 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.you_already_own_every_available_perk_points_refunded","color":"yellow"}'}
+execute if score #pool_chosen mgs.data matches ..-1 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.you_already_own_every_available_perk_points_refunded","fallback":"You already own every available perk. Points refunded.","color":"yellow"}'}
 
 # Roam instead of a perk, like the Mystery Box (roaming/roll_move): 1 in 3 after WF_MOVE_THRESHOLD uses,
 # only with 2+ placed spots.
@@ -45,5 +45,5 @@ tag @e[tag=mgs.wf_orb_new] remove mgs.wf_orb_new
 
 playsound minecraft:block.conduit.activate ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.2
 playsound minecraft:block.beacon.activate ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.6 1.6
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.der_wunderfizz_spinning","color":"gold"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.der_wunderfizz_spinning","fallback":"Der Wunderfizz spinning...","color":"gold"}]
 

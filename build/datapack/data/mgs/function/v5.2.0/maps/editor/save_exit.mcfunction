@@ -12,5 +12,5 @@ execute unless score @s mgs.mp.map_edit matches 1 run return fail
 function mgs:v5.2.0/maps/editor/do_save
 
 function mgs:v5.2.0/maps/editor/cleanup
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_saved_and_editor_closed","color":"green"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.map_saved_and_editor_closed","fallback":"Map saved and editor closed!","color":"green"}]
 

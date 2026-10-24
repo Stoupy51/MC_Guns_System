@@ -22,13 +22,13 @@
 								},
 								"minecraft:item_model": "mgs:perk_machine_quick_revive",
 								"minecraft:item_name": {
-									"translate": "mgs.perk_machine_quick_revive"
+									"translate": "mgs.perk_machine_quick_revive","fallback": "Perk Machine Quick Revive"
 								},
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								]
 							}

@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.double_tap_certified"
+			"translate": "mgs.double_tap_certified",
+			"fallback": "Double Tap Certified"
 		},
 		"description": {
-			"translate": "mgs.land_2000_headshot_kills"
+			"translate": "mgs.land_2000_headshot_kills",
+			"fallback": "Land 2,000 headshot kills"
 		},
 		"frame": "task",
 		"show_toast": true,

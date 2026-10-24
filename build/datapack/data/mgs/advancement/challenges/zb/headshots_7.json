@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.precision_rot"
+			"translate": "mgs.precision_rot",
+			"fallback": "Precision Rot"
 		},
 		"description": {
-			"translate": "mgs.land_3500_headshot_kills"
+			"translate": "mgs.land_3500_headshot_kills",
+			"fallback": "Land 3,500 headshot kills"
 		},
 		"frame": "task",
 		"show_toast": true,

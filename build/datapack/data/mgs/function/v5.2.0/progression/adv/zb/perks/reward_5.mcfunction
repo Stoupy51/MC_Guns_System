@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/perks_5
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.well_stocked","color":"yellow"}',description:'{"translate":"mgs.acquire_75_perks","color":"gray"}',xp:75,branch:"zb",chain:"perks",tier:5}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.well_stocked","fallback":"Well Stocked","color":"yellow"}',description:'{"translate":"mgs.acquire_75_perks","fallback":"Acquire 75 perks","color":"gray"}',xp:75,branch:"zb",chain:"perks",tier:5}
 

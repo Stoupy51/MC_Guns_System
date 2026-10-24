@@ -6,9 +6,9 @@
 # @within	mgs:v5.2.0/progression/zb/settle
 #
 
-data modify storage smithed.actionbar:input message set value {json:[{"text":"⬆ ","color":"white"},{"translate":"mgs.zombies_level","color":"gold"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"yellow"}],priority:"override",freeze:60}
+data modify storage smithed.actionbar:input message set value {json:[{"text":"⬆ ","color":"white"},{"translate":"mgs.zombies_level","fallback":"Zombies level ","color":"gold"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"yellow"}],priority:"override",freeze:60}
 function #smithed.actionbar:message
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⬆ ","color":"white"},{"translate":"mgs.zombies_level_up_you_are_now_level","color":"yellow"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":".","color":"yellow"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"⬆ ","color":"white"},{"translate":"mgs.zombies_level_up_you_are_now_level","fallback":"Zombies level up! You are now level ","color":"yellow"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":".","color":"yellow"}]
 playsound minecraft:entity.player.levelup player @s ~ ~ ~ 1 1.2
 
 # Run as the player who levelled; #xp_lvl_before holds the previous level.

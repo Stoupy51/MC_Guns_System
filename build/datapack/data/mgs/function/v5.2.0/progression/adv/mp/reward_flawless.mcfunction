@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mp/flawless
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.flawless_victory","color":"yellow"}',description:'{"translate":"mgs.win_a_match_without_dying_once","color":"gray"}',xp:300,branch:"mp",chain:"flawless",tier:0}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.flawless_victory","fallback":"Flawless Victory","color":"yellow"}',description:'{"translate":"mgs.win_a_match_without_dying_once","fallback":"Win a match without dying once","color":"gray"}',xp:300,branch:"mp",chain:"flawless",tier:0}
 

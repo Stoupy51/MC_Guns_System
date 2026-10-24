@@ -7,5 +7,5 @@
 #
 
 data remove storage mgs:config lobby
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.lobby_cleared_players_stay_where_their_game_ends","color":"yellow"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.lobby_cleared_players_stay_where_their_game_ends","fallback":"Lobby cleared. Players stay where their game ends.","color":"yellow"}]
 

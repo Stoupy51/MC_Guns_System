@@ -5,10 +5,12 @@
 			"id": "minecraft:leather_boots"
 		},
 		"title": {
-			"translate": "mgs.corpsman"
+			"translate": "mgs.corpsman",
+			"fallback": "Corpsman"
 		},
 		"description": {
-			"translate": "mgs.revive_5_teammates"
+			"translate": "mgs.revive_5_teammates",
+			"fallback": "Revive 5 teammates"
 		},
 		"frame": "task",
 		"show_toast": true,

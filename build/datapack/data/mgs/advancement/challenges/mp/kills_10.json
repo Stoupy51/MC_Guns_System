@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.war_machine"
+			"translate": "mgs.war_machine",
+			"fallback": "War Machine"
 		},
 		"description": {
-			"translate": "mgs.kill_10000_players"
+			"translate": "mgs.kill_10000_players",
+			"fallback": "Kill 10,000 players"
 		},
 		"frame": "challenge",
 		"show_toast": true,

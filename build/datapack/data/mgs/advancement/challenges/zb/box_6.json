@@ -5,10 +5,12 @@
 			"id": "minecraft:emerald"
 		},
 		"title": {
-			"translate": "mgs.gambler"
+			"translate": "mgs.gambler",
+			"fallback": "Gambler"
 		},
 		"description": {
-			"translate": "mgs.collect_75_weapons_from_the_box"
+			"translate": "mgs.collect_75_weapons_from_the_box",
+			"fallback": "Collect 75 weapons from the box"
 		},
 		"frame": "task",
 		"show_toast": true,

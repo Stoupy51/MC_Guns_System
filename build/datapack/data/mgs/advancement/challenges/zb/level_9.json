@@ -6,13 +6,15 @@
 		},
 		"title": [
 			{
-				"translate": "mgs.zombies_rank"
+				"translate": "mgs.zombies_rank",
+				"fallback": "Zombies Rank"
 			},
 			" 150"
 		],
 		"description": [
 			{
-				"translate": "mgs.reach_zombies_level"
+				"translate": "mgs.reach_zombies_level",
+				"fallback": "Reach Zombies level"
 			},
 			" 150"
 		],

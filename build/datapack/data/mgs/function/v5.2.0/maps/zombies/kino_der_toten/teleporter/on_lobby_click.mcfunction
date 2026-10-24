@@ -11,5 +11,5 @@ execute unless score #kino_tp_state mgs.data matches 1 run return fail
 # State 2 (armed): the next theater click teleports.
 scoreboard players set #kino_tp_state mgs.data 2
 playsound minecraft:block.beacon.activate block @a[distance=..50] ~ ~ ~ 1 1
-tellraw @a[distance=..50] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.teleporter_linked_click_the_theater_pad_again_to_teleport","color":"green"}]
+tellraw @a[distance=..50] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.teleporter_linked_click_the_theater_pad_again_to_teleport","fallback":"Teleporter linked! Click the theater pad again to teleport.","color":"green"}]
 

@@ -5,10 +5,12 @@
 			"id": "minecraft:lime_banner"
 		},
 		"title": {
-			"translate": "mgs.point_runner"
+			"translate": "mgs.point_runner",
+			"fallback": "Point Runner"
 		},
 		"description": {
-			"translate": "mgs.complete_200_objective_plays"
+			"translate": "mgs.complete_200_objective_plays",
+			"fallback": "Complete 200 objective plays"
 		},
 		"frame": "task",
 		"show_toast": true,

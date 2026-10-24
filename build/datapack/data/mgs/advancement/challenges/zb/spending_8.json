@@ -5,10 +5,12 @@
 			"id": "minecraft:gold_block"
 		},
 		"title": {
-			"translate": "mgs.money_is_no_object"
+			"translate": "mgs.money_is_no_object",
+			"fallback": "Money Is No Object"
 		},
 		"description": {
-			"translate": "mgs.spend_1000000_points"
+			"translate": "mgs.spend_1000000_points",
+			"fallback": "Spend 1,000,000 points"
 		},
 		"frame": "goal",
 		"show_toast": true,

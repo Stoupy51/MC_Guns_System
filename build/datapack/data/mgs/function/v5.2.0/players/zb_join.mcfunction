@@ -7,11 +7,11 @@
 #			dialog mgs:v5.2.0/zombies/setup
 #
 
-execute if score @s mgs.mp.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.leave_your_current_game_first","color":"red"}]
-execute if score @s mgs.mi.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.leave_your_current_game_first","color":"red"}]
+execute if score @s mgs.mp.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.leave_your_current_game_first","fallback":"Leave your current game first!","color":"red"}]
+execute if score @s mgs.mi.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.leave_your_current_game_first","fallback":"Leave your current game first!","color":"red"}]
 execute if score @s mgs.zb.in_game matches 0 if data storage mgs:zombies game{state:"active"} run function mgs:v5.2.0/zombies/join_game
 execute if score @s mgs.zb.in_game matches 0 if data storage mgs:zombies game{state:"preparing"} run function mgs:v5.2.0/zombies/join_game
 scoreboard players set @s mgs.zb.in_game 1
 team join mgs.zombies @s
-tellraw @s ["",{"translate":"mgs.joined_the","color":"white"},{"translate":"mgs.zombies_game","color":"dark_green","bold":true}]
+tellraw @s ["",{"translate":"mgs.joined_the","fallback":"Joined the ","color":"white"},{"translate":"mgs.zombies_game","fallback":"Zombies game","color":"dark_green","bold":true}]
 

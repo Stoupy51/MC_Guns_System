@@ -21,7 +21,19 @@ execute if score #zb_type_roll mgs.data matches 16..23 if score #zb_round mgs.da
 execute if score #zb_type_roll mgs.data matches 24..28 if score #zb_round mgs.data matches 15.. run data modify storage mgs:temp _zpos.type set value "armed"
 execute if score #zb_type_roll mgs.data matches 29..31 if score #zb_round mgs.data matches 20.. unless entity @e[type=minecraft:zombie,tag=mgs.zb_aura,limit=1] run data modify storage mgs:temp _zpos.type set value "aura"
 
-function mgs:v5.2.0/zombies/summon_zombie_at with storage mgs:temp _zpos
+# 2 blocks over the spawn's rise duration, up through the floor or down from the ceiling.
+scoreboard players set #zb_rise_step mgs.data 2000
+execute if entity @s[tag=mgs.spawn_from_ceiling] run scoreboard players set #zb_rise_step mgs.data -2000
+scoreboard players operation #zb_rise_step mgs.data /= @s mgs.zb.rise_tick
+
+execute unless entity @s[tag=mgs.spawn_from_ceiling] run function mgs:v5.2.0/zombies/summon_zombie_at with storage mgs:temp _zpos
+execute if entity @s[tag=mgs.spawn_from_ceiling] positioned ~ ~4 ~ run function mgs:v5.2.0/zombies/summon_zombie_at with storage mgs:temp _zpos
+scoreboard players operation @n[tag=mgs.zb_new] mgs.zb.rise_tick = @s mgs.zb.rise_tick
+scoreboard players operation @n[tag=mgs.zb_new] mgs.zb.rise_step = #zb_rise_step mgs.data
+
+# The block broken through is the floor below the spawn or the ceiling 2 blocks above it.
+execute unless entity @s[tag=mgs.spawn_from_ceiling] run function mgs:v5.2.0/zombies/summon_rise_dust {block_y:"-1"}
+execute if entity @s[tag=mgs.spawn_from_ceiling] positioned ~ ~2 ~ run function mgs:v5.2.0/zombies/summon_rise_dust {block_y:"0"}
 
 # Remembered so a stuck-rescue never reuses this spawn.
 scoreboard players operation @n[tag=mgs.zb_new] mgs.zb.spawn.sid = @s mgs.zb.spawn.sid

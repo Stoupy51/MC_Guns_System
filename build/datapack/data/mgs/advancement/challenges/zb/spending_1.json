@@ -5,10 +5,12 @@
 			"id": "minecraft:iron_nugget"
 		},
 		"title": {
-			"translate": "mgs.opening_doors"
+			"translate": "mgs.opening_doors",
+			"fallback": "Opening Doors"
 		},
 		"description": {
-			"translate": "mgs.spend_10000_points"
+			"translate": "mgs.spend_10000_points",
+			"fallback": "Spend 10,000 points"
 		},
 		"frame": "task",
 		"show_toast": true,

@@ -8,16 +8,16 @@
 
 execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.2.0/shared/enter_map {mode:"missions",fn:"mgs:v5.2.0/missions/start"}
 
-execute if data storage mgs:missions game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_already_in_progress","color":"red"}]
-execute if data storage mgs:missions game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_already_preparing","color":"red"}]
+execute if data storage mgs:missions game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mission_already_in_progress","fallback":"Mission already in progress!","color":"red"}]
+execute if data storage mgs:missions game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mission_already_preparing","fallback":"Mission already preparing!","color":"red"}]
 
 # Players join through Manage Players or + Join.
-execute unless entity @a[scores={mgs.mi.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_players_have_joined_the_mission_use_manage_players_first","color":"red"}]
+execute unless entity @a[scores={mgs.mi.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_players_have_joined_the_mission_use_manage_players_first","fallback":"No players have joined the mission. Use Manage Players first.","color":"red"}]
 
-execute if data storage mgs:missions game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_map","color":"red"}]
+execute if data storage mgs:missions game{map_id:""} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_map_selected_use_the_setup_menu_to_select_a_map","fallback":"No map selected! Use the setup menu to select a map.","color":"red"}]
 
 function mgs:v5.2.0/missions/load_map_from_storage with storage mgs:missions game
-execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_not_found_select_a_valid_map","color":"red"}]
+execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.map_not_found_select_a_valid_map","fallback":"Map not found! Select a valid map.","color":"red"}]
 
 data modify storage mgs:missions game.map set from storage mgs:temp map_load.result
 
@@ -84,5 +84,5 @@ execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.2.0/shared/tp_to_po
 
 schedule function mgs:v5.2.0/missions/preload_complete 20t
 
-tellraw @a[scores={mgs.mi.in_game=1}] ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.loading_mission_area","color":"yellow"}]
+tellraw @a[scores={mgs.mi.in_game=1}] ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.loading_mission_area","fallback":"Loading mission area...","color":"yellow"}]
 

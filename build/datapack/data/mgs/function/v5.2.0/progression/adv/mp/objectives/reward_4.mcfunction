@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mp/objectives_4
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.team_player","color":"yellow"}',description:'{"translate":"mgs.complete_50_objective_plays","color":"gray"}',xp:50,branch:"mp",chain:"objectives",tier:4}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.team_player","fallback":"Team Player","color":"yellow"}',description:'{"translate":"mgs.complete_50_objective_plays","fallback":"Complete 50 objective plays","color":"gray"}',xp:50,branch:"mp",chain:"objectives",tier:4}
 

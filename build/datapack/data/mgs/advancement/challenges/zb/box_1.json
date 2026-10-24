@@ -5,10 +5,12 @@
 			"id": "minecraft:chest"
 		},
 		"title": {
-			"translate": "mgs.first_roll"
+			"translate": "mgs.first_roll",
+			"fallback": "First Roll"
 		},
 		"description": {
-			"translate": "mgs.collect_a_weapon_from_the_box"
+			"translate": "mgs.collect_a_weapon_from_the_box",
+			"fallback": "Collect a weapon from the box"
 		},
 		"frame": "task",
 		"show_toast": true,

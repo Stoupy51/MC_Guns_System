@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.multiplayer"
+			"translate": "mgs.multiplayer",
+			"fallback": "Multiplayer"
 		},
 		"description": {
-			"translate": "mgs.challenges_across_every_competitive_gamemode"
+			"translate": "mgs.challenges_across_every_competitive_gamemode",
+			"fallback": "Challenges across every competitive gamemode"
 		},
 		"frame": "task",
 		"show_toast": false,

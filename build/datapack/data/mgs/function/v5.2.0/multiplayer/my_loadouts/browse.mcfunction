@@ -9,11 +9,11 @@
 #			mgs:v5.2.0/multiplayer/custom/toggle_visibility
 #
 
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.my_loadouts",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:written_book"},description:{contents:{translate:"mgs.click_a_loadout_to_manage_it",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.my_loadouts",fallback:"My Loadouts",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:written_book"},description:{contents:{translate:"mgs.click_a_loadout_to_manage_it",fallback:"Click a loadout to manage it",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
 
-data modify storage mgs:temp dialog.actions append value {label:["","⭐ ",{translate:"mgs.favorites",color:"yellow",bold:true}],tooltip:{translate:"mgs.show_only_your_favorited_loadouts"},action:{type:"run_command",command:"/trigger mgs.player.config set 1603"}}
-data modify storage mgs:temp dialog.actions append value {label:["","📋 ",{translate:"mgs.all",color:"aqua",bold:true}],tooltip:{translate:"mgs.show_all_your_loadouts_favorites_first_then_private_then_public"},action:{type:"run_command",command:"/trigger mgs.player.config set 102"}}
-data modify storage mgs:temp dialog.actions append value {label:["","✚ ",{translate:"mgs.create",color:"green",bold:true}],tooltip:{translate:"mgs.build_a_new_custom_loadout_from_scratch"},action:{type:"run_command",command:"/trigger mgs.player.config set 100"}}
+data modify storage mgs:temp dialog.actions append value {label:["","⭐ ",{translate:"mgs.favorites",fallback:"Favorites",color:"yellow",bold:true}],tooltip:{translate:"mgs.show_only_your_favorited_loadouts",fallback:"Show only your favorited loadouts"},action:{type:"run_command",command:"/trigger mgs.player.config set 1603"}}
+data modify storage mgs:temp dialog.actions append value {label:["","📋 ",{translate:"mgs.all",fallback:"All",color:"aqua",bold:true}],tooltip:{translate:"mgs.show_all_your_loadouts_favorites_first_then_private_then_public",fallback:"Show all your loadouts (favorites first, then private, then public)"},action:{type:"run_command",command:"/trigger mgs.player.config set 102"}}
+data modify storage mgs:temp dialog.actions append value {label:["","✚ ",{translate:"mgs.create",fallback:"Create",color:"green",bold:true}],tooltip:{translate:"mgs.build_a_new_custom_loadout_from_scratch",fallback:"Build a new custom loadout from scratch"},action:{type:"run_command",command:"/trigger mgs.player.config set 100"}}
 
 # Read for the ordering.
 function mgs:v5.2.0/multiplayer/shared/load_player_favorites

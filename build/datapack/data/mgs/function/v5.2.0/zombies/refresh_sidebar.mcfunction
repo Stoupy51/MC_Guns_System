@@ -11,7 +11,7 @@ scoreboard players operation #zb_total mgs.data = #zb_alive mgs.data
 scoreboard players operation #zb_total mgs.data += #zb_to_spawn mgs.data
 execute if score #zb_total mgs.data matches ..-1 run scoreboard players set #zb_total mgs.data 0
 
-data modify storage mgs:temp zb_sb set value [[{translate:"mgs.round",color:"red"},{score:{name:"#zb_round",objective:"mgs.data"},color:"gold"}],[{translate:"mgs.zombies",color:"red"},{score:{name:"#zb_total",objective:"mgs.data"},color:"gold"}]," "]
+data modify storage mgs:temp zb_sb set value [[{translate:"mgs.round",fallback:"Round",color:"red"},{score:{name:"#zb_round",objective:"mgs.data"},color:"gold"}],[{translate:"mgs.zombies",fallback:"Zombies",color:"red"},{score:{name:"#zb_total",objective:"mgs.data"},color:"gold"}]," "]
 
 scoreboard players set @a mgs.zb.sb_rank 0
 tag @a remove mgs.zb_sb_cand

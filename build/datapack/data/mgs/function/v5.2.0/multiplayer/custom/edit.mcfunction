@@ -19,7 +19,7 @@ scoreboard players set #edit_found mgs.data 0
 execute if data storage mgs:temp _find_iter[0] run function mgs:v5.2.0/multiplayer/custom/edit_load_iter
 
 # Loadouts saved before editor_state cannot be pre-filled.
-execute if score #edit_found mgs.data matches 0 run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.this_loadout_predates_editing_support_rebuild_it_from_scratch_sa","color":"yellow"}]
+execute if score #edit_found mgs.data matches 0 run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.this_loadout_predates_editing_support_rebuild_it_from_scratch_sa","fallback":"This loadout predates editing support. Rebuild it from scratch (saving still overwrites it).","color":"yellow"}]
 
 # Points are recomputed from the loaded state.
 function mgs:v5.2.0/multiplayer/editor/hub

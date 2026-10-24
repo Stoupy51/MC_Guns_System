@@ -58,7 +58,7 @@ kill @e[tag=mgs.tombstone,predicate=mgs:v5.2.0/zombies/revive/downed_id_match]
 
 title @s times 5 40 15
 title @s title ["🪦"]
-title @s subtitle [{"translate":"mgs.gear_recovered","color":"green"}]
+title @s subtitle [{"translate":"mgs.gear_recovered","fallback":"Gear recovered!","color":"green"}]
 playsound minecraft:block.respawn_anchor.charge player @a[distance=..24] ~ ~ ~ 1 1.2
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"green"}],{"translate":"mgs.recovered_their_gear_from_a_tombstone","color":"gray"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"green"}],{"translate":"mgs.recovered_their_gear_from_a_tombstone","fallback":" recovered their gear from a tombstone!","color":"gray"}]
 

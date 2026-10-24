@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.room_clearer"
+			"translate": "mgs.room_clearer",
+			"fallback": "Room Clearer"
 		},
 		"description": {
-			"translate": "mgs.kill_500_enemies_in_missions"
+			"translate": "mgs.kill_500_enemies_in_missions",
+			"fallback": "Kill 500 enemies in missions"
 		},
 		"frame": "task",
 		"show_toast": true,

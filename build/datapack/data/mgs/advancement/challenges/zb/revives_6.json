@@ -5,10 +5,12 @@
 			"id": "minecraft:glowstone_dust"
 		},
 		"title": {
-			"translate": "mgs.always_there"
+			"translate": "mgs.always_there",
+			"fallback": "Always There"
 		},
 		"description": {
-			"translate": "mgs.revive_35_teammates"
+			"translate": "mgs.revive_35_teammates",
+			"fallback": "Revive 35 teammates"
 		},
 		"frame": "task",
 		"show_toast": true,

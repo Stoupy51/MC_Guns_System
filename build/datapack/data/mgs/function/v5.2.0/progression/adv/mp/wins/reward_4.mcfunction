@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mp/wins_4
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.reliable","color":"yellow"}',description:'{"translate":"mgs.win_10_matches","color":"gray"}',xp:50,branch:"mp",chain:"wins",tier:4}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.reliable","fallback":"Reliable","color":"yellow"}',description:'{"translate":"mgs.win_10_matches","fallback":"Win 10 matches","color":"gray"}',xp:50,branch:"mp",chain:"wins",tier:4}
 

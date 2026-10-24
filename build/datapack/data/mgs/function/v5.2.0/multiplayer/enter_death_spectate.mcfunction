@@ -23,6 +23,6 @@ tag @a[tag=mgs.temp_killer] remove mgs.temp_killer
 
 title @s times 0 70 10
 title @s title ["☠"]
-title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","color":"gray"}]
+title @s subtitle [{"translate":"mgs.respawning_in_3_seconds","fallback":"Respawning in 3 seconds...","color":"gray"}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s
 

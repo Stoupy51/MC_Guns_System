@@ -8,7 +8,7 @@
 #
 
 $data remove storage mgs:maps $(mode)[$(idx)]
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_deleted","color":"red"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.map_deleted","fallback":"Map deleted.","color":"red"}]
 
 # The list of the same mode again.
 $function mgs:v5.2.0/maps/editor/list/$(mode)

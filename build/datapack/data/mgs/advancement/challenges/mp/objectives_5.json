@@ -5,10 +5,12 @@
 			"id": "minecraft:green_banner"
 		},
 		"title": {
-			"translate": "mgs.carrying"
+			"translate": "mgs.carrying",
+			"fallback": "Carrying"
 		},
 		"description": {
-			"translate": "mgs.complete_100_objective_plays"
+			"translate": "mgs.complete_100_objective_plays",
+			"fallback": "Complete 100 objective plays"
 		},
 		"frame": "task",
 		"show_toast": true,

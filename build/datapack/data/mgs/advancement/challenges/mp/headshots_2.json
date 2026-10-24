@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.steady_hands"
+			"translate": "mgs.steady_hands",
+			"fallback": "Steady Hands"
 		},
 		"description": {
-			"translate": "mgs.land_25_headshot_kills"
+			"translate": "mgs.land_25_headshot_kills",
+			"fallback": "Land 25 headshot kills"
 		},
 		"frame": "task",
 		"show_toast": true,

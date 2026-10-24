@@ -5,10 +5,12 @@
 			"id": "minecraft:brewing_stand"
 		},
 		"title": {
-			"translate": "mgs.well_stocked"
+			"translate": "mgs.well_stocked",
+			"fallback": "Well Stocked"
 		},
 		"description": {
-			"translate": "mgs.acquire_75_perks"
+			"translate": "mgs.acquire_75_perks",
+			"fallback": "Acquire 75 perks"
 		},
 		"frame": "task",
 		"show_toast": true,

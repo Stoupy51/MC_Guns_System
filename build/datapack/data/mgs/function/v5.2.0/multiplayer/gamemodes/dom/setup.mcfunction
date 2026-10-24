@@ -6,7 +6,7 @@
 # @within	mgs:v5.2.0/multiplayer/start
 #
 
-tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.domination_capture_and_hold_zones_to_earn_points","color":"yellow"}]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.domination_capture_and_hold_zones_to_earn_points","fallback":"Domination! Capture and hold zones to earn points!","color":"yellow"}]
 
 function mgs:v5.2.0/shared/load_base_coordinates {mode:"multiplayer"}
 

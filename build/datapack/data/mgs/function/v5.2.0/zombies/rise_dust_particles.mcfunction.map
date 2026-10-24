@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "rise_dust_particles.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/lifecycle.py"
+	],
+	"names": [],
+	"mappings": "AA4ByD;;;;;;;;;;AACzD;AACA"
+}

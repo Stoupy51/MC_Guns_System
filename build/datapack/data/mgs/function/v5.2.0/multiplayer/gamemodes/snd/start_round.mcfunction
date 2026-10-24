@@ -13,10 +13,10 @@ execute unless score #in_multiplayer_map mgs.data matches 1 run return run funct
 execute if data storage mgs:multiplayer game{state:"lobby"} run return fail
 execute if data storage mgs:multiplayer game{state:"ended"} run return fail
 
-tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.round_2","color":"gold"},{"score":{"name":"#snd_round","objective":"mgs.data"},"color":"yellow"}]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.round_2","fallback":"Round ","color":"gold"},{"score":{"name":"#snd_round","objective":"mgs.data"},"color":"yellow"}]
 
-execute if score #snd_attackers mgs.data matches 1 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.attacks"}, " | "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.defends_2"}]]
-execute if score #snd_attackers mgs.data matches 2 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.attacks"}, " | "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.defends_2"}]]
+execute if score #snd_attackers mgs.data matches 1 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.red","fallback":"Red","color":"red"},[{"text":" "}, {"translate":"mgs.attacks","fallback":"attacks"}, " | "],{"translate":"mgs.blue","fallback":"Blue","color":"blue"},[{"text":" "}, {"translate":"mgs.defends_2","fallback":"defends"}]]
+execute if score #snd_attackers mgs.data matches 2 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.blue","fallback":"Blue","color":"blue"},[{"text":" "}, {"translate":"mgs.attacks","fallback":"attacks"}, " | "],{"translate":"mgs.red","fallback":"Red","color":"red"},[{"text":" "}, {"translate":"mgs.defends_2","fallback":"defends"}]]
 playsound minecraft:block.note_block.harp player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.0
 
 scoreboard players set #snd_bomb_state mgs.data 0

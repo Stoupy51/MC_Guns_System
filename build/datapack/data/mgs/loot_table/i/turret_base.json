@@ -22,13 +22,13 @@
 								},
 								"minecraft:item_model": "mgs:turret_base",
 								"minecraft:item_name": {
-									"translate": "mgs.turret_base"
+									"translate": "mgs.turret_base","fallback": "Turret Base"
 								},
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								]
 							}

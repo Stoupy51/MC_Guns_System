@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.regular"
+			"translate": "mgs.regular",
+			"fallback": "Regular"
 		},
 		"description": {
-			"translate": "mgs.kill_250_players"
+			"translate": "mgs.kill_250_players",
+			"fallback": "Kill 250 players"
 		},
 		"frame": "task",
 		"show_toast": true,

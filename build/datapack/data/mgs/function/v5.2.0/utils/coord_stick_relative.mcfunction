@@ -37,5 +37,5 @@ execute if score #cs_state mgs.data matches 0 run data modify storage mgs:temp c
 execute if score #cs_state mgs.data matches 0 store result storage mgs:temp coord_stick.origin[0] int 1 run scoreboard players get #cs_pos_x mgs.data
 execute if score #cs_state mgs.data matches 0 store result storage mgs:temp coord_stick.origin[1] int 1 run scoreboard players get #cs_pos_y mgs.data
 execute if score #cs_state mgs.data matches 0 store result storage mgs:temp coord_stick.origin[2] int 1 run scoreboard players get #cs_pos_z mgs.data
-execute if score #cs_state mgs.data matches 0 as @a[tag=mgs.coord_stick_user,limit=1] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.first_position_saved_right_click_again_to_get_the_offset","color":"yellow"}]
+execute if score #cs_state mgs.data matches 0 as @a[tag=mgs.coord_stick_user,limit=1] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.first_position_saved_right_click_again_to_get_the_offset","fallback":"First position saved! Right-click again to get the offset.","color":"yellow"}]
 

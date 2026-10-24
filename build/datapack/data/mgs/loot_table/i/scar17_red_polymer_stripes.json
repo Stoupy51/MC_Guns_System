@@ -41,7 +41,7 @@
 								},
 								"minecraft:item_name": [
 									[{
-										"translate":"mgs.scar",
+										"translate": "mgs.scar","fallback": "SCAR",
 										"color": "gold",
 										"italic": false
 									}, "-17"]
@@ -235,7 +235,7 @@
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								],
 								"minecraft:item_model": "mgs:scar17_red_polymer_stripes"

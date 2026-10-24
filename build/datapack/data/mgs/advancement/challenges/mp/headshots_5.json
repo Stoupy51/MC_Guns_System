@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.marksman"
+			"translate": "mgs.marksman",
+			"fallback": "Marksman"
 		},
 		"description": {
-			"translate": "mgs.land_250_headshot_kills"
+			"translate": "mgs.land_250_headshot_kills",
+			"fallback": "Land 250 headshot kills"
 		},
 		"frame": "task",
 		"show_toast": true,

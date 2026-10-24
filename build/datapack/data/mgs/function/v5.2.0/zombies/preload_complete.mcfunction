@@ -40,8 +40,8 @@ schedule function mgs:v5.2.0/zombies/end_prep 200t
 function mgs:v5.2.0/zombies/create_sidebar
 
 # Perk wording only for Zonweeb.
-execute if data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_10_seconds","color":"yellow"}]
-execute unless data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_round_1_starts_in_10_seconds","color":"yellow"}]
+execute if data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_10_seconds","fallback":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}]
+execute unless data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_round_1_starts_in_10_seconds","fallback":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}]
 
 function mgs:v5.2.0/zombies/escort/setup_lure_center
 

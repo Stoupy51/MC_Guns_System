@@ -5,10 +5,12 @@
 			"id": "minecraft:nether_star"
 		},
 		"title": {
-			"translate": "mgs.beyond_upgraded"
+			"translate": "mgs.beyond_upgraded",
+			"fallback": "Beyond Upgraded"
 		},
 		"description": {
-			"translate": "mgs.upgrade_150_weapons"
+			"translate": "mgs.upgrade_150_weapons",
+			"fallback": "Upgrade 150 weapons"
 		},
 		"frame": "challenge",
 		"show_toast": true,

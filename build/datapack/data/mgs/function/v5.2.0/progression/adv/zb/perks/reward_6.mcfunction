@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/perks_6
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.liquid_courage","color":"yellow"}',description:'{"translate":"mgs.acquire_100_perks","color":"gray"}',xp:110,branch:"zb",chain:"perks",tier:6}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.liquid_courage","fallback":"Liquid Courage","color":"yellow"}',description:'{"translate":"mgs.acquire_100_perks","fallback":"Acquire 100 perks","color":"gray"}',xp:110,branch:"zb",chain:"perks",tier:6}
 

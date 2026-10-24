@@ -13,5 +13,5 @@ function mgs:v5.2.0/maps/editor/do_save
 # The save clears the tools.
 function mgs:v5.2.0/maps/editor/give_tools
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.map_saved","color":"green"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.map_saved","fallback":"Map saved!","color":"green"}]
 

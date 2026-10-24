@@ -5,7 +5,7 @@
 #
 
 # The caller must be editing.
-execute unless score @s mgs.mp.map_edit matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_must_be_in_map_editor_to_invite_players","color":"red"}]
+execute unless score @s mgs.mp.map_edit matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.you_must_be_in_map_editor_to_invite_players","fallback":"You must be in map editor to invite players.","color":"red"}]
 
 # Shares the caller's session with everyone not editing.
 scoreboard players set @a mgs.mp.map_edit 1
@@ -26,5 +26,5 @@ data modify storage mgs:temp _tp.dimension set value "minecraft:overworld"
 data modify storage mgs:temp _tp.dimension set from storage mgs:temp map_edit.map.dimension
 execute as @a[scores={mgs.mp.map_edit=1}] run function mgs:v5.2.0/maps/editor/tp_to_map with storage mgs:temp _tp
 
-tellraw @a[scores={mgs.mp.map_edit=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.editor_session_synced_for_all_players","color":"aqua"}]
+tellraw @a[scores={mgs.mp.map_edit=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.editor_session_synced_for_all_players","fallback":"Editor session synced for all players.","color":"aqua"}]
 

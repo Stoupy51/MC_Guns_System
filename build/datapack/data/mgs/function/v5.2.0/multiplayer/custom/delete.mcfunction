@@ -23,7 +23,7 @@ scoreboard players operation #del_neg_id mgs.data *= #minus_one mgs.data
 execute if score #del_removed mgs.data matches 1 if score @s mgs.mp.default = #loadout_id mgs.data run scoreboard players set @s mgs.mp.default 0
 execute if score #del_removed mgs.data matches 1 if score @s mgs.mp.class = #del_neg_id mgs.data run scoreboard players set @s mgs.mp.class 0
 
-tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.loadout_deleted","color":"red"}]
+tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.loadout_deleted","fallback":"Loadout deleted","color":"red"}]
 
 function mgs:v5.2.0/multiplayer/my_loadouts/browse
 

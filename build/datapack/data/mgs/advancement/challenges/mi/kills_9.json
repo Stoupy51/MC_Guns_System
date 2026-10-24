@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.one_man_army"
+			"translate": "mgs.one_man_army",
+			"fallback": "One Man Army"
 		},
 		"description": {
-			"translate": "mgs.kill_20000_enemies_in_missions"
+			"translate": "mgs.kill_20000_enemies_in_missions",
+			"fallback": "Kill 20,000 enemies in missions"
 		},
 		"frame": "goal",
 		"show_toast": true,

@@ -5,10 +5,12 @@
 			"id": "minecraft:enchanted_book"
 		},
 		"title": {
-			"translate": "mgs.fully_packed"
+			"translate": "mgs.fully_packed",
+			"fallback": "Fully Packed"
 		},
 		"description": {
-			"translate": "mgs.upgrade_50_weapons"
+			"translate": "mgs.upgrade_50_weapons",
+			"fallback": "Upgrade 50 weapons"
 		},
 		"frame": "task",
 		"show_toast": true,

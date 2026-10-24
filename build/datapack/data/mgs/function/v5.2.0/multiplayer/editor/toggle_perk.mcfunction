@@ -12,7 +12,7 @@
 $execute if data storage mgs:temp editor{perks:["$(_toggle_perk)"]} run return run function mgs:v5.2.0/multiplayer/editor/remove_perk
 
 execute store result score #perk_count mgs.data run data get storage mgs:temp editor.perks
-execute if score #perk_count mgs.data matches 3.. run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.max_3_perks_allowed","color":"red"}]
+execute if score #perk_count mgs.data matches 3.. run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.max_3_perks_allowed","fallback":"Max 3 perks allowed!","color":"red"}]
 
 # Snapshot, add, commit (reverts on overflow).
 data modify storage mgs:temp _ed_bak set from storage mgs:temp editor

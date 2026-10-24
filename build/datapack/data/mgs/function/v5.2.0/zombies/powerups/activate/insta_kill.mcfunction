@@ -9,7 +9,7 @@
 
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.instant_kill 600
 bossbar remove mgs:pu_insta_kill
-bossbar add mgs:pu_insta_kill {"translate":"mgs.insta_kill","bold":true,"color":"red"}
+bossbar add mgs:pu_insta_kill {"translate":"mgs.insta_kill","fallback":"Insta Kill","bold":true,"color":"red"}
 bossbar set mgs:pu_insta_kill max 600
 bossbar set mgs:pu_insta_kill value 600
 bossbar set mgs:pu_insta_kill color red

@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/pack_a_punch_3
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.tooled_up","color":"yellow"}',description:'{"translate":"mgs.upgrade_5_weapons","color":"gray"}',xp:30,branch:"zb",chain:"pack_a_punch",tier:3}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.tooled_up","fallback":"Tooled Up","color":"yellow"}',description:'{"translate":"mgs.upgrade_5_weapons","fallback":"Upgrade 5 weapons","color":"gray"}',xp:30,branch:"zb",chain:"pack_a_punch",tier:3}
 

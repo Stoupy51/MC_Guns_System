@@ -6,12 +6,12 @@
 # @within	mgs:v5.2.0/player/config/process
 #
 
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.marketplace",color:"light_purple",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:emerald"},description:{contents:{translate:"mgs.browse_public_loadouts_from_all_players",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
-data modify storage mgs:temp dialog.title set value [{text:"",color:"light_purple",bold:true},{translate:"mgs.marketplace"}," — ",{translate:"mgs.favorites"}]
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.marketplace",fallback:"Marketplace",color:"light_purple",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:emerald"},description:{contents:{translate:"mgs.browse_public_loadouts_from_all_players",fallback:"Browse public loadouts from all players",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
+data modify storage mgs:temp dialog.title set value [{text:"",color:"light_purple",bold:true},{translate:"mgs.marketplace",fallback:"Marketplace"}," — ",{translate:"mgs.favorites",fallback:"Favorites"}]
 
-data modify storage mgs:temp dialog.actions append value {label:["","📋 ",{translate:"mgs.all",color:"white",bold:true}],tooltip:{translate:"mgs.show_all_public_loadouts_your_favorites_first"},action:{type:"run_command",command:"/trigger mgs.player.config set 1600"}}
-data modify storage mgs:temp dialog.actions append value {label:["","⭐ ",{translate:"mgs.favorites",color:"gold",bold:true}],tooltip:{translate:"mgs.show_only_loadouts_you_favorited"},action:{type:"run_command",command:"/trigger mgs.player.config set 1601"}}
-data modify storage mgs:temp dialog.actions append value {label:["","❤ ",{translate:"mgs.best_liked",color:"white",bold:true}],tooltip:{translate:"mgs.show_all_public_loadouts_sorted_by_most_likes"},action:{type:"run_command",command:"/trigger mgs.player.config set 1602"}}
+data modify storage mgs:temp dialog.actions append value {label:["","📋 ",{translate:"mgs.all",fallback:"All",color:"white",bold:true}],tooltip:{translate:"mgs.show_all_public_loadouts_your_favorites_first",fallback:"Show all public loadouts (your favorites first)"},action:{type:"run_command",command:"/trigger mgs.player.config set 1600"}}
+data modify storage mgs:temp dialog.actions append value {label:["","⭐ ",{translate:"mgs.favorites",fallback:"Favorites",color:"gold",bold:true}],tooltip:{translate:"mgs.show_only_loadouts_you_favorited",fallback:"Show only loadouts you favorited"},action:{type:"run_command",command:"/trigger mgs.player.config set 1601"}}
+data modify storage mgs:temp dialog.actions append value {label:["","❤ ",{translate:"mgs.best_liked",fallback:"Best Liked",color:"white",bold:true}],tooltip:{translate:"mgs.show_all_public_loadouts_sorted_by_most_likes",fallback:"Show all public loadouts sorted by most likes"},action:{type:"run_command",command:"/trigger mgs.player.config set 1602"}}
 
 function mgs:v5.2.0/multiplayer/shared/load_player_favorites
 

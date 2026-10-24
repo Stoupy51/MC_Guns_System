@@ -5,10 +5,12 @@
 			"id": "minecraft:enchanted_golden_apple"
 		},
 		"title": {
-			"translate": "mgs.feared"
+			"translate": "mgs.feared",
+			"fallback": "Feared"
 		},
 		"description": {
-			"translate": "mgs.win_75_matches"
+			"translate": "mgs.win_75_matches",
+			"fallback": "Win 75 matches"
 		},
 		"frame": "goal",
 		"show_toast": true,

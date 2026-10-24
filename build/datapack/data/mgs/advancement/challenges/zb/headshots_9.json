@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.surgical_undertaking"
+			"translate": "mgs.surgical_undertaking",
+			"fallback": "Surgical Undertaking"
 		},
 		"description": {
-			"translate": "mgs.land_10000_headshot_kills"
+			"translate": "mgs.land_10000_headshot_kills",
+			"fallback": "Land 10,000 headshot kills"
 		},
 		"frame": "goal",
 		"show_toast": true,

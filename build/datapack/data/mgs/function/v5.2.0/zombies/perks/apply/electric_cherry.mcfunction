@@ -7,6 +7,6 @@
 #
 
 scoreboard players set @s mgs.special.electric_cherry 1
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🍒 ",{"translate":"mgs.electric_cherry_reloads_discharge_a_shock","color":"blue"},[" ",{"text":"+5 XP","color":"gold"}]]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],"🍒 ",{"translate":"mgs.electric_cherry_reloads_discharge_a_shock","fallback":"Electric Cherry! Reloads discharge a shock","color":"blue"},[" ",{"text":"+5 XP","color":"gold"}]]
 function mgs:v5.2.0/progression/zb/award_perk
 

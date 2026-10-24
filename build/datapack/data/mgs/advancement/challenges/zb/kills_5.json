@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.meat_grinder"
+			"translate": "mgs.meat_grinder",
+			"fallback": "Meat Grinder"
 		},
 		"description": {
-			"translate": "mgs.kill_2500_zombies"
+			"translate": "mgs.kill_2500_zombies",
+			"fallback": "Kill 2,500 zombies"
 		},
 		"frame": "task",
 		"show_toast": true,

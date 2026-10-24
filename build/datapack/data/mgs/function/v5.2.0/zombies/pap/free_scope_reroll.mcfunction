@@ -16,6 +16,6 @@ execute store result storage mgs:temp _pap_name_data.max int 1 run scoreboard pl
 
 function mgs:v5.2.0/zombies/pap/apply_to_slot with storage mgs:temp _pap
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"✦ ",{"translate":"mgs.free_scope_camo_reroll_already_at_max_pap_level","color":"aqua"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],"✦ ",{"translate":"mgs.free_scope_camo_reroll_already_at_max_pap_level","fallback":"Free scope/camo reroll! (already at max PAP level)","color":"aqua"}]
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 

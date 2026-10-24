@@ -17,7 +17,7 @@ execute if score #wb_purchase_done mgs.data matches 0 run return 0
 
 execute if data storage mgs:zombies mystery_box.result.weapon_id run function mgs:v5.2.0/zombies/mystery_box/capture_collected_name with storage mgs:zombies mystery_box.result
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_collected","color":"green"},{"storage":"mgs:temp","nbt":"_mb_collected_name","interpret":true},[{"text":" ","color":"green"}, {"translate":"mgs.from_the_mystery_box"}],[" ",{"text":"+3 XP","color":"gold"}]]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.you_collected","fallback":"You collected ","color":"green"},{"storage":"mgs:temp","nbt":"_mb_collected_name","interpret":true},[{"text":" ","color":"green"}, {"translate":"mgs.from_the_mystery_box","fallback":"from the Mystery Box."}],[" ",{"text":"+3 XP","color":"gold"}]]
 function mgs:v5.2.0/progression/zb/award_mystery_box
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 playsound mgs:zombies/mystery_box/close ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0

@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/spending_5
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.burning_through_it","color":"yellow"}',description:'{"translate":"mgs.spend_200000_points","color":"gray"}',xp:75,branch:"zb",chain:"spending",tier:5}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.burning_through_it","fallback":"Burning Through It","color":"yellow"}',description:'{"translate":"mgs.spend_200000_points","fallback":"Spend 200,000 points","color":"gray"}',xp:75,branch:"zb",chain:"spending",tier:5}
 

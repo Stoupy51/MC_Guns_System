@@ -1,26 +1,26 @@
 {
 	"type": "minecraft:multi_action",
 	"title": {
-		"translate": "mgs.infinite_ammo",
+		"translate": "mgs.infinite_ammo","fallback": "Infinite Ammo",
 		"color": "gold",
 		"bold": true
 	},
 	"body": [
-		{"type": "minecraft:plain_message","contents": {"translate": "mgs.no_reloads_needed_for_a_duration_self_only","color": "gray"}}
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.no_reloads_needed_for_a_duration_self_only","fallback": "No reloads needed for a duration (self only)","color": "gray"}}
 	],
 	"actions": [
-		{"label": {"translate": "mgs.off","color": "red"},"tooltip": {"translate": "mgs.set_infinite_ammo_off"},"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 0"}},
-		{"label": {"text": "10s","color": "yellow"},"tooltip": {"translate": "mgs.set_infinite_ammo_for_10s"},"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 200"}},
-		{"label": {"text": "30s","color": "yellow"},"tooltip": {"translate": "mgs.set_infinite_ammo_for_30s"},"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 600"}},
-		{"label": {"text": "60s","color": "yellow"},"tooltip": {"translate": "mgs.set_infinite_ammo_for_60s"},"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 1200"}},
-		{"label": {"text": "∞","color": "light_purple"},"tooltip": [{"translate":"mgs.set_infinite_ammo_for"}, " ∞"],"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 72000"}}
+		{"label": {"translate": "mgs.off","fallback": "OFF","color": "red"},"tooltip": {"translate": "mgs.set_infinite_ammo_off","fallback": "Set infinite ammo off"},"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 0"}},
+		{"label": {"text": "10s","color": "yellow"},"tooltip": {"translate": "mgs.set_infinite_ammo_for_10s","fallback": "Set infinite ammo for 10s"},"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 200"}},
+		{"label": {"text": "30s","color": "yellow"},"tooltip": {"translate": "mgs.set_infinite_ammo_for_30s","fallback": "Set infinite ammo for 30s"},"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 600"}},
+		{"label": {"text": "60s","color": "yellow"},"tooltip": {"translate": "mgs.set_infinite_ammo_for_60s","fallback": "Set infinite ammo for 60s"},"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 1200"}},
+		{"label": {"text": "∞","color": "light_purple"},"tooltip": [{"translate": "mgs.set_infinite_ammo_for","fallback": "Set infinite ammo for"}, " ∞"],"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 72000"}}
 	],
 	"columns": 1,
 	"pause": false,
 	"after_action": "none",
 	"exit_action": {
-		"label": ["","◀ ",{"translate": "mgs.back","color": "gray"}],
-		"tooltip": {"translate": "mgs.return_to_the_previous_menu"},
+		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},
 		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.2.0/config/personal"}
 	}
 }

@@ -9,7 +9,7 @@
 
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.special.double_points 600
 bossbar remove mgs:pu_double_points
-bossbar add mgs:pu_double_points {"translate":"mgs.double_points","bold":true,"color":"yellow"}
+bossbar add mgs:pu_double_points {"translate":"mgs.double_points","fallback":"Double Points","bold":true,"color":"yellow"}
 bossbar set mgs:pu_double_points max 600
 bossbar set mgs:pu_double_points value 600
 bossbar set mgs:pu_double_points color yellow

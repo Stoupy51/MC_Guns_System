@@ -5,10 +5,12 @@
 			"id": "minecraft:lead"
 		},
 		"title": {
-			"translate": "mgs.deployed"
+			"translate": "mgs.deployed",
+			"fallback": "Deployed"
 		},
 		"description": {
-			"translate": "mgs.complete_10_missions"
+			"translate": "mgs.complete_10_missions",
+			"fallback": "Complete 10 missions"
 		},
 		"frame": "task",
 		"show_toast": true,

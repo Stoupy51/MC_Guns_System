@@ -5,10 +5,12 @@
 			"id": "minecraft:netherite_ingot"
 		},
 		"title": {
-			"translate": "mgs.hundred_punches"
+			"translate": "mgs.hundred_punches",
+			"fallback": "Hundred Punches"
 		},
 		"description": {
-			"translate": "mgs.upgrade_100_weapons"
+			"translate": "mgs.upgrade_100_weapons",
+			"fallback": "Upgrade 100 weapons"
 		},
 		"frame": "goal",
 		"show_toast": true,

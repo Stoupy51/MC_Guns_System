@@ -22,13 +22,13 @@
 								},
 								"minecraft:item_model": "mgs:perk_machine_whos_who",
 								"minecraft:item_name": {
-									"translate": "mgs.perk_machine_whos_who"
+									"translate": "mgs.perk_machine_whos_who","fallback": "Perk Machine Whos Who"
 								},
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								]
 							}

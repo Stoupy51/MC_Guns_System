@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.zombies"
+			"translate": "mgs.zombies",
+			"fallback": "Zombies"
 		},
 		"description": {
-			"translate": "mgs.challenges_for_the_undead_survival_mode"
+			"translate": "mgs.challenges_for_the_undead_survival_mode",
+			"fallback": "Challenges for the undead survival mode"
 		},
 		"frame": "task",
 		"show_toast": false,

@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.heavy_contact"
+			"translate": "mgs.heavy_contact",
+			"fallback": "Heavy Contact"
 		},
 		"description": {
-			"translate": "mgs.kill_2000_enemies_in_missions"
+			"translate": "mgs.kill_2000_enemies_in_missions",
+			"fallback": "Kill 2,000 enemies in missions"
 		},
 		"frame": "task",
 		"show_toast": true,

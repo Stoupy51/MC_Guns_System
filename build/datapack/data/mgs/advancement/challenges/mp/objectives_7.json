@@ -5,10 +5,12 @@
 			"id": "minecraft:yellow_banner"
 		},
 		"title": {
-			"translate": "mgs.flag_bearer"
+			"translate": "mgs.flag_bearer",
+			"fallback": "Flag Bearer"
 		},
 		"description": {
-			"translate": "mgs.complete_350_objective_plays"
+			"translate": "mgs.complete_350_objective_plays",
+			"fallback": "Complete 350 objective plays"
 		},
 		"frame": "task",
 		"show_toast": true,

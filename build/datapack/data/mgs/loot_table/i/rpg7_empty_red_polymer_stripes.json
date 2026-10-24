@@ -237,12 +237,12 @@
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								],
 								"minecraft:item_model": "mgs:rpg7_empty_red_polymer_stripes",
 								"minecraft:item_name": {
-									"translate": "mgs.rpg7_empty_red_polymer_stripes"
+									"translate": "mgs.rpg7_empty_red_polymer_stripes","fallback": "Rpg7 Empty Red Polymer Stripes"
 								}
 							}
 						}

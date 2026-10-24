@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.surgical"
+			"translate": "mgs.surgical",
+			"fallback": "Surgical"
 		},
 		"description": {
-			"translate": "mgs.land_3000_headshot_kills"
+			"translate": "mgs.land_3000_headshot_kills",
+			"fallback": "Land 3,000 headshot kills"
 		},
 		"frame": "goal",
 		"show_toast": true,

@@ -14,10 +14,10 @@ execute if data storage mgs:multiplayer game{state:"lobby"} run return fail
 execute if data storage mgs:multiplayer game{state:"ended"} run return fail
 
 # The decider is announced as such but plays like any round.
-tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.round_2","color":"gold"},{"score":{"name":"#demo_round","objective":"mgs.data"},"color":"yellow"}]
-execute if score #demo_round mgs.data matches 3.. run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⚡ ","color":"white"},{"translate":"mgs.tie_break_round_most_kills_defends","color":"gold","bold":true}]
-execute if score #demo_attackers mgs.data matches 1 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.defends_2"}]]
-execute if score #demo_attackers mgs.data matches 2 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.blue","color":"blue"},[{"text":" "}, {"translate":"mgs.attacks_both_sites"}, " | "],{"translate":"mgs.red","color":"red"},[{"text":" "}, {"translate":"mgs.defends_2"}]]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.round_2","fallback":"Round ","color":"gold"},{"score":{"name":"#demo_round","objective":"mgs.data"},"color":"yellow"}]
+execute if score #demo_round mgs.data matches 3.. run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"⚡ ","color":"white"},{"translate":"mgs.tie_break_round_most_kills_defends","fallback":"TIE-BREAK ROUND: most kills defends!","color":"gold","bold":true}]
+execute if score #demo_attackers mgs.data matches 1 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.red","fallback":"Red","color":"red"},[{"text":" "}, {"translate":"mgs.attacks_both_sites","fallback":"attacks both sites"}, " | "],{"translate":"mgs.blue","fallback":"Blue","color":"blue"},[{"text":" "}, {"translate":"mgs.defends_2","fallback":"defends"}]]
+execute if score #demo_attackers mgs.data matches 2 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.blue","fallback":"Blue","color":"blue"},[{"text":" "}, {"translate":"mgs.attacks_both_sites","fallback":"attacks both sites"}, " | "],{"translate":"mgs.red","fallback":"Red","color":"red"},[{"text":" "}, {"translate":"mgs.defends_2","fallback":"defends"}]]
 playsound minecraft:block.note_block.harp player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.0
 
 kill @e[tag=mgs.demo_bomb]

@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.horde_breaker"
+			"translate": "mgs.horde_breaker",
+			"fallback": "Horde Breaker"
 		},
 		"description": {
-			"translate": "mgs.kill_5000_zombies"
+			"translate": "mgs.kill_5000_zombies",
+			"fallback": "Kill 5,000 zombies"
 		},
 		"frame": "task",
 		"show_toast": true,

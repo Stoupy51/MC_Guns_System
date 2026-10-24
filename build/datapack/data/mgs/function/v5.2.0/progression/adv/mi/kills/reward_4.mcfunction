@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mi/kills_4
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.clearing_house","color":"yellow"}',description:'{"translate":"mgs.kill_1000_enemies_in_missions","color":"gray"}',xp:50,branch:"mi",chain:"kills",tier:4}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.clearing_house","fallback":"Clearing House","color":"yellow"}',description:'{"translate":"mgs.kill_1000_enemies_in_missions","fallback":"Kill 1,000 enemies in missions","color":"gray"}',xp:50,branch:"mi",chain:"kills",tier:4}
 

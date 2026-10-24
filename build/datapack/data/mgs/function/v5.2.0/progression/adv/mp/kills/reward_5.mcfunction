@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mp/kills_5
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.seasoned","color":"yellow"}',description:'{"translate":"mgs.kill_500_players","color":"gray"}',xp:75,branch:"mp",chain:"kills",tier:5}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.seasoned","fallback":"Seasoned","color":"yellow"}',description:'{"translate":"mgs.kill_500_players","fallback":"Kill 500 players","color":"gray"}',xp:75,branch:"mp",chain:"kills",tier:5}
 

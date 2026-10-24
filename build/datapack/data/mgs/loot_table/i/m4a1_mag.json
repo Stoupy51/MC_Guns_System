@@ -51,12 +51,12 @@
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								],
 								"minecraft:item_model": "mgs:m4a1_mag",
 								"minecraft:item_name": {
-									"translate": "mgs.m4a1_mag"
+									"translate": "mgs.m4a1_mag","fallback": "M4A1 Mag"
 								}
 							}
 						}

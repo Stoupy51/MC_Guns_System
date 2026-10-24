@@ -5,10 +5,12 @@
 			"id": "minecraft:cyan_banner"
 		},
 		"title": {
-			"translate": "mgs.team_player"
+			"translate": "mgs.team_player",
+			"fallback": "Team Player"
 		},
 		"description": {
-			"translate": "mgs.complete_50_objective_plays"
+			"translate": "mgs.complete_50_objective_plays",
+			"fallback": "Complete 50 objective plays"
 		},
 		"frame": "task",
 		"show_toast": true,

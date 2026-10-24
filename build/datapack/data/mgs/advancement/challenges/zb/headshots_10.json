@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.ten_thousand_skulls"
+			"translate": "mgs.ten_thousand_skulls",
+			"fallback": "Ten Thousand Skulls"
 		},
 		"description": {
-			"translate": "mgs.land_15000_headshot_kills"
+			"translate": "mgs.land_15000_headshot_kills",
+			"fallback": "Land 15,000 headshot kills"
 		},
 		"frame": "challenge",
 		"show_toast": true,

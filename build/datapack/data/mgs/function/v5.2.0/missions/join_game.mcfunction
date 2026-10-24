@@ -10,13 +10,13 @@
 execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.2.0/shared/enter_map {mode:"missions",fn:"mgs:v5.2.0/missions/join_game"}
 
 # Require an active game
-execute unless data storage mgs:missions game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_active_mission_to_join","color":"red"}]
+execute unless data storage mgs:missions game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_active_mission_to_join","fallback":"No active mission to join!","color":"red"}]
 
 # Prevent double-joining
-execute if score @s mgs.mi.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_are_already_in_the_mission","color":"red"}]
+execute if score @s mgs.mi.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.you_are_already_in_the_mission","fallback":"You are already in the mission!","color":"red"}]
 
-execute if score @s mgs.mp.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.leave_your_current_game_first","color":"red"}]
-execute if score @s mgs.zb.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.leave_your_current_game_first","color":"red"}]
+execute if score @s mgs.mp.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.leave_your_current_game_first","fallback":"Leave your current game first!","color":"red"}]
+execute if score @s mgs.zb.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.leave_your_current_game_first","fallback":"Leave your current game first!","color":"red"}]
 
 # Tag as in-game and reset stats
 scoreboard players set @s mgs.mi.in_game 1
@@ -49,5 +49,5 @@ function mgs:v5.2.0/missions/respawn_tp
 function mgs:v5.2.0/shared/maps/call_script_at_base {mode:"missions",script:"join"}
 
 # Announce
-tellraw @a ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"green"}],[{"text":" ","color":"green"}, {"translate":"mgs.joined_the_mission"}]]
+tellraw @a ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"green"}],[{"text":" ","color":"green"}, {"translate":"mgs.joined_the_mission","fallback":"joined the mission!"}]]
 

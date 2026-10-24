@@ -22,13 +22,13 @@
 								},
 								"minecraft:item_model": "mgs:perk_machine_dying_wish",
 								"minecraft:item_name": {
-									"translate": "mgs.perk_machine_dying_wish"
+									"translate": "mgs.perk_machine_dying_wish","fallback": "Perk Machine Dying Wish"
 								},
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								]
 							}
