@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.lucky_shot"
+			"translate": "mgs.lucky_shot",
+			"fallback": "Lucky Shot"
 		},
 		"description": {
-			"translate": "mgs.land_10_headshot_kills"
+			"translate": "mgs.land_10_headshot_kills",
+			"fallback": "Land 10 headshot kills"
 		},
 		"frame": "task",
 		"show_toast": true,

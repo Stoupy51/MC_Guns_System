@@ -5,10 +5,12 @@
 			"id": "minecraft:orange_banner"
 		},
 		"title": {
-			"translate": "mgs.objective_machine"
+			"translate": "mgs.objective_machine",
+			"fallback": "Objective Machine"
 		},
 		"description": {
-			"translate": "mgs.complete_600_objective_plays"
+			"translate": "mgs.complete_600_objective_plays",
+			"fallback": "Complete 600 objective plays"
 		},
 		"frame": "goal",
 		"show_toast": true,

@@ -6,6 +6,6 @@
 # @within	mgs:v5.2.0/zombies/pap/repap_scope_only
 #
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_dont_have_enough_points_1000_needed","color":"red"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.you_dont_have_enough_points_1000_needed","fallback":"You don't have enough points (1000 needed).","color":"red"}]
 playsound minecraft:entity.villager.no ambient @s ~ ~ ~ 0.8 1.0
 

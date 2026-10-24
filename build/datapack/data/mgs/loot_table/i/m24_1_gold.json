@@ -41,7 +41,7 @@
 								},
 								"minecraft:item_name": [
 									{
-										"translate": "mgs.m24_holographic",
+										"translate": "mgs.m24_holographic","fallback": "M24 (Holographic)",
 										"color": "gold",
 										"italic": false
 									}
@@ -243,7 +243,7 @@
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								],
 								"minecraft:item_model": "mgs:m24_1_gold"

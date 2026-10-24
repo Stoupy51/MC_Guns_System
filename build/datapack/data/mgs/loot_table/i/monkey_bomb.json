@@ -41,7 +41,7 @@
 								},
 								"minecraft:item_name": [
 									{
-										"translate": "mgs.monkey_bomb",
+										"translate": "mgs.monkey_bomb","fallback": "Monkey Bomb",
 										"color": "gold",
 										"italic": false
 									}
@@ -137,7 +137,7 @@
 										{"text": " ","color": "#c77e36"},
 										"7",
 										" ",
-										{"translate": "mgs.blocks","color": "#c77e36"}
+										{"translate": "mgs.blocks","fallback": "blocks","color": "#c77e36"}
 									],
 									[
 										{"text": "F","color": "#c24a17","italic": false},
@@ -173,7 +173,7 @@
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								],
 								"minecraft:item_model": "mgs:monkey_bomb"

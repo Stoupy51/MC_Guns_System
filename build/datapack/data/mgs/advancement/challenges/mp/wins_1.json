@@ -5,10 +5,12 @@
 			"id": "minecraft:leather_helmet"
 		},
 		"title": {
-			"translate": "mgs.on_the_board"
+			"translate": "mgs.on_the_board",
+			"fallback": "On The Board"
 		},
 		"description": {
-			"translate": "mgs.win_a_match"
+			"translate": "mgs.win_a_match",
+			"fallback": "Win a match"
 		},
 		"frame": "task",
 		"show_toast": true,

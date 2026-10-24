@@ -5,10 +5,12 @@
 			"id": "minecraft:nether_star"
 		},
 		"title": {
-			"translate": "mgs.never_off_duty"
+			"translate": "mgs.never_off_duty",
+			"fallback": "Never Off Duty"
 		},
 		"description": {
-			"translate": "mgs.complete_150_missions"
+			"translate": "mgs.complete_150_missions",
+			"fallback": "Complete 150 missions"
 		},
 		"frame": "challenge",
 		"show_toast": true,

@@ -5,10 +5,12 @@
 			"id": "minecraft:netherite_block"
 		},
 		"title": {
-			"translate": "mgs.bottomless_pockets"
+			"translate": "mgs.bottomless_pockets",
+			"fallback": "Bottomless Pockets"
 		},
 		"description": {
-			"translate": "mgs.spend_3500000_points"
+			"translate": "mgs.spend_3500000_points",
+			"fallback": "Spend 3,500,000 points"
 		},
 		"frame": "challenge",
 		"show_toast": true,

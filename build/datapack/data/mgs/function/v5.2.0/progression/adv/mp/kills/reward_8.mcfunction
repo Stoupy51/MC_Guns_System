@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mp/kills_8
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.elite","color":"yellow"}',description:'{"translate":"mgs.kill_3500_players","color":"gray"}',xp:230,branch:"mp",chain:"kills",tier:8}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.elite","fallback":"Elite","color":"yellow"}',description:'{"translate":"mgs.kill_3500_players","fallback":"Kill 3,500 players","color":"gray"}',xp:230,branch:"mp",chain:"kills",tier:8}
 

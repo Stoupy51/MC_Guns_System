@@ -5,10 +5,12 @@
 			"id": "minecraft:trapped_chest"
 		},
 		"title": {
-			"translate": "mgs.rolling_the_box"
+			"translate": "mgs.rolling_the_box",
+			"fallback": "Rolling The Box"
 		},
 		"description": {
-			"translate": "mgs.collect_5_weapons_from_the_box"
+			"translate": "mgs.collect_5_weapons_from_the_box",
+			"fallback": "Collect 5 weapons from the box"
 		},
 		"frame": "task",
 		"show_toast": true,

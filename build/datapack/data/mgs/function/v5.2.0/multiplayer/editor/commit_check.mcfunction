@@ -20,6 +20,6 @@ execute if score @s mgs.mp.edit_points matches 0.. run return 1
 
 data modify storage mgs:temp editor set from storage mgs:temp _ed_bak
 function mgs:v5.2.0/multiplayer/editor/recompute_points
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.not_enough_points_for_that","color":"red"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.not_enough_points_for_that","fallback":"Not enough points for that!","color":"red"}]
 return fail
 

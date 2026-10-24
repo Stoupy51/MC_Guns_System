@@ -5,10 +5,12 @@
 			"id": "minecraft:compass"
 		},
 		"title": {
-			"translate": "mgs.first_deployment"
+			"translate": "mgs.first_deployment",
+			"fallback": "First Deployment"
 		},
 		"description": {
-			"translate": "mgs.complete_a_mission"
+			"translate": "mgs.complete_a_mission",
+			"fallback": "Complete a mission"
 		},
 		"frame": "task",
 		"show_toast": true,

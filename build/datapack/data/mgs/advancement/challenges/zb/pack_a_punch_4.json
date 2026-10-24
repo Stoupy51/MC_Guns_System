@@ -5,10 +5,12 @@
 			"id": "minecraft:enchanting_table"
 		},
 		"title": {
-			"translate": "mgs.upgrade_addict"
+			"translate": "mgs.upgrade_addict",
+			"fallback": "Upgrade Addict"
 		},
 		"description": {
-			"translate": "mgs.upgrade_10_weapons"
+			"translate": "mgs.upgrade_10_weapons",
+			"fallback": "Upgrade 10 weapons"
 		},
 		"frame": "task",
 		"show_toast": true,

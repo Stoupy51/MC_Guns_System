@@ -5,10 +5,12 @@
 			"id": "minecraft:ender_chest"
 		},
 		"title": {
-			"translate": "mgs.box_addict"
+			"translate": "mgs.box_addict",
+			"fallback": "Box Addict"
 		},
 		"description": {
-			"translate": "mgs.collect_25_weapons_from_the_box"
+			"translate": "mgs.collect_25_weapons_from_the_box",
+			"fallback": "Collect 25 weapons from the box"
 		},
 		"frame": "task",
 		"show_toast": true,

@@ -5,10 +5,12 @@
 			"id": "minecraft:white_banner"
 		},
 		"title": {
-			"translate": "mgs.doing_your_bit"
+			"translate": "mgs.doing_your_bit",
+			"fallback": "Doing Your Bit"
 		},
 		"description": {
-			"translate": "mgs.complete_5_objective_plays"
+			"translate": "mgs.complete_5_objective_plays",
+			"fallback": "Complete 5 objective plays"
 		},
 		"frame": "task",
 		"show_toast": true,

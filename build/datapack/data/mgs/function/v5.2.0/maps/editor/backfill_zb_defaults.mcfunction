@@ -9,6 +9,8 @@
 execute if entity @s[tag=mgs.element.barricade] run function mgs:v5.2.0/maps/light_fields/barricade
 execute if entity @s[tag=mgs.element.zombie_spawn] unless data entity @s data.activation_box run data modify entity @s data.activation_box set value []
 execute if entity @s[tag=mgs.element.zombie_spawn] unless data entity @s data.walk_to run data modify entity @s data.walk_to set value []
+execute if entity @s[tag=mgs.element.zombie_spawn] unless data entity @s data.rise_ticks run data modify entity @s data.rise_ticks set value 20
+execute if entity @s[tag=mgs.element.zombie_spawn] unless data entity @s data.from_ceiling run data modify entity @s data.from_ceiling set value 0b
 execute if entity @s[tag=mgs.element.special_spawn] unless data entity @s data.activation_box run data modify entity @s data.activation_box set value []
 execute if entity @s[tag=mgs.element.wallbuy] unless data entity @s data.name run data modify entity @s data.name set value ""
 execute if entity @s[tag=mgs.element.wallbuy] unless data entity @s data.price run data modify entity @s data.price set value 1000

@@ -5,10 +5,12 @@
 			"id": "minecraft:anvil"
 		},
 		"title": {
-			"translate": "mgs.packed"
+			"translate": "mgs.packed",
+			"fallback": "Packed"
 		},
 		"description": {
-			"translate": "mgs.upgrade_a_weapon"
+			"translate": "mgs.upgrade_a_weapon",
+			"fallback": "Upgrade a weapon"
 		},
 		"frame": "task",
 		"show_toast": true,

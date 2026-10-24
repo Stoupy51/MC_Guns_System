@@ -6,9 +6,9 @@
 # @within	mgs:v5.2.0/maps/editor/process_element
 #
 
-# start_function and tick_function survive the move.
-execute if data entity @n[tag=mgs.element.base_coordinates] data.start_function run data modify storage mgs:temp _base_preserve.start_function set from entity @n[tag=mgs.element.base_coordinates] data.start_function
-execute if data entity @n[tag=mgs.element.base_coordinates] data.tick_function run data modify storage mgs:temp _base_preserve.tick_function set from entity @n[tag=mgs.element.base_coordinates] data.tick_function
+# start_command and tick_command survive the move.
+execute if data entity @n[tag=mgs.element.base_coordinates] data.start_command run data modify storage mgs:temp _base_preserve.start_command set from entity @n[tag=mgs.element.base_coordinates] data.start_command
+execute if data entity @n[tag=mgs.element.base_coordinates] data.tick_command run data modify storage mgs:temp _base_preserve.tick_command set from entity @n[tag=mgs.element.base_coordinates] data.tick_command
 
 kill @e[tag=mgs.element.base_coordinates]
 
@@ -21,9 +21,9 @@ execute store result storage mgs:temp _pos.y double 1 run scoreboard players get
 execute store result storage mgs:temp _pos.z double 1 run scoreboard players get #base_z mgs.data
 function mgs:v5.2.0/maps/editor/summon_base_marker with storage mgs:temp _pos
 
-execute if data storage mgs:temp _base_preserve.start_function run data modify entity @n[tag=mgs.element.base_coordinates] data.start_function set from storage mgs:temp _base_preserve.start_function
-execute if data storage mgs:temp _base_preserve.tick_function run data modify entity @n[tag=mgs.element.base_coordinates] data.tick_function set from storage mgs:temp _base_preserve.tick_function
+execute if data storage mgs:temp _base_preserve.start_command run data modify entity @n[tag=mgs.element.base_coordinates] data.start_command set from storage mgs:temp _base_preserve.start_command
+execute if data storage mgs:temp _base_preserve.tick_command run data modify entity @n[tag=mgs.element.base_coordinates] data.tick_command set from storage mgs:temp _base_preserve.tick_command
 data remove storage mgs:temp _base_preserve
 
-execute as @a[tag=mgs.map_editor] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.base_coordinates_set","color":"light_purple"}]
+execute as @a[tag=mgs.map_editor] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.base_coordinates_set","fallback":"Base coordinates set!","color":"light_purple"}]
 

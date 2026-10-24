@@ -26,13 +26,13 @@
 								"minecraft:item_name": [{
 									"text":"556",
 									"color": "white"
-								}, {"translate": "mgs.x45mm"}],
+								}, {"translate": "mgs.x45mm","fallback": "x45mm"}],
 								"minecraft:item_model": "mgs:556x45mm",
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								]
 							}

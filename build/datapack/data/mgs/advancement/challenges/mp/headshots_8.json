@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.cold_precision"
+			"translate": "mgs.cold_precision",
+			"fallback": "Cold Precision"
 		},
 		"description": {
-			"translate": "mgs.land_1750_headshot_kills"
+			"translate": "mgs.land_1750_headshot_kills",
+			"fallback": "Land 1,750 headshot kills"
 		},
 		"frame": "goal",
 		"show_toast": true,

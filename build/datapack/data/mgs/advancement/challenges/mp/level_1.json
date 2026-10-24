@@ -6,13 +6,15 @@
 		},
 		"title": [
 			{
-				"translate": "mgs.rank"
+				"translate": "mgs.rank",
+				"fallback": "Rank"
 			},
 			" 10"
 		],
 		"description": [
 			{
-				"translate": "mgs.reach_multiplayer_level"
+				"translate": "mgs.reach_multiplayer_level",
+				"fallback": "Reach Multiplayer level"
 			},
 			" 10"
 		],

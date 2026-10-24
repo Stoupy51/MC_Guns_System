@@ -5,10 +5,12 @@
 			"id": "minecraft:gold_nugget"
 		},
 		"title": {
-			"translate": "mgs.points_well_spent"
+			"translate": "mgs.points_well_spent",
+			"fallback": "Points Well Spent"
 		},
 		"description": {
-			"translate": "mgs.collect_50_weapons_from_the_box"
+			"translate": "mgs.collect_50_weapons_from_the_box",
+			"fallback": "Collect 50 weapons from the box"
 		},
 		"frame": "task",
 		"show_toast": true,

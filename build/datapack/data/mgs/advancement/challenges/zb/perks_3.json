@@ -5,10 +5,12 @@
 			"id": "minecraft:splash_potion"
 		},
 		"title": {
-			"translate": "mgs.regular_round"
+			"translate": "mgs.regular_round",
+			"fallback": "Regular Round"
 		},
 		"description": {
-			"translate": "mgs.acquire_25_perks"
+			"translate": "mgs.acquire_25_perks",
+			"fallback": "Acquire 25 perks"
 		},
 		"frame": "task",
 		"show_toast": true,

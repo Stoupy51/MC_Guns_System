@@ -5,10 +5,12 @@
 			"id": "minecraft:feather"
 		},
 		"title": {
-			"translate": "mgs.guardian_angel"
+			"translate": "mgs.guardian_angel",
+			"fallback": "Guardian Angel"
 		},
 		"description": {
-			"translate": "mgs.revive_20_teammates"
+			"translate": "mgs.revive_20_teammates",
+			"fallback": "Revive 20 teammates"
 		},
 		"frame": "task",
 		"show_toast": true,

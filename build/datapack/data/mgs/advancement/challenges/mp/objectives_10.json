@@ -5,10 +5,12 @@
 			"id": "minecraft:beacon"
 		},
 		"title": {
-			"translate": "mgs.the_whole_reason"
+			"translate": "mgs.the_whole_reason",
+			"fallback": "The Whole Reason"
 		},
 		"description": {
-			"translate": "mgs.complete_1500_objective_plays"
+			"translate": "mgs.complete_1500_objective_plays",
+			"fallback": "Complete 1,500 objective plays"
 		},
 		"frame": "challenge",
 		"show_toast": true,

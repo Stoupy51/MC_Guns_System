@@ -5,10 +5,12 @@
 			"id": "minecraft:diamond"
 		},
 		"title": {
-			"translate": "mgs.economy_ruined"
+			"translate": "mgs.economy_ruined",
+			"fallback": "Economy Ruined"
 		},
 		"description": {
-			"translate": "mgs.spend_350000_points"
+			"translate": "mgs.spend_350000_points",
+			"fallback": "Spend 350,000 points"
 		},
 		"frame": "task",
 		"show_toast": true,

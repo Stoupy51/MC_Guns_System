@@ -12,6 +12,6 @@ function mgs:v5.2.0/zombies/inventory/loot_replace_lethal
 item modify entity @s hotbar.7 mgs:v5.2.0/grenade/set_count_2
 function mgs:v5.2.0/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}
 execute at @s run playsound mgs:zombies/perks/widows_wine ambient @s ~ ~ ~ 1.0 1.0
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"🕸 ",{"translate":"mgs.widows_wine_web_grenades_webbing_melee","color":"dark_red"},[" ",{"text":"+5 XP","color":"gold"}]]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],"🕸 ",{"translate":"mgs.widows_wine_web_grenades_webbing_melee","fallback":"Widow's Wine! Web grenades & webbing melee","color":"dark_red"},[" ",{"text":"+5 XP","color":"gold"}]]
 function mgs:v5.2.0/progression/zb/award_perk
 

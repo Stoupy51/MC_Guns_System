@@ -7,7 +7,7 @@
 #
 
 # The hub grays save out, but triggers can be sent by hand.
-execute if data storage mgs:temp editor{primary:""} run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.a_primary_weapon_is_required_to_save","color":"red"}]
+execute if data storage mgs:temp editor{primary:""} run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.a_primary_weapon_is_required_to_save","fallback":"A primary weapon is required to save!","color":"red"}]
 execute if data storage mgs:temp editor{primary:""} run return run function mgs:v5.2.0/multiplayer/editor/hub
 
 # So points_used is accurate.

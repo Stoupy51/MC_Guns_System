@@ -30,7 +30,7 @@ execute if score @s mgs.zb.perk.whos_who matches 1 run scoreboard players add #i
 execute if score @s mgs.zb.perk.dying_wish matches 1 run scoreboard players add #info_perk_count mgs.data 1
 execute if score @s mgs.zb.perk.widows_wine matches 1 run scoreboard players add #info_perk_count mgs.data 1
 execute if score #info_perk_count mgs.data matches 1.. run data modify storage mgs:temp info.lore append value {"text":"","italic":false}
-execute if score #info_perk_count mgs.data matches 1.. run data modify storage mgs:temp info.lore append value {"translate":"mgs.perks_3","color":"light_purple","italic":false}
+execute if score #info_perk_count mgs.data matches 1.. run data modify storage mgs:temp info.lore append value {"translate":"mgs.perks_3","fallback":"Perks:","color":"light_purple","italic":false}
 execute if score @s mgs.zb.perk.juggernog matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 Juggernog","color":"red","italic":false}
 execute if score @s mgs.zb.perk.speed_cola matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 Speed Cola","color":"green","italic":false}
 execute if score @s mgs.zb.perk.double_tap matches 1 run data modify storage mgs:temp info.lore append value {"text":"\u2022 Double Tap","color":"yellow","italic":false}

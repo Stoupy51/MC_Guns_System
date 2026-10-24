@@ -5,10 +5,12 @@
 			"id": "minecraft:blue_banner"
 		},
 		"title": {
-			"translate": "mgs.useful"
+			"translate": "mgs.useful",
+			"fallback": "Useful"
 		},
 		"description": {
-			"translate": "mgs.complete_25_objective_plays"
+			"translate": "mgs.complete_25_objective_plays",
+			"fallback": "Complete 25 objective plays"
 		},
 		"frame": "task",
 		"show_toast": true,

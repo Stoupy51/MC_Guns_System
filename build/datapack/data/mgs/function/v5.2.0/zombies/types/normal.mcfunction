@@ -46,6 +46,3 @@ execute if score #zb_round mgs.data matches 15.. if score #zb_speed_roll mgs.dat
 attribute @s minecraft:attack_damage base set 15.0
 attribute @s minecraft:knockback_resistance base set 1024
 
-# 20 ticks to rise 2 blocks.
-scoreboard players set @s mgs.zb.rise_tick 20
-

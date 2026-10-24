@@ -5,10 +5,12 @@
 			"id": "minecraft:netherite_scrap"
 		},
 		"title": {
-			"translate": "mgs.nothing_stock"
+			"translate": "mgs.nothing_stock",
+			"fallback": "Nothing Stock"
 		},
 		"description": {
-			"translate": "mgs.upgrade_75_weapons"
+			"translate": "mgs.upgrade_75_weapons",
+			"fallback": "Upgrade 75 weapons"
 		},
 		"frame": "goal",
 		"show_toast": true,

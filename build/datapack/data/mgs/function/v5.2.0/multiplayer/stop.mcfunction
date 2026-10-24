@@ -46,8 +46,8 @@ scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.stam_seen 0
 execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.2.0/player/fx_reset
 
 # Team scores mean nothing in FFA; player_wins announces the winner.
-tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.game_over"},"! "]]
-execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run tellraw @a[scores={mgs.mp.in_game=1}] ["",{"translate":"mgs.red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
+tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.game_over","fallback":"Game Over"},"! "]]
+execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run tellraw @a[scores={mgs.mp.in_game=1}] ["",{"translate":"mgs.red","fallback":"Red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","fallback":"Blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
 
 # Best first; the bare selector shows the team colour, which still applies before the team leave below.
 tag @a[scores={mgs.mp.in_game=1}] add mgs.stat_cand

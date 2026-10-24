@@ -15,6 +15,6 @@ execute if score @p[tag=mgs.pu_collecting] mgs.special.double_points matches 1..
 
 execute as @a[scores={mgs.zb.in_game=1}] run scoreboard players operation @s mgs.zb.points += #pu_cash mgs.data
 
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.cash_drop_2","color":"green","bold":true},{"text":"+","color":"gold"},{"score":{"name":"#pu_cash","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"gold"}, {"translate":"mgs.points_each"}]]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.cash_drop_2","fallback":"Cash Drop! ","color":"green","bold":true},{"text":"+","color":"gold"},{"score":{"name":"#pu_cash","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"gold"}, {"translate":"mgs.points_each","fallback":"points each!"}]]
 execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/bonus_points ambient @s ~ ~ ~ 0.7 1.0
 

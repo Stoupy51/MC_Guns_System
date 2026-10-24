@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.contact"
+			"translate": "mgs.contact",
+			"fallback": "Contact"
 		},
 		"description": {
-			"translate": "mgs.kill_50_players"
+			"translate": "mgs.kill_50_players",
+			"fallback": "Kill 50 players"
 		},
 		"frame": "task",
 		"show_toast": true,

@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.total_war"
+			"translate": "mgs.total_war",
+			"fallback": "Total War"
 		},
 		"description": {
-			"translate": "mgs.kill_35000_enemies_in_missions"
+			"translate": "mgs.kill_35000_enemies_in_missions",
+			"fallback": "Kill 35,000 enemies in missions"
 		},
 		"frame": "challenge",
 		"show_toast": true,

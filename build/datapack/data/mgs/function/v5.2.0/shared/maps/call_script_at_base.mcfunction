@@ -29,3 +29,7 @@ $data modify storage mgs:temp _base.mode set value "$(mode)"
 $data modify storage mgs:temp _base.fn set value "#mgs:maps/$(script)_script"
 function mgs:v5.2.0/shared/call_at_base with storage mgs:temp _base
 
+$execute unless data storage mgs:$(mode) game.map.$(script)_command run return 0
+$data modify storage mgs:temp _base.command set from storage mgs:$(mode) game.map.$(script)_command
+function mgs:v5.2.0/shared/run_start_command with storage mgs:temp _base
+

@@ -6,10 +6,10 @@
 # @within	dialog mgs:v5.2.0/zombies/admin
 #
 
-execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_zombies_game_is_active","color":"red"}]
+execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_zombies_game_is_active","fallback":"No zombies game is active.","color":"red"}]
 execute store result score #zb_round mgs.data run data get storage mgs:zombies game.round
 scoreboard players add #zb_round mgs.data 0
 execute store result storage mgs:zombies game.round int 1 run scoreboard players get #zb_round mgs.data
 function mgs:v5.2.0/zombies/admin/force_round_end
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_skipped_ahead_1_rounds","color":"yellow"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.an_operator_skipped_ahead_1_rounds","fallback":"An operator skipped ahead 1 round(s).","color":"yellow"}]
 

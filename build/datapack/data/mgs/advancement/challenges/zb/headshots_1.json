@@ -5,10 +5,12 @@
 			"id": "minecraft:skeleton_skull"
 		},
 		"title": {
-			"translate": "mgs.aim_for_the_head"
+			"translate": "mgs.aim_for_the_head",
+			"fallback": "Aim For The Head"
 		},
 		"description": {
-			"translate": "mgs.land_50_headshot_kills"
+			"translate": "mgs.land_50_headshot_kills",
+			"fallback": "Land 50 headshot kills"
 		},
 		"frame": "task",
 		"show_toast": true,

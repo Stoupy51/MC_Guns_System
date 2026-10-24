@@ -5,10 +5,12 @@
 			"id": "minecraft:golden_helmet"
 		},
 		"title": {
-			"translate": "mgs.reliable"
+			"translate": "mgs.reliable",
+			"fallback": "Reliable"
 		},
 		"description": {
-			"translate": "mgs.win_10_matches"
+			"translate": "mgs.win_10_matches",
+			"fallback": "Win 10 matches"
 		},
 		"frame": "task",
 		"show_toast": true,

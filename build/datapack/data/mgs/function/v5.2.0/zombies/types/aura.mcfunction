@@ -28,6 +28,9 @@ execute store result storage mgs:temp _zb_hp.val int 1 run scoreboard players ge
 function mgs:v5.2.0/zombies/apply_zombie_hp with storage mgs:temp _zb_hp
 
 attribute @s minecraft:scale base set 1.15
-item replace entity @s armor.head with minecraft:dragon_head
-data modify entity @s drop_chances.head set value 0f
+item replace entity @s armor.head with minecraft:golden_helmet[attribute_modifiers=[],unbreakable={}]
+item replace entity @s armor.chest with minecraft:golden_chestplate[attribute_modifiers=[],unbreakable={}]
+item replace entity @s armor.legs with minecraft:golden_leggings[attribute_modifiers=[],unbreakable={}]
+item replace entity @s armor.feet with minecraft:golden_boots[attribute_modifiers=[],unbreakable={}]
+data modify entity @s drop_chances set value {head:0f,chest:0f,legs:0f,feet:0f}
 

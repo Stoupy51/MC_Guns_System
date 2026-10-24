@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "zombie_rise_move.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/lifecycle.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAmBsD"
+}

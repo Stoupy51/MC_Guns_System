@@ -18,7 +18,7 @@ scoreboard players set #zb_mystery_box_price mgs.config 10
 scoreboard players set #zb_fire_sale_timer mgs.data 600
 
 bossbar remove mgs:pu_fire_sale
-bossbar add mgs:pu_fire_sale {"translate":"mgs.fire_sale","bold":true,"color":"light_purple"}
+bossbar add mgs:pu_fire_sale {"translate":"mgs.fire_sale","fallback":"Fire Sale","bold":true,"color":"light_purple"}
 bossbar set mgs:pu_fire_sale max 600
 bossbar set mgs:pu_fire_sale value 600
 bossbar set mgs:pu_fire_sale color pink

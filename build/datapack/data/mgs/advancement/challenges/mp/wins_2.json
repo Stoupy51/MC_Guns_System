@@ -5,10 +5,12 @@
 			"id": "minecraft:chainmail_helmet"
 		},
 		"title": {
-			"translate": "mgs.winning_habit"
+			"translate": "mgs.winning_habit",
+			"fallback": "Winning Habit"
 		},
 		"description": {
-			"translate": "mgs.win_3_matches"
+			"translate": "mgs.win_3_matches",
+			"fallback": "Win 3 matches"
 		},
 		"frame": "task",
 		"show_toast": true,

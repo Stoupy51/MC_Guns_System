@@ -5,10 +5,12 @@
 			"id": "minecraft:spyglass"
 		},
 		"title": {
-			"translate": "mgs.specialist"
+			"translate": "mgs.specialist",
+			"fallback": "Specialist"
 		},
 		"description": {
-			"translate": "mgs.complete_20_missions"
+			"translate": "mgs.complete_20_missions",
+			"fallback": "Complete 20 missions"
 		},
 		"frame": "task",
 		"show_toast": true,

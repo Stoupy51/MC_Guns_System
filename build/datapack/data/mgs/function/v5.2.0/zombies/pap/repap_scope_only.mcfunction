@@ -40,7 +40,7 @@ execute if data storage mgs:temp _pap_pre_cosm_scope_level run data modify stora
 
 $item modify entity @s $(slot) mgs:v5.2.0/zb_pap_apply_stats
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.scope_re_rolled_1000_points","color":"aqua"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.scope_re_rolled_1000_points","fallback":"Scope re-rolled! (-1000 points)","color":"aqua"}]
 
 tag @s add mgs.pap_owner
 scoreboard players operation @s mgs.zb.pap_s = #pap_sel mgs.data

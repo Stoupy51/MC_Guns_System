@@ -5,10 +5,12 @@
 			"id": "minecraft:diamond_chestplate"
 		},
 		"title": {
-			"translate": "mgs.hardened_command"
+			"translate": "mgs.hardened_command",
+			"fallback": "Hardened Command"
 		},
 		"description": {
-			"translate": "mgs.complete_75_missions"
+			"translate": "mgs.complete_75_missions",
+			"fallback": "Complete 75 missions"
 		},
 		"frame": "goal",
 		"show_toast": true,

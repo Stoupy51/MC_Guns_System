@@ -5,10 +5,12 @@
 			"id": "minecraft:light_gray_banner"
 		},
 		"title": {
-			"translate": "mgs.playing_the_objective"
+			"translate": "mgs.playing_the_objective",
+			"fallback": "Playing The Objective"
 		},
 		"description": {
-			"translate": "mgs.complete_10_objective_plays"
+			"translate": "mgs.complete_10_objective_plays",
+			"fallback": "Complete 10 objective plays"
 		},
 		"frame": "task",
 		"show_toast": true,

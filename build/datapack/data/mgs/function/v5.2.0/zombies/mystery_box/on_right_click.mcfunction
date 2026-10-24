@@ -16,7 +16,7 @@ execute if score #mb_usable mgs.data matches 0 run return fail
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
 # The active box can be moving.
-execute if score #mb_move_timer mgs.data matches 1.. if entity @e[tag=bs.interaction.target,tag=mgs.mystery_box_active] run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.the_mystery_box_is_moving","color":"yellow"}'}
+execute if score #mb_move_timer mgs.data matches 1.. if entity @e[tag=bs.interaction.target,tag=mgs.mystery_box_active] run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.the_mystery_box_is_moving","fallback":"The Mystery Box is moving...","color":"yellow"}'}
 
 # Dispatched at the box position.
 scoreboard players operation #cur_box mgs.data = @n[tag=bs.interaction.target] mgs.mb.box

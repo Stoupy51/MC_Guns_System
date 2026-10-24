@@ -8,7 +8,7 @@
 
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
-execute if score #zb_power mgs.data matches 1 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.power_is_already_on","color":"yellow"}'}
+execute if score #zb_power mgs.data matches 1 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.power_is_already_on","fallback":"Power is already on.","color":"yellow"}'}
 
 scoreboard players set #zb_power mgs.data 1
 
@@ -22,7 +22,7 @@ execute as @e[tag=mgs.power_switch_disp] run data modify entity @s item.componen
 kill @e[tag=mgs.power_switch]
 
 # The whole roster earns it, so no earner split.
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.power_is_on","color":"green","bold":true},[" ",{"text":"+10 XP","color":"gold"}]]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.power_is_on","fallback":"Power is ON!","color":"green","bold":true},[" ",{"text":"+10 XP","color":"gold"}]]
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.2.0/progression/zb/award_power
 playsound minecraft:block.beacon.activate ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.9 1.0
 

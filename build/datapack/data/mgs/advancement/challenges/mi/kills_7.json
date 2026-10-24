@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.spearhead"
+			"translate": "mgs.spearhead",
+			"fallback": "Spearhead"
 		},
 		"description": {
-			"translate": "mgs.kill_6000_enemies_in_missions"
+			"translate": "mgs.kill_6000_enemies_in_missions",
+			"fallback": "Kill 6,000 enemies in missions"
 		},
 		"frame": "task",
 		"show_toast": true,

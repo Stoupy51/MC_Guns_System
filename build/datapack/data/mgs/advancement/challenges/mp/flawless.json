@@ -5,10 +5,12 @@
 			"id": "minecraft:shield"
 		},
 		"title": {
-			"translate": "mgs.flawless_victory"
+			"translate": "mgs.flawless_victory",
+			"fallback": "Flawless Victory"
 		},
 		"description": {
-			"translate": "mgs.win_a_match_without_dying_once"
+			"translate": "mgs.win_a_match_without_dying_once",
+			"fallback": "Win a match without dying once"
 		},
 		"frame": "challenge",
 		"show_toast": true,

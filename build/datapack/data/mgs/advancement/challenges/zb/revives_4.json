@@ -5,10 +5,12 @@
 			"id": "minecraft:golden_apple"
 		},
 		"title": {
-			"translate": "mgs.field_medic"
+			"translate": "mgs.field_medic",
+			"fallback": "Field Medic"
 		},
 		"description": {
-			"translate": "mgs.revive_10_teammates"
+			"translate": "mgs.revive_10_teammates",
+			"fallback": "Revive 10 teammates"
 		},
 		"frame": "task",
 		"show_toast": true,

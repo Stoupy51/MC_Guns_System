@@ -36,7 +36,7 @@ scoreboard players set @s mgs.zb.perk.dying_wish 0
 execute if score @s mgs.zb.perk.widows_wine matches 1 run scoreboard players set @s mgs.special.widows_wine 0
 execute if score @s mgs.zb.perk.widows_wine matches 1 run attribute @s minecraft:attack_damage modifier remove mgs:widows_wine
 scoreboard players set @s mgs.zb.perk.widows_wine 0
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.all_perks_lost","color":"red"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.all_perks_lost","fallback":"All perks lost!","color":"red"}]
 
 # Right away.
 function mgs:v5.2.0/zombies/inventory/refresh_perk_items

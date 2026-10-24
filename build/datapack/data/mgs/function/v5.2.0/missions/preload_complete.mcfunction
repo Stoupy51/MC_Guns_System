@@ -39,5 +39,5 @@ execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs
 # Prep lasts 9 s.
 schedule function mgs:v5.2.0/missions/end_prep 180t
 
-tellraw @a[scores={mgs.mi.in_game=1}] ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.preparing_choose_your_class_mission_starts_in_9_seconds","color":"yellow"}]
+tellraw @a[scores={mgs.mi.in_game=1}] ["",{"text":"","color":"aqua","bold":true},"🎯 ",{"translate":"mgs.preparing_choose_your_class_mission_starts_in_9_seconds","fallback":"Preparing! Choose your class! Mission starts in 9 seconds!","color":"yellow"}]
 

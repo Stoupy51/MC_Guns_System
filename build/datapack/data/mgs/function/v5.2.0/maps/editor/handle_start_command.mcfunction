@@ -15,6 +15,6 @@ function mgs:v5.2.0/maps/editor/summon_start_command_marker with storage mgs:tem
 execute as @n[tag=mgs.new_start_cmd_marker] run data modify entity @s data.command set value "say Hello from start command"
 tag @e[tag=mgs.new_start_cmd_marker] remove mgs.new_start_cmd_marker
 
-tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.start_command_placed","color":"aqua"}]
+tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.start_command_placed","fallback":"Start Command placed!","color":"aqua"}]
 tellraw @a[tag=mgs.map_editor] ["  ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/data modify entity @n[tag=mgs.element.start_command,distance=..10] data.command set value \"say Hello from start command\""}, "hover_event": {"action": "show_text", "value": "Click to edit the command to run at game start"}}, "Edit Command", "]"]]
 

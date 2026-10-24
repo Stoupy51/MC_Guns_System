@@ -5,10 +5,12 @@
 			"id": "minecraft:white_bed"
 		},
 		"title": {
-			"translate": "mgs.good_hands"
+			"translate": "mgs.good_hands",
+			"fallback": "Good Hands"
 		},
 		"description": {
-			"translate": "mgs.revive_3_teammates"
+			"translate": "mgs.revive_3_teammates",
+			"fallback": "Revive 3 teammates"
 		},
 		"frame": "task",
 		"show_toast": true,

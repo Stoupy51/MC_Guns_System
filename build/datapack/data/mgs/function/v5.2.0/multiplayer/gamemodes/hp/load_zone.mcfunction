@@ -34,6 +34,6 @@ scoreboard players add #hp_zone_idx mgs.data 1
 
 function mgs:v5.2.0/multiplayer/gamemodes/hp/summon_marker with storage mgs:temp _hp_pos
 
-tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"⚡ ","color":"white"},{"translate":"mgs.hardpoint_2","color":"dark_purple"},{"storage":"mgs:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true},[{"text":" ","color":"dark_purple"}, {"translate":"mgs.active"}]]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"⚡ ","color":"white"},{"translate":"mgs.hardpoint_2","fallback":"Hardpoint ","color":"dark_purple"},{"storage":"mgs:temp","nbt":"_hp_pos.label","color":"yellow","interpret":true},[{"text":" ","color":"dark_purple"}, {"translate":"mgs.active","fallback":"active!"}]]
 playsound minecraft:block.note_block.chime player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.0
 

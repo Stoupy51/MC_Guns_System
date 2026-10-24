@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/spending_7
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.nothing_saved","color":"yellow"}',description:'{"translate":"mgs.spend_600000_points","color":"gray"}',xp:160,branch:"zb",chain:"spending",tier:7}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.nothing_saved","fallback":"Nothing Saved","color":"yellow"}',description:'{"translate":"mgs.spend_600000_points","fallback":"Spend 600,000 points","color":"gray"}',xp:160,branch:"zb",chain:"spending",tier:7}
 

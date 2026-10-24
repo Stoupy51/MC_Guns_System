@@ -5,10 +5,12 @@
 			"id": "minecraft:shulker_box"
 		},
 		"title": {
-			"translate": "mgs.box_is_home"
+			"translate": "mgs.box_is_home",
+			"fallback": "Box Is Home"
 		},
 		"description": {
-			"translate": "mgs.collect_200_weapons_from_the_box"
+			"translate": "mgs.collect_200_weapons_from_the_box",
+			"fallback": "Collect 200 weapons from the box"
 		},
 		"frame": "goal",
 		"show_toast": true,

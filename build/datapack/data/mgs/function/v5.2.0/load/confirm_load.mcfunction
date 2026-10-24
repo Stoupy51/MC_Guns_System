@@ -120,7 +120,7 @@ scoreboard players set #real_prev mgs.data 0
 
 
 # Confirm load
-tellraw @a[tag=convention.debug] {"translate":"mgs.loaded_mc_guns_system_v5_2_0","color":"green"}
+tellraw @a[tag=convention.debug] {"translate":"mgs.loaded_mc_guns_system_v5_2_0","fallback":"[Loaded MC Guns System v5.2.0]","color":"green"}
 scoreboard players set #mgs.loaded load.status 1
 
 scoreboard objectives add mgs.flash_id dummy
@@ -260,7 +260,10 @@ scoreboard objectives add mgs.zb.spawn.sid dummy
 
 scoreboard objectives add mgs.zb.sb_rank dummy
 
+# Ticks left for a rising zombie; on a spawn marker, the whole rise duration.
 scoreboard objectives add mgs.zb.rise_tick dummy
+# Thousandths of a block per tick, negative for a spawn_from_ceiling descent.
+scoreboard objectives add mgs.zb.rise_step dummy
 
 # A zombie's whole health, absorption included, which max_health alone cannot hold past 1024.
 scoreboard objectives add mgs.zb.max_hp dummy

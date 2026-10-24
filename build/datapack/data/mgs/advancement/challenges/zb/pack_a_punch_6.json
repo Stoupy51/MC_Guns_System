@@ -5,10 +5,12 @@
 			"id": "minecraft:redstone_block"
 		},
 		"title": {
-			"translate": "mgs.overclocked"
+			"translate": "mgs.overclocked",
+			"fallback": "Overclocked"
 		},
 		"description": {
-			"translate": "mgs.upgrade_35_weapons"
+			"translate": "mgs.upgrade_35_weapons",
+			"fallback": "Upgrade 35 weapons"
 		},
 		"frame": "task",
 		"show_toast": true,

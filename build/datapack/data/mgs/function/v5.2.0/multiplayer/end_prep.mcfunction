@@ -17,5 +17,5 @@ effect clear @a[scores={mgs.mp.in_game=1}] night_vision
 # The state is now active and chunks had time to load.
 function mgs:v5.2.0/shared/maps/call_script_at_base {mode:"multiplayer",script:"start"}
 
-tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"green","bold":true},{"translate":"mgs.go_go_go"}]]
+tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"green","bold":true},{"translate":"mgs.go_go_go","fallback":"GO! GO! GO!"}]]
 

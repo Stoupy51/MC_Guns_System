@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mp/objectives_5
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.carrying","color":"yellow"}',description:'{"translate":"mgs.complete_100_objective_plays","color":"gray"}',xp:75,branch:"mp",chain:"objectives",tier:5}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.carrying","fallback":"Carrying","color":"yellow"}',description:'{"translate":"mgs.complete_100_objective_plays","fallback":"Complete 100 objective plays","color":"gray"}',xp:75,branch:"mp",chain:"objectives",tier:5}
 

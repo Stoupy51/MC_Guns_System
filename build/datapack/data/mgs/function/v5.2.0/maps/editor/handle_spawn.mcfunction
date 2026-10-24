@@ -26,8 +26,8 @@ scoreboard players remove #yaw mgs.data 720
 execute as @n[tag=mgs.new_spawn_marker] store result entity @s data.yaw float 1 run scoreboard players get #yaw mgs.data
 tag @n[tag=mgs.new_spawn_marker] remove mgs.new_spawn_marker
 
-execute if entity @s[tag=mgs.element.red_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.red_spawn_placed","color":"red"}]
-execute if entity @s[tag=mgs.element.blue_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.blue_spawn_placed","color":"blue"}]
-execute if entity @s[tag=mgs.element.general_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.general_spawn_placed","color":"yellow"}]
-execute if entity @s[tag=mgs.element.mission_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_spawn_placed","color":"aqua"}]
+execute if entity @s[tag=mgs.element.red_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.red_spawn_placed","fallback":"Red Spawn placed!","color":"red"}]
+execute if entity @s[tag=mgs.element.blue_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.blue_spawn_placed","fallback":"Blue Spawn placed!","color":"blue"}]
+execute if entity @s[tag=mgs.element.general_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.general_spawn_placed","fallback":"General Spawn placed!","color":"yellow"}]
+execute if entity @s[tag=mgs.element.mission_spawn] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mission_spawn_placed","fallback":"Mission Spawn placed!","color":"aqua"}]
 

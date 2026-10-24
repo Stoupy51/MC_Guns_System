@@ -6,8 +6,8 @@
 # @within	dialog mgs:v5.2.0/zombies/admin
 #
 
-execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.no_zombies_game_is_active","color":"red"}]
+execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_zombies_game_is_active","fallback":"No zombies game is active.","color":"red"}]
 scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.zb.points 0
 scoreboard players operation @a[scores={mgs.zb.in_game=1}] mgs.zb.xp_pts_prev = @a[scores={mgs.zb.in_game=1}] mgs.zb.points
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.an_operator_reset_everyones_points","color":"red"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.an_operator_reset_everyones_points","fallback":"An operator reset everyone's points.","color":"red"}]
 

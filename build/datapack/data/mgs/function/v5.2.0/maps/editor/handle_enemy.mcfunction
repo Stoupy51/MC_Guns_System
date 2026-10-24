@@ -17,5 +17,5 @@ function mgs:v5.2.0/maps/editor/summon_enemy_marker with storage mgs:temp _pos
 execute as @n[tag=mgs.new_enemy_marker] run data modify entity @s data.function set from storage mgs:temp map_edit.map.default_enemy_function
 tag @e[tag=mgs.new_enemy_marker] remove mgs.new_enemy_marker
 
-tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.enemy_placed","color":"red"}]
+tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.enemy_placed","fallback":"Enemy placed!","color":"red"}]
 

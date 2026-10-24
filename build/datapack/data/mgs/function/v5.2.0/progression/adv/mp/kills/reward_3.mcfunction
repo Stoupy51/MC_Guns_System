@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mp/kills_3
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.trigger_time","color":"yellow"}',description:'{"translate":"mgs.kill_100_players","color":"gray"}',xp:30,branch:"mp",chain:"kills",tier:3}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.trigger_time","fallback":"Trigger Time","color":"yellow"}',description:'{"translate":"mgs.kill_100_players","fallback":"Kill 100 players","color":"gray"}',xp:30,branch:"mp",chain:"kills",tier:3}
 

@@ -9,5 +9,5 @@
 
 execute unless score @s mgs.mp.map_edit matches 1 run return fail
 function mgs:v5.2.0/maps/editor/cleanup
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.exited_map_editor_changes_discarded","color":"red"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.exited_map_editor_changes_discarded","fallback":"Exited map editor (changes discarded).","color":"red"}]
 

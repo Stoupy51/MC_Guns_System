@@ -20,5 +20,5 @@ data modify storage mgs:temp actionbar.list append value {"score":{"name":"#dps_
 data modify storage mgs:temp actionbar.list append value {"text":"."}
 data modify storage mgs:temp actionbar.list append value {"score":{"name":"#dps_dec","objective":"mgs.data"}}
 data modify storage mgs:temp actionbar.list append value " "
-data modify storage mgs:temp actionbar.list append value {"translate":"mgs.dps","color":"#c77e36"}
+data modify storage mgs:temp actionbar.list append value {"translate":"mgs.dps","fallback":"dps","color":"#c77e36"}
 

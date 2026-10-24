@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mp/wins_8
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.feared","color":"yellow"}',description:'{"translate":"mgs.win_75_matches","color":"gray"}',xp:230,branch:"mp",chain:"wins",tier:8}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.feared","fallback":"Feared","color":"yellow"}',description:'{"translate":"mgs.win_75_matches","fallback":"Win 75 matches","color":"gray"}',xp:230,branch:"mp",chain:"wins",tier:8}
 

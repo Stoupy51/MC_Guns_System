@@ -5,10 +5,12 @@
 			"id": "minecraft:milk_bucket"
 		},
 		"title": {
-			"translate": "mgs.liquid_diet"
+			"translate": "mgs.liquid_diet",
+			"fallback": "Liquid Diet"
 		},
 		"description": {
-			"translate": "mgs.acquire_150_perks"
+			"translate": "mgs.acquire_150_perks",
+			"fallback": "Acquire 150 perks"
 		},
 		"frame": "task",
 		"show_toast": true,

@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/perks_10
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.chemically_bound","color":"yellow"}',description:'{"translate":"mgs.acquire_500_perks","color":"gray"}',xp:340,branch:"zb",chain:"perks",tier:10}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.chemically_bound","fallback":"Chemically Bound","color":"yellow"}',description:'{"translate":"mgs.acquire_500_perks","fallback":"Acquire 500 perks","color":"gray"}',xp:340,branch:"zb",chain:"perks",tier:10}
 

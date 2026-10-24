@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.hostile_contact"
+			"translate": "mgs.hostile_contact",
+			"fallback": "Hostile Contact"
 		},
 		"description": {
-			"translate": "mgs.kill_100_enemies_in_missions"
+			"translate": "mgs.kill_100_enemies_in_missions",
+			"fallback": "Kill 100 enemies in missions"
 		},
 		"frame": "task",
 		"show_toast": true,

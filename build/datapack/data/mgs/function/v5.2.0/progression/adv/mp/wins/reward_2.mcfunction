@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/mp/wins_2
 #
 
-function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.winning_habit","color":"yellow"}',description:'{"translate":"mgs.win_3_matches","color":"gray"}',xp:20,branch:"mp",chain:"wins",tier:2}
+function mgs:v5.2.0/progression/adv/reward_mp {title:'{"translate":"mgs.winning_habit","fallback":"Winning Habit","color":"yellow"}',description:'{"translate":"mgs.win_3_matches","fallback":"Win 3 matches","color":"gray"}',xp:20,branch:"mp",chain:"wins",tier:2}
 

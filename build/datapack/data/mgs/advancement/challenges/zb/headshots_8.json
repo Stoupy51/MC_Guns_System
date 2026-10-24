@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.nothing_wasted"
+			"translate": "mgs.nothing_wasted",
+			"fallback": "Nothing Wasted"
 		},
 		"description": {
-			"translate": "mgs.land_6000_headshot_kills"
+			"translate": "mgs.land_6000_headshot_kills",
+			"fallback": "Land 6,000 headshot kills"
 		},
 		"frame": "goal",
 		"show_toast": true,

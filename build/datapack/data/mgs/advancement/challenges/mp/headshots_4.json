@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.clean_aim"
+			"translate": "mgs.clean_aim",
+			"fallback": "Clean Aim"
 		},
 		"description": {
-			"translate": "mgs.land_100_headshot_kills"
+			"translate": "mgs.land_100_headshot_kills",
+			"fallback": "Land 100 headshot kills"
 		},
 		"frame": "task",
 		"show_toast": true,

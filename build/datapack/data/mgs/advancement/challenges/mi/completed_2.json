@@ -5,10 +5,12 @@
 			"id": "minecraft:map"
 		},
 		"title": {
-			"translate": "mgs.second_tour"
+			"translate": "mgs.second_tour",
+			"fallback": "Second Tour"
 		},
 		"description": {
-			"translate": "mgs.complete_3_missions"
+			"translate": "mgs.complete_3_missions",
+			"fallback": "Complete 3 missions"
 		},
 		"frame": "task",
 		"show_toast": true,

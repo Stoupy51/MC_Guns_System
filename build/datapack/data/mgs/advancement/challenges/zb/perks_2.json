@@ -5,10 +5,12 @@
 			"id": "minecraft:potion"
 		},
 		"title": {
-			"translate": "mgs.acquired_taste"
+			"translate": "mgs.acquired_taste",
+			"fallback": "Acquired Taste"
 		},
 		"description": {
-			"translate": "mgs.acquire_10_perks"
+			"translate": "mgs.acquire_10_perks",
+			"fallback": "Acquire 10 perks"
 		},
 		"frame": "task",
 		"show_toast": true,

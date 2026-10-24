@@ -5,10 +5,12 @@
 			"id": "minecraft:iron_ingot"
 		},
 		"title": {
-			"translate": "mgs.big_spender"
+			"translate": "mgs.big_spender",
+			"fallback": "Big Spender"
 		},
 		"description": {
-			"translate": "mgs.spend_50000_points"
+			"translate": "mgs.spend_50000_points",
+			"fallback": "Spend 50,000 points"
 		},
 		"frame": "task",
 		"show_toast": true,

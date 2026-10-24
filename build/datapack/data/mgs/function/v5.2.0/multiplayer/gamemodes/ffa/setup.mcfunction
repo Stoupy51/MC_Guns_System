@@ -10,5 +10,5 @@
 team leave @a[team=mgs.red]
 team leave @a[team=mgs.blue]
 scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.team 0
-tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.free_for_all_everyone_for_themselves","color":"yellow"}]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.free_for_all_everyone_for_themselves","fallback":"Free-For-All! Everyone for themselves!","color":"yellow"}]
 

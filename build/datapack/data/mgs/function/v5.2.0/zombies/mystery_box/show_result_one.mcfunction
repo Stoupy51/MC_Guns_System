@@ -28,5 +28,5 @@ data modify entity @s item.components."minecraft:custom_data".mgs.mb_result set 
 data merge entity @s {transformation:{translation:[0f,1.5f,0f]}}
 data merge entity @s {interpolation_duration:150,transformation:{translation:[0f,0f,0f]},start_interpolation:0}
 
-execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.pid = #this_buyer mgs.data run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_result_ready","color":"light_purple"},{"translate":"mgs.right_click_to_collect","color":"green","bold":true}]
+execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.pid = #this_buyer mgs.data run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mystery_box_result_ready","fallback":"Mystery Box result ready! ","color":"light_purple"},{"translate":"mgs.right_click_to_collect","fallback":"Right-click to collect!","color":"green","bold":true}]
 

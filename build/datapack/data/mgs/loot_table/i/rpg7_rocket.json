@@ -52,12 +52,12 @@
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								],
 								"minecraft:item_model": "mgs:rpg7_rocket",
 								"minecraft:item_name": {
-									"translate": "mgs.rpg7_rocket"
+									"translate": "mgs.rpg7_rocket","fallback": "Rpg7 Rocket"
 								}
 							}
 						}

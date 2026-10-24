@@ -39,10 +39,10 @@ execute store result storage mgs:temp _hub.perks int 1 run data get storage mgs:
 
 function mgs:v5.2.0/multiplayer/editor/hub_base with storage mgs:temp _hub
 function mgs:v5.2.0/multiplayer/editor/hub_row_primary with storage mgs:temp editor
-execute if data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udce6 ",{text:"Primary Mags \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.pick_a_primary_weapon_first",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
+execute if data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udce6 ",{text:"Primary Mags \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.pick_a_primary_weapon_first",fallback:"Pick a primary weapon first",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
 execute unless data storage mgs:temp editor{primary:""} run function mgs:v5.2.0/multiplayer/editor/hub_row_primary_mags with storage mgs:temp editor
 function mgs:v5.2.0/multiplayer/editor/hub_row_secondary with storage mgs:temp editor
-execute if data storage mgs:temp editor{secondary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udce6 ",{text:"Secondary Mags \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.pick_a_secondary_weapon_first",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
+execute if data storage mgs:temp editor{secondary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udce6 ",{text:"Secondary Mags \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.pick_a_secondary_weapon_first",fallback:"Pick a secondary weapon first",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
 execute unless data storage mgs:temp editor{secondary:""} run function mgs:v5.2.0/multiplayer/editor/hub_row_secondary_mags with storage mgs:temp editor
 function mgs:v5.2.0/multiplayer/editor/hub_row_knife with storage mgs:temp editor
 function mgs:v5.2.0/multiplayer/editor/hub_row_equip1 with storage mgs:temp editor
@@ -50,9 +50,9 @@ function mgs:v5.2.0/multiplayer/editor/hub_row_equip2 with storage mgs:temp edit
 function mgs:v5.2.0/multiplayer/editor/hub_row_perks with storage mgs:temp _hub
 
 # Grayed out until a primary is picked.
-execute if data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udcbe ",{text:"Save \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.a_primary_weapon_is_required",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
-execute unless data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udcbe ",{translate:"mgs.save_as_public",color:"green",bold:true}],tooltip:{translate:"mgs.everyone_can_see_and_use_this_loadout"},action:{type:"run_command",command:"/trigger mgs.player.config set 350"}}
-execute unless data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udcbe ",{translate:"mgs.save_as_private",color:"yellow",bold:true}],tooltip:{translate:"mgs.only_you_can_see_and_use_this_loadout"},action:{type:"run_command",command:"/trigger mgs.player.config set 351"}}
+execute if data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udcbe ",{text:"Save \u2014 Unavailable",color:"dark_gray"}],tooltip:{translate:"mgs.a_primary_weapon_is_required",fallback:"A primary weapon is required",color:"red"},action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}
+execute unless data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udcbe ",{translate:"mgs.save_as_public",fallback:"Save as Public",color:"green",bold:true}],tooltip:{translate:"mgs.everyone_can_see_and_use_this_loadout",fallback:"Everyone can see and use this loadout"},action:{type:"run_command",command:"/trigger mgs.player.config set 350"}}
+execute unless data storage mgs:temp editor{primary:""} run data modify storage mgs:temp dialog.actions append value {label:["","\ud83d\udcbe ",{translate:"mgs.save_as_private",fallback:"Save as Private",color:"yellow",bold:true}],tooltip:{translate:"mgs.only_you_can_see_and_use_this_loadout",fallback:"Only you can see and use this loadout"},action:{type:"run_command",command:"/trigger mgs.player.config set 351"}}
 
 function mgs:v5.2.0/multiplayer/show_dialog with storage mgs:temp
 

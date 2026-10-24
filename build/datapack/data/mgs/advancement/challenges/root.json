@@ -7,10 +7,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.mc_guns_system"
+			"translate": "mgs.mc_guns_system",
+			"fallback": "MC Guns System"
 		},
 		"description": {
-			"translate": "mgs.challenges_across_every_mode_each_one_pays_xp"
+			"translate": "mgs.challenges_across_every_mode_each_one_pays_xp",
+			"fallback": "Challenges across every mode. Each one pays XP"
 		},
 		"frame": "task",
 		"show_toast": false,

@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/kills_8
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.body_count","color":"yellow"}',description:'{"translate":"mgs.kill_20000_zombies","color":"gray"}',xp:230,branch:"zb",chain:"kills",tier:8}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.body_count","fallback":"Body Count","color":"yellow"}',description:'{"translate":"mgs.kill_20000_zombies","fallback":"Kill 20,000 zombies","color":"gray"}',xp:230,branch:"zb",chain:"kills",tier:8}
 

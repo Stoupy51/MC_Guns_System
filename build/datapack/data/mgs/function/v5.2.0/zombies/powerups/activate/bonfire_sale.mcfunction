@@ -10,7 +10,7 @@
 scoreboard players set #zb_bonfire_sale_timer mgs.data 600
 
 bossbar remove mgs:pu_bonfire_sale
-bossbar add mgs:pu_bonfire_sale {"translate":"mgs.bonfire_sale","bold":true,"color":"gold"}
+bossbar add mgs:pu_bonfire_sale {"translate":"mgs.bonfire_sale","fallback":"Bonfire Sale","bold":true,"color":"gold"}
 bossbar set mgs:pu_bonfire_sale max 600
 bossbar set mgs:pu_bonfire_sale value 600
 bossbar set mgs:pu_bonfire_sale color yellow

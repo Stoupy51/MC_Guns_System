@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.relentless"
+			"translate": "mgs.relentless",
+			"fallback": "Relentless"
 		},
 		"description": {
-			"translate": "mgs.kill_6000_players"
+			"translate": "mgs.kill_6000_players",
+			"fallback": "Kill 6,000 players"
 		},
 		"frame": "goal",
 		"show_toast": true,

@@ -10,7 +10,7 @@
 
 tag @a remove mgs.ffa_candidate
 scoreboard players reset * mgs.sidebar
-$function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{translate:"mgs.free_for_all",color:"gold",bold:true},contents:$(ffa_sb)}
+$function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{translate:"mgs.free_for_all",fallback:"Free For All",color:"gold",bold:true},contents:$(ffa_sb)}
 scoreboard objectives setdisplay sidebar.team.red mgs.sidebar
 scoreboard objectives setdisplay sidebar.team.blue mgs.sidebar
 scoreboard objectives setdisplay sidebar.team.gold mgs.sidebar

@@ -5,10 +5,12 @@
 			"id": "minecraft:totem_of_undying"
 		},
 		"title": {
-			"translate": "mgs.death_denied"
+			"translate": "mgs.death_denied",
+			"fallback": "Death Denied"
 		},
 		"description": {
-			"translate": "mgs.revive_150_teammates"
+			"translate": "mgs.revive_150_teammates",
+			"fallback": "Revive 150 teammates"
 		},
 		"frame": "challenge",
 		"show_toast": true,

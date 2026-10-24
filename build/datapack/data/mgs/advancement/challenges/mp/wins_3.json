@@ -5,10 +5,12 @@
 			"id": "minecraft:iron_helmet"
 		},
 		"title": {
-			"translate": "mgs.victor"
+			"translate": "mgs.victor",
+			"fallback": "Victor"
 		},
 		"description": {
-			"translate": "mgs.win_5_matches"
+			"translate": "mgs.win_5_matches",
+			"fallback": "Win 5 matches"
 		},
 		"frame": "task",
 		"show_toast": true,

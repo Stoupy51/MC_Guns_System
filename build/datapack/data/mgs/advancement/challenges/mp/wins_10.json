@@ -5,10 +5,12 @@
 			"id": "minecraft:nether_star"
 		},
 		"title": {
-			"translate": "mgs.undisputed"
+			"translate": "mgs.undisputed",
+			"fallback": "Undisputed"
 		},
 		"description": {
-			"translate": "mgs.win_150_matches"
+			"translate": "mgs.win_150_matches",
+			"fallback": "Win 150 matches"
 		},
 		"frame": "challenge",
 		"show_toast": true,

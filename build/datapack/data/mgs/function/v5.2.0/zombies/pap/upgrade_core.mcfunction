@@ -8,13 +8,13 @@
 
 # Must be hotbar 1, 2 or 3.
 execute store result score #pap_sel mgs.data run data get entity @s SelectedItemSlot
-execute unless score #pap_sel mgs.data matches 1..3 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.hold_weapon_slot_1_2_or_3_to_use_pack_a_punch","color":"red"}'}
+execute unless score #pap_sel mgs.data matches 1..3 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.hold_weapon_slot_1_2_or_3_to_use_pack_a_punch","fallback":"Hold weapon slot 1, 2, or 3 to use Pack-a-Punch.","color":"red"}'}
 
 scoreboard players set #pap_is_gun mgs.data 0
 execute if score #pap_sel mgs.data matches 1 if items entity @s hotbar.1 *[custom_data~{mgs:{gun:true}}] run scoreboard players set #pap_is_gun mgs.data 1
 execute if score #pap_sel mgs.data matches 2 if items entity @s hotbar.2 *[custom_data~{mgs:{gun:true}}] run scoreboard players set #pap_is_gun mgs.data 1
 execute if score #pap_sel mgs.data matches 3 if items entity @s hotbar.3 *[custom_data~{mgs:{gun:true}}] run scoreboard players set #pap_is_gun mgs.data 1
-execute unless score #pap_is_gun mgs.data matches 1 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.selected_slot_does_not_contain_a_weapon","color":"red"}'}
+execute unless score #pap_is_gun mgs.data matches 1 run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.selected_slot_does_not_contain_a_weapon","fallback":"Selected slot does not contain a weapon.","color":"red"}'}
 
 data modify storage mgs:temp _pap.slot set value "hotbar.1"
 execute if score #pap_sel mgs.data matches 2 run data modify storage mgs:temp _pap.slot set value "hotbar.2"
@@ -22,7 +22,7 @@ execute if score #pap_sel mgs.data matches 3 run data modify storage mgs:temp _p
 
 function mgs:v5.2.0/zombies/pap/extract_selected with storage mgs:temp _pap
 
-execute unless data storage mgs:temp _pap_extract.stats.pap_stats run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.this_weapon_cannot_be_pack_a_punched","color":"red"}'}
+execute unless data storage mgs:temp _pap_extract.stats.pap_stats run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.this_weapon_cannot_be_pack_a_punched","fallback":"This weapon cannot be Pack-a-Punched.","color":"red"}'}
 
 scoreboard players set #pap_level mgs.data 0
 execute if data storage mgs:temp _pap_extract.stats.pap_level store result score #pap_level mgs.data run data get storage mgs:temp _pap_extract.stats.pap_level
@@ -59,7 +59,7 @@ execute if data storage mgs:temp _pap_extract.lore[1] run data modify storage mg
 
 execute if data storage mgs:temp _pap_extract.lore[0] run function mgs:v5.2.0/zombies/pap/annotate_lore
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],"✦ ",{"translate":"mgs.pack_a_punch_3","color":"aqua","bold":true},[{"text":"  ","color":"gray"}, {"translate":"mgs.level_2"}],{"score":{"name":"#pap_next","objective":"mgs.data"},"color":"aqua"},{"text":"/","color":"dark_gray"},{"score":{"name":"#pap_max","objective":"mgs.data"},"color":"aqua"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],"✦ ",{"translate":"mgs.pack_a_punch_3","fallback":"Pack-a-Punch!","color":"aqua","bold":true},[{"text":"  ","color":"gray"}, {"translate":"mgs.level_2","fallback":"Level "}],{"score":{"name":"#pap_next","objective":"mgs.data"},"color":"aqua"},{"text":"/","color":"dark_gray"},{"score":{"name":"#pap_max","objective":"mgs.data"},"color":"aqua"}]
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 
 execute if data storage mgs:temp _pap_lore1_original run data modify storage mgs:temp _pap_extract.lore[1] set from storage mgs:temp _pap_lore1_original

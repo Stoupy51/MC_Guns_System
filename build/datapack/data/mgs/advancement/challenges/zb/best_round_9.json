@@ -6,13 +6,15 @@
 		},
 		"title": [
 			{
-				"translate": "mgs.round"
+				"translate": "mgs.round",
+				"fallback": "Round"
 			},
 			" 50"
 		],
 		"description": [
 			{
-				"translate": "mgs.clear_round"
+				"translate": "mgs.clear_round",
+				"fallback": "Clear round"
 			},
 			" 50"
 		],

@@ -12,5 +12,5 @@ scoreboard players remove #loadout_id mgs.data 60000
 
 scoreboard players operation @s mgs.mp.default = #loadout_id mgs.data
 
-tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.default_loadout_set_it_will_auto_apply_when_a_game_starts","color":"green"}]
+tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.default_loadout_set_it_will_auto_apply_when_a_game_starts","fallback":"Default loadout set! It will auto-apply when a game starts","color":"green"}]
 

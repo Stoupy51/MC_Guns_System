@@ -9,6 +9,6 @@
 #
 
 tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] {"text":"============================================","color":"dark_gray"}
-tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["  ",{"translate":"mgs.nearest_start_command","color":"yellow","bold":true},{"entity":"@n[tag=mgs.element.start_command,distance=..10]","nbt":"data.command","color":"white"}]
-$tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["    ",{"translate":"mgs.edit_nearest_start_command","color":"yellow","click_event":{"action":"suggest_command","command":"/data modify entity @n[tag=mgs.element.start_command,distance=..10] data.command set value \"$(nearest_cmd)\""},"hover_event":{"action":"show_text","value":"Edit nearest start command command using its current value"}}]
+tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["  ",{"translate":"mgs.nearest_start_command","fallback":"Nearest Start Command: ","color":"yellow","bold":true},{"entity":"@n[tag=mgs.element.start_command,distance=..10]","nbt":"data.command","color":"white"}]
+$tellraw @p[tag=mgs.map_editor,distance=..6,sort=nearest] ["    ",{"translate":"mgs.edit_nearest_start_command","fallback":"[Edit Nearest Start Command]","color":"yellow","click_event":{"action":"suggest_command","command":"/data modify entity @n[tag=mgs.element.start_command,distance=..10] data.command set value \"$(nearest_cmd)\""},"hover_event":{"action":"show_text","value":"Edit nearest start command command using its current value"}}]
 

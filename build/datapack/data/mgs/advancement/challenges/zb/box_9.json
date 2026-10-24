@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.ray_gun_eventually"
+			"translate": "mgs.ray_gun_eventually",
+			"fallback": "Ray Gun Eventually"
 		},
 		"description": {
-			"translate": "mgs.collect_300_weapons_from_the_box"
+			"translate": "mgs.collect_300_weapons_from_the_box",
+			"fallback": "Collect 300 weapons from the box"
 		},
 		"frame": "goal",
 		"show_toast": true,

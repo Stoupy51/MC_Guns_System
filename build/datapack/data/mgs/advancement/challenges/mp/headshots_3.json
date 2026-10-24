@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.eyes_up"
+			"translate": "mgs.eyes_up",
+			"fallback": "Eyes Up"
 		},
 		"description": {
-			"translate": "mgs.land_50_headshot_kills"
+			"translate": "mgs.land_50_headshot_kills",
+			"fallback": "Land 50 headshot kills"
 		},
 		"frame": "task",
 		"show_toast": true,

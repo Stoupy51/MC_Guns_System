@@ -16,8 +16,8 @@ execute if score #demo_ch mgs.data matches 1.. run scoreboard players operation 
 
 # Only the defending side sees it, or an attacker crouched by their own bomb would read that they are defusing.
 scoreboard players operation #demo_prog_shown mgs.data = @s mgs.demo_prog
-execute if score #demo_ch mgs.data matches 1.. if score @s mgs.demo_owner matches 1 run title @a[scores={mgs.mp.team=2},predicate=mgs:v5.2.0/is_sneaking,gamemode=!spectator,distance=..3.0] actionbar [{"translate":"mgs.defusing","color":"aqua"},{"score":{"name":"#demo_prog_shown","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.100"}]
-execute if score #demo_ch mgs.data matches 1.. if score @s mgs.demo_owner matches 2 run title @a[scores={mgs.mp.team=1},predicate=mgs:v5.2.0/is_sneaking,gamemode=!spectator,distance=..3.0] actionbar [{"translate":"mgs.defusing","color":"aqua"},{"score":{"name":"#demo_prog_shown","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.100"}]
+execute if score #demo_ch mgs.data matches 1.. if score @s mgs.demo_owner matches 1 run title @a[scores={mgs.mp.team=2},predicate=mgs:v5.2.0/is_sneaking,gamemode=!spectator,distance=..3.0] actionbar [{"translate":"mgs.defusing","fallback":"Defusing... ","color":"aqua"},{"score":{"name":"#demo_prog_shown","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.100","fallback":"/100"}]
+execute if score #demo_ch mgs.data matches 1.. if score @s mgs.demo_owner matches 2 run title @a[scores={mgs.mp.team=1},predicate=mgs:v5.2.0/is_sneaking,gamemode=!spectator,distance=..3.0] actionbar [{"translate":"mgs.defusing","fallback":"Defusing... ","color":"aqua"},{"score":{"name":"#demo_prog_shown","objective":"mgs.data"},"color":"yellow"},{"translate":"mgs.100","fallback":"/100"}]
 
 execute if score @s mgs.demo_prog matches 100.. run function mgs:v5.2.0/multiplayer/gamemodes/demo/site_defused
 

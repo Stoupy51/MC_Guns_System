@@ -5,10 +5,12 @@
 			"id": "minecraft:white_wool"
 		},
 		"title": {
-			"translate": "mgs.teddy_bear_collector"
+			"translate": "mgs.teddy_bear_collector",
+			"fallback": "Teddy Bear Collector"
 		},
 		"description": {
-			"translate": "mgs.collect_100_weapons_from_the_box"
+			"translate": "mgs.collect_100_weapons_from_the_box",
+			"fallback": "Collect 100 weapons from the box"
 		},
 		"frame": "task",
 		"show_toast": true,

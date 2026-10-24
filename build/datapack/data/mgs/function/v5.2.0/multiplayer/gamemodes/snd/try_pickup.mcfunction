@@ -17,8 +17,8 @@ summon minecraft:text_display ~ ~ ~ {Tags:["mgs.snd_carrier_label","mgs.multipla
 
 tag @a remove mgs.xp_earner
 tag @s add mgs.xp_earner
-tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s"}],[{"text":" ","color":"gold"}, {"translate":"mgs.picked_up_the_bomb"}]]
-tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"text":"💣 ","color":"white"},["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s"}],[{"text":" ","color":"gold"}, {"translate":"mgs.picked_up_the_bomb"}],[" ",{"text":"+2 XP","color":"gold"}]]
+tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"💣 ","color":"white"},["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s"}],[{"text":" ","color":"gold"}, {"translate":"mgs.picked_up_the_bomb","fallback":"picked up the bomb!"}]]
+tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"💣 ","color":"white"},["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s"}],[{"text":" ","color":"gold"}, {"translate":"mgs.picked_up_the_bomb","fallback":"picked up the bomb!"}],[" ",{"text":"+2 XP","color":"gold"}]]
 execute as @a[tag=mgs.xp_earner] run function mgs:v5.2.0/progression/mp/award_bomb_pickup
 tag @a remove mgs.xp_earner
 playsound minecraft:item.armor.equip_chain player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.2

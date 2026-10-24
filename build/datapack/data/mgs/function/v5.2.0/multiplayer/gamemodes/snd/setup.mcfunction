@@ -6,7 +6,7 @@
 # @within	mgs:v5.2.0/multiplayer/start
 #
 
-tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.search_destroy_carry_the_bomb_to_a_site_or_defend_both","color":"yellow"}]
+tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.search_destroy_carry_the_bomb_to_a_site_or_defend_both","fallback":"Search & Destroy! Carry the bomb to a site, or defend both!","color":"yellow"}]
 
 function mgs:v5.2.0/shared/load_base_coordinates {mode:"multiplayer"}
 

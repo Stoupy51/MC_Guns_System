@@ -5,10 +5,12 @@
 			"id": "minecraft:nether_star"
 		},
 		"title": {
-			"translate": "mgs.the_house_always_pays"
+			"translate": "mgs.the_house_always_pays",
+			"fallback": "The House Always Pays"
 		},
 		"description": {
-			"translate": "mgs.collect_500_weapons_from_the_box"
+			"translate": "mgs.collect_500_weapons_from_the_box",
+			"fallback": "Collect 500 weapons from the box"
 		},
 		"frame": "challenge",
 		"show_toast": true,

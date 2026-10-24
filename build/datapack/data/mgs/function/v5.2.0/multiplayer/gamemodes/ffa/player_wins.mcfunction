@@ -11,8 +11,8 @@
 # FFA has no team score for multiplayer/xp/on_game_end, so the winner is marked here.
 tag @s add mgs.xp_winner
 
-tellraw @a[scores={mgs.mp.in_game=1}] ["","🏆 ",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"gold","bold":true}]," ",{"translate":"mgs.wins","color":"gold","bold":true}]
-tellraw @a[scores={mgs.mp.in_game=1}] ["","  ",{"translate":"mgs.score","color":"gray"},{"score":{"name":"@s","objective":"mgs.mp.kills"},"color":"yellow"}," ",{"translate":"mgs.kills","color":"gray"}]
+tellraw @a[scores={mgs.mp.in_game=1}] ["","🏆 ",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"gold","bold":true}]," ",{"translate":"mgs.wins","fallback":"wins!","color":"gold","bold":true}]
+tellraw @a[scores={mgs.mp.in_game=1}] ["","  ",{"translate":"mgs.score","fallback":"Score: ","color":"gray"},{"score":{"name":"@s","objective":"mgs.mp.kills"},"color":"yellow"}," ",{"translate":"mgs.kills","fallback":"kills","color":"gray"}]
 
 function mgs:v5.2.0/multiplayer/stop
 

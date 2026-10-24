@@ -28,6 +28,6 @@ execute unless entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spe
 
 title @s times 0 60 20
 title @s title ["☠"]
-title @s subtitle [{"translate":"mgs.you_bled_out_respawning_next_round","color":"gray"}]
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"dark_red"}],[{"text":" ","color":"gray"}, {"translate":"mgs.has_bled_out"}]]
+title @s subtitle [{"translate":"mgs.you_bled_out_respawning_next_round","fallback":"You bled out. Respawning next round...","color":"gray"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"dark_red"}],[{"text":" ","color":"gray"}, {"translate":"mgs.has_bled_out","fallback":"has bled out."}]]
 

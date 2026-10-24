@@ -51,12 +51,12 @@
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								],
 								"minecraft:item_model": "mgs:glock18_mag",
 								"minecraft:item_name": {
-									"translate": "mgs.glock18_mag"
+									"translate": "mgs.glock18_mag","fallback": "Glock18 Mag"
 								}
 							}
 						}

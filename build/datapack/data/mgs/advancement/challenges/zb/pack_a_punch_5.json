@@ -5,10 +5,12 @@
 			"id": "minecraft:lapis_lazuli"
 		},
 		"title": {
-			"translate": "mgs.machine_regular"
+			"translate": "mgs.machine_regular",
+			"fallback": "Machine Regular"
 		},
 		"description": {
-			"translate": "mgs.upgrade_20_weapons"
+			"translate": "mgs.upgrade_20_weapons",
+			"fallback": "Upgrade 20 weapons"
 		},
 		"frame": "task",
 		"show_toast": true,

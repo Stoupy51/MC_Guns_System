@@ -19,8 +19,8 @@ execute if data storage mgs:temp _pd_src[0] run function mgs:v5.2.0/multiplayer/
 # Then raise the loadout's like count.
 execute if score #already_liked mgs.data matches 0 run function mgs:v5.2.0/multiplayer/custom/like_increment_setup
 
-execute if score #already_liked mgs.data matches 0 run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.loadout_liked","color":"green"}]
-execute if score #already_liked mgs.data matches 1 run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.you_already_liked_this_loadout","color":"yellow"}]
+execute if score #already_liked mgs.data matches 0 run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.loadout_liked","fallback":"Loadout liked!","color":"green"}]
+execute if score #already_liked mgs.data matches 1 run tellraw @s ["",[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.you_already_liked_this_loadout","fallback":"You already liked this loadout","color":"yellow"}]
 
 function mgs:v5.2.0/multiplayer/marketplace/browse
 

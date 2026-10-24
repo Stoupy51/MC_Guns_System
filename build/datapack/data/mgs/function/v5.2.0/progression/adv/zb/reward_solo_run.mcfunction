@@ -6,5 +6,5 @@
 # @within	advancement mgs:challenges/zb/solo_run
 #
 
-function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.alone_in_the_dark","color":"yellow"}',description:'{"translate":"mgs.reach_round_20_with_nobody_else_in_the_game","color":"gray"}',xp:500,branch:"zb",chain:"solo_run",tier:0}
+function mgs:v5.2.0/progression/adv/reward_zb {title:'{"translate":"mgs.alone_in_the_dark","fallback":"Alone In The Dark","color":"yellow"}',description:'{"translate":"mgs.reach_round_20_with_nobody_else_in_the_game","fallback":"Reach round 20 with nobody else in the game","color":"gray"}',xp:500,branch:"zb",chain:"solo_run",tier:0}
 

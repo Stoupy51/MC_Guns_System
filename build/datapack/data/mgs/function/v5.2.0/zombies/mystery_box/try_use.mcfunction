@@ -20,7 +20,8 @@ scoreboard players operation #roam_uses mgs.data = #mb_pulls mgs.data
 scoreboard players set #roam_threshold mgs.data 4
 function mgs:v5.2.0/zombies/roaming/roll_move
 scoreboard players operation #mb_will_move mgs.data = #roam_will_move mgs.data
-# Only the active box moves, never during a Fire Sale.
+# Only the active box moves, never during a Fire Sale, and never on a map with a single spot.
+execute unless data storage mgs:zombies game.map.mystery_box.positions[1] run scoreboard players set #mb_will_move mgs.data 0
 execute unless entity @n[tag=bs.interaction.target,tag=mgs.mystery_box_active] run scoreboard players set #mb_will_move mgs.data 0
 execute if score #zb_fire_sale_timer mgs.data matches 1.. run scoreboard players set #mb_will_move mgs.data 0
 execute if score #mb_will_move mgs.data matches 1 run scoreboard players set #mb_pulls mgs.data 0
@@ -45,5 +46,5 @@ execute unless score @s mgs.special.timeslip matches 1.. run playsound mgs:zombi
 execute unless score @s mgs.special.timeslip matches 1.. run playsound mgs:zombies/mystery_box/music_box ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
 execute if score @s mgs.special.timeslip matches 1.. run playsound mgs:zombies/mystery_box/box_spin ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.1 1.0
 execute if score @s mgs.special.timeslip matches 1.. run playsound mgs:zombies/mystery_box/music_box_short ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 1.0 1.0
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mystery_box_spinning","color":"light_purple"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mystery_box_spinning","fallback":"Mystery Box spinning...","color":"light_purple"}]
 

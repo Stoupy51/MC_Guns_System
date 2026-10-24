@@ -42,7 +42,7 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.stam_seen 0
 # Every shader id off, so nothing survives into the lobby.
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.2.0/player/fx_reset
 
-tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.zombies_game_ended","color":"red"}]
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.zombies_game_ended","fallback":"Zombies game ended.","color":"red"}]
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.2.0/zombies/reset_player
 
 kill @e[type=minecraft:marker,tag=mgs.death_watch]

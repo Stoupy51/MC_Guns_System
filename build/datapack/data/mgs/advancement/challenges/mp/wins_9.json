@@ -5,10 +5,12 @@
 			"id": "minecraft:totem_of_undying"
 		},
 		"title": {
-			"translate": "mgs.champion"
+			"translate": "mgs.champion",
+			"fallback": "Champion"
 		},
 		"description": {
-			"translate": "mgs.win_100_matches"
+			"translate": "mgs.win_100_matches",
+			"fallback": "Win 100 matches"
 		},
 		"frame": "goal",
 		"show_toast": true,

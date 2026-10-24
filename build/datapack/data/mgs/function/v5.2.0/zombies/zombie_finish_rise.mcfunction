@@ -9,6 +9,9 @@
 data modify entity @s NoAI set value 0b
 tag @s remove mgs.zb_rising
 
+# The stuck timeout counts from here, so a long rise does not eat into it.
+scoreboard players operation @s mgs.zb.stuck_ticks = #total_tick mgs.data
+
 # summon_zombie_at already joins the horde; a zombie that missed it would make escort traders flee it.
 team join mgs.horde @s
 

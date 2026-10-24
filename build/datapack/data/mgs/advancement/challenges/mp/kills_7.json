@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.veteran"
+			"translate": "mgs.veteran",
+			"fallback": "Veteran"
 		},
 		"description": {
-			"translate": "mgs.kill_2000_players"
+			"translate": "mgs.kill_2000_players",
+			"fallback": "Kill 2,000 players"
 		},
 		"frame": "task",
 		"show_toast": true,

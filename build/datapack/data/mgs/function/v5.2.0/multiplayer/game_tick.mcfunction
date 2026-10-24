@@ -11,8 +11,8 @@ kill @e[type=experience_orb]
 
 # 3 s respawn countdown in real time; range checks, since a 2+ tick delta can jump over an exact 0.
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..}] run scoreboard players operation @s mgs.mp.spectate_timer -= #tick_delta mgs.data
-execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=21..40},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_2_seconds","color":"gray"}]
-execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..20},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_1_second","color":"gray"}]
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=21..40},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_2_seconds","fallback":"Respawning in 2 seconds...","color":"gray"}]
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=1..20},gamemode=spectator] run title @s subtitle [{"translate":"mgs.respawning_in_1_second","fallback":"Respawning in 1 second...","color":"gray"}]
 # The countdown subtitle is cleared: Minecraft keeps the last subtitle, so a later `title` would show "Respawning in 1 second..." under it.
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=..0},gamemode=spectator] run title @s subtitle {"text":""}
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.spectate_timer=..0},gamemode=spectator] at @s run function mgs:v5.2.0/multiplayer/actual_respawn

@@ -22,13 +22,13 @@
 								},
 								"minecraft:item_model": "mgs:power_switch_on",
 								"minecraft:item_name": {
-									"translate": "mgs.power_switch_on"
+									"translate": "mgs.power_switch_on","fallback": "Power Switch On"
 								},
 								"minecraft:lore": [
 									[
 										"",
 										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
-										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system"}]
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
 									]
 								]
 							}

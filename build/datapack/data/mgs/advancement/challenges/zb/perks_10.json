@@ -5,10 +5,12 @@
 			"id": "minecraft:experience_bottle"
 		},
 		"title": {
-			"translate": "mgs.chemically_bound"
+			"translate": "mgs.chemically_bound",
+			"fallback": "Chemically Bound"
 		},
 		"description": {
-			"translate": "mgs.acquire_500_perks"
+			"translate": "mgs.acquire_500_perks",
+			"fallback": "Acquire 500 perks"
 		},
 		"frame": "challenge",
 		"show_toast": true,

@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.undertaker"
+			"translate": "mgs.undertaker",
+			"fallback": "Undertaker"
 		},
 		"description": {
-			"translate": "mgs.kill_50000_zombies"
+			"translate": "mgs.kill_50000_zombies",
+			"fallback": "Kill 50,000 zombies"
 		},
 		"frame": "challenge",
 		"show_toast": true,

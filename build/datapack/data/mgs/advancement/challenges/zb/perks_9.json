@@ -5,10 +5,12 @@
 			"id": "minecraft:dragon_breath"
 		},
 		"title": {
-			"translate": "mgs.better_living"
+			"translate": "mgs.better_living",
+			"fallback": "Better Living"
 		},
 		"description": {
-			"translate": "mgs.acquire_300_perks"
+			"translate": "mgs.acquire_300_perks",
+			"fallback": "Acquire 300 perks"
 		},
 		"frame": "goal",
 		"show_toast": true,

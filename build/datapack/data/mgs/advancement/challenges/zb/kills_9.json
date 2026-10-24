@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.ocean_of_bodies"
+			"translate": "mgs.ocean_of_bodies",
+			"fallback": "Ocean Of Bodies"
 		},
 		"description": {
-			"translate": "mgs.kill_35000_zombies"
+			"translate": "mgs.kill_35000_zombies",
+			"fallback": "Kill 35,000 zombies"
 		},
 		"frame": "goal",
 		"show_toast": true,

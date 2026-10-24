@@ -5,10 +5,12 @@
 			"id": "minecraft:diamond_block"
 		},
 		"title": {
-			"translate": "mgs.points_are_fake"
+			"translate": "mgs.points_are_fake",
+			"fallback": "Points Are Fake"
 		},
 		"description": {
-			"translate": "mgs.spend_2000000_points"
+			"translate": "mgs.spend_2000000_points",
+			"fallback": "Spend 2,000,000 points"
 		},
 		"frame": "goal",
 		"show_toast": true,

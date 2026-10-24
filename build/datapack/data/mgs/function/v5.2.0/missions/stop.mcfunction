@@ -40,7 +40,7 @@ scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.stam_seen 0
 # Every shader id off, so nothing survives into the lobby.
 execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.2.0/player/fx_reset
 
-tellraw @a[scores={mgs.mi.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs"},"] "],{"translate":"mgs.mission_ended","color":"red"}]
+tellraw @a[scores={mgs.mi.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mission_ended","fallback":"Mission ended.","color":"red"}]
 
 execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.2.0/shared/maps/call_script_at_base {mode:"missions",script:"leave"}
 execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.2.0/lobby/return

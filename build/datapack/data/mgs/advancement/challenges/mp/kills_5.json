@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.seasoned"
+			"translate": "mgs.seasoned",
+			"fallback": "Seasoned"
 		},
 		"description": {
-			"translate": "mgs.kill_500_players"
+			"translate": "mgs.kill_500_players",
+			"fallback": "Kill 500 players"
 		},
 		"frame": "task",
 		"show_toast": true,

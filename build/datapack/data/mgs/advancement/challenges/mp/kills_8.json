@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.elite"
+			"translate": "mgs.elite",
+			"fallback": "Elite"
 		},
 		"description": {
-			"translate": "mgs.kill_3500_players"
+			"translate": "mgs.kill_3500_players",
+			"fallback": "Kill 3,500 players"
 		},
 		"frame": "goal",
 		"show_toast": true,

@@ -8,10 +8,12 @@
 			}
 		},
 		"title": {
-			"translate": "mgs.one_shot_one_kill"
+			"translate": "mgs.one_shot_one_kill",
+			"fallback": "One Shot, One Kill"
 		},
 		"description": {
-			"translate": "mgs.land_5000_headshot_kills"
+			"translate": "mgs.land_5000_headshot_kills",
+			"fallback": "Land 5,000 headshot kills"
 		},
 		"frame": "challenge",
 		"show_toast": true,

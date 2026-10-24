@@ -8,5 +8,5 @@ scoreboard players set @s mgs.mp.team 0
 scoreboard players set @s mgs.mp.in_game 0
 team leave @s
 execute if data storage mgs:multiplayer game{state:"active"} run gamemode spectator @s
-tellraw @s [{"translate":"mgs.removed_from_the_game","color":"gray"}]
+tellraw @s [{"translate":"mgs.removed_from_the_game","fallback":"Removed from the game","color":"gray"}]
 

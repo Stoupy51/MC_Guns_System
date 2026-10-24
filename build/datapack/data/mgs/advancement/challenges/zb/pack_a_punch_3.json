@@ -5,10 +5,12 @@
 			"id": "minecraft:damaged_anvil"
 		},
 		"title": {
-			"translate": "mgs.tooled_up"
+			"translate": "mgs.tooled_up",
+			"fallback": "Tooled Up"
 		},
 		"description": {
-			"translate": "mgs.upgrade_5_weapons"
+			"translate": "mgs.upgrade_5_weapons",
+			"fallback": "Upgrade 5 weapons"
 		},
 		"frame": "task",
 		"show_toast": true,

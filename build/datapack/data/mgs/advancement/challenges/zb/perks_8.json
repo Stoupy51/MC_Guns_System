@@ -5,10 +5,12 @@
 			"id": "minecraft:lingering_potion"
 		},
 		"title": {
-			"translate": "mgs.fully_loaded"
+			"translate": "mgs.fully_loaded",
+			"fallback": "Fully Loaded"
 		},
 		"description": {
-			"translate": "mgs.acquire_200_perks"
+			"translate": "mgs.acquire_200_perks",
+			"fallback": "Acquire 200 perks"
 		},
 		"frame": "goal",
 		"show_toast": true,

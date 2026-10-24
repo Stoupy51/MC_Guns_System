@@ -5,10 +5,12 @@
 			"id": "minecraft:red_banner"
 		},
 		"title": {
-			"translate": "mgs.backbone"
+			"translate": "mgs.backbone",
+			"fallback": "Backbone"
 		},
 		"description": {
-			"translate": "mgs.complete_1000_objective_plays"
+			"translate": "mgs.complete_1000_objective_plays",
+			"fallback": "Complete 1,000 objective plays"
 		},
 		"frame": "goal",
 		"show_toast": true,

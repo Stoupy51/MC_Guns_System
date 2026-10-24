@@ -8,7 +8,7 @@
 # @args		weapon_id (unknown)
 #
 
-$execute if items entity @s hotbar.0 *[custom_data~{mgs:{$(weapon_id):true}}] run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.you_already_own_this_knife","color":"yellow"}'}
+$execute if items entity @s hotbar.0 *[custom_data~{mgs:{$(weapon_id):true}}] run return run function mgs:v5.2.0/zombies/deny/message {msg:'{"translate":"mgs.you_already_own_this_knife","fallback":"You already own this knife.","color":"yellow"}'}
 
 scoreboard players operation #wb_price mgs.data = #wb_buy_price mgs.data
 execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.2.0/zombies/deny/not_enough_points {score:"#wb_price",obj:"mgs.data"}
