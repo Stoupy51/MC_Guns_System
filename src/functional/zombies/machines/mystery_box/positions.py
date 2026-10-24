@@ -135,9 +135,6 @@ data merge entity @n[tag={ns}.mb_lid,distance=..4] {{transformation:{MB_CLOSED_T
 """)
 
 	write_versioned_function("zombies/mystery_box/move_active_position", f"""
-execute store result score #mb_pos_count {ns}.data run data get storage {ns}:zombies game.map.mystery_box.positions
-execute if score #mb_pos_count {ns}.data matches ..1 run return 0
-
 tag @e[tag={ns}.mystery_box_active] add {ns}.mb_prev_active
 tag @e[tag={ns}.mystery_box_active] remove {ns}.mystery_box_active
 execute as @n[tag={ns}.mystery_box_pos,tag=!{ns}.mb_prev_active,sort=random] run tag @s add {ns}.mystery_box_active

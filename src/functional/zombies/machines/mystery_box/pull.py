@@ -32,7 +32,8 @@ scoreboard players operation #roam_uses {ns}.data = #mb_pulls {ns}.data
 scoreboard players set #roam_threshold {ns}.data 4
 function {ns}:v{version}/zombies/roaming/roll_move
 scoreboard players operation #mb_will_move {ns}.data = #roam_will_move {ns}.data
-# Only the active box moves, never during a Fire Sale.
+# Only the active box moves, never during a Fire Sale, and never on a map with a single spot.
+execute unless data storage {ns}:zombies game.map.mystery_box.positions[1] run scoreboard players set #mb_will_move {ns}.data 0
 execute unless entity @n[tag=bs.interaction.target,tag={ns}.mystery_box_active] run scoreboard players set #mb_will_move {ns}.data 0
 execute if score #zb_fire_sale_timer {ns}.data matches 1.. run scoreboard players set #mb_will_move {ns}.data 0
 execute if score #mb_will_move {ns}.data matches 1 run scoreboard players set #mb_pulls {ns}.data 0
