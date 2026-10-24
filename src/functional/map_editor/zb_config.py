@@ -174,7 +174,7 @@ def marker_config_lines(ns: str) -> list[str]:
 	lines += [f"execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] " + yaw_row(ns, etype) for etype in ZB_ELEMENTS]
 
 	# Enemy types: the function. The suggestion stays unversioned like the map default, or a saved map would call a path a later version removes.
-	edit_fn_btn = Dialogs.btn(
+	edit_cmd_btn = Dialogs.btn(
 		"✎",
 		f"/data modify entity @n[tag={ns}.element.enemy,distance=..10] data.function set value '{ns}:mob/default/level_1'",
 		"yellow", "Click to edit function", action="suggest_command"
@@ -184,7 +184,7 @@ def marker_config_lines(ns: str) -> list[str]:
 		f'["  ","👤 ",{{"text":"Enemy Configuration","color":"red","bold":true}}]',
 		f'execute if entity @s[tag={ns}.element.enemy] run tellraw @a[tag={ns}.map_editor] '
 		f'["    ",{{"text":"function: ","color":"gray"}},'
-		f'{{"entity":"@s","nbt":"data.function","color":"white"}}," ",{edit_fn_btn}]',
+		f'{{"entity":"@s","nbt":"data.function","color":"white"}}," ",{edit_cmd_btn}]',
 	]
 
 	# Point types have nothing to configure.
@@ -207,33 +207,33 @@ def yaw_row(ns: str, etype: str) -> str:
 
 
 def base_coordinates_config_lines(ns: str) -> list[str]:
-	""" Config panel lines of the base coordinates marker: its start_function and tick_function. """
-	edit_start_fn_btn = Dialogs.btn(
+	""" Config panel lines of the base coordinates marker: its start_command and tick_command. """
+	edit_start_cmd_btn = Dialogs.btn(
 		"✎",
-		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function set value "namespace:path/to/function"',
-		"yellow", "Click to edit start_function (called once when game starts)", action="suggest_command"
+		f"/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_command set value 'say Game started'",
+		"yellow", "Click to edit start_command (run once when the game starts)", action="suggest_command"
 	)
-	clear_start_fn_btn = Dialogs.btn(
+	clear_start_cmd_btn = Dialogs.btn(
 		"✗",
-		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_function',
-		"red", "Clear start_function (won't be called)", action="run_command"
+		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.start_command',
+		"red", "Clear start_command (won't be run)", action="run_command"
 	)
-	edit_tick_fn_btn = Dialogs.btn(
+	edit_tick_cmd_btn = Dialogs.btn(
 		"✎",
-		f'/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function set value "namespace:path/to/function"',
-		"yellow", "Click to edit tick_function (called every game tick)", action="suggest_command"
+		f"/data modify entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_command set value 'function namespace:path/to/function'",
+		"yellow", "Click to edit tick_command (run every game tick)", action="suggest_command"
 	)
-	clear_tick_fn_btn = Dialogs.btn(
+	clear_tick_cmd_btn = Dialogs.btn(
 		"✗",
-		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_function',
-		"red", "Clear tick_function (won't be called)", action="run_command"
+		f'/data remove entity @n[tag={ns}.element.base_coordinates,distance=..10] data.tick_command',
+		"red", "Clear tick_command (won't be run)", action="run_command"
 	)
 	shown: str = f"execute if entity @s[tag={ns}.element.base_coordinates] run tellraw @a[tag={ns}.map_editor] "
 	return [
 		shown + '["  ","⬟ ",{"text":"Base Coordinates Configuration","color":"light_purple","bold":true}]',
-		shown + f'["    ",{{"text":"start_function: ","color":"gray"}},{{"entity":"@s","nbt":"data.start_function","color":"white"}}," ",{edit_start_fn_btn}," ",{clear_start_fn_btn}]',
-		shown + f'["    ",{{"text":"tick_function: ","color":"gray"}},{{"entity":"@s","nbt":"data.tick_function","color":"white"}}," ",{edit_tick_fn_btn}," ",{clear_tick_fn_btn}]',
-		shown + '["    ","💎 ",{"text":"start_function is called once when the game starts, tick_function every game tick.","color":"dark_gray","italic":true}]',
+		shown + f'["    ",{{"text":"start_command: ","color":"gray"}},{{"entity":"@s","nbt":"data.start_command","color":"white"}}," ",{edit_start_cmd_btn}," ",{clear_start_cmd_btn}]',
+		shown + f'["    ",{{"text":"tick_command: ","color":"gray"}},{{"entity":"@s","nbt":"data.tick_command","color":"white"}}," ",{edit_tick_cmd_btn}," ",{clear_tick_cmd_btn}]',
+		shown + '["    ","💎 ",{"text":"Commands run at the base: start_command once when the game starts, tick_command every game tick.","color":"dark_gray","italic":true}]',
 	]
 
 

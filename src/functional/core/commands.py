@@ -71,6 +71,7 @@ $execute positioned $(x) $(y) $(z) run function $(fn)
 """)
 
 		# Usage: {mode:"zombies",script:"start"}. Every map script of the tag runs, and each one checks _base.mode.
+		# The map's own `<script>_command` (start_command, tick_command, set on the base marker) runs after them.
 		write_versioned_function("shared/maps/call_script_at_base", f"""
 $execute store result storage {ns}:temp _base.x int 1 run scoreboard players get #$(mode)_base_x {ns}.data
 $execute store result storage {ns}:temp _base.y int 1 run scoreboard players get #$(mode)_base_y {ns}.data
@@ -78,6 +79,10 @@ $execute store result storage {ns}:temp _base.z int 1 run scoreboard players get
 $data modify storage {ns}:temp _base.mode set value "$(mode)"
 $data modify storage {ns}:temp _base.fn set value "#{ns}:maps/$(script)_script"
 function {ns}:v{version}/shared/call_at_base with storage {ns}:temp _base
+
+$execute unless data storage {ns}:$(mode) game.map.$(script)_command run return 0
+$data modify storage {ns}:temp _base.command set from storage {ns}:$(mode) game.map.$(script)_command
+function {ns}:v{version}/shared/run_start_command with storage {ns}:temp _base
 """)
 
 		# Usage: {mode:"multiplayer"}

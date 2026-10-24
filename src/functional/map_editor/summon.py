@@ -51,8 +51,8 @@ execute store result storage {ns}:temp _pos.y double 1 run scoreboard players ge
 execute store result storage {ns}:temp _pos.z double 1 run scoreboard players get #bz {ns}.data
 function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _pos
 
-execute if data storage {ns}:temp map_edit.map.start_function run data modify entity @n[tag={ns}.element.base_coordinates] data.start_function set from storage {ns}:temp map_edit.map.start_function
-execute if data storage {ns}:temp map_edit.map.tick_function run data modify entity @n[tag={ns}.element.base_coordinates] data.tick_function set from storage {ns}:temp map_edit.map.tick_function
+execute if data storage {ns}:temp map_edit.map.start_command run data modify entity @n[tag={ns}.element.base_coordinates] data.start_command set from storage {ns}:temp map_edit.map.start_command
+execute if data storage {ns}:temp map_edit.map.tick_command run data modify entity @n[tag={ns}.element.base_coordinates] data.tick_command set from storage {ns}:temp map_edit.map.tick_command
 
 {summon_dispatch}
 """)

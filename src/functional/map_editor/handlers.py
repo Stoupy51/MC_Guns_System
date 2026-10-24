@@ -14,9 +14,9 @@ def write_editor_handlers() -> None:
 	version: str = Mem.ctx.project_version
 
 	write_versioned_function("maps/editor/handle_base", f"""
-# start_function and tick_function survive the move.
-execute if data entity @n[tag={ns}.element.base_coordinates] data.start_function run data modify storage {ns}:temp _base_preserve.start_function set from entity @n[tag={ns}.element.base_coordinates] data.start_function
-execute if data entity @n[tag={ns}.element.base_coordinates] data.tick_function run data modify storage {ns}:temp _base_preserve.tick_function set from entity @n[tag={ns}.element.base_coordinates] data.tick_function
+# start_command and tick_command survive the move.
+execute if data entity @n[tag={ns}.element.base_coordinates] data.start_command run data modify storage {ns}:temp _base_preserve.start_command set from entity @n[tag={ns}.element.base_coordinates] data.start_command
+execute if data entity @n[tag={ns}.element.base_coordinates] data.tick_command run data modify storage {ns}:temp _base_preserve.tick_command set from entity @n[tag={ns}.element.base_coordinates] data.tick_command
 
 kill @e[tag={ns}.element.base_coordinates]
 
@@ -29,8 +29,8 @@ execute store result storage {ns}:temp _pos.y double 1 run scoreboard players ge
 execute store result storage {ns}:temp _pos.z double 1 run scoreboard players get #base_z {ns}.data
 function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _pos
 
-execute if data storage {ns}:temp _base_preserve.start_function run data modify entity @n[tag={ns}.element.base_coordinates] data.start_function set from storage {ns}:temp _base_preserve.start_function
-execute if data storage {ns}:temp _base_preserve.tick_function run data modify entity @n[tag={ns}.element.base_coordinates] data.tick_function set from storage {ns}:temp _base_preserve.tick_function
+execute if data storage {ns}:temp _base_preserve.start_command run data modify entity @n[tag={ns}.element.base_coordinates] data.start_command set from storage {ns}:temp _base_preserve.start_command
+execute if data storage {ns}:temp _base_preserve.tick_command run data modify entity @n[tag={ns}.element.base_coordinates] data.tick_command set from storage {ns}:temp _base_preserve.tick_command
 data remove storage {ns}:temp _base_preserve
 
 execute as @a[tag={ns}.map_editor] run tellraw @s [{MGS_TAG},{{"text":"Base coordinates set!","color":"light_purple"}}]
