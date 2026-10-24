@@ -65,6 +65,13 @@ execute if data storage {ns}:temp _spawn_iter[0].activation_box[5] run function 
 # Zombie spawns only: zombies spawned here are escorted to this absolute spot.
 execute if data storage {ns}:temp _spawn_iter[0].walk_to[2] run function {ns}:v{version}/zombies/store_spawn_walk_to
 
+# Zombie spawns only: the rise duration (20 ticks for maps saved without it) and its direction.
+scoreboard players set @n[tag={ns}.new_spawn] {ns}.zb.rise_tick 20
+execute if data storage {ns}:temp _spawn_iter[0].rise_ticks store result score @n[tag={ns}.new_spawn] {ns}.zb.rise_tick run data get storage {ns}:temp _spawn_iter[0].rise_ticks
+execute if score @n[tag={ns}.new_spawn] {ns}.zb.rise_tick matches ..0 run scoreboard players set @n[tag={ns}.new_spawn] {ns}.zb.rise_tick 1
+execute store result score #zb_from_ceiling {ns}.data run data get storage {ns}:temp _spawn_iter[0].from_ceiling
+execute if score #zb_from_ceiling {ns}.data matches 1 run tag @n[tag={ns}.new_spawn] add {ns}.spawn_from_ceiling
+
 tag @n[tag={ns}.new_spawn] remove {ns}.new_spawn
 
 data remove storage {ns}:temp _spawn_iter[0]

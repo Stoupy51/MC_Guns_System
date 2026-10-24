@@ -29,6 +29,7 @@ execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}
 
 # Untyped: other enemies than zombies will rise too.
 execute as @e[tag={ns}.zb_rising] at @s run function {ns}:v{version}/zombies/zombie_rise_tick
+execute as @e[type=minecraft:marker,tag={ns}.zb_rise_dust] at @s run function {ns}:v{version}/zombies/rise_dust_tick
 
 # Only when the map has bounds.
 execute if score #zb_has_bounds {ns}.data matches 1 as @e[tag={ns}.zombie_round] at @s run function {ns}:v{version}/shared/check_bounds

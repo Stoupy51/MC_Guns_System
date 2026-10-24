@@ -87,9 +87,6 @@ execute if score #zb_round {ns}.data matches 15.. if score #zb_speed_roll {ns}.d
 # 7.5 hearts, no knockback.
 attribute @s minecraft:attack_damage base set 15.0
 attribute @s minecraft:knockback_resistance base set 1024
-
-# 20 ticks to rise 2 blocks.
-scoreboard players set @s {ns}.zb.rise_tick 20
 """)
 
 	# The Missions gun AI: a random weapon, a visible name, and shots at the nearest player (mob/tick).
