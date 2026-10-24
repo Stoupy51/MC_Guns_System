@@ -119,7 +119,7 @@ $tellraw @s ["  ",{{"text":"$(name)","color":"white"}},{{"text":" ($(id))","colo
 
 	for mode_key, mode_info in EDITOR_MODES.items():
 		sk = mode_info.storage_key
-		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]"
+		create_snbt = r"id:'my_map',name:'My Map',description:'A new map',dimension:'minecraft:overworld',base_coordinates:[0,64,0],start_commands:[],respawn_commands:[]"
 		back_btn = Dialogs.btn("◀ Back", f"/function {ns}:v{version}/maps/editor/list/{mode_key}", "yellow", "Back to map list")
 
 		write_versioned_function(f"maps/editor/create/{mode_key}", f"""
@@ -129,6 +129,7 @@ tellraw @s {SEP}
 tellraw @s {{"text":"Run this command to create a new map:","color":"yellow"}}
 tellraw @s [{{"text":"","color":"aqua","click_event":{{"action":"suggest_command","command":"/data modify storage {ns}:maps {sk} append value {{{create_snbt}}}"}}}},"/data modify storage {ns}:maps {sk} append value {{...}}"]
 tellraw @s ["  ",{{"text":"⬆ Click to paste the command, then edit the id/name/description.","color":"gray","italic":true}}]
+tellraw @s ["  ",{{"text":"dimension: minecraft:overworld, {ns}:zombies or any other. Saving in the editor sets it to the dimension you save from.","color":"gray","italic":true}}]
 tellraw @s ""
 tellraw @s ["  ",{back_btn}]
 tellraw @s {SEP}
