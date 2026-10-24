@@ -45,7 +45,10 @@ scoreboard objectives add {ns}.zb.spawn.sid dummy
 
 scoreboard objectives add {ns}.zb.sb_rank dummy
 
+# Ticks left for a rising zombie; on a spawn marker, the whole rise duration.
 scoreboard objectives add {ns}.zb.rise_tick dummy
+# Thousandths of a block per tick, negative for a spawn_from_ceiling descent.
+scoreboard objectives add {ns}.zb.rise_step dummy
 
 # A zombie's whole health, absorption included, which max_health alone cannot hold past 1024.
 scoreboard objectives add {ns}.zb.max_hp dummy

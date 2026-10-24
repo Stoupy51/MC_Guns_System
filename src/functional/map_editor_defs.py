@@ -70,7 +70,7 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	# Config (utility, no marker)
 	"config":             ElementDef(name="⚙ Config",         color="white",        particle=[1.0, 1.0, 1.0], particle_scale=0.5, has_rotation=False, egg_model="minecraft:allay_spawn_egg",       save_type="config",                                               emoji="⚙"),
 	# Zombies elements (zb_object: a compound with pos, rotation, group_id and extra fields)
-	"zombie_spawn":       ElementDef(name="Zombie Spawn",     color="dark_green",   particle=[0.0, 0.5, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:zombie_spawn_egg",      save_type="zb_object",       save_path="spawning_points.zombies", emoji="🧟", defaults={"activation_box": [], "walk_to": []}),
+	"zombie_spawn":       ElementDef(name="Zombie Spawn",     color="dark_green",   particle=[0.0, 0.5, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:zombie_spawn_egg",      save_type="zb_object",       save_path="spawning_points.zombies", emoji="🧟", defaults={"activation_box": [], "walk_to": [], "rise_ticks": 20, "from_ceiling": False}),
 	"player_spawn_zb":    ElementDef(name="Player Spawn",     color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:villager_spawn_egg",    save_type="zb_object",       save_path="spawning_points.players", emoji="●", defaults={}),
 	# Special spawns are for non-regular arrivals: dog rounds today, mini-bosses later. A map without any never gets those rounds.
 	"special_spawn":      ElementDef(name="Special Spawn",    color="dark_red",     particle=[0.6, 0.0, 0.2], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:wolf_spawn_egg",        save_type="zb_object",       save_path="spawning_points.special", emoji="🐺", defaults={"activation_box": []}),
@@ -119,6 +119,8 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("mystery_box_pos", "location_name"): "Name of the place this spot sits in, announced in chat when the box\nlands here (e.g. \"the Power Room\").\nLeave EMPTY to fall back to the generic \"a new location\" message.",
 	"activation_box": "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces enemies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
 	"walk_to": "Optional [x, y, z] offset (relative to this spawn, in blocks).\nWhen set, zombies from this spawn walk straight to that spot instead of\nheading for the nearest player. A pathfinding escort carries them there,\nthen hands them back to normal AI on arrival. Empty [] = normal behaviour.\nAim it just inside a window and they break in through the barricade on the way.",
+	("zombie_spawn", "rise_ticks"): "Ticks a zombie takes to come out of this spawn (20 ticks = 1 second).",
+	("zombie_spawn", "from_ceiling"): "false = zombies rise out of the floor.\ntrue = zombies drop down out of the ceiling 2 blocks above this spawn,\nfor vents and holes in the roof.",
 	# Shared fallbacks:
 	"can_start_on": "true = the machine is allowed to be the ACTIVE (usable) spot at game\nstart and after it roams. false = a valid roam destination, but never\nthe first active spot. Only one spot is active at a time; the rest show\na grayed-out disabled model. At least one spot must allow starting.",
 	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",

@@ -10,24 +10,32 @@ def write_enemy_lifecycle() -> None:
 
 	## Run from game_tick for every rising zombie.
 	write_versioned_function("zombies/zombie_rise_tick", f"""
-tp @s ~ ~0.1 ~
-
-# Block particles from the surface, about 2 blocks above the spawn.
-execute positioned ~ ~ ~ run function #bs.block:get_type
-data modify storage {ns}:temp _rise_particle.block set from storage bs:out block.type
-function {ns}:v{version}/zombies/zombie_rise_particles with storage {ns}:temp _rise_particle
+execute store result storage {ns}:temp _rise.dy double 0.001 run scoreboard players get @s {ns}.zb.rise_step
+function {ns}:v{version}/zombies/zombie_rise_move with storage {ns}:temp _rise
 
 scoreboard players remove @s {ns}.zb.rise_tick 1
 execute if score @s {ns}.zb.rise_tick matches ..0 run function {ns}:v{version}/zombies/zombie_finish_rise
 """)
 
-	write_versioned_function("zombies/zombie_rise_particles", r"""
-$execute align xyz run particle block{block_state:"$(block)"} ~.5 ~1 ~.5 0.3 0.1 0.3 0.5 15 force @a[distance=..64]
+	write_versioned_function("zombies/zombie_rise_move", "$tp @s ~ ~$(dy) ~")
+
+	## Run as a zb_rise_dust marker, at the surface a zombie is breaking through.
+	write_versioned_function("zombies/rise_dust_tick", f"""
+function {ns}:v{version}/zombies/rise_dust_particles with entity @s data
+scoreboard players remove @s {ns}.zb.rise_tick 1
+execute if score @s {ns}.zb.rise_tick matches ..0 run kill @s
+""")
+
+	write_versioned_function("zombies/rise_dust_particles", r"""
+$execute align xyz run particle block{block_state:"$(block)"} ~.5 ~ ~.5 0.3 0.1 0.3 0.5 15 force @a[distance=..64]
 """)
 
 	write_versioned_function("zombies/zombie_finish_rise", f"""
 data modify entity @s NoAI set value 0b
 tag @s remove {ns}.zb_rising
+
+# The stuck timeout counts from here, so a long rise does not eat into it.
+scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 
 # summon_zombie_at already joins the horde; a zombie that missed it would make escort traders flee it.
 team join {ns}.horde @s

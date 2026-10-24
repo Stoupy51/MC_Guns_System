@@ -103,7 +103,19 @@ scoreboard players set #zb_type_roll {ns}.data 0
 execute if data storage {ns}:zombies game{{variant:"zonweeb"}} unless score #zb_dog_round {ns}.data matches 1 store result score #zb_type_roll {ns}.data run random value 1..100
 {type_rolls}
 
-function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
+# 2 blocks over the spawn's rise duration, up through the floor or down from the ceiling.
+scoreboard players set #zb_rise_step {ns}.data 2000
+execute if entity @s[tag={ns}.spawn_from_ceiling] run scoreboard players set #zb_rise_step {ns}.data -2000
+scoreboard players operation #zb_rise_step {ns}.data /= @s {ns}.zb.rise_tick
+
+execute unless entity @s[tag={ns}.spawn_from_ceiling] run function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
+execute if entity @s[tag={ns}.spawn_from_ceiling] positioned ~ ~4 ~ run function {ns}:v{version}/zombies/summon_zombie_at with storage {ns}:temp _zpos
+scoreboard players operation @n[tag={ns}.zb_new] {ns}.zb.rise_tick = @s {ns}.zb.rise_tick
+scoreboard players operation @n[tag={ns}.zb_new] {ns}.zb.rise_step = #zb_rise_step {ns}.data
+
+# The block broken through is the floor below the spawn or the ceiling 2 blocks above it.
+execute unless entity @s[tag={ns}.spawn_from_ceiling] run function {ns}:v{version}/zombies/summon_rise_dust {{block_y:"-1"}}
+execute if entity @s[tag={ns}.spawn_from_ceiling] positioned ~ ~2 ~ run function {ns}:v{version}/zombies/summon_rise_dust {{block_y:"0"}}
 
 # Remembered so a stuck-rescue never reuses this spawn.
 scoreboard players operation @n[tag={ns}.zb_new] {ns}.zb.spawn.sid = @s {ns}.zb.spawn.sid
@@ -112,6 +124,15 @@ scoreboard players operation @n[tag={ns}.zb_new] {ns}.zb.spawn.sid = @s {ns}.zb.
 execute if data entity @s data.walk_to run data modify entity @n[tag={ns}.zb_new] data.walk_to set from entity @s data.walk_to
 
 tag @n[tag={ns}.zb_new] remove {ns}.zb_new
+""")
+
+	## Run as the spawn marker, positioned on the surface the zombie breaks through, which sheds debris for the whole rise.
+	write_versioned_function("zombies/summon_rise_dust", f"""
+$execute positioned ~ ~$(block_y) ~ run function #bs.block:get_type
+summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.zb_rise_dust","{ns}.zombies_entity","{ns}.zb_rise_dust_new"]}}
+data modify entity @n[tag={ns}.zb_rise_dust_new] data.block set from storage bs:out block.type
+scoreboard players operation @n[tag={ns}.zb_rise_dust_new] {ns}.zb.rise_tick = @s {ns}.zb.rise_tick
+tag @n[tag={ns}.zb_rise_dust_new] remove {ns}.zb_rise_dust_new
 """)
 
 	## Release one hound unless the pack is full; a skipped spawn stays queued in #zb_to_spawn.
@@ -214,7 +235,7 @@ execute as @n[tag={ns}.zb_dog_new] store result score @s {ns}.zb.stuck_z run dat
 scoreboard players set @n[tag={ns}.zb_dog_new] {ns}.zb.stuck_dist 4
 """)
 
-	## Spawns 2 blocks underground for the rise animation; runs at the spawn marker.
+	## Spawns 2 blocks below where the rise ends; runs at the spawn marker, or 4 blocks above it for a descent.
 	write_versioned_function("zombies/summon_zombie_at", f"""
 # The marker passenger intercepts death before vanilla event 60 (poof particles).
 # follow_range also sets the pathfinding region (range + 16) and node budget (range x 16); 40 keeps repaths cheap.
@@ -231,7 +252,6 @@ team join {ns}.horde @n[tag={ns}.zb_new]
 attribute @n[tag={ns}.zb_new] minecraft:waypoint_transmit_range base set 256
 waypoint modify @n[tag={ns}.zb_new] color green
 
-execute as @n[tag={ns}.zb_new] run scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 execute as @n[tag={ns}.zb_new] store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
 execute as @n[tag={ns}.zb_new] store result score @s {ns}.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players set @n[tag={ns}.zb_new] {ns}.zb.stuck_dist 4
