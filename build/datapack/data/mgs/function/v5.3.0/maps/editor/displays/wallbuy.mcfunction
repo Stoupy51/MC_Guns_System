@@ -1,0 +1,14 @@
+
+#> mgs:v5.3.0/maps/editor/displays/wallbuy
+#
+# @executed	at @s
+#
+# @within	mgs:v5.3.0/maps/editor/refresh_displays [ at @s ]
+#
+
+# Run as the wallbuy marker, at it (its Rotation is synced from data.yaw).
+data modify storage mgs:temp _ed_disp.weapon_id set from entity @s data.weapon_id
+data modify storage mgs:temp _ed_disp.yaw set value 0.0f
+data modify storage mgs:temp _ed_disp.yaw set from entity @s data.yaw
+function mgs:v5.3.0/maps/editor/displays/summon_wallbuy with storage mgs:temp _ed_disp
+

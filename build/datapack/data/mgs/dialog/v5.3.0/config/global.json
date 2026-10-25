@@ -1,0 +1,22 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [
+		"",
+		"⚙ ",
+		{"translate": "mgs.global_settings","fallback": "Global Settings","color": "gold","bold": true}
+	],
+	"actions": [
+		{"label": {"translate": "mgs.rpg_explosion_power","fallback": "RPG Explosion Power","color": "red"},"tooltip": {"translate": "mgs.server_wide_projectile_explosion_power","fallback": "Server-wide projectile explosion power"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/rpg_power"}},
+		{"label": {"translate": "mgs.grenade_explosion_power","fallback": "Grenade Explosion Power","color": "gold"},"tooltip": {"translate": "mgs.server_wide_grenade_explosion_power","fallback": "Server-wide grenade explosion power"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/grenade_power"}},
+		{"label": {"translate": "mgs.max_ammo_mode","fallback": "Max Ammo Mode","color": "aqua"},"tooltip": {"translate": "mgs.how_the_max_ammo_powerup_refills_weapons","fallback": "How the Max Ammo powerup refills weapons"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/max_ammo"}},
+		{"label": {"translate": "mgs.damage_debug","fallback": "Damage Debug","color": "yellow"},"tooltip": {"translate": "mgs.broadcast_every_hits_damage_to_chat","fallback": "Broadcast every hit's damage to chat"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/damage_debug"}},
+		{"label": ["","🏠 ",{"translate": "mgs.set_lobby_here","fallback": "Set Lobby Here","color": "green"}],"tooltip": {"translate": "mgs.players_return_here_with_this_rotation_and_dimension_when_their_","fallback": "Players return here, with this rotation and dimension, when their game ends"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/lobby/set"}},
+		{"label": ["","🏠 ",{"translate": "mgs.clear_lobby","fallback": "Clear Lobby","color": "red"}],"tooltip": {"translate": "mgs.players_stay_where_their_game_ends","fallback": "Players stay where their game ends"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/lobby/clear"}}
+	],
+	"columns": 1,
+	"exit_action": {
+		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_configuration","fallback": "Return to configuration"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config"}
+	}
+}

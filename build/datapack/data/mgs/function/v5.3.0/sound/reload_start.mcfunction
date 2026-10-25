@@ -1,0 +1,12 @@
+
+#> mgs:v5.3.0/sound/reload_start
+#
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.3.0/ammo/reload with storage mgs:gun all.sounds
+#
+# @args		reload (unknown)
+#
+
+$playsound mgs:$(reload) player @s
+

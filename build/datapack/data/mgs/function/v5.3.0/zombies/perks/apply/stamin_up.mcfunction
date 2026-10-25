@@ -1,0 +1,15 @@
+
+#> mgs:v5.3.0/zombies/perks/apply/stamin_up
+#
+# @executed	as @p[tag=mgs.pu_collecting]
+#
+# @within	mgs:v5.3.0/zombies/perks/apply
+#
+
+attribute @s minecraft:movement_speed modifier add mgs:stamin_up 0.07 add_multiplied_total
+scoreboard players set @s mgs.stam_bonus 300
+scoreboard players add @s mgs.stam 300
+execute at @s run playsound mgs:zombies/perks/stamin_up ambient @s ~ ~ ~ 1.0 1.0
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],"🏃 ",{"translate":"mgs.stamin_up_sprint_longer_move_faster","fallback":"Stamin-Up! Sprint longer, move faster","color":"yellow"},[" ",{"text":"+5 XP","color":"gold"}]]
+function mgs:v5.3.0/progression/zb/award_perk
+

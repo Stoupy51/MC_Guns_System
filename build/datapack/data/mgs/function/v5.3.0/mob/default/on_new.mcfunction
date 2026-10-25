@@ -1,0 +1,30 @@
+
+#> mgs:v5.3.0/mob/default/on_new
+#
+# @within	mgs:v5.3.0/mob/default/on_new_lv5 {entity:"$(entity)",level:5,active_time:72000,sleep_time:0}
+#			mgs:mob/default/level_1 {entity:"$(entity)",level:1,active_time:50,sleep_time:100}
+#			mgs:mob/default/level_2 {entity:"$(entity)",level:2,active_time:50,sleep_time:50}
+#			mgs:mob/default/level_3 {entity:"$(entity)",level:3,active_time:60,sleep_time:20}
+#			mgs:mob/default/level_4 {entity:"$(entity)",level:4,active_time:72000,sleep_time:1}
+#			mgs:v5.3.0/zombies/types/armed {entity:"Zombie",level:$(level),active_time:60,sleep_time:40}
+#
+# @args		entity (string)
+#			level (int)
+#			active_time (int)
+#			sleep_time (int)
+#
+
+tag @s add mgs.armed
+$data modify entity @s CustomName set value {"text":"Armed $(entity) [Lv.$(level)]","color":"red"}
+data modify entity @s DeathLootTable set value "minecraft:empty"
+data modify entity @s drop_chances set value {mainhand:0.0f,offhand:0.0f}
+data modify entity @s PersistenceRequired set value true
+attribute @s minecraft:waypoint_transmit_range base set 32
+
+function mgs:v5.3.0/utils/random_weapon {slot:"weapon.mainhand"}
+
+$scoreboard players set @s mgs.mob.active_time $(active_time)
+$scoreboard players set @s mgs.mob.sleep_time $(sleep_time)
+
+scoreboard players add #armed_mob_count mgs.data 1
+

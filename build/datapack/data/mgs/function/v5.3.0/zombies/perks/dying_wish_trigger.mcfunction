@@ -1,0 +1,45 @@
+
+#> mgs:v5.3.0/zombies/perks/dying_wish_trigger
+#
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.3.0/zombies/revive/on_down
+#
+
+# Not a real down: undo the downs++ that on_respawn added.
+scoreboard players remove @s mgs.zb.downs 1
+
+# 60 s x uses.
+scoreboard players add @s mgs.zb.dw_uses 1
+scoreboard players operation @s mgs.zb.dw_cd = @s mgs.zb.dw_uses
+scoreboard players operation @s mgs.zb.dw_cd *= #1200 mgs.data
+
+# Reuses the revive teleport macro.
+execute store result storage mgs:temp rv_x double 0.001 run data get entity @s LastDeathLocation.pos[0] 1000
+execute store result storage mgs:temp rv_y double 0.001 run data get entity @s LastDeathLocation.pos[1] 1000
+execute store result storage mgs:temp rv_z double 0.001 run data get entity @s LastDeathLocation.pos[2] 1000
+function mgs:v5.3.0/zombies/revive/tp_revive_pos with storage mgs:temp
+
+# Juggernog's health is respected.
+gamemode adventure @s
+execute if score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 40
+execute unless score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 20
+effect give @s minecraft:instant_health 1 255 true
+scoreboard players set @s mgs.stam_seen 0
+
+# 9 s: resistance V, one-shot melee, mobility.
+scoreboard players set @s mgs.zb.dw_timer 180
+tag @s add mgs.dying_wish_active
+effect give @s minecraft:resistance 180 4 true
+effect give @s minecraft:fire_resistance 180 0 true
+effect give @s minecraft:strength 180 4 true
+effect give @s minecraft:speed 180 1 true
+attribute @s minecraft:attack_damage modifier add mgs:dying_wish 200 add_value
+
+title @s times 5 40 15
+title @s title ["⚔"]
+title @s subtitle [{"translate":"mgs.dying_wish_berserk","fallback":"DYING WISH: Berserk!","color":"dark_red"}]
+particle minecraft:totem_of_undying ~ ~1 ~ 0.5 1 0.5 0.3 80 force @a[distance=..32]
+playsound minecraft:item.totem.use player @a[distance=..32] ~ ~ ~ 1 0.8
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"blue"}],[{"text":" ","color":"gray"}, {"translate":"mgs.refuses_to_die","fallback":"refuses to die!"}]]
+

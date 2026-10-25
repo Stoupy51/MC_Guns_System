@@ -1,0 +1,42 @@
+
+#> mgs:v5.3.0/zombies/perks/on_right_click
+#
+# @executed	as @n[tag=mgs.pk_new]
+#
+# @within	mgs:v5.3.0/zombies/perks/setup_iter {run:"function mgs:v5.3.0/zombies/perks/on_right_click",executor:"source"} [ as @n[tag=mgs.pk_new] ]
+#
+
+execute unless data storage mgs:zombies game{state:"active"} run return fail
+
+# Quick Revive needs no power while solo (Black Ops rule).
+execute store result score #pk_power mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.perk.power
+execute store result score #qr_solo mgs.data if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
+execute if score #pk_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 unless entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] run return run function mgs:v5.3.0/zombies/deny/message {msg:'{"translate":"mgs.this_perk_machine_requires_power","fallback":"This perk machine requires power.","color":"red"}'}
+execute if score #pk_power mgs.data matches 1 unless score #zb_power mgs.data matches 1 if entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] if score #qr_solo mgs.data matches 2.. run return run function mgs:v5.3.0/zombies/deny/message {msg:'{"translate":"mgs.this_perk_machine_requires_power","fallback":"This perk machine requires power.","color":"red"}'}
+
+execute store result storage mgs:temp _pk_buy.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.perk.id
+function mgs:v5.3.0/zombies/perks/lookup_perk with storage mgs:temp _pk_buy
+
+function mgs:v5.3.0/zombies/perks/check_owned with storage mgs:temp _pk_data
+execute if score #pk_owned mgs.data matches 1 run return run function mgs:v5.3.0/zombies/deny/message {msg:'{"translate":"mgs.you_already_own_this_perk","fallback":"You already own this perk.","color":"yellow"}'}
+
+# At most 3 solo self-revives per game, counted on qr_uses.
+execute if entity @n[tag=bs.interaction.target,tag=mgs.pk_quick_revive] if score @s mgs.zb.qr_uses matches 3.. run return run function mgs:v5.3.0/zombies/deny/message {msg:'{"translate":"mgs.quick_revive_is_spent_3_3_self_revives_used_this_game","fallback":"Quick Revive is spent (3/3 self-revives used this game).","color":"yellow"}'}
+
+# Chip-in machines charge one chunk per click.
+function mgs:v5.3.0/zombies/perks/read_price with storage mgs:temp _pk_data
+execute unless score @s mgs.zb.points >= #pk_price mgs.data run return run function mgs:v5.3.0/zombies/deny/not_enough_points {score:"#pk_price",obj:"mgs.data"}
+
+scoreboard players operation @s mgs.zb.points -= #pk_price mgs.data
+
+# Chip-in progress is per player: stop unless this payment completed it.
+scoreboard players operation #pk_paid mgs.data += #pk_price mgs.data
+execute if score #pk_partial mgs.data matches 1.. run function mgs:v5.3.0/zombies/perks/store_progress with storage mgs:temp _pk_data
+execute if score #pk_partial mgs.data matches 1.. if score #pk_paid mgs.data < #pk_total mgs.data run return run function mgs:v5.3.0/zombies/perks/announce_progress
+
+function mgs:v5.3.0/zombies/perks/apply with storage mgs:temp _pk_data
+
+function #mgs:zombies/on_new_perk
+
+playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
+

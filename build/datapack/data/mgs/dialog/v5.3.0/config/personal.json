@@ -1,0 +1,20 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [
+		"",
+		"⚡ ",
+		{"translate": "mgs.personal_cheats","fallback": "Personal Cheats","color": "gold","bold": true}
+	],
+	"actions": [
+		{"label": {"translate": "mgs.instant_kill","fallback": "Instant Kill","color": "red"},"tooltip": {"translate": "mgs.one_shot_kills_for_a_duration_self_only","fallback": "One-shot kills for a duration (self only)"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/instant_kill"}},
+		{"label": {"translate": "mgs.infinite_ammo","fallback": "Infinite Ammo","color": "gold"},"tooltip": {"translate": "mgs.no_reloads_needed_for_a_duration_self_only","fallback": "No reloads needed for a duration (self only)"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/infinite_ammo"}},
+		{"label": {"translate": "mgs.quick_reload","fallback": "Quick Reload","color": "green"},"tooltip": {"translate": "mgs.reduce_reload_time_self_only","fallback": "Reduce reload time (self only)"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/quick_reload"}},
+		{"label": {"translate": "mgs.quick_swap","fallback": "Quick Swap","color": "aqua"},"tooltip": {"translate": "mgs.reduce_weapon_swap_time_self_only","fallback": "Reduce weapon-swap time (self only)"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/quick_swap"}}
+	],
+	"columns": 1,
+	"exit_action": {
+		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_configuration","fallback": "Return to configuration"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config"}
+	}
+}

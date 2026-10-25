@@ -1,0 +1,13 @@
+
+#> mgs:v5.3.0/multiplayer/create_sidebar_demo
+#
+# @executed	as the player & at current position
+#
+# @within	mgs:v5.3.0/multiplayer/start
+#
+
+function mgs:v5.3.0/multiplayer/refresh_sidebar_demo
+scoreboard objectives setdisplay sidebar.team.red mgs.sidebar
+scoreboard objectives setdisplay sidebar.team.blue mgs.sidebar
+scoreboard objectives setdisplay sidebar.team.gold mgs.sidebar
+

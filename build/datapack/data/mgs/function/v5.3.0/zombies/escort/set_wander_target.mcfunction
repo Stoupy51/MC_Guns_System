@@ -1,0 +1,17 @@
+
+#> mgs:v5.3.0/zombies/escort/set_wander_target
+#
+# @executed	as @n[tag=mgs.zb_escort_new] & at @s
+#
+# @within	mgs:v5.3.0/zombies/escort/retarget with entity @s data.walk_to
+#			mgs:v5.3.0/zombies/escort/retarget with storage mgs:temp _escort
+#			mgs:v5.3.0/zombies/escort/retarget_lure with storage mgs:temp _escort
+#			mgs:v5.3.0/zombies/escort/retarget_monkey with storage mgs:temp _escort
+#
+# @args		x (unknown)
+#			y (unknown)
+#			z (unknown)
+#
+
+$data modify entity @s wander_target set value [I;$(x),$(y),$(z)]
+

@@ -1,0 +1,36 @@
+
+#> mgs:v5.3.0/maps/editor/do_save
+#
+# @executed	as @p[tag=mgs.map_editor,distance=..6,sort=nearest]
+#
+# @within	mgs:v5.3.0/maps/editor/save_exit
+#			mgs:v5.3.0/maps/editor/save_only
+#
+
+# The default enemy function changed this session survives the reload.
+data modify storage mgs:temp _session_enemy_fn set from storage mgs:temp map_edit.map.default_enemy_function
+
+# Reloading keeps the metadata (id, name, description, scripts).
+execute store result storage mgs:temp map_edit.idx int 1 run scoreboard players get @s mgs.mp.map_idx
+function mgs:v5.3.0/maps/editor/load_map_data with storage mgs:temp map_edit
+
+# Only a map without a dimension takes the editor's; otherwise it stays what Settings set.
+execute unless data storage mgs:temp map_edit.map.dimension run data modify storage mgs:temp map_edit.map.dimension set from entity @s Dimension
+
+execute if data storage mgs:temp _session_enemy_fn run data modify storage mgs:temp map_edit.map.default_enemy_function set from storage mgs:temp _session_enemy_fn
+data remove storage mgs:temp _session_enemy_fn
+
+execute as @n[tag=mgs.element.base_coordinates] at @s run function mgs:v5.3.0/maps/editor/save_base
+
+# For the relative coordinates.
+execute store result score #base_x mgs.data run data get storage mgs:temp map_edit.map.base_coordinates[0]
+execute store result score #base_y mgs.data run data get storage mgs:temp map_edit.map.base_coordinates[1]
+execute store result score #base_z mgs.data run data get storage mgs:temp map_edit.map.base_coordinates[2]
+
+# Lists are reset and rebuilt from the markers.
+execute if score @s mgs.mp.map_mode matches 0 run function mgs:v5.3.0/maps/editor/save_lists/multiplayer
+execute if score @s mgs.mp.map_mode matches 1 run function mgs:v5.3.0/maps/editor/save_lists/zombies
+execute if score @s mgs.mp.map_mode matches 2 run function mgs:v5.3.0/maps/editor/save_lists/missions
+
+function mgs:v5.3.0/maps/editor/write_back with storage mgs:temp map_edit
+

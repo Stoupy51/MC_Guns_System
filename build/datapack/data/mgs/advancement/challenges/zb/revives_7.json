@@ -23,6 +23,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.2.0/progression/adv/zb/revives/reward_7"
+		"function": "mgs:v5.3.0/progression/adv/zb/revives/reward_7"
 	}
 }

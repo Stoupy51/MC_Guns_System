@@ -1,0 +1,29 @@
+{
+	"type": "minecraft:multi_action",
+	"title": [
+		"",
+		"🛠 ",
+		{"translate": "mgs.zombies_admin","fallback": "Zombies Admin","color": "dark_red","bold": true}
+	],
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.debug_tools_operators_only","fallback": "Debug tools (operators only)","color": "gray"}}
+	],
+	"actions": [
+		{"label": ["","⏭ ",{"translate": "mgs.skip_round","fallback": "Skip Round","color": "yellow"}],"tooltip": {"translate": "mgs.end_this_round_and_start_the_next_one","fallback": "End this round and start the next one"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/admin/round_skip_1"}},
+		{"label": ["","⏩ ",{"translate": "mgs.skip_5_rounds","fallback": "Skip 5 Rounds","color": "gold"}],"tooltip": {"translate": "mgs.jump_forward_5_rounds","fallback": "Jump forward 5 rounds"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/admin/round_skip_5"}},
+		{"label": ["","⏩ ",{"translate": "mgs.skip_10_rounds","fallback": "Skip 10 Rounds","color": "gold"}],"tooltip": {"translate": "mgs.jump_forward_10_rounds","fallback": "Jump forward 10 rounds"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/admin/round_skip_10"}},
+		{"label": ["","⏩ ",{"translate": "mgs.skip_50_rounds","fallback": "Skip 50 Rounds","color": "gold"}],"tooltip": {"translate": "mgs.jump_forward_50_rounds","fallback": "Jump forward 50 rounds"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/admin/round_skip_50"}},
+		{"label": ["","⚡ ",{"translate": "mgs.force_power_up","fallback": "Force Power-Up"}],"tooltip": {"translate": "mgs.trigger_any_power_up_for_everyone","fallback": "Trigger any power-up for everyone"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/zombies/admin/powerups"}},
+		{"label": ["","⟲ ",{"translate": "mgs.reset_points","fallback": "Reset Points","color": "red"}],"tooltip": {"translate": "mgs.set_every_players_points_back_to_0","fallback": "Set every player's points back to 0"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/admin/points_reset"}},
+		{"label": ["","+",[{"text":"2500 ","color": "green"}, {"translate": "mgs.points","fallback": "Points"}]],"tooltip": {"translate": "mgs.give_every_player_2500_points","fallback": "Give every player 2500 points"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/admin/points_add_2500"}},
+		{"label": ["","+",[{"text":"500000 ","color": "green"}, {"translate": "mgs.points","fallback": "Points"}]],"tooltip": {"translate": "mgs.give_every_player_500000_points","fallback": "Give every player 500000 points"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/admin/points_add_500000"}},
+		{"label": ["","⏸ ",{"translate": "mgs.freeze_unfreeze","fallback": "Freeze / Unfreeze","color": "aqua"}],"tooltip": {"translate": "mgs.pause_the_game_no_mob_moves_no_player_moves_every_timer_stops","fallback": "Pause the game: no mob moves, no player moves, every timer stops"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/admin/freeze_toggle"}},
+		{"label": ["","🔧 ",{"translate": "mgs.unfreeze_round","fallback": "Unfreeze Round","color": "aqua"}],"tooltip": {"translate": "mgs.rebuild_a_round_that_has_stopped_advancing_stuck_at_0_zombies","fallback": "Rebuild a round that has stopped advancing (stuck at 0 zombies)"},"action": {"type": "run_command","command": "/function mgs:zombies/recover"}}
+	],
+	"columns": 2,
+	"exit_action": {
+		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_the_zombies_setup_menu","fallback": "Return to the zombies setup menu"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/zombies/setup"}
+	}
+}

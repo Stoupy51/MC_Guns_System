@@ -1,0 +1,19 @@
+
+#> mgs:v5.3.0/missions/on_respawn
+#
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.3.0/player/tick
+#
+
+scoreboard players set @s mgs.mp.death_count 0
+
+# Already handled as a simulated death in the same tick.
+execute if score @s mgs.mp.spectate_timer matches 1.. run return 0
+execute if entity @s[gamemode=spectator] run return 0
+
+scoreboard players add @s mgs.mi.deaths 1
+scoreboard players set @s mgs.mi.died_here 0
+
+function mgs:v5.3.0/missions/enter_death_spectate
+

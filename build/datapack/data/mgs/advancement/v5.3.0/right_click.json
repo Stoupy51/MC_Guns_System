@@ -1,0 +1,17 @@
+{
+	"criteria": {
+		"requirement": {
+			"trigger": "minecraft:using_item",
+			"conditions": {
+				"item": {
+					"predicates": {
+						"minecraft:custom_data": "{mgs:{gun:true}}"
+					}
+				}
+			}
+		}
+	},
+	"rewards": {
+		"function": "mgs:v5.3.0/player/set_pending_clicks"
+	}
+}
