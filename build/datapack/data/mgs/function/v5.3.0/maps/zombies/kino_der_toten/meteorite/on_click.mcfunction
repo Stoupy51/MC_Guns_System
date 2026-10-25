@@ -1,0 +1,18 @@
+
+#> mgs:v5.3.0/maps/zombies/kino_der_toten/meteorite/on_click
+#
+# @executed	as @e[tag=mgs.kino]
+#
+# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/on_right_click
+#
+
+# Run as the meteorite interaction.
+execute if entity @s[tag=mgs.kino.met_active] run return fail
+
+tag @s add mgs.kino.met_active
+scoreboard players add #kino_met_count mgs.data 1
+execute at @s run playsound minecraft:block.beacon.activate block @a[distance=..50] ~ ~ ~ 1 1
+
+# Third meteorite: play 115.
+execute if score #kino_met_count mgs.data matches 3 run function mgs:v5.3.0/maps/zombies/kino_der_toten/meteorite/play_song
+

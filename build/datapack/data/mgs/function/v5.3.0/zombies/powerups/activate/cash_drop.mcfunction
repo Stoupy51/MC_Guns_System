@@ -1,0 +1,20 @@
+
+#> mgs:v5.3.0/zombies/powerups/activate/cash_drop
+#
+# @executed	as the player & at current position
+#
+# @within	mgs:v5.3.0/zombies/admin/powerup
+#			mgs:v5.3.0/zombies/powerups/dispatch_activate
+#
+
+execute store result score #pu_cash mgs.data run random value 4..16
+scoreboard players operation #pu_cash mgs.data *= #100 mgs.data
+
+# Doubled when the collector has Double Points.
+execute if score @p[tag=mgs.pu_collecting] mgs.special.double_points matches 1.. run scoreboard players operation #pu_cash mgs.data *= #2 mgs.data
+
+execute as @a[scores={mgs.zb.in_game=1}] run scoreboard players operation @s mgs.zb.points += #pu_cash mgs.data
+
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.cash_drop_2","fallback":"Cash Drop! ","color":"green","bold":true},{"text":"+","color":"gold"},{"score":{"name":"#pu_cash","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"gold"}, {"translate":"mgs.points_each","fallback":"points each!"}]]
+execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/powerups/bonus_points ambient @s ~ ~ ~ 0.7 1.0
+

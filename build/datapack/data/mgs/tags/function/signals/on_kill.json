@@ -1,9 +1,9 @@
 {
 	"values": [
-		"mgs:v5.2.0/zombies/xp/on_kill",
-		"mgs:v5.2.0/multiplayer/on_kill_signal",
-		"mgs:v5.2.0/multiplayer/xp/on_kill",
-		"mgs:v5.2.0/multiplayer/perks/on_kill",
-		"mgs:v5.2.0/missions/xp/on_kill"
+		"mgs:v5.3.0/zombies/xp/on_kill",
+		"mgs:v5.3.0/multiplayer/on_kill_signal",
+		"mgs:v5.3.0/multiplayer/xp/on_kill",
+		"mgs:v5.3.0/multiplayer/perks/on_kill",
+		"mgs:v5.3.0/missions/xp/on_kill"
 	]
 }

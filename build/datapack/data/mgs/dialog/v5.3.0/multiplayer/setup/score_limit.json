@@ -1,0 +1,29 @@
+{
+	"type": "minecraft:multi_action",
+	"title": {
+		"translate": "mgs.score_limit","fallback": "Score Limit",
+		"color": "gold",
+		"bold": true
+	},
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.set_the_score_needed_to_win","fallback": "Set the score needed to win","color": "gray"}}
+	],
+	"actions": [
+		{"label": {"text": "10","color": "yellow"},"tooltip": [{"translate": "mgs.set_score_limit_to","fallback": "Set score limit to"}, " 10"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 10"}},
+		{"label": {"text": "20","color": "yellow"},"tooltip": [{"translate": "mgs.set_score_limit_to","fallback": "Set score limit to"}, " 20"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 20"}},
+		{"label": {"text": "30","color": "yellow"},"tooltip": [{"translate": "mgs.set_score_limit_to","fallback": "Set score limit to"}, " 30"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 30"}},
+		{"label": {"text": "50","color": "green"},"tooltip": [{"translate": "mgs.set_score_limit_to","fallback": "Set score limit to"}, " 50"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 50"}},
+		{"label": {"translate": "mgs.100_2","fallback": "100","color": "yellow"},"tooltip": [{"translate": "mgs.set_score_limit_to","fallback": "Set score limit to"}, " 100"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 100"}},
+		{"label": {"translate": "mgs.200","fallback": "200","color": "yellow"},"tooltip": [{"translate": "mgs.set_score_limit_to","fallback": "Set score limit to"}, " 200"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 200"}},
+		{"label": {"translate": "mgs.300","fallback": "300","color": "yellow"},"tooltip": [{"translate": "mgs.set_score_limit_to","fallback": "Set score limit to"}, " 300"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 300"}},
+		{"label": {"translate": "mgs.500","fallback": "500","color": "yellow"},"tooltip": [{"translate": "mgs.set_score_limit_to","fallback": "Set score limit to"}, " 500"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 500"}}
+	],
+	"columns": 1,
+	"pause": false,
+	"after_action": "none",
+	"exit_action": {
+		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},
+		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/multiplayer/setup"}
+	}
+}

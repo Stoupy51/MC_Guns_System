@@ -1,0 +1,13 @@
+
+#> mgs:v5.3.0/zombies/freeze_tick
+#
+# @within	mgs:v5.3.0/tick
+#
+
+execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.3.0/zombies/freeze_tick"}
+
+execute if score #zb_freeze mgs.data matches 2 run return run function mgs:v5.3.0/zombies/suspended_tick
+scoreboard players add #zb_freeze_msg mgs.data 1
+execute if score #zb_freeze_msg mgs.data matches 20.. run scoreboard players set #zb_freeze_msg mgs.data 0
+execute if score #zb_freeze_msg mgs.data matches 0 run title @a[scores={mgs.zb.in_game=1}] actionbar [{"text":"⏸ ","color":"white"},{"translate":"mgs.game_frozen","fallback":"GAME FROZEN","color":"aqua","bold":true}]
+

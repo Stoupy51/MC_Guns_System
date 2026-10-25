@@ -1,9 +1,0 @@
-
-#> mgs:v5.2.0/multiplayer/gamemodes/ffa/tick
-#
-# @within	mgs:v5.2.0/multiplayer/game_tick
-#
-
-execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit
-execute as @a if score @s mgs.mp.kills >= #score_limit mgs.data run function mgs:v5.2.0/multiplayer/gamemodes/ffa/player_wins
-

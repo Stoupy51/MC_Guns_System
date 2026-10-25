@@ -29,6 +29,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.2.0/progression/adv/zb/best_round/reward_10"
+		"function": "mgs:v5.3.0/progression/adv/zb/best_round/reward_10"
 	}
 }

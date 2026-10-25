@@ -1,0 +1,23 @@
+
+#> mgs:v5.3.0/zombies/pap/annotate_fire_rate_line
+#
+# @executed	as @n[tag=mgs.pap_new]
+#
+# @within	mgs:v5.3.0/zombies/pap/annotate_lore
+#
+
+execute store result score #pap_old mgs.data run data get storage mgs:temp _pap_old_stats.cooldown
+execute store result score #pap_new mgs.data run data get storage mgs:temp _pap_extract.stats.cooldown
+
+scoreboard players operation #pap_rate_old mgs.data = #200 mgs.data
+scoreboard players operation #pap_rate_old mgs.data /= #pap_old mgs.data
+scoreboard players operation #pap_rate_new mgs.data = #200 mgs.data
+scoreboard players operation #pap_rate_new mgs.data /= #pap_new mgs.data
+
+scoreboard players operation #pap_delta mgs.data = #pap_rate_new mgs.data
+scoreboard players operation #pap_delta mgs.data -= #pap_rate_old mgs.data
+
+execute store result storage mgs:temp _pap_ann.index int 1 run scoreboard players get #pap_li mgs.data
+execute unless score #pap_delta mgs.data matches 0 run function mgs:v5.3.0/zombies/pap/annotate_rate_delta
+scoreboard players add #pap_li mgs.data 1
+
