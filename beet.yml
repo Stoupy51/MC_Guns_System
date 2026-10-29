@@ -23,7 +23,7 @@ ignore: ["build", "manual_cache", "definitions_debug.json"]
 require:
     - "stewbeet"
     - "stewbeet.plugins.livereload"
-    - "stewbeet.plugins.sniffer"
+    - "stewbeet.plugins.source_maps"
 
 # Takes a nested pack config, see PackConfig() documentation
 data_pack:
@@ -62,7 +62,6 @@ pipeline:
     - "stewbeet.plugins.auto.scoreboard_constants.silent"
     - "stewbeet.plugins.auto.lang_file"
     - "stewbeet.plugins.auto.headers"
-    - "stewbeet.plugins.sniffer.emit"
     - "stewbeet.plugins.archive"
     - "stewbeet.plugins.merge_smithed_weld.datapack"
     - "stewbeet.plugins.merge_smithed_weld.resource_pack"
