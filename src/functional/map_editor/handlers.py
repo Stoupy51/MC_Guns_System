@@ -1,6 +1,6 @@
 """ Placing an element: its marker, its defaults and the announce that follows. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs
@@ -146,21 +146,24 @@ tellraw @a[tag={ns}.map_editor] ["  ",{edit_respawn_cmd_btn}]
 """)
 
 	# Zombies objects: detect the type, copy its defaults, take the player's yaw, summon the marker with its data.
-	zb_tag_lines: list[str] = []
+	zb_tags: McFunction = ""
 	for etype in ZB_ELEMENTS:
-		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zbpos.tag set value "{ns}.element.{etype}"')
-		zb_tag_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zb_new set from storage {ns}:temp map_edit.zb_defaults.{etype}')
+		zb_tags += f"""
+execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zbpos.tag set value "{ns}.element.{etype}"
+execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zb_new set from storage {ns}:temp map_edit.zb_defaults.{etype}
+"""
 
-	zb_msg_lines: list[str] = []
-	for etype, einfo in ZB_ELEMENTS.items():
-		zb_msg_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo.name} placed!","color":"{einfo.color}"}}]')
+	zb_messages: str = "\n".join(
+		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo.name} placed!","color":"{einfo.color}"}}]'
+		for etype, einfo in ZB_ELEMENTS.items()
+	)
 
 	write_versioned_function("maps/editor/handle_zb_object", f"""
 execute store result storage {ns}:temp _zbpos.x double 1 run data get entity @s Pos[0]
 execute store result storage {ns}:temp _zbpos.y double 1 run data get entity @s Pos[1]
 execute store result storage {ns}:temp _zbpos.z double 1 run data get entity @s Pos[2]
 
-{chr(10).join(zb_tag_lines)}
+{zb_tags}
 
 function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zbpos
 
@@ -200,6 +203,6 @@ tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
 # Wallbuy, perk, PaP, mystery box and power switch displays.
 function {ns}:v{version}/maps/editor/refresh_displays
 
-{chr(10).join(zb_msg_lines)}
+{zb_messages}
 """)
 

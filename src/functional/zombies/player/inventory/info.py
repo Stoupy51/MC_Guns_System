@@ -1,6 +1,6 @@
 """ The info paper: its lore, its perk lines and the perk display items beside it. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ...machines.perks.definitions import PERK_DEFINITIONS, PERK_DESCRIPTIONS
 
@@ -51,7 +51,7 @@ $item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_in
 
 	# One mini perk machine per owned perk in a fixed slot (26 - index) of the last row, written only when a perk is gained or lost; an unowned perk leaves a gap.
 	# custom_data has no "zombies" key, so on_new_item kills a thrown one and the next refresh brings it back.
-	perk_display_lines: list[str] = []
+	perk_display_sync: McFunction = ""
 	for i, (pid, pdata) in enumerate(PERK_DEFINITIONS.items()):
 		perk_slot: int = 26 - i
 		lore_parts: list[str] = [
@@ -67,15 +67,10 @@ $item replace entity @s hotbar.8 with minecraft:paper[custom_data={{{ns}:{{zb_in
 			f"lore={lore_snbt}]"
 		)
 		# Owned but not shown: place it. Not owned but shown: clear it.
-		perk_display_lines.append(
-			f"execute if score @s {ns}.zb.perk.{pid} matches 1 unless items entity @s inventory.{perk_slot} "
-			f"*[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{perk_slot} with {perk_item}"
-		)
-		perk_display_lines.append(
-			f"execute unless score @s {ns}.zb.perk.{pid} matches 1 if items entity @s inventory.{perk_slot} "
-			f"*[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{perk_slot} with air"
-		)
-	perk_display_sync: str = "\n".join(perk_display_lines)
+		perk_display_sync += f"""
+execute if score @s {ns}.zb.perk.{pid} matches 1 unless items entity @s inventory.{perk_slot} *[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{perk_slot} with {perk_item}
+execute unless score @s {ns}.zb.perk.{pid} matches 1 if items entity @s inventory.{perk_slot} *[custom_data~{{{ns}:{{zb_perk_display:true}}}}] run item replace entity @s inventory.{perk_slot} with air
+"""
 	# Also in the on_new_perk signal (as the buyer), so a purchase shows at once.
 	write_versioned_function("zombies/inventory/refresh_perk_items", f"""
 {perk_display_sync}

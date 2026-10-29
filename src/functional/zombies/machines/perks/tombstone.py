@@ -1,6 +1,6 @@
 """ Tombstone: the marker left behind on a bleed-out and recovering perks and weapons from it. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
@@ -29,13 +29,13 @@ def write_tombstone() -> None:
 		if cmds:
 			write_versioned_function(f"zombies/perks/reapply/{pid}", cmds)
 
-	ts_restore_perks_lines: list[str] = []
+	ts_restore_perks: McFunction = ""
 	for pid in TOMBSTONE_PERKS:
-		pdata = PERK_DEFINITIONS[pid]
-		ts_restore_perks_lines.append(f"execute if score @s {ns}.zb.tsp.{pid} matches 1 run scoreboard players set @s {ns}.zb.perk.{pid} 1")
-		if pdata.commands:
-			ts_restore_perks_lines.append(f"execute if score @s {ns}.zb.tsp.{pid} matches 1 run function {ns}:v{version}/zombies/perks/reapply/{pid}")
-	ts_restore_perks: str = "\n".join(ts_restore_perks_lines)
+		reapply: str = f"execute if score @s {ns}.zb.tsp.{pid} matches 1 run function {ns}:v{version}/zombies/perks/reapply/{pid}" if PERK_DEFINITIONS[pid].commands else ""
+		ts_restore_perks += f"""
+execute if score @s {ns}.zb.tsp.{pid} matches 1 run scoreboard players set @s {ns}.zb.perk.{pid} 1
+{reapply}
+"""
 
 	# A skeleton skull laid flat, raised and enlarged so it reads from across the map.
 	ts_tags: str = f'Tags:["{ns}.tombstone","{ns}.tombstone_new","{ns}.zombies_entity"]'

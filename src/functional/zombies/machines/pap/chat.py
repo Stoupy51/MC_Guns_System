@@ -25,14 +25,14 @@ scoreboard players add #pap_li {ns}.data 1
 execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v{version}/zombies/pap/pap_chat_lore_loop
 """)
 
-	pap_chat_lines: list[str] = [
-		f'tellraw @s [{MGS_TAG},{{"text":"Machine: ","color":"gray"}},{{"storage":"{ns}:temp","nbt":"_pap_machine.name","color":"gold","italic":false,"interpret":true}},{{"text":"\\nLevel: ","color":"gray"}},{{"score":{{"name":"#pap_next","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"/","color":"dark_gray"}},{{"score":{{"name":"#pap_max","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"  Cost: -","color":"gray"}},{{"score":{{"name":"#pap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]',
-		'tellraw @s [{"text":"Weapon stats:","color":"gray","italic":true}]',
-		# len - 2 skips the switch time and the empty separator.
-		f'execute store result score #pap_lore_len {ns}.data run data get storage {ns}:temp _pap_extract.lore',
-		f'scoreboard players remove #pap_lore_len {ns}.data 2',
-		f'scoreboard players set #pap_li {ns}.data 0',
-		f'execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v{version}/zombies/pap/pap_chat_lore_loop',
-	]
-	write_versioned_function("zombies/pap/pap_chat_message", "\n".join(pap_chat_lines))
+	write_versioned_function("zombies/pap/pap_chat_message", f"""
+tellraw @s [{MGS_TAG},{{"text":"Machine: ","color":"gray"}},{{"storage":"{ns}:temp","nbt":"_pap_machine.name","color":"gold","italic":false,"interpret":true}},{{"text":"\\nLevel: ","color":"gray"}},{{"score":{{"name":"#pap_next","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"/","color":"dark_gray"}},{{"score":{{"name":"#pap_max","objective":"{ns}.data"}},"color":"aqua"}},{{"text":"  Cost: -","color":"gray"}},{{"score":{{"name":"#pap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points","color":"gray"}}]
+tellraw @s [{{"text":"Weapon stats:","color":"gray","italic":true}}]
+
+# len - 2 skips the switch time and the empty separator.
+execute store result score #pap_lore_len {ns}.data run data get storage {ns}:temp _pap_extract.lore
+scoreboard players remove #pap_lore_len {ns}.data 2
+scoreboard players set #pap_li {ns}.data 0
+execute if score #pap_li {ns}.data < #pap_lore_len {ns}.data run function {ns}:v{version}/zombies/pap/pap_chat_lore_loop
+""")
 

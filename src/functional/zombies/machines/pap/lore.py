@@ -14,68 +14,55 @@ $item modify entity @s $(slot) {"type":"minecraft:set_components","components":{
 """)
 
 	# Annotate lore lines with PAP deltas: old stats in _pap_old_stats, new ones in _pap_extract.stats, #pap_li is the line index.
-	annotate_lore_lines: list[str] = [f'scoreboard players set #pap_li {ns}.data 0']
+	write_versioned_function("zombies/pap/annotate_lore", f"""
+scoreboard players set #pap_li {ns}.data 0
 
-	# Line 0: damage
-	annotate_lore_lines.extend([
-		f'execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.damage',
-		f'execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.damage',
-		f'scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data',
-		f'scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data',
-		f'execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_int_delta',
-		f'scoreboard players add #pap_li {ns}.data 1',
-	])
+# Line 0: damage
+execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.damage
+execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.damage
+scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data
+scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data
+execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_int_delta
+scoreboard players add #pap_li {ns}.data 1
 
-	# Line 1: ammo capacity
-	annotate_lore_lines.extend([
-		f'execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.capacity',
-		f'execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.capacity',
-		f'scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data',
-		f'scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data',
-		f'execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_int_delta',
-		f'scoreboard players add #pap_li {ns}.data 1',
-	])
+# Line 1: ammo capacity
+execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.capacity
+execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.capacity
+scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data
+scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data
+execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_int_delta
+scoreboard players add #pap_li {ns}.data 1
 
-	# Line 2: reload time (ticks to seconds)
-	annotate_lore_lines.extend([
-		f'execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.reload_time',
-		f'execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.reload_time',
-		f'scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data',
-		f'scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data',
-		f'execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_time_delta',
-		f'scoreboard players add #pap_li {ns}.data 1',
-	])
+# Line 2: reload time (ticks to seconds)
+execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.reload_time
+execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.reload_time
+scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data
+scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data
+execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_time_delta
+scoreboard players add #pap_li {ns}.data 1
 
-	# Optional fire rate line, gated on the old stats: the lore only has it if the weapon had a cooldown before.
-	# pap_stats can add one (m1911), which would annotate a missing line and shift the ones below.
-	annotate_lore_lines.append(
-		f'execute if data storage {ns}:temp _pap_old_stats.cooldown run function {ns}:v{version}/zombies/pap/annotate_fire_rate_line'
-	)
+# Optional fire rate line, gated on the old stats: the lore only has it if the weapon had a cooldown before.
+# pap_stats can add one (m1911), which would annotate a missing line and shift the ones below.
+execute if data storage {ns}:temp _pap_old_stats.cooldown run function {ns}:v{version}/zombies/pap/annotate_fire_rate_line
 
-	# Optional pellets line, gated the same way.
-	annotate_lore_lines.append(
-		f'execute if data storage {ns}:temp _pap_old_stats.pellet_count run function {ns}:v{version}/zombies/pap/annotate_pellets_line'
-	)
+# Optional pellets line, gated the same way.
+execute if data storage {ns}:temp _pap_old_stats.pellet_count run function {ns}:v{version}/zombies/pap/annotate_pellets_line
 
-	# Damage decay (percentage, x100)
-	annotate_lore_lines.extend([
-		f'execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.decay 100',
-		f'execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.decay 100',
-		f'scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data',
-		f'scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data',
-		f'execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_pct_delta',
-		f'scoreboard players add #pap_li {ns}.data 1',
-	])
+# Damage decay (percentage, x100)
+execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.decay 100
+execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.decay 100
+scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data
+scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data
+execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_pct_delta
+scoreboard players add #pap_li {ns}.data 1
 
-	# Switch time (ticks to seconds)
-	annotate_lore_lines.extend([
-		f'execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.switch',
-		f'execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.switch',
-		f'scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data',
-		f'scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data',
-		f'execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_time_delta',
-	])
-	write_versioned_function("zombies/pap/annotate_lore", "\n".join(annotate_lore_lines))
+# Switch time (ticks to seconds)
+execute store result score #pap_old {ns}.data run data get storage {ns}:temp _pap_old_stats.switch
+execute store result score #pap_new {ns}.data run data get storage {ns}:temp _pap_extract.stats.switch
+scoreboard players operation #pap_delta {ns}.data = #pap_new {ns}.data
+scoreboard players operation #pap_delta {ns}.data -= #pap_old {ns}.data
+execute unless score #pap_delta {ns}.data matches 0 run function {ns}:v{version}/zombies/pap/annotate_time_delta
+""")
 
 	write_versioned_function("zombies/pap/annotate_int_delta", f"""
 execute store result storage {ns}:temp _pap_ann.index int 1 run scoreboard players get #pap_li {ns}.data

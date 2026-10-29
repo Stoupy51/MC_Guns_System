@@ -12,17 +12,15 @@ def write_pap_magazines() -> None:
 	version: str = Mem.ctx.project_version
 
 	# PaP magazines hold 8x the weapon capacity.
-	pap_mag_lines: list[str] = [
-		f"# Upgrade and refill matching {BASE_WEAPON} magazines to 8x weapon capacity",
-		f"execute store result score #pap_mag_cap {ns}.data run data get storage {ns}:temp _pap_extract.stats.capacity 8",
-	]
-	for slot in ItemBuilder.ALL_SLOTS:
-		if slot == "weapon.mainhand":
-			continue
-		pap_mag_lines.append(
-			f'$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:"$({BASE_WEAPON})"}}}}] run function {ns}:v{version}/zombies/pap/upgrade_magazine_slot {{slot:"{slot}"}}'
-		)
-	write_versioned_function("zombies/pap/pap_upgrade_magazines", "\n".join(pap_mag_lines))
+	slot_lines: str = "\n".join(
+		f'$execute if items entity @s {slot} *[custom_data~{{{ns}:{{magazine:true,weapon:"$({BASE_WEAPON})"}}}}] run function {ns}:v{version}/zombies/pap/upgrade_magazine_slot {{slot:"{slot}"}}'
+		for slot in ItemBuilder.ALL_SLOTS if slot != "weapon.mainhand"
+	)
+	write_versioned_function("zombies/pap/pap_upgrade_magazines", f"""
+# Upgrade and refill matching {BASE_WEAPON} magazines to 8x weapon capacity
+execute store result score #pap_mag_cap {ns}.data run data get storage {ns}:temp _pap_extract.stats.capacity 8
+{slot_lines}
+""")
 
 	write_versioned_function("zombies/pap/upgrade_magazine_slot", f"""
 execute store result storage {ns}:temp zb_item_stats.{CAPACITY} int 1 run scoreboard players get #pap_mag_cap {ns}.data

@@ -9,7 +9,7 @@ The body link lives in zb.ww.id, not zb.downed_id, which a later normal down wou
 Bleed and revive progress use the owner's normal scores, so the revive core works unchanged.
 """
 # Imports
-from stewbeet import Mem, write_load_file, write_versioned_function
+from stewbeet import McFunction, Mem, write_load_file, write_versioned_function
 
 from ...core.feedback import ZombiesFeedback
 from ...helpers import MGS_TAG
@@ -34,14 +34,14 @@ def generate_whos_who() -> None:
 		for pid in perk_ids
 	)
 	ww_clear: str = "\n".join(f"scoreboard players set @s {ns}.zb.wwp.{pid} 0" for pid in perk_ids)
-	ww_restore_lines: list[str] = []
+	ww_restore: McFunction = ""
 	for pid in perk_ids:
-		pdata = PERK_DEFINITIONS[pid]
-		ww_restore_lines.append(f"execute if score @s {ns}.zb.wwp.{pid} matches 1 run scoreboard players set @s {ns}.zb.perk.{pid} 1")
-		if pdata.commands:
-			# reapply/<pid> (no chat, jingle or XP) is generated in perks/tombstone.
-			ww_restore_lines.append(f"execute if score @s {ns}.zb.wwp.{pid} matches 1 run function {ns}:v{version}/zombies/perks/reapply/{pid}")
-	ww_restore: str = "\n".join(ww_restore_lines)
+		# reapply/<pid> (no chat, jingle or XP) is generated in perks/tombstone.
+		reapply: str = f"execute if score @s {ns}.zb.wwp.{pid} matches 1 run function {ns}:v{version}/zombies/perks/reapply/{pid}" if PERK_DEFINITIONS[pid].commands else ""
+		ww_restore += f"""
+execute if score @s {ns}.zb.wwp.{pid} matches 1 run scoreboard players set @s {ns}.zb.perk.{pid} 1
+{reapply}
+"""
 
 	write_load_file(f"""
 # zb.ww.id links the owner to the body and survives later normal downs, unlike zb.downed_id.

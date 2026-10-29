@@ -2,7 +2,7 @@
 # Imports
 from dataclasses import dataclass
 
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, MODE_LIST
 
@@ -58,15 +58,10 @@ execute if data storage {ns}:temp map_edit.map.tick_command run data modify enti
 """)
 
 	for mode_key, mode_info in EDITOR_MODES.items():
-		summon_lines: list[str] = [
-			line
-			for etype in mode_info.slots if ALL_ELEMENTS[etype].save_type in SUMMON_ITERATORS
-			for line in start_iterator(ns, version, etype)
-		]
-		write_versioned_function(
-			f"maps/editor/summon_existing/{mode_key}",
-			"\n".join(summon_lines) if summon_lines else "# No mode-specific elements to summon"
+		summon_existing: McFunction = "".join(
+			start_iterator(ns, version, etype) for etype in mode_info.slots if ALL_ELEMENTS[etype].save_type in SUMMON_ITERATORS
 		)
+		write_versioned_function(f"maps/editor/summon_existing/{mode_key}", summon_existing or "# No mode-specific elements to summon")
 
 	write_versioned_function("maps/editor/summon_base_marker", f"""
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.base_coordinates"]}}
@@ -248,14 +243,14 @@ $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns
 """)
 
 
-def start_iterator(ns: str, version: str, etype: str) -> list[str]:
-	""" Lines copying one element's saved list and starting its summon iterator, then a blank separator. """
+def start_iterator(ns: str, version: str, etype: str) -> McFunction:
+	""" Lines copying one element's saved list and starting its summon iterator. """
 	einfo = ALL_ELEMENTS[etype]
 	iterator: SummonIterator = SUMMON_ITERATORS[einfo.save_type]
-	return [
-		f"data modify storage {ns}:temp {iterator.storage} set from storage {ns}:temp map_edit.map.{einfo.save_path}",
-		*([f'data modify storage {ns}:temp {iterator.storage}_tag set value "{ns}.element.{etype}"'] if iterator.tagged else []),
-		f"execute if data storage {ns}:temp {iterator.storage}[0] run function {ns}:v{version}/maps/editor/{iterator.function}",
-		"",
-	]
+	tag: str = f'data modify storage {ns}:temp {iterator.storage}_tag set value "{ns}.element.{etype}"' if iterator.tagged else ""
+	return f"""
+data modify storage {ns}:temp {iterator.storage} set from storage {ns}:temp map_edit.map.{einfo.save_path}
+{tag}
+execute if data storage {ns}:temp {iterator.storage}[0] run function {ns}:v{version}/maps/editor/{iterator.function}
+"""
 

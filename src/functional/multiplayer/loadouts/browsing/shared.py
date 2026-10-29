@@ -26,20 +26,20 @@ def normalize_btn_fields(ns: str) -> str:
 			for i, p in enumerate(PERKS)
 		)
 	)
-	return "\n".join([
-		f'execute unless data storage {ns}:temp _btn_data.perks run data modify storage {ns}:temp _btn_data.perks set value []',
-		f'execute store result storage {ns}:temp _btn_data.perks_count int 1 run data get storage {ns}:temp _btn_data.perks',
-		perk_disp,
-		f'execute unless data storage {ns}:temp _btn_data.points_used run data modify storage {ns}:temp _btn_data.points_used set value 0',
-		f'execute unless data storage {ns}:temp _btn_data.favorites_count run data modify storage {ns}:temp _btn_data.favorites_count set value 0',
-		f'execute unless data storage {ns}:temp _btn_data.likes run data modify storage {ns}:temp _btn_data.likes set value 0',
-		f'execute unless data storage {ns}:temp _btn_data.primary_mag_count run data modify storage {ns}:temp _btn_data.primary_mag_count set value 1',
-		f'execute unless data storage {ns}:temp _btn_data.secondary_mag_count run data modify storage {ns}:temp _btn_data.secondary_mag_count set value 0',
-		f'execute unless data storage {ns}:temp _btn_data.equip_slot1_name run data modify storage {ns}:temp _btn_data.equip_slot1_name set value "?"',
-		f'execute unless data storage {ns}:temp _btn_data.equip_slot2_name run data modify storage {ns}:temp _btn_data.equip_slot2_name set value "?"',
-		f'execute unless data storage {ns}:temp _btn_data.main_gun_display run data modify storage {ns}:temp _btn_data.main_gun_display set from storage {ns}:temp _btn_data.main_gun',
-		f'execute unless data storage {ns}:temp _btn_data.secondary_gun_display run data modify storage {ns}:temp _btn_data.secondary_gun_display set value "None"',
-	])
+	return f"""
+execute unless data storage {ns}:temp _btn_data.perks run data modify storage {ns}:temp _btn_data.perks set value []
+execute store result storage {ns}:temp _btn_data.perks_count int 1 run data get storage {ns}:temp _btn_data.perks
+{perk_disp}
+execute unless data storage {ns}:temp _btn_data.points_used run data modify storage {ns}:temp _btn_data.points_used set value 0
+execute unless data storage {ns}:temp _btn_data.favorites_count run data modify storage {ns}:temp _btn_data.favorites_count set value 0
+execute unless data storage {ns}:temp _btn_data.likes run data modify storage {ns}:temp _btn_data.likes set value 0
+execute unless data storage {ns}:temp _btn_data.primary_mag_count run data modify storage {ns}:temp _btn_data.primary_mag_count set value 1
+execute unless data storage {ns}:temp _btn_data.secondary_mag_count run data modify storage {ns}:temp _btn_data.secondary_mag_count set value 0
+execute unless data storage {ns}:temp _btn_data.equip_slot1_name run data modify storage {ns}:temp _btn_data.equip_slot1_name set value "?"
+execute unless data storage {ns}:temp _btn_data.equip_slot2_name run data modify storage {ns}:temp _btn_data.equip_slot2_name set value "?"
+execute unless data storage {ns}:temp _btn_data.main_gun_display run data modify storage {ns}:temp _btn_data.main_gun_display set from storage {ns}:temp _btn_data.main_gun
+execute unless data storage {ns}:temp _btn_data.secondary_gun_display run data modify storage {ns}:temp _btn_data.secondary_gun_display set value "None"
+"""
 
 def compute_trig(ns: str, field: str, base: int) -> str:
 	""" Return the lines storing `base + the current row's loadout id` into a _btn_data field.
