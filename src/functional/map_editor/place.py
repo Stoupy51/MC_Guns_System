@@ -1,6 +1,7 @@
 """ Catching an egg placement and routing it to the handler for that element. """
+
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..map_editor_defs import ALL_ELEMENTS
 
@@ -19,12 +20,11 @@ execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/editor/process_element
 """)
 
-	process_lines: list[str] = []
-	process_lines.append('# DESTROY handler')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.destroy] run function {ns}:v{version}/maps/editor/handle_destroy')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.destroy] run return run kill @s')
-	process_lines.append("")
-
+	process_element: McFunction = f"""
+# DESTROY handler
+execute if entity @s[tag={ns}.element.destroy] run function {ns}:v{version}/maps/editor/handle_destroy
+execute if entity @s[tag={ns}.element.destroy] run return run kill @s
+"""
 	for etype, einfo in ALL_ELEMENTS.items():
 		save_type = einfo.save_type
 		if save_type == "base":
@@ -45,28 +45,27 @@ execute as @n[tag={ns}.new_element] at @s run function {ns}:v{version}/maps/edit
 			handler = "handle_zb_object"
 		else:
 			continue
-		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/{handler}')
-		process_lines.append(f'execute if entity @s[tag={ns}.element.{etype}] run return run kill @s')
-		process_lines.append("")
+		process_element += f"""
+execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/{handler}
+execute if entity @s[tag={ns}.element.{etype}] run return run kill @s
+"""
+	# Finally, add the handlers for the utility elements (zombies and editor)
+	write_versioned_function("maps/editor/process_element", process_element + f"""
+# Zombies utility tool handlers
+execute if entity @s[tag={ns}.element.zb_defaults] run function {ns}:v{version}/maps/editor/handle_zb_defaults
+execute if entity @s[tag={ns}.element.zb_defaults] run return run kill @s
+execute if entity @s[tag={ns}.element.zb_configure] run function {ns}:v{version}/maps/editor/handle_zb_configure
+execute if entity @s[tag={ns}.element.zb_configure] run return run kill @s
 
-	process_lines.append("# Zombies utility tool handlers")
-	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run function {ns}:v{version}/maps/editor/handle_zb_defaults')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_defaults] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_configure] run function {ns}:v{version}/maps/editor/handle_zb_configure')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.zb_configure] run return run kill @s')
-	process_lines.append("")
+# Editor utility handlers
+execute if entity @s[tag={ns}.element.editor_save_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_exit
+execute if entity @s[tag={ns}.element.editor_save_exit] run return run kill @s
+execute if entity @s[tag={ns}.element.editor_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/exit
+execute if entity @s[tag={ns}.element.editor_exit] run return run kill @s
+execute if entity @s[tag={ns}.element.editor_save] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_only
+execute if entity @s[tag={ns}.element.editor_save] run return run kill @s
 
-	process_lines.append("# Editor utility handlers")
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_exit')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save_exit] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/exit')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_exit] run return run kill @s')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] as @p[tag={ns}.map_editor,distance=..6,sort=nearest] run function {ns}:v{version}/maps/editor/save_only')
-	process_lines.append(f'execute if entity @s[tag={ns}.element.editor_save] run return run kill @s')
-	process_lines.append("")
-
-	process_lines.append("# Fallback: unknown type")
-	process_lines.append("kill @s")
-
-	write_versioned_function("maps/editor/process_element", "\n".join(process_lines))
+# Fallback: unknown type
+kill @s
+""")
 

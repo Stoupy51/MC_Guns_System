@@ -11,6 +11,7 @@ tellraw @a[tag=mgs.map_editor] [{"text":"","color":"white","bold":true},"  ⚙ "
 tellraw @a[tag=mgs.map_editor] ["  ",{"translate":"mgs.new_elements_use_these_values_on_placement","fallback":"New elements use these values on placement","color":"gray","italic":true}]
 tellraw @a[tag=mgs.map_editor] {"text":"============================================","color":"dark_gray"}
 
+# Shared group_id default.
 tellraw @a[tag=mgs.map_editor] ["  ",{"translate":"mgs.group_id","fallback":"group_id: ","color":"gray"},{"storage":"mgs:temp","nbt":"map_edit.zb_defaults.group_id","color":"white"}," ",[{"text": "[", "color": "aqua", "click_event": {"action": "suggest_command", "command": "/data modify storage mgs:temp map_edit.zb_defaults.group_id set value 0"}, "hover_event": {"action": "show_text", "value": "Click to edit group_id"}}, "\u270e", "]"]]
 tellraw @a[tag=mgs.map_editor] ["  ",{"translate":"mgs.applies_to_zombie_spawn_player_spawn","fallback":"Applies to Zombie Spawn & Player Spawn.","color":"dark_gray","italic":true}]
 

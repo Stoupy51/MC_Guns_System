@@ -22,6 +22,7 @@ execute store result storage mgs:temp _btn_data.delete_trig int 1 run scoreboard
 scoreboard players operation #trig mgs.data = #loadout_id mgs.data
 scoreboard players add #trig mgs.data 60000
 execute store result storage mgs:temp _btn_data.default_trig int 1 run scoreboard players get #trig mgs.data
+
 execute unless data storage mgs:temp _btn_data.perks run data modify storage mgs:temp _btn_data.perks set value []
 execute store result storage mgs:temp _btn_data.perks_count int 1 run data get storage mgs:temp _btn_data.perks
 data modify storage mgs:temp _btn_data.perk0 set value ""
@@ -51,6 +52,7 @@ execute unless data storage mgs:temp _btn_data.equip_slot1_name run data modify 
 execute unless data storage mgs:temp _btn_data.equip_slot2_name run data modify storage mgs:temp _btn_data.equip_slot2_name set value "?"
 execute unless data storage mgs:temp _btn_data.main_gun_display run data modify storage mgs:temp _btn_data.main_gun_display set from storage mgs:temp _btn_data.main_gun
 execute unless data storage mgs:temp _btn_data.secondary_gun_display run data modify storage mgs:temp _btn_data.secondary_gun_display set value "None"
+
 execute store result score #pub mgs.data run data get storage mgs:temp _find_iter[0].public
 execute if score #pub mgs.data matches 1 run function mgs:v5.3.0/multiplayer/my_loadouts/manage_build_public with storage mgs:temp _btn_data
 execute if score #pub mgs.data matches 0 run function mgs:v5.3.0/multiplayer/my_loadouts/manage_build_private with storage mgs:temp _btn_data

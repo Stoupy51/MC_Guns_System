@@ -49,6 +49,7 @@ execute unless data storage mgs:temp _btn_data.equip_slot1_name run data modify 
 execute unless data storage mgs:temp _btn_data.equip_slot2_name run data modify storage mgs:temp _btn_data.equip_slot2_name set value "?"
 execute unless data storage mgs:temp _btn_data.main_gun_display run data modify storage mgs:temp _btn_data.main_gun_display set from storage mgs:temp _btn_data.main_gun
 execute unless data storage mgs:temp _btn_data.secondary_gun_display run data modify storage mgs:temp _btn_data.secondary_gun_display set value "None"
+
 execute unless data storage mgs:temp _btn_data.owner_name run data modify storage mgs:temp _btn_data.owner_name set value "?"
 
 function mgs:v5.3.0/multiplayer/marketplace/add_btn with storage mgs:temp _btn_data

@@ -3,8 +3,8 @@
 	"file": "drop_bomb.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/bomb/snd/carry.py"
 	],
 	"names": [],
-	"mappings": "AAmCE;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA"
+	"mappings": "AAyE2B;;;;;;;;AAC3B;AACA;AACA;AACA;AACA"
 }

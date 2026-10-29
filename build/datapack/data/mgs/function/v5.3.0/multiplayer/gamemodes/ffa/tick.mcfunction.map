@@ -3,8 +3,8 @@
 	"file": "tick.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/free_for_all.py"
 	],
 	"names": [],
-	"mappings": "AAmCE;;;;;;AAAA;AAAA;AAAA"
+	"mappings": "AA2BmB;;;;;;AACnB;AACA;AACA"
 }
