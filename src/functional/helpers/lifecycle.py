@@ -1,6 +1,6 @@
 """ Command blocks every mode's start, prep and late-join flows are assembled from. """
 # Imports
-from stewbeet import Mem
+from stewbeet import McFunction, Mem
 
 from . import MGS_TAG
 from .text import Text
@@ -54,38 +54,30 @@ execute unless data storage {ns}:{storage} game.map.start_commands run data modi
 		return f'schedule function {ns}:v{version}/{mode}/preload_complete 20t'
 
 	@staticmethod
-	def prep_freeze_lines(ns: str, score_prefix: str, prepend: str = "", append: str = "") -> str:
+	def prep_freeze_lines(ns: str, score_prefix: str) -> McFunction:
 		""" Return shared prep freeze/effects lines for a mode's in-game players. """
 		selector: str = f'@a[scores={{{ns}.{score_prefix}.in_game=1}}]'
-		parts: list[str] = [
-			f'effect give {selector} darkness 25 255 true',
-			f'effect give {selector} blindness 25 255 true',
-			f'effect give {selector} night_vision 25 255 true',
-		]
-		if prepend:
-			parts.append(prepend.strip())
-		parts.extend([
-			f'execute as {selector} run attribute @s minecraft:movement_speed base set 0',
-			f'execute as {selector} run attribute @s minecraft:jump_strength base set 0',
-		])
-		if append:
-			parts.append(append.strip())
-		return "\n".join(parts)
+		return f"""
+effect give {selector} darkness 25 255 true
+effect give {selector} blindness 25 255 true
+effect give {selector} night_vision 25 255 true
+execute as {selector} run attribute @s minecraft:movement_speed base set 0
+execute as {selector} run attribute @s minecraft:jump_strength base set 0
+"""
 
 	@staticmethod
-	def end_prep_transition_lines(ns: str, storage: str, score_prefix: str) -> str:
+	def end_prep_transition_lines(ns: str, storage: str, score_prefix: str) -> McFunction:
 		"""Return shared end-prep transition lines (guard, active state, restore, clear effects)."""
 		selector: str = f'@a[scores={{{ns}.{score_prefix}.in_game=1}}]'
-		parts: list[str] = [
-			f'execute unless data storage {ns}:{storage} game{{state:"preparing"}} run return fail',
-			f'data modify storage {ns}:{storage} game.state set value "active"',
-			f'execute as {selector} run attribute @s minecraft:movement_speed base reset',
-			f'execute as {selector} run attribute @s minecraft:jump_strength base reset',
-			f'effect clear {selector} darkness',
-			f'effect clear {selector} blindness',
-			f'effect clear {selector} night_vision',
-		]
-		return "\n".join(parts)
+		return f"""
+execute unless data storage {ns}:{storage} game{{state:"preparing"}} run return fail
+data modify storage {ns}:{storage} game.state set value "active"
+execute as {selector} run attribute @s minecraft:movement_speed base reset
+execute as {selector} run attribute @s minecraft:jump_strength base reset
+effect clear {selector} darkness
+effect clear {selector} blindness
+effect clear {selector} night_vision
+"""
 
 	@staticmethod
 	def late_join_flow_lines(

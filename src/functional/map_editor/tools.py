@@ -1,6 +1,6 @@
 """ The editor hotbar: one spawn egg per element, plus destroy, save, exit and the coord stick. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, MODE_LIST
 
@@ -70,34 +70,31 @@ def write_editor_tools() -> None:
 """)
 
 	for mode_key, mode_info in EDITOR_MODES.items():
-		egg_cmds: list[str] = []
+		eggs: McFunction = ""
 		for etype, eslot in mode_info.slots.items():
 			einfo = ALL_ELEMENTS[etype]
-			egg_cmds.append(
+			eggs += (
 				f'item replace entity @s {eslot} with minecraft:bat_spawn_egg'
 				f'[minecraft:item_name={{"text":"{einfo.name}","color":"{einfo.color}","italic":false}},'
 				f'minecraft:item_model="{einfo.egg_model}",'
 				f'minecraft:custom_data={{{ns}:{{editor:true,type:"{etype}"}}}},'
-				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.{etype}"]}}]'
+				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.{etype}"]}}]\n'
 			)
 		# Zombies: defaults config (hotbar.6) and configure element (hotbar.7).
 		if mode_key == "zombies":
-			egg_cmds.append(
+			eggs += (
 				f'item replace entity @s hotbar.6 with minecraft:bat_spawn_egg'
 				f'[minecraft:item_name={{"text":"⚙ Defaults","color":"white","italic":false,"bold":true}},'
 				f'minecraft:item_model="minecraft:allay_spawn_egg",'
 				f'minecraft:custom_data={{{ns}:{{editor:true,type:"zb_defaults"}}}},'
-				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_defaults"]}}]'
+				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_defaults"]}}]\n'
 			)
-			egg_cmds.append(
+			eggs += (
 				f'item replace entity @s hotbar.7 with minecraft:bat_spawn_egg'
 				f'[minecraft:item_name=["","🔧 ",{{"text":"Configure","color":"aqua","italic":false,"bold":true}}],'
 				f'minecraft:item_model="minecraft:breeze_spawn_egg",'
 				f'minecraft:custom_data={{{ns}:{{editor:true,type:"zb_configure"}}}},'
-				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_configure"]}}]'
+				f'minecraft:entity_data={{id:"minecraft:bat",NoAI:1b,Silent:1b,Invulnerable:1b,Tags:["{ns}.new_element","{ns}.element.zb_configure"]}}]\n'
 			)
-		write_versioned_function(
-			f"maps/editor/give_tools/{mode_key}",
-			"\n".join(egg_cmds) if egg_cmds else "# No eggs for this mode"
-		)
+		write_versioned_function(f"maps/editor/give_tools/{mode_key}", eggs or "# No eggs for this mode")
 

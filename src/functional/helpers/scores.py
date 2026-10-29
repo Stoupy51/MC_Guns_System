@@ -2,6 +2,8 @@
 # Imports
 from typing import ClassVar
 
+from stewbeet import McFunction
+
 
 # Classes
 class SpecialScores:
@@ -35,14 +37,16 @@ class SpecialScores:
 	"""
 
 	@staticmethod
-	def special_objectives_lines(ns: str) -> str:
+	def special_objectives_lines(ns: str) -> McFunction:
 		""" Return the `scoreboard objectives add` block for every special score, with its comment. """
-		parts: list[str] = []
+		objectives: McFunction = ""
 		for name, comment in SpecialScores.ALL.items():
-			if comment:
-				parts.append(f"# {comment.format(ns=ns)}")
-			parts.append(f"scoreboard objectives add {ns}.special.{name} dummy")
-		return "\n".join(parts)
+			documentation: str = f"# {comment.format(ns=ns)}" if comment else ""
+			objectives += f"""
+{documentation}
+scoreboard objectives add {ns}.special.{name} dummy
+"""
+		return objectives
 
 	@staticmethod
 	def reset_special_scores_lines(ns: str, selector: str) -> str:

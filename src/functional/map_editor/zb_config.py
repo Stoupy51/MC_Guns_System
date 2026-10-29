@@ -1,6 +1,6 @@
 """ Per-map zombies defaults and the field-by-field panel for one placed element. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs
@@ -37,16 +37,17 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 
 	# Markers from an already-saved map get fields added to `defaults` since then (partial_price on doors and perk machines),
 	# so the config UI shows the default instead of a blank row; a set value is never touched.
-	backfill_lines: list[str] = [
-		*write_light_fields(),
-		*(
-			f"execute if entity @s[tag={ns}.element.{etype}] unless data entity @s data.{field} "
-			f"run data modify entity @s data.{field} set value {snbt_suggest(default_val)}"
-			for etype, einfo in ZB_ELEMENTS.items()
-			for field, default_val in einfo.defaults.items()
-		),
-	]
-	write_versioned_function("maps/editor/backfill_zb_defaults", "\n".join(backfill_lines))
+	light_dispatch: str = write_light_fields()
+	missing_defaults: str = "\n".join(
+		f"execute if entity @s[tag={ns}.element.{etype}] unless data entity @s data.{field} "
+		f"run data modify entity @s data.{field} set value {snbt_suggest(default_val)}"
+		for etype, einfo in ZB_ELEMENTS.items()
+		for field, default_val in einfo.defaults.items()
+	)
+	write_versioned_function("maps/editor/backfill_zb_defaults", f"""
+{light_dispatch}
+{missing_defaults}
+""")
 
 
 def write_zb_defaults(ns: str) -> None:
@@ -56,49 +57,49 @@ def write_zb_defaults(ns: str) -> None:
 		f"/data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0",
 		"aqua", "Click to edit group_id", action="suggest_command"
 	)
-	zb_defaults_lines: list[str] = [
-		f"tellraw @a[tag={ns}.map_editor] {SEP}",
-		f'tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Zombies Element Defaults"}}]',
-		f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"New elements use these values on placement","color":"gray","italic":true}}]',
-		f"tellraw @a[tag={ns}.map_editor] {SEP}",
-		"",
+	handle_zb_defaults: McFunction = f"""
+tellraw @a[tag={ns}.map_editor] {SEP}
+tellraw @a[tag={ns}.map_editor] [{{"text":"","color":"white","bold":true}},"  ⚙ ",{{"text":"Zombies Element Defaults"}}]
+tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"New elements use these values on placement","color":"gray","italic":true}}]
+tellraw @a[tag={ns}.map_editor] {SEP}
 
-		# Shared group_id default.
-		f'tellraw @a[tag={ns}.map_editor] '
-		f'["  ",{{"text":"group_id: ","color":"gray"}},'
-		f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.group_id","color":"white"}}," ",{group_id_btn}]',
-		f'tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"Applies to Zombie Spawn & Player Spawn.","color":"dark_gray","italic":true}}]',
-		"",
-	]
+# Shared group_id default.
+tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"group_id: ","color":"gray"}},{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.group_id","color":"white"}}," ",{group_id_btn}]
+tellraw @a[tag={ns}.map_editor] ["  ",{{"text":"Applies to Zombie Spawn & Player Spawn.","color":"dark_gray","italic":true}}]
+"""
 
 	# No type-specific defaults, no section.
 	for etype, einfo in ZB_ELEMENTS.items():
 		if not einfo.defaults:
 			continue
-		zb_defaults_lines.append(
-			f'tellraw @a[tag={ns}.map_editor] ["  ","{einfo.emoji} ",{{"text":"{einfo.name}","color":"{einfo.color}","bold":true}}]'
-		)
+		handle_zb_defaults += f"""
+tellraw @a[tag={ns}.map_editor] ["  ","{einfo.emoji} ",{{"text":"{einfo.name}","color":"{einfo.color}","bold":true}}]
+"""
 		for field, default_val in einfo.defaults.items():
 			edit_btn = Dialogs.btn(
 				"✎",
 				f"/data modify storage {ns}:temp map_edit.zb_defaults.{etype}.{field} set value {snbt_suggest(default_val)}",
 				"aqua", f"Click to edit {field}", action="suggest_command"
 			)
-			zb_defaults_lines.append(
+			handle_zb_defaults += (
 				f'tellraw @a[tag={ns}.map_editor] '
 				f'["    ",{{"text":"{field}: ","color":"gray"}},'
-				f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.{etype}.{field}","color":"white"}}," ",{edit_btn}]'
+				f'{{"storage":"{ns}:temp","nbt":"map_edit.zb_defaults.{etype}.{field}","color":"white"}}," ",{edit_btn}]\n'
 			)
-		zb_defaults_lines.append("")
 
-	zb_defaults_lines.append(f"tellraw @a[tag={ns}.map_editor] {SEP}")
-	write_versioned_function("maps/editor/handle_zb_defaults", "\n".join(zb_defaults_lines))
+	handle_zb_defaults += f"""
+tellraw @a[tag={ns}.map_editor] {SEP}
+"""
+	write_versioned_function("maps/editor/handle_zb_defaults", handle_zb_defaults)
 
 	# On editor entry, zombies mode only.
-	write_versioned_function("maps/editor/init_zb_defaults", "\n".join([
-		f"data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0",
-		*(f"data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {snbt_compound(einfo.defaults)}" for etype, einfo in ZB_ELEMENTS.items()),
-	]))
+	element_defaults: str = "\n".join(
+		f"data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {snbt_compound(einfo.defaults)}" for etype, einfo in ZB_ELEMENTS.items()
+	)
+	write_versioned_function("maps/editor/init_zb_defaults", f"""
+data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0
+{element_defaults}
+""")
 
 
 def zb_object_config_lines(ns: str, version: str) -> list[str]:
@@ -237,7 +238,7 @@ def base_coordinates_config_lines(ns: str) -> list[str]:
 	]
 
 
-def write_light_fields() -> list[str]:
+def write_light_fields() -> str:
 	""" Write maps/light_fields/<etype>, restoring the fields a saved map leaves out and upgrading pre-26.3 block states.
 
 	Returns:
@@ -247,19 +248,21 @@ def write_light_fields() -> list[str]:
 	version: str = Mem.ctx.project_version
 	light_elements: dict[str, ElementDef] = {etype: einfo for etype, einfo in ZB_ELEMENTS.items() if einfo.light_fields}
 	for etype, einfo in light_elements.items():
-		light_lines: list[str] = [f"# @s = an entity holding one saved {etype} compound in data (editor marker or in-game display)"]
+		light_fields: McFunction = f"""
+# @s = an entity holding one saved {etype} compound in data (editor marker or in-game display)
+"""
 		for field in einfo.light_fields:
 			path: str = f"entity @s data.{field}"
-			light_lines += [
-				f"execute if data {path}.Name run data modify {path}.id set from {path}.Name",
-				f"execute if data {path}.Properties run data modify {path}.properties set from {path}.Properties",
-				f"data remove {path}.Name",
-				f"data remove {path}.Properties",
-				f"execute unless data {path} run data modify {path} set value {snbt_suggest(einfo.defaults[field])}",
-			]
-		write_versioned_function(f"maps/light_fields/{etype}", "\n".join(light_lines))
-	return [
+			light_fields += f"""
+execute if data {path}.Name run data modify {path}.id set from {path}.Name
+execute if data {path}.Properties run data modify {path}.properties set from {path}.Properties
+data remove {path}.Name
+data remove {path}.Properties
+execute unless data {path} run data modify {path} set value {snbt_suggest(einfo.defaults[field])}
+"""
+		write_versioned_function(f"maps/light_fields/{etype}", light_fields)
+	return "\n".join(
 		f"execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/light_fields/{etype}"
 		for etype in light_elements
-	]
+	)
 

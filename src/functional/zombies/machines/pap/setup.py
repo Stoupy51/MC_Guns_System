@@ -3,6 +3,7 @@
 from stewbeet import (
 	ItemModifier,
 	JsonDict,
+	McFunction,
 	Mem,
 	set_json_encoder,
 	write_load_file,
@@ -42,7 +43,7 @@ scoreboard objectives add {ns}.zb.pap_s dummy
 scoreboard objectives add {ns}.zb.pap_mid dummy
 """)
 
-	scope_data_lines: list[str] = []
+	scope_data: McFunction = ""
 	for base_weapon, suffixes in SCOPE_VARIANTS.items():
 		entries: list[str] = []
 		for suffix in suffixes:
@@ -54,15 +55,12 @@ scoreboard objectives add {ns}.zb.pap_mid dummy
 				entry += ",scope_level:4"
 			entry += "}"
 			entries.append(entry)
-		scope_data_lines.append(
-			f'data modify storage {ns}:zombies scope_variants."{base_weapon}" set value [{",".join(entries)}]'
-		)
-	write_load_file("\n".join(scope_data_lines))
+		scope_data += f'data modify storage {ns}:zombies scope_variants."{base_weapon}" set value [{",".join(entries)}]\n'
+	write_load_file(scope_data)
 
 	all_camos = list(MATERIALS.keys())
 	all_camos_str = ",".join(f'"{c}"' for c in all_camos)
-	camo_data_lines: list[str] = [f'data modify storage {ns}:zombies camo_variants._default set value [{all_camos_str}]']
-	write_load_file("\n".join(camo_data_lines))
+	write_load_file(f'data modify storage {ns}:zombies camo_variants._default set value [{all_camos_str}]')
 
 	write_versioned_function("zombies/pap/setup", f"""
 scoreboard players set #pap_counter {ns}.data 0

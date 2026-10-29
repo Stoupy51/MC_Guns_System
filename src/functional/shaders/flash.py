@@ -9,7 +9,7 @@ new burst is always a brand new chain with a fresh clock.
 from dataclasses import dataclass
 
 from beet import FragmentShader, Texture
-from stewbeet import JsonDict, Mem, write_versioned_function
+from stewbeet import JsonDict, McFunction, Mem, write_versioned_function
 
 from .common import HEADER, timed_effect, uniform
 
@@ -220,15 +220,16 @@ execute if score #has_pap_level {ns}.data matches 0 unless data storage {ns}:gun
 """)
 
 	for name, pap in (("apply_flash", False), ("apply_pap_flash", True)):
-		adds: list[str] = []
+		adds: McFunction = ""
 		for variant in (v for v in FLASH_VARIANTS if v.pap == pap):
 			aim: str = "if" if variant.zoomed else "unless"
 			for slot in (0, 1):
 				index: int = FLASH_IDS.index(f"flash{variant.suffix}_{slot}") + 1
 				guard: str = f"execute {aim} score @s {ns}.zoom matches 1 if score @s {ns}.flash_slot matches {slot} run"
-				adds.append(f"{guard} posteffect add @s {ns}:flash{variant.suffix}_{slot}")
-				adds.append(f"{guard} scoreboard players set @s {ns}.flash_id {index}")
-		lines: str = "\n".join(adds)
+				adds += f"""
+{guard} posteffect add @s {ns}:flash{variant.suffix}_{slot}
+{guard} scoreboard players set @s {ns}.flash_id {index}
+"""
 		write_versioned_function(f"player/{name}", f"""
 # At most one burst per {COOLDOWN_TICKS} ticks
 execute if score @s {ns}.last_muzzle_flash > #total_tick {ns}.data run return 0
@@ -240,7 +241,7 @@ scoreboard players operation @s {ns}.last_muzzle_flash += #total_tick {ns}.data
 function {ns}:v{version}/player/flash_clear
 execute store success score #flash_slot_was_1 {ns}.data if score @s {ns}.flash_slot matches 1
 execute store result score @s {ns}.flash_slot if score #flash_slot_was_1 {ns}.data matches 0
-{lines}
+{adds}
 
 # The flash lights from unmagnified depth, so the zoom must run after it; the crosshair stays on top
 function {ns}:v{version}/zoom/fx_to_back

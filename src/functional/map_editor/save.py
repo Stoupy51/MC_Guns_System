@@ -1,6 +1,6 @@
 """ Writing the markers back into storage, one save function per element kind. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, MODE_LIST
@@ -227,14 +227,18 @@ def write_save_lists(ns: str, version: str) -> None:
 	""" Write one `save_lists/<mode>` function per editor mode: empty each saved list, then rebuild it from its markers. """
 	for mode_key, mode_info in EDITOR_MODES.items():
 		saved: list[str] = [etype for etype in mode_info.slots if ALL_ELEMENTS[etype].save_type in SAVED_TYPES]
-		resets: list[str] = [f"data modify storage {ns}:temp map_edit.map.{ALL_ELEMENTS[etype].save_path} set value []" for etype in saved]
-		rebuilds: list[str] = [
+		resets: str = "\n".join(f"data modify storage {ns}:temp map_edit.map.{ALL_ELEMENTS[etype].save_path} set value []" for etype in saved)
+		rebuilds: str = "\n".join(
 			f"execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/{save_call(etype)}" for etype in saved
-		]
-		write_versioned_function(
-			f"maps/editor/save_lists/{mode_key}",
-			"\n".join(["# Reset lists", *resets, "", "# Rebuild from markers", *rebuilds]) if saved else "# No mode-specific elements to save",
 		)
+		save_lists: McFunction = f"""
+# Reset lists
+{resets}
+
+# Rebuild from markers
+{rebuilds}
+""" if saved else "# No mode-specific elements to save"
+		write_versioned_function(f"maps/editor/save_lists/{mode_key}", save_lists)
 
 
 def save_call(etype: str) -> str:

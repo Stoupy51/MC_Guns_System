@@ -1,6 +1,6 @@
 """ The editor tick: marker particles and the nearest-element actionbar. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..map_editor_defs import ALL_ELEMENTS, MODEL_DISPLAY_ELEMENTS
 
@@ -13,32 +13,24 @@ def write_editor_tick() -> None:
 	# Particles only go to players in editor mode: without a viewer selector a particle command reaches every player on the server.
 	editor_viewers: str = f"@a[scores={{{ns}.mp.map_edit=1}},distance=..48]"
 
-	particle_lines: list[str] = []
+	particles: McFunction = ""
 	for etype, einfo in ALL_ELEMENTS.items():
 		# Elements with a real model display need no dust marker.
 		if einfo.save_type == "config" or etype in MODEL_DISPLAY_ELEMENTS:
 			continue
 		r, g, b = einfo.particle
-		scale = einfo.particle_scale
 		spread = "0.2 0.5 0.2" if einfo.save_type == "spawn" else "0.3 0.5 0.3"
 		count = 2 if etype == "base_coordinates" else 1
-		particle_lines.append(
-			f'execute at @e[type=minecraft:marker,tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{scale}}} ~ ~1 ~ {spread} 0 {count} normal {editor_viewers}'
-		)
+		particles += f'execute at @e[type=minecraft:marker,tag={ns}.element.{etype}] run particle dust{{color:[{r},{g},{b}],scale:{einfo.particle_scale}}} ~ ~1 ~ {spread} 0 {count} normal {editor_viewers}\n'
 
 	# Nor the white rotation tick.
 	model_excluded: str = "".join(f",tag=!{ns}.element.{etype}" for etype in MODEL_DISPLAY_ELEMENTS)
 
-	actionbar_type_lines: list[str] = []
-	for etype, einfo in ALL_ELEMENTS.items():
-		if einfo.save_type == "config":
-			continue
-		actionbar_type_lines.append(
-			f'execute if entity @s[tag={ns}.element.{etype}] run return run title @a[tag={ns}.check_nearest] actionbar [{{"text":"{einfo.emoji} ","color":"{einfo.color}"}},{{"text":"{einfo.name}"}}]'
-		)
-
 	# Run as the nearest marker.
-	write_versioned_function("maps/editor/actionbar_nearest", "\n".join(actionbar_type_lines))
+	write_versioned_function("maps/editor/actionbar_nearest", "\n".join(
+		f'execute if entity @s[tag={ns}.element.{etype}] run return run title @a[tag={ns}.check_nearest] actionbar [{{"text":"{einfo.emoji} ","color":"{einfo.color}"}},{{"text":"{einfo.name}"}}]'
+		for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type != "config"
+	))
 
 	write_versioned_function("maps/editor/tick", f"""
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
@@ -73,6 +65,6 @@ execute if score #ed_part_phase {ns}.data matches 0 run function {ns}:v{version}
 # Skipped for markers that draw a real model.
 execute as @e[type=minecraft:marker,tag={ns}.map_element{model_excluded}] at @s positioned ^ ^ ^0.5 run particle dust{{color:[1.0,1.0,1.0],scale:0.5}} ~ ~1.69 ~ 0.1 0.1 0.1 0 5 normal {editor_viewers}
 
-{chr(10).join(particle_lines)}
+{particles}
 """)
 

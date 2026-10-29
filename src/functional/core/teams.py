@@ -5,7 +5,7 @@ Created at load rather than at game start: the Manage Players menu assigns a tea
 # Imports
 from dataclasses import dataclass
 
-from stewbeet import Mem, write_load_file
+from stewbeet import McFunction, Mem, write_load_file
 
 
 # Classes
@@ -34,11 +34,15 @@ TEAMS: list[TeamDef] = [
 def write_teams() -> None:
 	ns: str = Mem.ctx.project_id
 
-	lines: list[str] = ["# Shared vanilla teams"]
+	shared_teams: McFunction = """
+# Shared vanilla teams
+"""
 	for team in TEAMS:
-		lines.append(f"team add {ns}.{team.suffix}")
-		lines.append(f"team modify {ns}.{team.suffix} color {team.color}")
-		lines.append(f"team modify {ns}.{team.suffix} friendlyFire {str(team.friendly_fire).lower()}")
-		lines.append(f"team modify {ns}.{team.suffix} nametagVisibility {team.nametag_visibility}")
-	write_load_file("\n".join(lines))
+		shared_teams += f"""
+team add {ns}.{team.suffix}
+team modify {ns}.{team.suffix} color {team.color}
+team modify {ns}.{team.suffix} friendlyFire {str(team.friendly_fire).lower()}
+team modify {ns}.{team.suffix} nametagVisibility {team.nametag_visibility}
+"""
+	write_load_file(shared_teams)
 

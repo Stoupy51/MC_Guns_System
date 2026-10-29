@@ -1,6 +1,6 @@
 """ Losing every perk, the hover actionbar, solo Quick Revive pricing and the game hooks. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from .definitions import PERK_DEFINITIONS, perk_effects_teardown
@@ -22,15 +22,17 @@ def write_perk_hooks() -> None:
 	)
 
 	## Run when a player goes down.
-	lose_all_lines: list[str] = []
+	lose_all: McFunction = ""
 	for perk_id, perk_data in PERK_DEFINITIONS.items():
-		lose_all_lines.extend(
+		removal: str = "\n".join(
 			f"execute if score @s {ns}.zb.perk.{perk_id} matches 1 run {cmd.replace('{ns}', ns)}" for cmd in perk_data.removal_commands or ()
 		)
-		lose_all_lines.append(f"scoreboard players set @s {ns}.zb.perk.{perk_id} 0")
-	lose_all_body = "\n".join(lose_all_lines)
+		lose_all += f"""
+{removal}
+scoreboard players set @s {ns}.zb.perk.{perk_id} 0
+"""
 	write_versioned_function("zombies/perks/lose_all", f"""
-{lose_all_body}
+{lose_all}
 tellraw @s [{MGS_TAG},{{"text":"All perks lost!","color":"red"}}]
 
 # Right away.

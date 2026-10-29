@@ -1,6 +1,6 @@
 """ Reading the selected gun, its runtime max level and applying one pap_stats field per stat. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import McFunction, Mem, write_versioned_function
 
 from .....config.stats.keys import PAP_STATS, STATS_FIELDS
 
@@ -46,21 +46,15 @@ function {ns}:v{version}/zombies/pap/pick_list_value_step
 """)
 
 	# Max level from the list lengths in pap_stats (1 when pap_stats exists).
-	compute_max_lines: list[str] = [f"scoreboard players set #pap_max {ns}.data 1"]
-	for field in STATS_FIELDS:
-		compute_max_lines.append(
-			f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}[0] store result score #pap_len {ns}.data run data get storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}'
-		)
-		compute_max_lines.append(
-			f'execute if score #pap_len {ns}.data > #pap_max {ns}.data run scoreboard players operation #pap_max {ns}.data = #pap_len {ns}.data'
-		)
-	compute_max_lines.append(
-		f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name[0] store result score #pap_len {ns}.data run data get storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name'
-	)
-	compute_max_lines.append(
-		f'execute if score #pap_len {ns}.data > #pap_max {ns}.data run scoreboard players operation #pap_max {ns}.data = #pap_len {ns}.data'
-	)
-	write_versioned_function("zombies/pap/compute_max_level", "\n".join(compute_max_lines))
+	compute_max_level: McFunction = f"""
+scoreboard players set #pap_max {ns}.data 1
+"""
+	for field in (*STATS_FIELDS, "pap_name"):
+		compute_max_level += f"""
+execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}[0] store result score #pap_len {ns}.data run data get storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field}
+execute if score #pap_len {ns}.data > #pap_max {ns}.data run scoreboard players operation #pap_max {ns}.data = #pap_len {ns}.data
+"""
+	write_versioned_function("zombies/pap/compute_max_level", compute_max_level)
 
 	# A macro rather than one function per stat: the purchase path is cold and the arguments are the fixed STATS_FIELDS,
 	# so each variant compiles once and is cached.
@@ -71,18 +65,16 @@ $execute if data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns
 $execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.stats.$(field) set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.$(field)
 """)
 
-	apply_lines: list[str] = [
+	write_versioned_function("zombies/pap/apply_runtime_overrides", "\n".join(
 		f'execute if data storage {ns}:temp _pap_extract.stats.{PAP_STATS}.{field} run function {ns}:v{version}/zombies/pap/apply_field {{field:"{field}"}}'
 		for field in STATS_FIELDS
-	]
-	write_versioned_function("zombies/pap/apply_runtime_overrides", "\n".join(apply_lines))
+	))
 
 	# pap_name can be a scalar or a list.
-	name_lines: list[str] = [
-		f'data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name',
-		f'execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value',
-		f'execute if data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.new_name set from storage {ns}:temp _pap_pick.value',
-		f'execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.new_name set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name',
-	]
-	write_versioned_function("zombies/pap/resolve_runtime_name", "\n".join(name_lines))
+	write_versioned_function("zombies/pap/resolve_runtime_name", f"""
+data modify storage {ns}:temp _pap_pick.list set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name
+execute if data storage {ns}:temp _pap_pick.list[0] run function {ns}:v{version}/zombies/pap/pick_list_value
+execute if data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.new_name set from storage {ns}:temp _pap_pick.value
+execute unless data storage {ns}:temp _pap_pick.list[0] run data modify storage {ns}:temp _pap_extract.new_name set from storage {ns}:temp _pap_extract.stats.{PAP_STATS}.pap_name
+""")
 

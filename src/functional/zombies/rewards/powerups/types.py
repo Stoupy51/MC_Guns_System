@@ -72,8 +72,5 @@ def pu_activate_sound(ns: str, v: PowerupType, vol: float = 1.0) -> str:
 	""" The activation cue for a power-up, including its "additional" layer when it has one. """
 	if not v.sound:
 		return f"playsound minecraft:entity.player.levelup ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 1.0 1.0"
-	lines = [pu_snd(ns, v.sound, vol)]
-	if v.additional:
-		lines.append(pu_snd(ns, v.additional, vol))
-	return "\n".join(lines)
+	return pu_snd(ns, v.sound, vol) + (f"\n{pu_snd(ns, v.additional, vol)}" if v.additional else "")
 
