@@ -552,7 +552,7 @@ wheels = [
 
 [[package]]
 name = "model-resolver"
-version = "1.15.2"
+version = "1.16.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beet" },
@@ -560,9 +560,9 @@ dependencies = [
     { name = "pillow" },
     { name = "pyopengl" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bf/57/af01f478c624ccf5d8dedb9059119e35ac4c2011df5fa44c38afc8931a78/model_resolver-1.15.2.tar.gz", hash = "sha256:0d6743b9b114ca2c01de9c87198deb9a64af5af6f36297b42d1cbe3be0722628", size = 1249775, upload-time = "2026-03-24T20:19:26.853Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/76/14/116dc2bd98bdff0c208de16d49ad3388500d5574d16ec6aee794f38d5823/model_resolver-1.16.1.tar.gz", hash = "sha256:cd832bef8ef863b657e82a65a511e1d16bd8c01356baa25ac25403cc1e5e9d6f", size = 1276531, upload-time = "2026-10-26T20:13:30.587Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/d6/f2/e3191c5ab37f70f21909ca79ed39ac5c5241ca354d17e8e29f5159e06571/model_resolver-1.15.2-py3-none-any.whl", hash = "sha256:7adf17913d78671639436662563e6dd95ed2a098b57792ee6fb9be1855dda917", size = 60746, upload-time = "2026-03-24T20:19:28.449Z" },
+    { url = "https://files.pythonhosted.org/packages/07/58/e5e36973862bb155238d9db92e4f812bd6e269adb0f0abe9b9ff6b04cddf/model_resolver-1.16.1-py3-none-any.whl", hash = "sha256:de439e233600f17027c1b479565f34079e9528facf93862b323a4aef5c925aa1", size = 63475, upload-time = "2026-10-26T20:13:29.37Z" },
 ]
 
 [[package]]
@@ -1130,7 +1130,7 @@ wheels = [
 
 [[package]]
 name = "stewbeet"
-version = "3.12.1"
+version = "3.13.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "beet" },
@@ -1143,9 +1143,9 @@ dependencies = [
     { name = "smithed" },
     { name = "stouputils" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/4c/28/f48b6bf542803d9f9cd41c5fa7f711bf5fca2d0e025052c21bcd7ef09064/stewbeet-3.12.1.tar.gz", hash = "sha256:7ec6a33a1b62ebe849c62a7c0bde272b31ef7aa570f7883ce3eec63cac360941", size = 784034, upload-time = "2026-10-24T20:38:03.457Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/58/c6/08856106b0e92154942a9e232f4fcabf5796d9a4225b16c48b3444520f51/stewbeet-3.13.0.tar.gz", hash = "sha256:c82aa6c6d9b18c3546ab163676042fce336113a029b730795b571fbb0334b195", size = 788402, upload-time = "2026-10-29T16:42:01.985Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/21/0d/595366a271f61696c98835bdc4aceaa7ea532b56ab4c342ea6b5965de426/stewbeet-3.12.1-py3-none-any.whl", hash = "sha256:56c623b0b2f4bb05bcaf29057af894592a15871e01e2dbe9ecdee5cb22498fbe", size = 961861, upload-time = "2026-10-24T20:38:00.999Z" },
+    { url = "https://files.pythonhosted.org/packages/03/49/9a1b417bc960a0cd053bd0692d0c8a2304a87f4f1ec4749bfa2a6f6159a4/stewbeet-3.13.0-py3-none-any.whl", hash = "sha256:1c9d5c1a3ac496f6b6af5b02b779d958da4ff483f0889b369db68cec0e43ab18", size = 966986, upload-time = "2026-10-29T16:41:59.223Z" },
 ]
 
 [[package]]
@@ -1185,7 +1185,7 @@ dev = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "stewbeet", specifier = ">=3.12.1" }]
+requires-dist = [{ name = "stewbeet", specifier = ">=3.13.0" }]
 
 [package.metadata.requires-dev]
 dev = [
