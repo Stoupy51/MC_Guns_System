@@ -26,20 +26,27 @@
 #
 
 scoreboard players set #lc_cost mgs.data 0
+
 execute unless data storage mgs:temp editor{primary:""} run scoreboard players add #lc_cost mgs.data 1
 execute unless data storage mgs:temp editor{primary:""} unless data storage mgs:temp editor{primary_scope:""} run scoreboard players add #lc_cost mgs.data 1
 execute unless data storage mgs:temp editor{primary:""} store result score #lc_t mgs.data run data get storage mgs:temp editor.primary_mag_count 1
 execute unless data storage mgs:temp editor{primary:""} run scoreboard players operation #lc_cost mgs.data += #lc_t mgs.data
+
 execute unless data storage mgs:temp editor{secondary:""} run scoreboard players add #lc_cost mgs.data 1
 execute unless data storage mgs:temp editor{secondary:""} unless data storage mgs:temp editor{secondary_scope:""} run scoreboard players add #lc_cost mgs.data 1
 execute unless data storage mgs:temp editor{secondary:""} store result score #lc_t mgs.data run data get storage mgs:temp editor.secondary_mag_count 1
 execute unless data storage mgs:temp editor{secondary:""} run scoreboard players operation #lc_cost mgs.data += #lc_t mgs.data
+
 execute unless data storage mgs:temp editor{equip_slot1:""} run scoreboard players add #lc_cost mgs.data 1
 execute unless data storage mgs:temp editor{equip_slot2:""} run scoreboard players add #lc_cost mgs.data 1
+
+# `data get` on a list takes no scale (it fails silently, letting players overspend), so the count is multiplied by the cost.
 execute store result score #lc_t mgs.data run data get storage mgs:temp editor.perks
 scoreboard players operation #lc_t mgs.data *= #1 mgs.data
 scoreboard players operation #lc_cost mgs.data += #lc_t mgs.data
 scoreboard players set @s mgs.mp.edit_points 10
 scoreboard players operation @s mgs.mp.edit_points -= #lc_cost mgs.data
+
+# Every submenu passes it to show_static_dialog.
 execute store result storage mgs:temp _dlg.pts int 1 run scoreboard players get @s mgs.mp.edit_points
 

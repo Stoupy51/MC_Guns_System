@@ -4,7 +4,8 @@
             "type": "sniffer",
             "request": "attach",
             "name": "Connect to Minecraft",
-            "address": "ws://localhost:25599/dap"
+            "address": "ws://localhost:25599/dap",
+            "user": "Stoupy51"
         }
     ]
 }

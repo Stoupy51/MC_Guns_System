@@ -12,26 +12,37 @@ execute store result storage mgs:temp _zbpos.z double 1 run data get entity @s P
 
 execute if entity @s[tag=mgs.element.zombie_spawn] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.zombie_spawn"
 execute if entity @s[tag=mgs.element.zombie_spawn] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.zombie_spawn
+
 execute if entity @s[tag=mgs.element.player_spawn_zb] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.player_spawn_zb"
 execute if entity @s[tag=mgs.element.player_spawn_zb] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.player_spawn_zb
+
 execute if entity @s[tag=mgs.element.special_spawn] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.special_spawn"
 execute if entity @s[tag=mgs.element.special_spawn] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.special_spawn
+
 execute if entity @s[tag=mgs.element.wallbuy] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.wallbuy"
 execute if entity @s[tag=mgs.element.wallbuy] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.wallbuy
+
 execute if entity @s[tag=mgs.element.door] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.door"
 execute if entity @s[tag=mgs.element.door] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.door
+
 execute if entity @s[tag=mgs.element.trap] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.trap"
 execute if entity @s[tag=mgs.element.trap] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.trap
+
 execute if entity @s[tag=mgs.element.perk_machine] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.perk_machine"
 execute if entity @s[tag=mgs.element.perk_machine] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.perk_machine
+
 execute if entity @s[tag=mgs.element.wunderfizz] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.wunderfizz"
 execute if entity @s[tag=mgs.element.wunderfizz] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.wunderfizz
+
 execute if entity @s[tag=mgs.element.pap_machine] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.pap_machine"
 execute if entity @s[tag=mgs.element.pap_machine] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.pap_machine
+
 execute if entity @s[tag=mgs.element.mystery_box_pos] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.mystery_box_pos"
 execute if entity @s[tag=mgs.element.mystery_box_pos] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.mystery_box_pos
+
 execute if entity @s[tag=mgs.element.power_switch] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.power_switch"
 execute if entity @s[tag=mgs.element.power_switch] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.power_switch
+
 execute if entity @s[tag=mgs.element.barricade] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.barricade"
 execute if entity @s[tag=mgs.element.barricade] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.barricade
 

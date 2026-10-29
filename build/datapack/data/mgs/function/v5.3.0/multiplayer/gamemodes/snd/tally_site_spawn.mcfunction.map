@@ -3,8 +3,8 @@
 	"file": "tally_site_spawn.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/bomb/sites.py"
 	],
 	"names": [],
-	"mappings": "AAmCE;;;;;;;;AAAA;AAAA;AAAA"
+	"mappings": "AA4FkC;;;;;;;;AAClC;AACA;AACA"
 }

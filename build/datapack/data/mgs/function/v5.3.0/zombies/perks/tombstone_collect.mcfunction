@@ -8,25 +8,37 @@
 
 execute if score @s mgs.zb.tsp.juggernog matches 1 run scoreboard players set @s mgs.zb.perk.juggernog 1
 execute if score @s mgs.zb.tsp.juggernog matches 1 run function mgs:v5.3.0/zombies/perks/reapply/juggernog
+
 execute if score @s mgs.zb.tsp.speed_cola matches 1 run scoreboard players set @s mgs.zb.perk.speed_cola 1
 execute if score @s mgs.zb.tsp.speed_cola matches 1 run function mgs:v5.3.0/zombies/perks/reapply/speed_cola
+
 execute if score @s mgs.zb.tsp.double_tap matches 1 run scoreboard players set @s mgs.zb.perk.double_tap 1
 execute if score @s mgs.zb.tsp.double_tap matches 1 run function mgs:v5.3.0/zombies/perks/reapply/double_tap
+
 execute if score @s mgs.zb.tsp.quick_revive matches 1 run scoreboard players set @s mgs.zb.perk.quick_revive 1
 execute if score @s mgs.zb.tsp.quick_revive matches 1 run function mgs:v5.3.0/zombies/perks/reapply/quick_revive
+
 execute if score @s mgs.zb.tsp.mule_kick matches 1 run scoreboard players set @s mgs.zb.perk.mule_kick 1
+
 execute if score @s mgs.zb.tsp.stamin_up matches 1 run scoreboard players set @s mgs.zb.perk.stamin_up 1
 execute if score @s mgs.zb.tsp.stamin_up matches 1 run function mgs:v5.3.0/zombies/perks/reapply/stamin_up
+
 execute if score @s mgs.zb.tsp.phd_flopper matches 1 run scoreboard players set @s mgs.zb.perk.phd_flopper 1
 execute if score @s mgs.zb.tsp.phd_flopper matches 1 run function mgs:v5.3.0/zombies/perks/reapply/phd_flopper
+
 execute if score @s mgs.zb.tsp.deadshot matches 1 run scoreboard players set @s mgs.zb.perk.deadshot 1
 execute if score @s mgs.zb.tsp.deadshot matches 1 run function mgs:v5.3.0/zombies/perks/reapply/deadshot
+
 execute if score @s mgs.zb.tsp.timeslip matches 1 run scoreboard players set @s mgs.zb.perk.timeslip 1
 execute if score @s mgs.zb.tsp.timeslip matches 1 run function mgs:v5.3.0/zombies/perks/reapply/timeslip
+
 execute if score @s mgs.zb.tsp.electric_cherry matches 1 run scoreboard players set @s mgs.zb.perk.electric_cherry 1
 execute if score @s mgs.zb.tsp.electric_cherry matches 1 run function mgs:v5.3.0/zombies/perks/reapply/electric_cherry
+
 execute if score @s mgs.zb.tsp.whos_who matches 1 run scoreboard players set @s mgs.zb.perk.whos_who 1
+
 execute if score @s mgs.zb.tsp.dying_wish matches 1 run scoreboard players set @s mgs.zb.perk.dying_wish 1
+
 execute if score @s mgs.zb.tsp.widows_wine matches 1 run scoreboard players set @s mgs.zb.perk.widows_wine 1
 execute if score @s mgs.zb.tsp.widows_wine matches 1 run function mgs:v5.3.0/zombies/perks/reapply/widows_wine
 

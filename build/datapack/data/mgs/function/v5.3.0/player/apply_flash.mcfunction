@@ -16,12 +16,16 @@ scoreboard players operation @s mgs.last_muzzle_flash += #total_tick mgs.data
 function mgs:v5.3.0/player/flash_clear
 execute store success score #flash_slot_was_1 mgs.data if score @s mgs.flash_slot matches 1
 execute store result score @s mgs.flash_slot if score #flash_slot_was_1 mgs.data matches 0
+
 execute unless score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 0 run posteffect add @s mgs:flash_0
 execute unless score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 0 run scoreboard players set @s mgs.flash_id 1
+
 execute unless score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 1 run posteffect add @s mgs:flash_1
 execute unless score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 1 run scoreboard players set @s mgs.flash_id 2
+
 execute if score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 0 run posteffect add @s mgs:flash_zoom_0
 execute if score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 0 run scoreboard players set @s mgs.flash_id 3
+
 execute if score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 1 run posteffect add @s mgs:flash_zoom_1
 execute if score @s mgs.zoom matches 1 if score @s mgs.flash_slot matches 1 run scoreboard players set @s mgs.flash_id 4
 

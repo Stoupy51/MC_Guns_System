@@ -3,8 +3,8 @@
 	"file": "on_death.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/bomb/snd/__init__.py"
 	],
 	"names": [],
-	"mappings": "AAmCE;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+	"mappings": "AA4IuB;;;;;;;;AACvB;AACA;AACA;AACA;AACA;AACA;AACA"
 }

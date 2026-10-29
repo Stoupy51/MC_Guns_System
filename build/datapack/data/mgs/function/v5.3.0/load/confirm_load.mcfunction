@@ -50,36 +50,55 @@ scoreboard objectives add mgs.last_muzzle_flash dummy
 scoreboard objectives add mgs.config dummy
 
 ## From SpecialScores.ALL, which game starts also wipe.
+
 # Instant kill: duration in ticks (kills entities in one hit, except mgs.no_instant_kill tagged)
 scoreboard objectives add mgs.special.instant_kill dummy
+
 # Infinite ammo: duration in ticks (don't consume ammo, set ammo to max capacity)
 scoreboard objectives add mgs.special.infinite_ammo dummy
+
 # Double points: duration in ticks (double points earned from kills/hits in zombies)
 scoreboard objectives add mgs.special.double_points dummy
+
 # Quick reload: percentage faster reload (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add mgs.special.quick_reload dummy
+
 # Quick swap: percentage faster weapon switch (20 = 20% faster, 50 = 50% faster)
 scoreboard objectives add mgs.special.quick_swap dummy
+
 # Double Tap perk: bullet damage x2
 scoreboard objectives add mgs.special.double_tap dummy
+
 # PhD Flopper perk: immune to explosive self-damage (fall damage handled by attribute)
 scoreboard objectives add mgs.special.phd_flopper dummy
+
 # Deadshot Daiquiri perk: 65% weapon spread + recoil
 scoreboard objectives add mgs.special.deadshot dummy
+
 # Timeslip perk: faster traps / Mystery Box / Pack-a-Punch for the owner
 scoreboard objectives add mgs.special.timeslip dummy
+
 # Electric Cherry perk: reload discharges a shock that damages/stuns nearby zombies
 scoreboard objectives add mgs.special.electric_cherry dummy
+
 # Widow's Wine perk: web grenades + web-on-hurt passive + stronger knife
 scoreboard objectives add mgs.special.widows_wine dummy
+
 # Multiplayer loadout perk flags, set on loadout apply
 scoreboard objectives add mgs.special.juggernaut dummy
+
 scoreboard objectives add mgs.special.scavenger dummy
+
 scoreboard objectives add mgs.special.flak_jacket dummy
+
 scoreboard objectives add mgs.special.tracker dummy
+
 scoreboard objectives add mgs.special.tactical_mask dummy
+
 scoreboard objectives add mgs.special.overkill dummy
+
 scoreboard objectives add mgs.special.quick_fix dummy
+
 # Damage per second, accumulated then snapshotted for the actionbar.
 scoreboard objectives add mgs.dps dummy
 scoreboard objectives add mgs.previous_dps dummy
@@ -165,26 +184,32 @@ scoreboard objectives add mgs.mob.active_time dummy
 scoreboard objectives add mgs.mob.sleep_time dummy
 
 # Shared vanilla teams
+
 team add mgs.red
 team modify mgs.red color red
 team modify mgs.red friendlyFire false
 team modify mgs.red nametagVisibility hideForOtherTeams
+
 team add mgs.blue
 team modify mgs.blue color blue
 team modify mgs.blue friendlyFire false
 team modify mgs.blue nametagVisibility hideForOtherTeams
+
 team add mgs.ffa
 team modify mgs.ffa color gold
 team modify mgs.ffa friendlyFire true
 team modify mgs.ffa nametagVisibility never
+
 team add mgs.zombies
 team modify mgs.zombies color yellow
 team modify mgs.zombies friendlyFire false
 team modify mgs.zombies nametagVisibility hideForOtherTeams
+
 team add mgs.missions
 team modify mgs.missions color aqua
 team modify mgs.missions friendlyFire false
 team modify mgs.missions nametagVisibility hideForOtherTeams
+
 team add mgs.mi_mobs
 team modify mgs.mi_mobs color dark_red
 team modify mgs.mi_mobs friendlyFire true
@@ -345,6 +370,7 @@ data modify storage mgs:zombies scope_variants."m590" set value [{id:"m590",mode
 data modify storage mgs:zombies scope_variants."m249" set value [{id:"m249",model:"mgs:m249",zoom:"mgs:m249_zoom"},{id:"m249_1",model:"mgs:m249_1",zoom:"mgs:m249_1_zoom"},{id:"m249_2",model:"mgs:m249_2",zoom:"mgs:m249_2_zoom"},{id:"m249_3",model:"mgs:m249_3",zoom:"mgs:m249_3_zoom",scope_level:3}]
 data modify storage mgs:zombies scope_variants."mosin" set value [{id:"mosin",model:"mgs:mosin",zoom:"mgs:mosin_zoom"},{id:"mosin_1",model:"mgs:mosin_1",zoom:"mgs:mosin_1_zoom"}]
 data modify storage mgs:zombies scope_variants."deagle" set value [{id:"deagle",model:"mgs:deagle",zoom:"mgs:deagle_zoom"},{id:"deagle_4",model:"mgs:deagle_4",zoom:"mgs:deagle_4_zoom",scope_level:4}]
+
 data modify storage mgs:zombies camo_variants._default set value ["gold","autumn","galaxy","red_polymer_stripes"]
 
 scoreboard objectives add mgs.zb.barricade.id dummy

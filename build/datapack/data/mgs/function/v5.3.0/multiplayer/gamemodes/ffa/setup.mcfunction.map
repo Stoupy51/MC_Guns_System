@@ -3,8 +3,8 @@
 	"file": "setup.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/free_for_all.py"
 	],
 	"names": [],
-	"mappings": "AAmCE;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+	"mappings": "AAmBoB;;;;;;;;AACpB;AACA;AACA;AACA;AACA;AACA"
 }

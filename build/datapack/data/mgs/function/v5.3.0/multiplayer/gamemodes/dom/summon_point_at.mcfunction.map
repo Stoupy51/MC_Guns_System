@@ -3,8 +3,8 @@
 	"file": "summon_point_at.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/domination.py"
 	],
 	"names": [],
-	"mappings": "AAmCE;;;;;;;;;;;;;AAAA;AAAA;AAAA"
+	"mappings": "AAqE8B;;;;;;;;;;;;;AAC9B;AACA;AACA"
 }

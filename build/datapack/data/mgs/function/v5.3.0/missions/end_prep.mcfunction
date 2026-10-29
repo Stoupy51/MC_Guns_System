@@ -6,6 +6,7 @@
 
 execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"missions",fn:"mgs:v5.3.0/missions/end_prep"}
 
+
 execute unless data storage mgs:missions game{state:"preparing"} run return fail
 data modify storage mgs:missions game.state set value "active"
 execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:movement_speed base reset
