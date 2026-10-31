@@ -1,10 +1,13 @@
 """ Per-map zombies defaults and the field-by-field panel for one placed element. """
 # Imports
+import json
+
 from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs
 from ..helpers.snbt import snbt
+from ..helpers.text import Text
 from ..map_editor_defs import ALL_ELEMENTS, FIELD_DOCS, OPTIONAL_LIST_FIELDS, ElementDef
 from .forms import FORM_ELEMENTS
 from .shared import SEP, ZB_ELEMENTS
@@ -156,8 +159,7 @@ def field_config_row(ns: str, version: str, etype: str, field: str, default_val:
 	doc: str | None = FIELD_DOCS.get((etype, field)) or FIELD_DOCS.get(field)
 	info_component: str = ""
 	if doc:
-		doc_escaped = doc.replace("\\", "\\\\").replace('"', '\\"').replace("\n", "\\n")
-		info_component = f',"  ",{{"text":"ⓘ","color":"aqua","hover_event":{{"action":"show_text","value":"{doc_escaped}"}}}}'
+		info_component = f',"  ",{{"text":"ⓘ","color":"aqua","hover_event":{{"action":"show_text","value":{json.dumps(Text.help(doc), ensure_ascii=False)}}}}}'
 
 	return (
 		f'["    ",{{"text":"{field}: ","color":"gray"}},'

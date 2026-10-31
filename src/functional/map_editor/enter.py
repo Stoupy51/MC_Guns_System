@@ -32,6 +32,7 @@ scoreboard players operation @s {ns}.mp.map_disp = @s {ns}.mp.map_mode
 execute store result storage {ns}:temp map_edit.idx int 1 run scoreboard players get @s {ns}.mp.map_idx
 
 function {ns}:v{version}/maps/editor/load_map_data with storage {ns}:temp map_edit
+data remove storage {ns}:temp map_edit.removed
 
 gamemode creative @s
 clear @s

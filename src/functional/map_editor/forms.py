@@ -1,11 +1,13 @@
 """ Dialog forms configuring a spawn or a mystery box spot, and drawing a spawn's activation box with the Coord Stick. """
 # Imports
 import json
+from collections.abc import Sequence
 
 from stewbeet import JsonDict, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..helpers.snbt import snbt
+from ..helpers.text import Text
 from ..map_editor_defs import FIELD_DOCS
 from ..zombies.game.lifecycle.spawns import ARRIVALS, SPECIAL_SPAWNS, ZOMBIE_SPAWNS, SpawnKind
 from ..zombies.machines.mystery_box.shared import ROLLS
@@ -35,8 +37,9 @@ tag @s add {ns}.ed_form_target
 		write_spawn_form(ns, form, etype, kind, show_dialog)
 
 	## Run as the editor. The fields go in storage first, so the rest of the save is no macro.
+	## A dialog escapes its text fields for a quoted string, so they come quoted and turn back into SNBT here, in brackets so empty is [].
 	write_versioned_function("maps/editor/form/spawn_apply", f"""
-$data modify storage {ns}:temp _form set value {{data:{{group_id:$(group_id),min_round:$(min_round),max_round:$(max_round),arrival:"$(arrival)",rise_ticks:$(rise_ticks),activation_box:$(activation_box),walk_to:$(walk_to)}},power:$(power)b,mob:$(mob),then:"$(then)"}}
+$data modify storage {ns}:temp _form set value {{data:{{group_id:$(group_id),min_round:$(min_round),max_round:$(max_round),arrival:"$(arrival)",rise_ticks:$(rise_ticks),activation_box:[$(activation_box)],walk_to:[$(walk_to)]}},power:$(power)b,mob:[$(mob)],then:"$(then)"}}
 execute unless entity {target} run return run {gone}
 execute as {target} run function {form}/spawn_write
 tellraw @s [{MGS_TAG},{{"text":"Spawn saved.","color":"green"}}]
@@ -61,34 +64,39 @@ execute if data storage {ns}:temp _form.mob[0] run data modify entity @s data.mo
 
 def write_spawn_form(ns: str, form: str, etype: str, kind: SpawnKind, show_dialog: str) -> None:
 	""" Write form/open/<etype>, the dialog of a zombie or special spawn filled from its marker's data. """
+	has_power: bool = "power" in kind.defaults
 	inputs: list[JsonDict] = [
 		{"type": "minecraft:number_range", "key": "group_id", "label": "Group, opened by doors", "start": 0, "end": 64, "step": 1, "width": 300},
 		{"type": "minecraft:number_range", "key": "min_round", "label": "From round (0: the first)", "start": 0, "end": 100, "step": 1, "width": 300},
 		{"type": "minecraft:number_range", "key": "max_round", "label": "Until round (0: no end)", "start": 0, "end": 100, "step": 1, "width": 300},
 		{"type": "minecraft:single_option", "key": "arrival", "label": "Arrival", "width": 300, "options": [{"id": arrival, "display": arrival.capitalize()} for arrival in ARRIVALS]},
-		{"type": "minecraft:number_range", "key": "rise_ticks", "label": "Rise from the floor or ceiling, in ticks", "start": 1, "end": 100, "step": 1, "width": 300},
-		*([{"type": "minecraft:boolean", "key": "power", "label": "Only once the power is on", "initial": False, "on_true": "1", "on_false": "0"}] if "power" in kind.defaults else []),
-		{"type": "minecraft:text", "key": "mob", "label": "Mob (SNBT, empty for the default)", "initial": "", "max_length": 4096, "width": 400},
-		{"type": "minecraft:text", "key": "activation_box", "label": "Activation box: x, y, z, dx, dy, dz", "initial": "", "max_length": 128, "width": 300},
-		{"type": "minecraft:text", "key": "walk_to", "label": "Walk to: x, y, z", "initial": "", "max_length": 64, "width": 300},
+		{"type": "minecraft:number_range", "key": "rise_ticks", "label": "Rise time, in ticks", "start": 1, "end": 100, "step": 1, "width": 300},
+		*([{"type": "minecraft:boolean", "key": "power", "label": "Only once the power is on", "initial": False, "on_true": "1", "on_false": "0"}] if has_power else []),
+		{"type": "minecraft:text", "key": "mob", "label": {"text": "Mob (SNBT, empty for the default)", "hover_event": doc_hover("mob")}, "initial": "", "max_length": 4096, "width": 400},
+		{"type": "minecraft:text", "key": "activation_box", "label": {"text": "Activation box: x, y, z, dx, dy, dz", "hover_event": doc_hover("activation_box")}, "initial": "", "max_length": 128, "width": 300},
+		{"type": "minecraft:text", "key": "walk_to", "label": {"text": "Walk to: x, y, z", "hover_event": doc_hover("walk_to")}, "initial": "", "max_length": 64, "width": 300},
 	]
 	index: dict[str, int] = {field["key"]: i for i, field in enumerate(inputs)}
-	power: str = "$(power)" if "power" in index else "0"
+	power: str = "$(power)" if has_power else "0"
 	fields: str = (
 		"group_id:$(group_id),min_round:$(min_round),max_round:$(max_round),arrival:\"$(arrival)\",rise_ticks:$(rise_ticks),"
-		f"power:{power},mob:[$(mob)],activation_box:[$(activation_box)],walk_to:[$(walk_to)]"
+		f"power:{power},mob:\"$(mob)\",activation_box:\"$(activation_box)\",walk_to:\"$(walk_to)\""
 	)
+	legend: list[tuple[str, str]] = [
+		("Group", "group_id"), ("From round", "min_round"), ("Until round", "max_round"), ("Arrival", "arrival"), ("Rise", "rise_ticks"),
+		*([("Power", "power")] if has_power else []), ("Mob", "mob"), ("Activation box", "activation_box"), ("Walk to", "walk_to"),
+	]
 	dialog: JsonDict = {
 		"type": "minecraft:multi_action",
 		"title": {"text": kind.name, "color": "gold", "bold": True},
 		"body": [
-			{"type": "minecraft:plain_message", "width": 400, "contents": FIELD_DOCS["mob"]},
-			{"type": "minecraft:plain_message", "width": 400, "contents": "Activation box: only spawns while a player stands in it, relative to the spawn. Empty: always."},
+			help_legend(legend),
+			{"type": "minecraft:plain_message", "width": 400, "contents": Text.help('Mob example: `{entity:"spider",riders:[{entity:"zombie"}]}`')},
 		],
 		"inputs": inputs,
 		"actions": [
 			{"label": {"text": "Save", "color": "green"}, "action": {"type": "dynamic/run_command", "template": f"/function {form}/spawn_apply {{{fields},then:\"\"}}"}},
-			{"label": "📐 Save, then draw the box", "tooltip": "Right-click two opposite corners with the Coord Stick",
+			{"label": "📐 Save, then draw the box", "tooltip": "Then right-click two opposite\ncorners with the Coord Stick.",
 				"action": {"type": "dynamic/run_command", "template": f"/function {form}/spawn_apply {{{fields},then:\"box\"}}"}},
 		],
 		"columns": 2,
@@ -118,7 +126,7 @@ data modify storage {ns}:temp dialog set value {json.dumps(dialog, ensure_ascii=
 
 # The mob as SNBT, the lists without their brackets. A text holding a single quote breaks the macro, so the field stays empty and says so.
 execute store result score #ed_texts {ns}.data run function {open_function}_texts with entity @s data
-execute if score #ed_texts {ns}.data matches 0 run data modify storage {ns}:temp dialog.body append value {{type:"minecraft:plain_message",contents:{{text:"This mob holds a quote the form cannot show: saving would reset it.",color:"red"}}}}
+execute if score #ed_texts {ns}.data matches 0 run data modify storage {ns}:temp dialog.body append value {{type:"minecraft:plain_message",width:400,contents:{{text:"This mob holds a quote the form cannot show:\\nsaving would reset it.",color:"red"}}}}
 {show_dialog}
 """)
 	write_versioned_function(f"maps/editor/form/open/{etype}_texts", f"""
@@ -137,14 +145,18 @@ def write_mystery_box_form(ns: str, form: str, show_dialog: str, target: str, go
 	dialog: JsonDict = {
 		"type": "minecraft:multi_action",
 		"title": {"text": "Mystery Box", "color": "light_purple", "bold": True},
-		"body": [{"type": "minecraft:plain_message", "width": 400, "contents": "The box turns about the centre of the block it was placed in: upside down, it hangs from the block above. Every animation follows its own up."}],
+		"body": [
+			{"type": "minecraft:plain_message", "width": 400, "contents": Text.help("The box turns about the centre of its block.\nUpside down, it hangs from the block above.")},
+			help_legend([("Pitch", ("mystery_box_pos", "pitch")), ("Roll", ("mystery_box_pos", "roll")), ("First spot", "can_start_on"), ("Location name", ("mystery_box_pos", "location_name"))]),
+		],
 		"inputs": [
 			{"type": "minecraft:number_range", "key": "yaw", "label": "Yaw", "start": 0, "end": 359, "step": 1, "width": 300},
 			{"type": "minecraft:number_range", "key": "pitch", "label": "Pitch", "start": -90, "end": 90, "step": 1, "width": 300},
 			{"type": "minecraft:single_option", "key": "roll", "label": "Roll", "width": 300,
 				"options": [{"id": str(roll), "display": f"{roll} (upside down)" if roll == 180 else str(roll)} for roll in rolls]},
 			{"type": "minecraft:boolean", "key": "can_start_on", "label": "Can be the first spot", "initial": True, "on_true": "1", "on_false": "0"},
-			{"type": "minecraft:text", "key": "location_name", "label": "Location name, announced when the box lands here", "initial": "", "max_length": 64, "width": 300},
+			{"type": "minecraft:text", "key": "location_name", "label": {"text": "Location name", "hover_event": doc_hover(("mystery_box_pos", "location_name"))},
+				"initial": "", "max_length": 64, "width": 300},
 		],
 		"actions": [{
 			"label": {"text": "Save", "color": "green"},
@@ -248,4 +260,20 @@ tag @a remove {ns}.ed_form_user
 	write_versioned_function("maps/editor/form/reopen", "\n".join(
 		f"execute if entity @s[tag={ns}.element.{etype}] run function {form}/open/{etype}" for etype in SPAWN_FORMS
 	))
+
+
+def help_legend(fields: Sequence[tuple[str, tuple[str, str] | str]]) -> JsonDict:
+	""" A dialog body of "ⓘ" chips, one per field label, five a line, each showing its FIELD_DOCS entry on hover.
+
+	Only text inputs show a tooltip on their own label: sliders, option buttons and check boxes do not.
+	"""
+	contents: list[str | JsonDict] = ["", {"text": "Hover a name for its help:", "color": "gray"}]
+	for i, (label, doc) in enumerate(fields):
+		contents += ["\n" if i % 5 == 0 else "   ", {"text": f"ⓘ {label}", "color": "aqua", "hover_event": doc_hover(doc)}]
+	return {"type": "minecraft:plain_message", "width": 400, "contents": contents}
+
+
+def doc_hover(doc: tuple[str, str] | str) -> JsonDict:
+	""" A hover event showing a FIELD_DOCS entry. """
+	return {"action": "show_text", "value": Text.help(FIELD_DOCS[doc])}
 
