@@ -25,6 +25,7 @@ execute if entity @s[gamemode=spectator] run return 0
 # Healed so the player never really dies.
 effect give @s instant_health 1 100 true
 scoreboard players add @s {ns}.mp.deaths 1
+scoreboard players add @s {ns}.st.mp.deaths 1
 
 # `{ns}:input with` is shared scratch that the signals below reuse (Scavenger refills, lore rewrites clear it),
 # so the branch is decided on a score taken now and the signals get a private copy.

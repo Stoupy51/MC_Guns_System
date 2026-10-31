@@ -33,9 +33,11 @@ class EquipmentPreset:
 
 @dataclass(frozen=True)
 class CamoVariant:
-	""" A free cosmetic camo: suffix appended after the scope suffix. """
+	""" A cosmetic camo: suffix appended after the scope suffix. Free in Multiplayer. """
 	suffix: str
 	display_name: str
+	zb_knife_level: int
+	""" Zombies level unlocking it for the Zombies knife. """
 
 @dataclass(frozen=True)
 class GrenadeType:
@@ -251,6 +253,23 @@ TRIG_MARKETPLACE_LIKES        = 1602
 TRIG_MY_LOADOUTS_FAV_ONLY     = 1603
 """ My Loadouts: show only favorited own loadouts. """
 
+TRIG_MY_STATS                 = 1610
+""" Open the clicker's own stats, Zombies page. """
+TRIG_ZB_KNIFE_MENU            = 1620
+""" Open the Zombies knife camo picker. """
+TRIG_ZB_KNIFE_CAMO_BASE       = 1621
+""" + camo index -> pick the Zombies knife camo, if the Zombies level unlocks it. """
+TRIG_LEADERBOARDS             = 1630
+""" Leaderboards menu; + 1 Multiplayer level, + 2 Zombies level, + 3 Zombies maps, + 4 Missions maps. """
+TRIG_LB_MI_MAP_BASE           = 2000
+""" + map index -> that Missions map's leaderboard. """
+TRIG_LB_ZB_MAP_BASE           = 3000
+""" + map index * 8 + player count (0 for all) -> that Zombies map's leaderboard, up to 3999. """
+TRIG_PLAYERS_PAGE_BASE        = 90000
+""" + page -> list the known players, 10 per page. """
+TRIG_PLAYER_STATS_BASE        = 100000
+""" + known_index * 4 + mode (0 Zombies, 1 Multiplayer, 2 Missions) -> one player's stats page. Open-ended, so it stays last. """
+
 PICK10_TOTAL = 10
 """ Total Pick-10 points budget. """
 
@@ -268,13 +287,13 @@ COST_GRENADE           = 1
 COST_PERK              = 1
 
 CAMO_VARIANTS: list[CamoVariant] = [
-	CamoVariant(suffix="",                     display_name="Default"),
-	CamoVariant(suffix="_autumn",              display_name="Autumn"),
-	CamoVariant(suffix="_galaxy",              display_name="Galaxy"),
-	CamoVariant(suffix="_gold",                display_name="Gold"),
-	CamoVariant(suffix="_red_polymer_stripes", display_name="Red Polymer"),
+	CamoVariant(suffix="",                     display_name="Default",     zb_knife_level=1),
+	CamoVariant(suffix="_autumn",              display_name="Autumn",      zb_knife_level=25),
+	CamoVariant(suffix="_galaxy",              display_name="Galaxy",      zb_knife_level=50),
+	CamoVariant(suffix="_gold",                display_name="Gold",        zb_knife_level=100),
+	CamoVariant(suffix="_red_polymer_stripes", display_name="Red Polymer", zb_knife_level=75),
 ]
-""" Free cosmetic camos; the suffix is appended after the scope suffix (ak47 + _3 + _gold). """
+""" Camos; the suffix is appended after the scope suffix (ak47 + _3 + _gold). The index is the trigger offset and the `mgs.zb.knife_camo` value. """
 
 GRENADE_TYPES: list[GrenadeType] = [
 	GrenadeType(item_id="",              display_name="None"),

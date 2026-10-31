@@ -93,6 +93,7 @@ title @s subtitle [{{"text":"You have been revived!","color":"green"}}]
 
 	# Run as the downed spectator who was not revived in time.
 	write_versioned_function("zombies/revive/bleed_out", f"""
+scoreboard players add @s {ns}.st.zb.deaths 1
 scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0
 tag @s remove {ns}.downed_spectator

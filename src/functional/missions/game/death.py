@@ -20,6 +20,7 @@ execute if entity @s[gamemode=spectator] run return 0
 # Healed so the player never really dies.
 effect give @s instant_health 1 100 true
 scoreboard players add @s {ns}.mi.deaths 1
+scoreboard players add @s {ns}.st.mi.deaths 1
 
 # Hit effects, hitmarker and DPS, for hits.
 execute if data storage {ns}:input with.amount run function #{ns}:signals/damage with storage {ns}:input with
@@ -40,6 +41,7 @@ execute if score @s {ns}.mp.spectate_timer matches 1.. run return 0
 execute if entity @s[gamemode=spectator] run return 0
 
 scoreboard players add @s {ns}.mi.deaths 1
+scoreboard players add @s {ns}.st.mi.deaths 1
 scoreboard players set @s {ns}.mi.died_here 0
 
 function {ns}:v{version}/missions/enter_death_spectate

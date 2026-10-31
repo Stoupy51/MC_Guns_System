@@ -89,6 +89,8 @@ def write_config_menu() -> None:
 		Dialogs.dialog_show_btn(f"{ns}:config/global", "⚙ Global Settings", "Server-wide gameplay settings", "gold"),
 		Dialogs.dialog_show_btn(f"{ns}:config/personal", "⚡ Personal Cheats", "Self-only powerups", "light_purple"),
 		Dialogs.dialog_run_btn("🗺 Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
+		Dialogs.dialog_run_btn("📊 Reset Player Stats", f"/function {ns}:v{version}/stats/admin/players {{page:0}}", "Pick a player whose stats go back to zero (levels are kept)", "red"),
+		Dialogs.dialog_run_btn("🏆 Reset Leaderboard", f"/function {ns}:v{version}/stats/admin/boards", "Empty one Zombies or Missions map's leaderboard", "red"),
 	]
 	Dialogs.register_dialog("config", {
 		"type": "minecraft:multi_action",

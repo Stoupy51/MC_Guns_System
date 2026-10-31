@@ -23,6 +23,7 @@ from .objects.wallbuys import generate_wallbuys
 from .player.ability import generate_zombies_abilities
 from .player.hurt import generate_hurt_player
 from .player.inventory import generate_zombies_inventory
+from .player.knife_camo import write_knife_camo
 from .player.revive import generate_revive
 from .player.whos_who import generate_whos_who
 from .rewards.bonus import main as bonus_main
@@ -43,6 +44,7 @@ def main() -> None:
 	generate_zombies_escort()
 	generate_zombies_abilities()
 	generate_zombies_inventory()
+	write_knife_camo()
 	generate_display_helpers()
 	generate_roaming()
 	generate_mystery_box()

@@ -27,13 +27,18 @@ execute if data storage {ns}:temp {{_plr_mode:"multiplayer"}} if score @s {ns}.m
 execute if data storage {ns}:temp {{_plr_mode:"zombies"}} if score @s {ns}.zb.in_game matches 1 run data modify storage {ns}:temp _plr_entry.color set value "green"
 execute if data storage {ns}:temp {{_plr_mode:"missions"}} if score @s {ns}.mi.in_game matches 1 run data modify storage {ns}:temp _plr_entry.color set value "green"
 
-# Dialog labels do not resolve selector components, so the name is baked in: an invisible probe's head gets @s's profile, and the name is read back.
-execute at @s run summon armor_stand ~ ~ ~ {{Tags:["{ns}_name_probe"],Invisible:1b,NoGravity:1b}}
-loot replace entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] armor.head loot {ns}:get_username
-data modify storage {ns}:temp _plr_entry.name set from entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] equipment.head.components."minecraft:profile".name
-kill @e[type=armor_stand,tag={ns}_name_probe]
+function {ns}:v{version}/players/read_name
+data modify storage {ns}:temp _plr_entry.name set from storage {ns}:temp _name
 
 data modify storage {ns}:temp _plr_iter append from storage {ns}:temp _plr_entry
+""")
+
+	# Dialog labels do not resolve selector components, so the name is baked in: an invisible probe's head gets @s's profile, and the name is read back into `{ns}:temp _name`.
+	write_versioned_function("players/read_name", f"""
+execute at @s run summon armor_stand ~ ~ ~ {{Tags:["{ns}_name_probe"],Invisible:1b,NoGravity:1b}}
+loot replace entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] armor.head loot {ns}:get_username
+data modify storage {ns}:temp _name set from entity @e[type=armor_stand,tag={ns}_name_probe,limit=1] equipment.head.components."minecraft:profile".name
+kill @e[type=armor_stand,tag={ns}_name_probe]
 """)
 
 	# Pop one entry, add the mode, append its button, recurse (as shared/maps/select_iter).

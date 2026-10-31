@@ -48,6 +48,8 @@ execute if score #wb_purchase_mode {ns}.data matches 1 run function {ns}:v{versi
 execute if score #wb_purchase_mode {ns}.data matches 2 run function {ns}:v{version}/zombies/wallbuys/msg_refilled
 execute if score #wb_purchase_mode {ns}.data matches 3 run function {ns}:v{version}/zombies/wallbuys/msg_replaced
 execute if score #wb_purchase_mode {ns}.data matches 4 run scoreboard players operation @s {ns}.zb.points += #wb_price {ns}.data
+execute if score #wb_purchase_mode {ns}.data matches 1 run scoreboard players add @s {ns}.st.zb.wallbuys 1
+execute if score #wb_purchase_mode {ns}.data matches 3 run scoreboard players add @s {ns}.st.zb.wallbuys 1
 execute if score #wb_purchase_mode {ns}.data matches 4 run function {ns}:v{version}/zombies/wallbuys/msg_refund_full
 
 # The actionbar reads reserve_ammo, which is otherwise only recomputed on reload, idle or weapon switch.
@@ -120,7 +122,7 @@ function {ns}:v{version}/zombies/inventory/apply_slot_tag {{slot:"hotbar.7",grou
 function {ns}:v{version}/zombies/wallbuys/msg_purchased
 """)
 
-	## Silent tactical give or refill, for the Mystery Box (default_give/monkey_bomb).
+	## Silent tactical give or refill, for the Mystery Box (mystery_box/give_result).
 	## Sets the purchase flags its retry logic reads.
 	write_versioned_function("zombies/wallbuys/give_tactical", f"""
 scoreboard players set #wb_purchase_done {ns}.data 1

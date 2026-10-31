@@ -1,6 +1,6 @@
 """ Cosmetic leveling, shared by Multiplayer and Zombies.
 
-Purely visual: nothing is gated behind a level, there is no cap and no prestige.
+Cosmetic: the only thing a level unlocks is the Zombies knife camos (`zombies/player/knife_camo.py`), and there is no cap and no prestige.
 Each side keeps its own independent level, shown on the vanilla XP bar and in front of the player's name in every message the pack prints.
 
 This package owns the curve and the display. The award *sites* live with the mode that fires them,

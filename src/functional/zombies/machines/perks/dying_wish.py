@@ -19,6 +19,7 @@ def write_dying_wish() -> None:
 	write_versioned_function("zombies/perks/dying_wish_trigger", f"""
 # Not a real down: undo the downs++ that on_respawn added.
 scoreboard players remove @s {ns}.zb.downs 1
+scoreboard players remove @s {ns}.st.zb.downs 1
 
 # 60 s x uses.
 scoreboard players add @s {ns}.zb.dw_uses 1
