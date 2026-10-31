@@ -85,6 +85,7 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"mystery_box_pos":    ElementDef(name="Mystery Box Pos",  color="light_purple", particle=[1.0, 0.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:evoker_spawn_egg",      save_type="zb_object",       save_path="mystery_box.positions",   emoji="📦", defaults={"can_start_on": True, "display_item": "", "item_model": "", "location_name": "", "pitch": 0.0, "roll": 0}),
 	"power_switch":       ElementDef(name="Power Switch",     color="green",        particle=[0.0, 1.0, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:slime_spawn_egg",       save_type="zb_object",       save_path="power_switch",            emoji="⚡", defaults={}),
 	"barricade":            ElementDef(name="Barricade",          color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",    save_type="zb_object",       save_path="barricades",                emoji="🧱", defaults={"block_enabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "false"}}, "block_disabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "true"}}, "radius": 2}, light_fields=("block_enabled", "block_disabled")),
+	"leaderboard":          ElementDef(name="Leaderboard",        color="gold",         particle=[1.0, 0.8, 0.0], particle_scale=1.0, has_rotation=False, egg_model="minecraft:parrot_spawn_egg",      save_type="zb_object",       save_path="leaderboards",              emoji="🏆", defaults={"board": "level_zb", "map_id": "", "players": "all"}),
 }
 
 # Shown as real in-game models in the editor instead of dust, each through maps/editor/displays/<etype>, which mirrors the game's own display setup.
@@ -99,7 +100,7 @@ Empty brackets are useless to type into, and each gets a "✗" button to clear i
 """
 
 # Hover tooltips ("ⓘ") next to constant and enum fields in the element editor, so map makers need not guess the magic numbers.
-# Keyed by (element_type, field); a plain field name is a fallback shared by every element type ("power").
+# Keyed by (element_type, field), a plain field name being a fallback for every type ("power"). Text.help colours `code`, and docs in forms keep lines under the 34 characters a tooltip wraps at.
 FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("trap", "type"): "Trap behaviour:\n0 = Fire: lethal to zombies, burns players inside\n1 = Electric: lethal to zombies, shocks players inside\n2 = Turret: auto-fires at the nearest zombie every 5 ticks",
 	("trap", "duration"): "How long the trap stays active, in ticks (20 ticks = 1 second).",
@@ -116,21 +117,30 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("wunderfizz", "price"): "Points per use. Cycles perk bottles and grants one random perk the\nbuyer doesn't already own, collectable by the buyer for 10s. Suggested: 1500.",
 	("wallbuy", "weapon_id"): "Item id given on purchase. Guns (e.g. m1911, ak47, mp5),\nknives (bowie_knife, ~3000 pts), lethal grenades (frag_grenade,\nsemtex), or tacticals (monkey_bomb, smoke_grenade, flash_grenade).\nNon-guns route to their own slot: knife hotbar.0, lethals hotbar.7 (x4), tacticals hotbar.6 (x3).",
 	("wallbuy", "magazine_id"): "Magazine item paired with the gun (e.g. m1911_mag).\nLeave empty for knife/grenade/tactical wallbuys.",
+	("leaderboard", "board"): "Board shown, as a floating text while a player is within 24 blocks:\nlevel_zb = Zombies level, level_mp = Multiplayer level,\nzb_map = best rounds on a Zombies map, mi_map = best times on a Missions map.",
+	("leaderboard", "map_id"): "Map of a zb_map or mi_map board. Leave EMPTY for the map this board is placed in.",
+	("leaderboard", "players"): "Player count of a zb_map board: all, or a number of players such as 2.",
 	("barricade", "radius"): "Block radius the barricade toggles open/closed around its marker.",
-	("mystery_box_pos", "location_name"): "Name of the place this spot sits in, announced in chat when the box\nlands here (e.g. \"the Power Room\").\nLeave EMPTY to fall back to the generic \"a new location\" message.",
-	"activation_box": "Optional [x, y, z, dx, dy, dz] box (relative to this spawn, in blocks).\nWhen set, this spawn only produces enemies while a player stands inside the box.\nx/y/z = corner offset from the spawn, dx/dy/dz = size. Empty [] = always active.",
-	"walk_to": "Optional [x, y, z] offset (relative to this spawn, in blocks).\nWhen set, zombies from this spawn walk straight to that spot instead of\nheading for the nearest player. A pathfinding escort carries them there,\nthen hands them back to normal AI on arrival. Empty [] = normal behaviour.\nAim it just inside a window and they break in through the barricade on the way.",
+	("mystery_box_pos", "location_name"): "Announced in chat when the box\nlands here: `\"the Power Room\"`.\nEmpty: a generic message.",
+	"activation_box": "Optional `[x,y,z,dx,dy,dz]` box,\nin blocks from the spawn, which\nonly works with a player inside.\n`x,y,z`: corner, `dx,dy,dz`: size.\nEmpty `[]`: always active.",
+	"walk_to": "Optional `[x,y,z]` spot, in blocks\nfrom this spawn. Its enemies walk\nthere first, then hunt players.\nAim just inside a window: they\nbreak the barricade on the way.\nEmpty `[]`: they hunt at once.",
 	("door", "min_round"): "Round from which the doors of this link_id can be bought (0 = from the start).\nBefore it, hovering shows \"Locked until round N\" and clicks are refused.",
-	"rise_ticks": "Ticks an enemy takes to come out of the floor or ceiling (20 ticks = 1 second).",
-	"arrival": "How the enemy comes in:\nfloor = rises out of the floor\nceiling = drops from the ceiling 2 blocks above, for vents and holes in the roof\nportal = sparks for 1.5 s, then a lightning strike delivers it\ninstant = appears at once, awake",
-	"min_round": "First round this spawn is used (0 = from round 1).",
-	"max_round": "Last round this spawn is used (0 = never stops).",
-	"mob": "What spawns here, as SNBT: {entity:\"zombie\", gun:..., nbt:{...}, riders:[...]}\nentity: any entity id. nbt: merged into it, but the round still sets its health and speed.\ngun: absent = the round decides, false = never armed, {id:\"ak47\", level:2} = always armed\n(no id = a random non-explosive gun, no level = 1 with an id, else the round's tier).\nriders: mobs of the same format riding it; the whole stack counts once in the round.\nA plain zombie (no nbt, riders or gun) can still become a Zonweeb special type.",
-	("mystery_box_pos", "pitch"): "Tilt of the box, -90 to 90 degrees; every animation follows the box's own up.",
-	("mystery_box_pos", "roll"): "Roll of the box around its front axis: 0, 90, 180 or 270 (180 = upside down, for a ceiling).",
+	"rise_ticks": "Ticks to come out of the floor\nor ceiling. `20` ticks: 1 second.",
+	"arrival": "How the enemy comes in.\n`floor`: rises out of the floor.\n`ceiling`: drops from 2 blocks\nabove, for vents and roof holes.\n`portal`: sparks for 1.5 s, then\na lightning strike brings it.\n`instant`: appears at once, awake.",
+	"group_id": "Group `0` is open from the start.\nA door opens the groups of its\n`link_id` and `back_group_id`.",
+	"min_round": "First round this spawn is used.\n`0`: from the first round.",
+	"max_round": "Last round this spawn is used.\n`0`: it never stops.",
+	"mob": (
+		"What spawns here, as SNBT.\n`entity`: any entity id.\n`nbt`: merged into it; the round\nstill sets its health and speed.\n"
+		"`gun`: absent, the round decides.\n  `false`: never armed.\n  `{}`: any gun but explosives.\n  `{id:\"ak47\",level:2}`: that gun.\n"
+		"  No `level`: 1 with an `id`, else\n  the round's tier.\n`riders`: mobs in this same format\nriding it. The stack counts once.\n"
+		"A plain zombie (no `nbt`, `riders`\nor `gun`) can be a Zonweeb type."
+	),
+	("mystery_box_pos", "pitch"): "Tilt of the box, `-90` to `90`\ndegrees. Every animation follows\nthe box's own up.",
+	("mystery_box_pos", "roll"): "Turn about its front axis:\n`0`, `90`, `180` or `270`.\n`180`: upside down, for a ceiling.",
 	# Shared fallbacks:
-	"can_start_on": "true = the machine is allowed to be the ACTIVE (usable) spot at game\nstart and after it roams. false = a valid roam destination, but never\nthe first active spot. Only one spot is active at a time; the rest show\na grayed-out disabled model. At least one spot must allow starting.",
-	"power": "true = requires the map's power to be switched on before it works\nfalse = always usable",
+	"can_start_on": "`true`: it may be the first spot.\n`false`: only reached by moving.\nOnly one spot is active at once;\nthe others show a grayed model.\nAt least one spot must allow it.",
+	"power": "`true`: works only once the map's\npower is switched on.\n`false`: always works.",
 	"price": "Cost in points to buy/use this element.",
 }
 
@@ -183,6 +193,7 @@ EDITOR_MODES: dict[str, EditorMode] = {
 			"special_spawn": "inventory.7",
 			"barricade": "inventory.8",
 			"wunderfizz": "inventory.9",
+			"leaderboard": "inventory.10",
 		},
 	),
 	"missions": EditorMode(

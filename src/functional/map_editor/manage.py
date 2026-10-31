@@ -5,6 +5,7 @@ import json
 from stewbeet import JsonDict, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
+from ..helpers.text import Text
 
 
 # Functions
@@ -18,7 +19,9 @@ def write_editor_manage() -> None:
 	settings_dialog: JsonDict = {
 		"type": "minecraft:confirmation",
 		"title": {"text": "Map Settings", "color": "gold", "bold": True},
-		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Dimension: minecraft:overworld, mgs:zombies, minecraft:the_nether, minecraft:the_end or any other.", "color": "gray"}}],
+		"body": [{"type": "minecraft:plain_message", "width": 300, "contents": Text.help(
+			"Dimension: any id, like\n`minecraft:overworld`, `mgs:zombies`,\n`minecraft:the_nether` or `minecraft:the_end`."
+		)}],
 		"inputs": [
 			{"type": "minecraft:text", "key": "name", "label": "Name", "initial": "", "max_length": 64, "width": 300},
 			{"type": "minecraft:text", "key": "description", "label": "Description", "initial": "", "max_length": 256, "width": 300},
@@ -33,14 +36,17 @@ def write_editor_manage() -> None:
 	delete_dialog: JsonDict = {
 		"type": "minecraft:confirmation",
 		"title": {"text": "Delete Map", "color": "red", "bold": True},
-		"body": [{"type": "minecraft:plain_message", "contents": [{"text": "Delete "}, {"text": "", "color": "gold"}, {"text": "? This cannot be undone."}]}],
+		"body": [{"type": "minecraft:plain_message", "contents": [{"text": "Delete "}, {"text": "", "color": "gold"}, {"text": "?\nThis cannot be undone."}]}],
 		"yes": {"label": {"text": "Delete", "color": "red"}, "action": {"type": "run_command", "command": ""}},
 		"no": {"label": {"text": "Cancel", "color": "gray"}, "action": {"type": "run_command", "command": ""}},
 	}
 	export_dialog: JsonDict = {
 		"type": "minecraft:notice",
 		"title": {"text": "Export Map", "color": "aqua", "bold": True},
-		"body": [{"type": "minecraft:plain_message", "width": 400, "contents": {"text": f"Click the box, then Ctrl+A and Ctrl+C. To import it, paste it after \"data modify storage {ns}:maps <mode> append value\" in a command block or a function, since chat cuts commands at 256 characters.", "color": "gray"}}],
+		"body": [{"type": "minecraft:plain_message", "width": 400, "contents": Text.help(
+			f"Click the box, then Ctrl+A and Ctrl+C.\nTo import the map, paste it after\n`data modify storage {ns}:maps <mode> append value`\n"
+			"in a command block or a function,\nsince chat cuts commands at 256 characters."
+		)}],
 		"inputs": [{"type": "minecraft:text", "key": "map", "label": "Map data", "initial": "", "max_length": 2000000, "width": 400, "multiline": {"max_lines": 512, "height": 200}}],
 		"action": {"label": {"text": "Back", "color": "gray"}, "action": {"type": "run_command", "command": ""}},
 	}

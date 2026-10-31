@@ -1,4 +1,4 @@
-""" Building text components: gradients, splitting an emoji off a coloured label, and naming a player. """
+""" Building text components: gradients, splitting an emoji off a coloured label, naming a player and colouring a help text. """
 # Imports
 import re
 
@@ -7,9 +7,32 @@ from stouputils.typing import JsonDict
 
 # Classes
 class Text:
-	""" Building text components: gradients, splitting an emoji off a coloured label, and naming a player. """
+	""" Building text components: gradients, splitting an emoji off a coloured label, naming a player and colouring a help text. """
+
+	# Constants
+	CODE_TOKEN: re.Pattern[str] = re.compile(r'(?P<value>"[^"]*"|-?\d+(?:\.\d+)?|\b(?:true|false)\b|[a-z_]+:(?!true\b|false\b)[a-z_][a-z0-9_./]*)|[A-Za-z_]\w*')
+	""" A value (quoted string, number, boolean or namespaced id) or else a name, in the code of a help text. """
 
 	# Functions
+	@staticmethod
+	def help(text: str) -> list[JsonDict]:
+		""" Components of a help text: prose in gray, and in each `code` span, names in yellow and values in green.
+
+		>>> [(part["text"], part["color"]) for part in Text.help('Set `gun:false` here.')]
+		[('Set ', 'gray'), ('gun', 'yellow'), (':', 'white'), ('false', 'green'), (' here.', 'gray')]
+		"""
+		parts: list[JsonDict] = []
+		for index, segment in enumerate(text.split("`")):
+			if index % 2 == 0:
+				parts.append({"text": segment, "color": "gray"})
+				continue
+			end: int = 0
+			for token in Text.CODE_TOKEN.finditer(segment):
+				parts += [{"text": segment[end:token.start()], "color": "white"}, {"text": token[0], "color": "green" if token["value"] else "yellow"}]
+				end = token.end()
+			parts.append({"text": segment[end:], "color": "white"})
+		return [part for part in parts if part["text"]]
+
 	@staticmethod
 	def player(ns: str, selector: str = "@s", side: str = "mp", **style: str) -> str:
 		""" A player's name with their level in front of it, as one grouped component.
