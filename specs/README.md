@@ -11,6 +11,7 @@ One directory per feature, in the Spec Kit layout (`spec.md` -> `plan.md` -> `ta
 | [008-original-fire-modes](008-original-fire-modes/) | Built, in-game checks open (T014 to T017) |
 | [009-concurrent-modes-isolation](009-concurrent-modes-isolation/) | Built and played with two clients: map dimension, lobby, mgs:zombies dimension; L4 and the tab list open |
 | [010-zombie-spawn-profiles](010-zombie-spawn-profiles/) | Built: decisions and reminders only (mobs, riders, guns, round bounds, arrivals, door round lock, turned mystery box, entity names) |
+| [011-player-stats-leaderboards](011-player-stats-leaderboards/) | Specced, P1 to P4 to do: stats and Quick Actions, Zombies knife camos, mystery box pools (independent), leaderboards and holograms |
 
 Working on one of these: run `/speckit-tasks` to regenerate its task list from the current code,
 or `/speckit-converge` to have the remaining work appended after a partial implementation.
