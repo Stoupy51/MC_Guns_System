@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "gamemode_game.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/snapshot.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA6BoD"
+}

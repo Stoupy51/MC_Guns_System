@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reset_board.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA+XqD;;;;;;;;;AACrD;AACA;AACA;AACA"
+}

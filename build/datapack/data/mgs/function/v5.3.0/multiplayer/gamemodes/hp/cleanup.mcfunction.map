@@ -3,8 +3,8 @@
 	"file": "cleanup.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/hardpoint.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AAoLsB;;;;;;AACtB;AACA;AACA;AACA"
+	"mappings": "AAmCE;;;;;;AAAA;AAAA;AAAA;AAAA"
 }

@@ -99,6 +99,7 @@ execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.3.0/shared/tp_to_po
 
 # Extension points.
 function #mgs:zombies/register_maps
+function mgs:v5.3.0/zombies/mystery_box/build_pool
 function #mgs:zombies/register_mystery_box_item
 
 schedule function mgs:v5.3.0/zombies/preload_complete 20t

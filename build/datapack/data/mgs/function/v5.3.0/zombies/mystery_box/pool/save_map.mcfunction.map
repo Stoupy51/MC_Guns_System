@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "save_map.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/pool_menu.py"
+	],
+	"names": [],
+	"mappings": "AA6D+D;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAC/D;AACA;AACA"
+}

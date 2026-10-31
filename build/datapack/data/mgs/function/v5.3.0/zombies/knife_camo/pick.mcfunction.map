@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "pick.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/knife_camo.py"
+	],
+	"names": [],
+	"mappings": "AAyCqD;;;;;;;;AACrD;AAAA;AAAA;AAAA;AAAA;AACA;AACA"
+}

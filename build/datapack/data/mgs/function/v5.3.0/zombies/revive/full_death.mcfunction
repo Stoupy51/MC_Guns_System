@@ -17,6 +17,7 @@ execute if entity @s[tag=mgs.perk.quick_revive] if score #zb_ingame_total mgs.da
 
 # Counts as a down and strips perks.
 scoreboard players add @s mgs.zb.downs 1
+scoreboard players add @s mgs.st.zb.downs 1
 function mgs:v5.3.0/zombies/perks/lose_all
 
 # No mannequin exists on this path.

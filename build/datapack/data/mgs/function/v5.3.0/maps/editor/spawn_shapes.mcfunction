@@ -1,8 +1,6 @@
 
 #> mgs:v5.3.0/maps/editor/spawn_shapes
 #
-# @executed	as @e[type=minecraft:marker,tag=mgs.map_element]
-#
 # @within	mgs:v5.3.0/maps/editor/refresh_marker
 #
 

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "mi_map_view.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA2OqD;;;;;;;;;;AACrD;AACA;AACA;AACA;AACA"
+}

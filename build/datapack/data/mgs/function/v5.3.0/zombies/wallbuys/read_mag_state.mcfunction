@@ -1,6 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/read_mag_state
 #
+# @executed	at @n[tag=bs.interaction.target]
+#
 # @within	mgs:v5.3.0/zombies/wallbuys/check_mag_not_full {slot:"$(slot)"}
 #
 # @args		slot (string)

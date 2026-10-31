@@ -73,6 +73,15 @@ execute if score @s mgs.player.config matches 60000..69998 run function mgs:v5.3
 execute if score @s mgs.player.config matches 69999 run function mgs:v5.3.0/multiplayer/custom/unset_default
 execute if score @s mgs.player.config matches 70000..79999 run function mgs:v5.3.0/multiplayer/custom/edit
 execute if score @s mgs.player.config matches 80000..89999 run function mgs:v5.3.0/multiplayer/my_loadouts/manage
+# Zombies knife camo.
+execute if score @s mgs.player.config matches 1620 run function mgs:v5.3.0/zombies/knife_camo/menu
+execute if score @s mgs.player.config matches 1621..1625 run function mgs:v5.3.0/zombies/knife_camo/pick
+# Stats.
+execute if score @s mgs.player.config matches 1630..1634 run function mgs:v5.3.0/stats/board/dispatch
+execute if score @s mgs.player.config matches 2000..3999 run function mgs:v5.3.0/stats/board/dispatch
+execute if score @s mgs.player.config matches 1610 run function mgs:v5.3.0/stats/menu/mine
+execute if score @s mgs.player.config matches 90000..99999 run function mgs:v5.3.0/stats/menu/players_page
+execute if score @s mgs.player.config matches 100000.. run function mgs:v5.3.0/stats/menu/view_trigger
 # Marketplace and My Loadouts filters.
 execute if score @s mgs.player.config matches 1600 run function mgs:v5.3.0/multiplayer/marketplace/browse
 execute if score @s mgs.player.config matches 1601 run function mgs:v5.3.0/multiplayer/marketplace/browse_fav_only

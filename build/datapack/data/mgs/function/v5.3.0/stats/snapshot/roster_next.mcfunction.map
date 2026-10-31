@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "roster_next.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/snapshot.py"
+	],
+	"names": [],
+	"mappings": "AAiGwD;;;;;;;;;;;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

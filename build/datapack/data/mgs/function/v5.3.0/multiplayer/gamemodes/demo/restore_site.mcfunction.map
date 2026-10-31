@@ -3,8 +3,8 @@
 	"file": "restore_site.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/bomb/demo/sites_state.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AAqF8B;;;;;;;;AAC9B;AACA;AACA"
+	"mappings": "AAmCE;;;;;;;;AAAA;AAAA;AAAA"
 }

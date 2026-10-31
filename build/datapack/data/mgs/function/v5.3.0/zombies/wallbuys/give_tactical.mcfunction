@@ -1,7 +1,9 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/give_tactical
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/default_give/monkey_bomb {weapon_id:"monkey_bomb"}
+# @executed	at @n[tag=bs.interaction.target]
+#
+# @within	mgs:v5.3.0/zombies/mystery_box/give_result {weapon_id:"monkey_bomb"}
 #
 # @args		weapon_id (string)
 #

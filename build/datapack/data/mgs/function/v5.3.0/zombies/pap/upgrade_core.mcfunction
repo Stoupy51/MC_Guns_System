@@ -59,7 +59,7 @@ execute if data storage mgs:temp _pap_extract.lore[1] run data modify storage mg
 
 execute if data storage mgs:temp _pap_extract.lore[0] run function mgs:v5.3.0/zombies/pap/annotate_lore
 
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],"✦ ",{"translate":"mgs.pack_a_punch_3","fallback":"Pack-a-Punch!","color":"aqua","bold":true},[{"text":"  ","color":"gray"}, {"translate":"mgs.level_2","fallback":"Level "}],{"score":{"name":"#pap_next","objective":"mgs.data"},"color":"aqua"},{"text":"/","color":"dark_gray"},{"score":{"name":"#pap_max","objective":"mgs.data"},"color":"aqua"}]
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],"✦ ",{"translate":"mgs.pack_a_punch_3","fallback":"Pack-a-Punch!","color":"aqua","bold":true},[{"text":"  ","color":"gray"}, {"translate":"mgs.level_3","fallback":"Level "}],{"score":{"name":"#pap_next","objective":"mgs.data"},"color":"aqua"},{"text":"/","color":"dark_gray"},{"score":{"name":"#pap_max","objective":"mgs.data"},"color":"aqua"}]
 playsound minecraft:entity.experience_orb.pickup ambient @s ~ ~ ~ 0.8 1.25
 
 execute if data storage mgs:temp _pap_lore1_original run data modify storage mgs:temp _pap_extract.lore[1] set from storage mgs:temp _pap_lore1_original

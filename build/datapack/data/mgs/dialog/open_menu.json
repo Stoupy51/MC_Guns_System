@@ -1,0 +1,19 @@
+{
+	"type": "minecraft:multi_action",
+	"external_title": "MC Guns System",
+	"title": {
+		"translate": "mgs.mc_guns_system","fallback": "MC Guns System",
+		"color": "gold",
+		"bold": true
+	},
+	"body": [
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.settings_class_stats_and_players","fallback": "Settings, class, stats and players","color": "gray"}}
+	],
+	"actions": [
+		{"label": {"translate": "mgs.open_menu","fallback": "Open Menu","color": "green"},"action": {"type": "run_command","command": "/trigger mgs.player.config set 1"}}
+	],
+	"columns": 1,
+	"exit_action": {
+		"label": {"translate": "gui.cancel"}
+	}
+}

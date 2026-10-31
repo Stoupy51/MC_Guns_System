@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "view.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": "AA8D6C;;;;;;;;;AAC7C;AACA;AACA;AACA;AACA;AACA;AAAA;AAAA;AACA"
+}

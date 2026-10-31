@@ -22,6 +22,7 @@ scoreboard players operation @s mgs.mp.map_disp = @s mgs.mp.map_mode
 execute store result storage mgs:temp map_edit.idx int 1 run scoreboard players get @s mgs.mp.map_idx
 
 function mgs:v5.3.0/maps/editor/load_map_data with storage mgs:temp map_edit
+data remove storage mgs:temp map_edit.removed
 
 gamemode creative @s
 clear @s

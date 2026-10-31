@@ -8,10 +8,9 @@
 
 execute unless score @s mgs.zb.points >= #zb_mystery_box_price mgs.config run return run function mgs:v5.3.0/zombies/deny/not_enough_points {score:"#zb_mystery_box_price",obj:"mgs.config"}
 
-function mgs:v5.3.0/zombies/mystery_box/ensure_default_pool
-
 # A stable player id lets the display record its buyer, so one player can run several pulls at once.
 scoreboard players operation @s mgs.zb.points -= #zb_mystery_box_price mgs.config
+scoreboard players add @s mgs.st.zb.boxes 1
 execute unless score @s mgs.mb.pid matches 1.. run function mgs:v5.3.0/zombies/mystery_box/assign_pid
 
 # Decided now: after N uses, a 1 in 3 chance (shared with Der Wunderfizz, roaming/roll_move).

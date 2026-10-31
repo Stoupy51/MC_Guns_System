@@ -1,6 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/give_to_slot
 #
+# @executed	at @n[tag=bs.interaction.target]
+#
 # @within	mgs:v5.3.0/zombies/wallbuys/process_purchase {hotbar:1,inventory:1,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}
 #			mgs:v5.3.0/zombies/wallbuys/process_purchase {hotbar:2,inventory:2,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}
 #			mgs:v5.3.0/zombies/wallbuys/process_purchase {hotbar:3,inventory:3,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}

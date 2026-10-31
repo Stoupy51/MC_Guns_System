@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "zb_round_bucket.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA6FyD;;;;;;;;;AACzD;AACA;AACA;AACA;AACA"
+}

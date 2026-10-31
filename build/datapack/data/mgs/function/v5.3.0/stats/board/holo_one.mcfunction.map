@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "holo_one.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA8UkD;;;;;;;;AAClD;AACA;AACA"
+}

@@ -1,8 +1,6 @@
 
 #> mgs:v5.3.0/maps/editor/name/special_spawn_apply
 #
-# @executed	as @e[type=minecraft:marker,tag=mgs.map_element]
-#
 # @within	mgs:v5.3.0/maps/editor/name/special_spawn with storage mgs:temp _ed_name
 #
 # @args		group (unknown)

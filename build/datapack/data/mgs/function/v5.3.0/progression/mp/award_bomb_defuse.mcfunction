@@ -17,3 +17,5 @@ scoreboard players add @s mgs.adv.mp.objectives 1
 function mgs:v5.3.0/progression/adv/mp/objectives/check
 function mgs:v5.3.0/progression/mp/settle
 
+scoreboard players add @s mgs.st.mp.defuses 1
+

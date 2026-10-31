@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "zb_dialog.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": "AAmJ2D;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AAC3D;AACA;AACA;AACA;AAAA;AAAA;AACA;AACA;AACA;AACA"
+}

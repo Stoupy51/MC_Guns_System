@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "zb_map_path.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AAsOqD;;;;;;;;;;;;AACrD;AACA;AACA;AACA"
+}

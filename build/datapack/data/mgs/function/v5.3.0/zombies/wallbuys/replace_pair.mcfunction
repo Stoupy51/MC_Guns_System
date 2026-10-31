@@ -1,6 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/replace_pair
 #
+# @executed	at @n[tag=bs.interaction.target]
+#
 # @within	mgs:v5.3.0/zombies/wallbuys/replace_selected {hotbar:1,inventory:1,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}
 #			mgs:v5.3.0/zombies/wallbuys/replace_selected {hotbar:2,inventory:2,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}
 #			mgs:v5.3.0/zombies/wallbuys/replace_selected {hotbar:3,inventory:3,weapon_id:"$(weapon_id)",magazine_id:"$(magazine_id)"}

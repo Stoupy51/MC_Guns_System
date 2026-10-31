@@ -3,8 +3,8 @@
 	"file": "on_kill.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/hardpoint.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AA4KsB;;;;;;AACtB;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAmCE;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
 }

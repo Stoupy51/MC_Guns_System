@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "row_player.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA8IoD;;;;;;;;;;AACpD;AACA;AACA;AACA;AACA"
+}

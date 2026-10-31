@@ -6,6 +6,7 @@
 # @within	mgs:v5.3.0/zombies/revive/downed_tick
 #
 
+scoreboard players add @s mgs.st.zb.deaths 1
 scoreboard players set @s mgs.zb.downed 0
 scoreboard players set @s mgs.zb.revive_p 0
 tag @s remove mgs.downed_spectator

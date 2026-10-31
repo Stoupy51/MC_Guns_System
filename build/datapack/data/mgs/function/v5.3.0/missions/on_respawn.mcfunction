@@ -13,6 +13,7 @@ execute if score @s mgs.mp.spectate_timer matches 1.. run return 0
 execute if entity @s[gamemode=spectator] run return 0
 
 scoreboard players add @s mgs.mi.deaths 1
+scoreboard players add @s mgs.st.mi.deaths 1
 scoreboard players set @s mgs.mi.died_here 0
 
 function mgs:v5.3.0/missions/enter_death_spectate

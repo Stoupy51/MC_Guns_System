@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "read_name.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/player_menus.py"
+	],
+	"names": [],
+	"mappings": "AAoC+C;;;;;;;;;AAC/C;AACA;AACA;AACA;AACA"
+}

@@ -3,8 +3,8 @@
 	"file": "place_loose_bomb.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/bomb/snd/carry.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AA2CkC;;;;;;;;;AAClC;AACA;AACA;AACA;AACA"
+	"mappings": "AAmCE;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA"
 }

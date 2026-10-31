@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "holo_place.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AAuToD;;;;;;;;;;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

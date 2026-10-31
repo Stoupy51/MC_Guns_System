@@ -10,7 +10,7 @@ data modify storage mgs:zombies mystery_box.result set from entity @n[tag=mgs.mb
 
 scoreboard players set #wb_purchase_done mgs.data 0
 scoreboard players set #wb_purchase_mode mgs.data -1
-execute if data storage mgs:zombies mystery_box.result.give_function run function mgs:v5.3.0/zombies/mystery_box/give_via_function
+execute if data storage mgs:zombies mystery_box.result.weapon_id run function mgs:v5.3.0/zombies/mystery_box/give_result
 
 # A failed give (invalid selected slot) keeps the result for a retry.
 execute if score #wb_purchase_done mgs.data matches 0 run return 0

@@ -3,8 +3,8 @@
 	"file": "place_planted_bomb.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/bomb/snd/bomb.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AAiEoC;;;;;;;;AACpC;AAAA;AAAA;AACA;AACA;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA"
+	"mappings": "AAmCE;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
 }

@@ -14,6 +14,7 @@ execute if score @s mgs.zb.qr_uses matches 3.. run tellraw @s [[{"text":"","colo
 execute unless score @s mgs.zb.qr_uses matches 3.. run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.quick_revive_used_2_3_rebuy_for_another_self_revive","fallback":"Quick Revive used! (2/3) Rebuy for another self-revive.","color":"gray"}]
 
 scoreboard players add @s mgs.zb.downs 1
+scoreboard players add @s mgs.st.zb.downs 1
 function mgs:v5.3.0/zombies/perks/lose_all
 scoreboard players set @s mgs.zb.downed 0
 scoreboard players set @s mgs.zb.revive_p 0

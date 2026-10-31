@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "admin_button.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;AA8XsD"
+}

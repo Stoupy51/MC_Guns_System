@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "refresh_holograms.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AAqW2D;;;;;;;;;;;;AAC3D;AACA;AACA"
+}

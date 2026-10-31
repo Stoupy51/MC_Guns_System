@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "on_mission_end.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/snapshot.py"
+	],
+	"names": [],
+	"mappings": "AA0CqD;;;;;;AACrD;AACA;AACA;AAkBqD"
+}

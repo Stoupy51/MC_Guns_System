@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "mi_time.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AAqGiD;;;;;;;;;AACjD;AACA;AACA;AACA;AACA;AACA"
+}

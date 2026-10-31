@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "earn_delta.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/xp.py"
+	],
+	"names": [],
+	"mappings": "AAqDmD;;;;;;;;AACnD;AACA;AACA"
+}

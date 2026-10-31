@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/sync_marker
 #
-# @executed	as @e[type=minecraft:marker,tag=mgs.map_element]
-#
-# @within	mgs:v5.3.0/maps/editor/global_tick [ as @e[type=minecraft:marker,tag=mgs.map_element] ]
+# @within	mgs:v5.3.0/maps/editor/revert_marker
+#			mgs:v5.3.0/maps/editor/global_tick [ as @e[type=minecraft:marker,tag=mgs.map_element] ]
 #
 
 data modify storage mgs:temp _ed_sig set value {}

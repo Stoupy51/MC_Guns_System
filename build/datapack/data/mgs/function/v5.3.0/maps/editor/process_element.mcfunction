@@ -88,6 +88,9 @@ execute if entity @s[tag=mgs.element.power_switch] run return run kill @s
 execute if entity @s[tag=mgs.element.barricade] run function mgs:v5.3.0/maps/editor/handle_zb_object
 execute if entity @s[tag=mgs.element.barricade] run return run kill @s
 
+execute if entity @s[tag=mgs.element.leaderboard] run function mgs:v5.3.0/maps/editor/handle_zb_object
+execute if entity @s[tag=mgs.element.leaderboard] run return run kill @s
+
 # Zombies utility tool handlers
 execute if entity @s[tag=mgs.element.zb_defaults] run function mgs:v5.3.0/maps/editor/handle_zb_defaults
 execute if entity @s[tag=mgs.element.zb_defaults] run return run kill @s

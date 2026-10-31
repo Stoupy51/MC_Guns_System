@@ -3,8 +3,8 @@
 	"file": "cleanup.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/domination.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AAuNsB;;;;;;AACtB;AACA;AACA"
+	"mappings": "AAmCE;;;;;;AAAA;AAAA;AAAA"
 }

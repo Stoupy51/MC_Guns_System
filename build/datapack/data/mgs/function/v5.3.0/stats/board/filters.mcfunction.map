@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "filters.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAwRC;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

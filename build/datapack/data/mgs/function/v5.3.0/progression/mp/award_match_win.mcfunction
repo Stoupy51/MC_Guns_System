@@ -16,3 +16,6 @@ scoreboard players add @s mgs.adv.mp.wins 1
 function mgs:v5.3.0/progression/adv/mp/wins/check
 function mgs:v5.3.0/progression/mp/settle
 
+scoreboard players add @s mgs.st.mp.games 1
+function mgs:v5.3.0/stats/mp/gamemode_win with storage mgs:multiplayer game
+

@@ -13,6 +13,7 @@ execute if score @s mgs.mp.spectate_timer matches 1.. run return 0
 execute if entity @s[gamemode=spectator] run return 0
 
 scoreboard players add @s mgs.mp.deaths 1
+scoreboard players add @s mgs.st.mp.deaths 1
 
 # Vanilla damage kills land here, melee included (knives are an attack_damage attribute, not a raycast),
 # so the kill is credited through signals/on_kill like a bullet kill.

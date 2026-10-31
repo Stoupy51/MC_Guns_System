@@ -32,3 +32,8 @@ function mgs:v5.3.0/zombies/inventory/refresh_info_item
 # Only for manual abilities.
 execute if score @s mgs.zb.ability matches 3.. run function mgs:v5.3.0/zombies/inventory/give_ability_item
 
+execute if score @s mgs.zb.knife_camo matches 1 run item modify entity @s hotbar.0 {type:"minecraft:set_components",components:{"minecraft:item_model":"mgs:combat_knife_autumn"}}
+execute if score @s mgs.zb.knife_camo matches 2 run item modify entity @s hotbar.0 {type:"minecraft:set_components",components:{"minecraft:item_model":"mgs:combat_knife_galaxy"}}
+execute if score @s mgs.zb.knife_camo matches 3 run item modify entity @s hotbar.0 {type:"minecraft:set_components",components:{"minecraft:item_model":"mgs:combat_knife_gold"}}
+execute if score @s mgs.zb.knife_camo matches 4 run item modify entity @s hotbar.0 {type:"minecraft:set_components",components:{"minecraft:item_model":"mgs:combat_knife_red_polymer_stripes"}}
+

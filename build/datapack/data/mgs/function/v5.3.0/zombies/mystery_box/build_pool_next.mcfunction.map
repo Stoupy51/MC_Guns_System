@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "build_pool_next.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/setup.py"
+	],
+	"names": [],
+	"mappings": "AAqEiE;;;;;;;;;AACjE;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

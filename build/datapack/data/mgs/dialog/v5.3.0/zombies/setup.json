@@ -18,7 +18,10 @@
 		{"label": ["","👥 ",{"text": "Manage Players","color": "dark_aqua"}],"tooltip": {"text": "Add or remove players from the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/players/list_zombies"}},
 		{"label": ["","👥 ",{"text": "All Players Join","color": "green"}],"tooltip": {"text": "Add every online player to the zombies game"},"action": {"type": "run_command","command": "/execute as @a run function mgs:v5.3.0/players/zb_join"}},
 		{"label": ["","+ ",{"text": "Join","color": "yellow"}],"tooltip": {"text": "Join the ongoing zombies game as a late joiner"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/join_game"}},
-		{"label": ["","🛠 ",{"text": "Admin / Debug"}],"tooltip": {"text": "Skip rounds, grant points and force power-ups (operators only)"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/zombies/admin"}}
+		{"label": ["","🛠 ",{"text": "Admin / Debug"}],"tooltip": {"text": "Skip rounds, grant points and force power-ups (operators only)"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/zombies/admin"}},
+		{"label": ["","🎁 ",{"text": "Box Pool","color": "light_purple"}],"tooltip": {"text": "Weapons of the mystery box and their weights, for every map without its own pool"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/mystery_box/pool/edit_global"}},
+		{"label": ["","🎁 ",{"text": "Map Box Pool","color": "light_purple"}],"tooltip": {"text": "Give the selected map a mystery box pool of its own"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/mystery_box/pool/edit_map"}},
+		{"label": ["","🎁 ",{"text": "Clear Map Box Pool","color": "gray"}],"tooltip": {"text": "The selected map goes back to the global pool"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/zombies/mystery_box/pool/clear_map"}}
 	],
 	"columns": 2,
 	"exit_action": {

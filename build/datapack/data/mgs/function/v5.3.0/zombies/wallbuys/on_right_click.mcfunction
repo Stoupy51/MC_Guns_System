@@ -36,6 +36,8 @@ execute if score #wb_purchase_mode mgs.data matches 1 run function mgs:v5.3.0/zo
 execute if score #wb_purchase_mode mgs.data matches 2 run function mgs:v5.3.0/zombies/wallbuys/msg_refilled
 execute if score #wb_purchase_mode mgs.data matches 3 run function mgs:v5.3.0/zombies/wallbuys/msg_replaced
 execute if score #wb_purchase_mode mgs.data matches 4 run scoreboard players operation @s mgs.zb.points += #wb_price mgs.data
+execute if score #wb_purchase_mode mgs.data matches 1 run scoreboard players add @s mgs.st.zb.wallbuys 1
+execute if score #wb_purchase_mode mgs.data matches 3 run scoreboard players add @s mgs.st.zb.wallbuys 1
 execute if score #wb_purchase_mode mgs.data matches 4 run function mgs:v5.3.0/zombies/wallbuys/msg_refund_full
 
 # The actionbar reads reserve_ammo, which is otherwise only recomputed on reload, idle or weapon switch.

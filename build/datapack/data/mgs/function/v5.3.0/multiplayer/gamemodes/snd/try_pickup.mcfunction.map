@@ -3,8 +3,8 @@
 	"file": "try_pickup.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/bomb/snd/carry.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AA0D4B;;;;;;;;AAC5B;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA;AACA"
+	"mappings": "AAmCE;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
 }
