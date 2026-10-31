@@ -63,23 +63,23 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
 	## Quick Action launcher (#minecraft:quick_actions), opened from the pause screen: the only dialog kept as a file, since dialog tags only reference registered dialogs.
-	## It fires trigger 4 (select_class); external_title is the pack name, which Minecraft shows when several packs add a quick action.
+	## It fires trigger 1, the Player Settings menu of `/trigger mgs.player.config`; external_title is the pack name, which Minecraft shows when several packs add a quick action.
 	pack_name: str = Mem.ctx.project_name
-	Mem.ctx.data[ns].dialogs["open_class_menu"] = set_json_encoder(Dialog({
+	Mem.ctx.data[ns].dialogs["open_menu"] = set_json_encoder(Dialog({
 		"type": "minecraft:multi_action",
 		"external_title": pack_name,
 		"title": {"text": pack_name, "color": "gold", "bold": True},
-		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Open the class & loadouts menu", "color": "gray"}}],
+		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Settings, class, stats and players", "color": "gray"}}],
 		"actions": [{
-			"label": {"text": "Open Class Menu", "color": "green"},
-			"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set 4"},
+			"label": {"text": "Open Menu", "color": "green"},
+			"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set 1"},
 		}],
 		"columns": 1,
 		"exit_action": {"label": {"translate": "gui.cancel"}},
 	}))
 
 	# Merged, so other packs' entries stay.
-	dialog_ref: str = f"{ns}:open_class_menu"
+	dialog_ref: str = f"{ns}:open_menu"
 	qa_values: list[str] = []
 	if "quick_actions" in Mem.ctx.data["minecraft"].dialogs_tags:
 		qa_values = list(Mem.ctx.data["minecraft"].dialogs_tags["quick_actions"].data.get("values", []))
@@ -175,6 +175,7 @@ execute if score @s {ns}.mp.spectate_timer matches 1.. run return 0
 execute if entity @s[gamemode=spectator] run return 0
 
 scoreboard players add @s {ns}.mp.deaths 1
+scoreboard players add @s {ns}.st.mp.deaths 1
 
 # Vanilla damage kills land here, melee included (knives are an attack_damage attribute, not a raycast),
 # so the kill is credited through signals/on_kill like a bullet kill.

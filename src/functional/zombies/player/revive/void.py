@@ -27,6 +27,7 @@ execute if entity @s[tag={ns}.perk.quick_revive] if score #zb_ingame_total {ns}.
 
 # Counts as a down and strips perks.
 scoreboard players add @s {ns}.zb.downs 1
+scoreboard players add @s {ns}.st.zb.downs 1
 function {ns}:v{version}/zombies/perks/lose_all
 
 # No mannequin exists on this path.
@@ -65,6 +66,7 @@ execute if score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [{MGS
 execute unless score @s {ns}.zb.qr_uses matches {SOLO_QR_MAX}.. run tellraw @s [{MGS_TAG},{{"text":"Quick Revive used! ({SOLO_QR_MAX - 1 if SOLO_QR_MAX > 1 else 0}/{SOLO_QR_MAX}) Rebuy for another self-revive.","color":"gray"}}]
 
 scoreboard players add @s {ns}.zb.downs 1
+scoreboard players add @s {ns}.st.zb.downs 1
 function {ns}:v{version}/zombies/perks/lose_all
 scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0

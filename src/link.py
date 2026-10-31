@@ -12,6 +12,7 @@ from .functional.player_config import main as main_player_config
 from .functional.progression import generate_progression
 from .functional.shaders import main as main_shaders
 from .functional.stamina import main as main_stamina
+from .functional.stats import generate_stats
 from .functional.weapon import main as main_weapon
 from .functional.zombies import main as main_zombies
 
@@ -31,6 +32,7 @@ def beet_default(ctx: Context) -> None:
 	main_zombies()
 	main_multiplayer()
 	main_missions()
+	generate_stats()        # After the three modes: it appends to their award functions and end-of-game tags
 	generate_map_editor()  # Generic across all three modes
 	official_lib_used("bs.dump")
 

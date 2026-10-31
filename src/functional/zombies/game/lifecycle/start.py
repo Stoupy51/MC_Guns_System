@@ -81,6 +81,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/shared/
 
 # Extension points.
 function #{ns}:zombies/register_maps
+function {ns}:v{version}/zombies/mystery_box/build_pool
 function #{ns}:zombies/register_mystery_box_item
 
 {GameLifecycle.schedule_preload_complete_line(ns, "zombies")}

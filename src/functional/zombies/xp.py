@@ -29,10 +29,11 @@ execute unless data storage {ns}:signals on_kill{{headshot:1}} run return fail
 {Xp.give("zb", "headshot")}
 """, tags=[f"{ns}:signals/on_kill"])
 
-	## Run per in-game player every tick from zombies/game_tick: usually two commands. Not in check_kill_points,
+	## Run per in-game player every tick from zombies/game_tick: usually three commands. Not in check_kill_points,
 	## which returns early when there are no new kills.
 	write_versioned_function("zombies/xp/track_points", f"""
 execute if score @s {ns}.zb.points < @s {ns}.zb.xp_pts_prev run function {ns}:v{version}/zombies/xp/spend_delta
+execute if score @s {ns}.zb.points > @s {ns}.zb.xp_pts_prev run function {ns}:v{version}/zombies/xp/earn_delta
 scoreboard players operation @s {ns}.zb.xp_pts_prev = @s {ns}.zb.points
 """)
 
@@ -47,6 +48,12 @@ scoreboard players operation @s {ns}.zb.xp_spent_acc += #xp_spent {ns}.data
 scoreboard players operation #xp_gain {ns}.data = @s {ns}.zb.xp_spent_acc
 scoreboard players operation #xp_gain {ns}.data /= #{POINTS_PER_XP} {ns}.data
 execute if score #xp_gain {ns}.data matches 1.. run function {ns}:v{version}/zombies/xp/pay_spend
+""")
+
+	## Refunds count as earned, as refunded buys count as spent.
+	write_versioned_function("zombies/xp/earn_delta", f"""
+scoreboard players operation @s {ns}.st.zb.points_earned += @s {ns}.zb.points
+scoreboard players operation @s {ns}.st.zb.points_earned -= @s {ns}.zb.xp_pts_prev
 """)
 
 	write_versioned_function("zombies/xp/pay_spend", f"""

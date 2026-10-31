@@ -20,10 +20,9 @@ def write_mystery_box_pull() -> None:
 	write_versioned_function("zombies/mystery_box/try_use", f"""
 execute unless score @s {ns}.zb.points >= #zb_mystery_box_price {ns}.config run return run {deny_not_enough_points}
 
-function {ns}:v{version}/zombies/mystery_box/ensure_default_pool
-
 # A stable player id lets the display record its buyer, so one player can run several pulls at once.
 scoreboard players operation @s {ns}.zb.points -= #zb_mystery_box_price {ns}.config
+scoreboard players add @s {ns}.st.zb.boxes 1
 execute unless score @s {ns}.mb.pid matches 1.. run function {ns}:v{version}/zombies/mystery_box/assign_pid
 
 # Decided now: after N uses, a 1 in 3 chance (shared with Der Wunderfizz, roaming/roll_move).

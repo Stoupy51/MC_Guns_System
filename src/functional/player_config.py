@@ -27,6 +27,9 @@ from ..config.catalogs import (
 	TRIG_HUB_SECONDARY,
 	TRIG_HUB_SECONDARY_MAGS,
 	TRIG_KNIFE_CAMO_BASE,
+	TRIG_LB_MI_MAP_BASE,
+	TRIG_LB_ZB_MAP_BASE,
+	TRIG_LEADERBOARDS,
 	TRIG_LIKE_BASE,
 	TRIG_MANAGE_BASE,
 	TRIG_MARKETPLACE,
@@ -35,8 +38,11 @@ from ..config.catalogs import (
 	TRIG_MARKETPLACE_LIKES,
 	TRIG_MY_LOADOUTS,
 	TRIG_MY_LOADOUTS_FAV_ONLY,
+	TRIG_MY_STATS,
 	TRIG_OVERKILL_SEC_BASE,
 	TRIG_PERK_BASE,
+	TRIG_PLAYER_STATS_BASE,
+	TRIG_PLAYERS_PAGE_BASE,
 	TRIG_PRIMARY_BASE,
 	TRIG_PRIMARY_CAMO_BASE,
 	TRIG_PRIMARY_MAGS_BASE,
@@ -53,6 +59,8 @@ from ..config.catalogs import (
 	TRIG_SET_DEFAULT_BASE,
 	TRIG_TOGGLE_VIS_BASE,
 	TRIG_UNSET_DEFAULT,
+	TRIG_ZB_KNIFE_CAMO_BASE,
+	TRIG_ZB_KNIFE_MENU,
 )
 from .helpers import MGS_TAG
 from .multiplayer.classes import MultiplayerClasses
@@ -167,6 +175,15 @@ execute if score @s {ns}.player.config matches {TRIG_SET_DEFAULT_BASE}..{set_def
 execute if score @s {ns}.player.config matches {TRIG_UNSET_DEFAULT} run function {ns}:v{version}/multiplayer/custom/unset_default
 execute if score @s {ns}.player.config matches {TRIG_EDIT_BASE}..{edit_max} run function {ns}:v{version}/multiplayer/custom/edit
 execute if score @s {ns}.player.config matches {TRIG_MANAGE_BASE}..{manage_max} run function {ns}:v{version}/multiplayer/my_loadouts/manage
+# Zombies knife camo.
+execute if score @s {ns}.player.config matches {TRIG_ZB_KNIFE_MENU} run function {ns}:v{version}/zombies/knife_camo/menu
+execute if score @s {ns}.player.config matches {TRIG_ZB_KNIFE_CAMO_BASE}..{TRIG_ZB_KNIFE_CAMO_BASE + len(CAMO_VARIANTS) - 1} run function {ns}:v{version}/zombies/knife_camo/pick
+# Stats.
+execute if score @s {ns}.player.config matches {TRIG_LEADERBOARDS}..{TRIG_LEADERBOARDS + 4} run function {ns}:v{version}/stats/board/dispatch
+execute if score @s {ns}.player.config matches {TRIG_LB_MI_MAP_BASE}..{TRIG_LB_ZB_MAP_BASE + 999} run function {ns}:v{version}/stats/board/dispatch
+execute if score @s {ns}.player.config matches {TRIG_MY_STATS} run function {ns}:v{version}/stats/menu/mine
+execute if score @s {ns}.player.config matches {TRIG_PLAYERS_PAGE_BASE}..{TRIG_PLAYER_STATS_BASE - 1} run function {ns}:v{version}/stats/menu/players_page
+execute if score @s {ns}.player.config matches {TRIG_PLAYER_STATS_BASE}.. run function {ns}:v{version}/stats/menu/view_trigger
 # Marketplace and My Loadouts filters.
 execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_ALL} run function {ns}:v{version}/multiplayer/marketplace/browse
 execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_FAV_ONLY} run function {ns}:v{version}/multiplayer/marketplace/browse_fav_only
@@ -202,6 +219,10 @@ execute if score @s {ns}.player.damage_debug matches 1 run data modify storage {
 execute unless score @s {ns}.player.damage_debug matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Damage Debug: "}},{{text:"OFF ✘",color:"red"}}],tooltip:{{text:"Toggle damage numbers in chat"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 3"}}}}
 
 data modify storage {ns}:temp dialog.actions append value {{label:["","⚔ ",{{text:"Multiplayer Class",color:"aqua",bold:true}}],tooltip:{{text:"Open multiplayer class selection menu"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 4"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:["","📊 ",{{text:"My Stats",color:"green",bold:true}}],tooltip:{{text:"Your stats in every mode"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_STATS}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:["","👥 ",{{text:"Players",color:"yellow",bold:true}}],tooltip:{{text:"Every known player and their stats"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_PLAYERS_PAGE_BASE}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:["","🏆 ",{{text:"Leaderboards",color:"gold",bold:true}}],tooltip:{{text:"Levels, best rounds and best mission times"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_LEADERBOARDS}"}}}}
+data modify storage {ns}:temp dialog.actions append value {{label:["","🔪 ",{{text:"Zombies Knife Camo",color:"gold",bold:true}}],tooltip:{{text:"Camos unlocked by your Zombies level"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_KNIFE_MENU}"}}}}
 
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)

@@ -45,6 +45,9 @@ def generate_zombies_menus() -> None:
 		Dialogs.dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/zb_join", "Add every online player to the zombies game", "green"),
 		Dialogs.dialog_run_btn("+ Join", f"/function {ns}:v{version}/zombies/join_game", "Join the ongoing zombies game as a late joiner", "yellow"),
 		Dialogs.dialog_show_btn(f"{ns}:zombies/admin", "🛠 Admin / Debug", "Skip rounds, grant points and force power-ups (operators only)"),
+		Dialogs.dialog_run_btn("🎁 Box Pool", f"/function {ns}:v{version}/zombies/mystery_box/pool/edit_global", "Weapons of the mystery box and their weights, for every map without its own pool", "light_purple"),
+		Dialogs.dialog_run_btn("🎁 Map Box Pool", f"/function {ns}:v{version}/zombies/mystery_box/pool/edit_map", "Give the selected map a mystery box pool of its own", "light_purple"),
+		Dialogs.dialog_run_btn("🎁 Clear Map Box Pool", f"/function {ns}:v{version}/zombies/mystery_box/pool/clear_map", "The selected map goes back to the global pool", "gray"),
 	]
 	Dialogs.register_dialog("zombies/setup", {
 		"type": "minecraft:multi_action",

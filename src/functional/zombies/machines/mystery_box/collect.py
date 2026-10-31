@@ -21,7 +21,7 @@ data modify storage {ns}:zombies mystery_box.result set from entity @n[tag={ns}.
 
 scoreboard players set #wb_purchase_done {ns}.data 0
 scoreboard players set #wb_purchase_mode {ns}.data -1
-execute if data storage {ns}:zombies mystery_box.result.give_function run function {ns}:v{version}/zombies/mystery_box/give_via_function
+execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {ns}:v{version}/zombies/mystery_box/give_result
 
 # A failed give (invalid selected slot) keeps the result for a retry.
 execute if score #wb_purchase_done {ns}.data matches 0 run return 0
@@ -65,14 +65,6 @@ scoreboard players set #mb_name_found {ns}.data 1
 $item replace entity @s contents from entity @p[tag={ns}.mb_name_reader] $(slot)
 data modify storage {ns}:temp _mb_collected_name set from entity @s item.components."minecraft:item_name"
 kill @s
-""")
-
-	write_versioned_function("zombies/mystery_box/give_via_function", f"""
-function {ns}:v{version}/zombies/mystery_box/run_give with storage {ns}:zombies mystery_box.result
-""")
-
-	write_versioned_function("zombies/mystery_box/run_give", """
-$function $(give_function)
 """)
 
 	## Run as the display, at the box.

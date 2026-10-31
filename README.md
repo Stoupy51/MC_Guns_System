@@ -27,7 +27,7 @@ MC Guns System is an FPS framework for Minecraft 26.3: data-driven weapons, Mult
 - Give every item: `/function mgs:_give_all`
 - Give one item: `/loot give @s loot mgs:i/<item>`
 - Admin menu (game setup, map editor, server options): `/function mgs:config`
-- Player options: `/trigger mgs.player.config set 1`
+- Player options, stats, leaderboards and the Zombies knife camo: `/trigger mgs.player.config set 1`, or the Quick Actions key
 - After retuning `src/functional/progression/awards.py` or a challenge threshold, rebuild every online player's levels and challenges from their banked XP: `/function mgs:v5.1.0/progression/recompute_all` (the path carries the pack version).
 
 ## 🛠️ Build
@@ -190,7 +190,7 @@ https://github.com/user-attachments/assets/69d14336-9af0-47ef-a5da-538b0f668787
 
 A generic in-game authoring tool shared by Multiplayer, Missions, and Zombies. Instead of hardcoding coordinates in functions, each map is a storage compound (id, name, base_coordinates, boundaries, mode-specific element arrays) stored in a per-mode list. Element positions are saved relative to base_coordinates and converted to absolute world positions at runtime, so maps are portable and shareable between worlds/projects.
 
-Workflow: open the editor from the config menu (Game Setup), pick a mode tab, then select or create a map. The editor loads the map into temporary storage, spawns markers for existing elements, and gives you editor tools (spawn eggs and utility items). Place eggs to add elements, configure them via per-element handlers, then save: live markers are read back, converted to relative positions, and the map compound is rebuilt. Exiting cleans up all editor entities/items/tags.
+Workflow: open the editor from the config menu (Game Setup), pick a mode tab, then select or create a map. The editor loads the map into temporary storage, spawns markers for existing elements, and gives you editor tools (spawn eggs and utility items). Place eggs to add elements, configure them via per-element handlers (the DESTROY egg removes the nearest one, and its chat message has a Revert button), then save: live markers are read back, converted to relative positions, and the map compound is rebuilt. Exiting cleans up all editor entities/items/tags.
 
 Available elements per mode:
 

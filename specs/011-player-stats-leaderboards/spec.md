@@ -4,7 +4,7 @@
 
 **Created**: 2026-10-31
 
-**Status**: Specced, nothing built. Decisions settled with the author on 2026-10-31; [plan.md](plan.md) splits the work into P1 to P4.
+**Status**: Built, P1 to P4; see [plan.md](plan.md) for what was tested. Decisions settled with the author on 2026-10-31; [plan.md](plan.md) splits the work into P1 to P4.
 
 Leaderboards are inspired by the Switch project (`../Switch/src/datapack/stats/`, `player/stats_storage.py`, `player/username_change.py`): the storage layout and the username change handling are reused in spirit, its full re-sort on every update is not.
 
@@ -121,7 +121,7 @@ New objectives, `mgs.st.<mode>.<stat>`, fed at the site that already pays the ma
 
 ## Quick Actions and menus
 
-- `mgs:open_class_menu` (the static Quick Actions dialog) keeps one button, which runs `/trigger mgs.player.config set 1`: the same menu as the command. The class menu stays reachable from inside it. The dialog's file name is not frozen; its id may follow its new role.
+- `mgs:open_menu` (the static Quick Actions dialog) keeps one button, which runs `/trigger mgs.player.config set 1`: the same menu as the command. The class menu stays reachable from inside it. The dialog's file name is not frozen; its id may follow its new role.
 - Player Settings gains: My Stats, Leaderboards, Players, Knife Camo.
 - My Stats and a player's stats: one dialog per mode, paged by mode buttons.
 - Players: the known players, paged by 10, each opening their stats.

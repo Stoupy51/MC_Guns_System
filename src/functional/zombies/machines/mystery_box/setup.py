@@ -1,4 +1,4 @@
-""" Per-box state objectives, the default weapon pool and the give functions behind it. """
+""" Per-box state objectives, the weapon catalog, the pool a game builds from it and the give of a result. """
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
@@ -31,64 +31,71 @@ scoreboard objectives add {ns}.mb.buyer dummy
 
 	# The move animation uses the shared teddy bear loot table (mgs:zombies/roaming_bear, see roaming).
 
-	pool_entries: list[str] = []
-	pool_weights: list[int] = []
-	pool_ids: list[str] = []
+	## The catalog is the pack's own data, rewritten at each load; a pool names weapons from it by id.
+	catalog: list[str] = []
+	default_pool: list[str] = []
 	for weapon in (*PRIMARY_WEAPONS, *SECONDARY_WEAPONS):
 		weight: int = WEAPON_STATS.get(weapon.item_id, {}).get("stats", {}).get(WEIGHT, 1)
-		if weight == 0:
-			continue  # Weight 0 = excluded from mystery box
-		pool_ids.append(weapon.item_id)
 		consumable: str = "1b" if weapon.magazine_id in CONSUMABLE_MAGAZINES else "0b"
-		pool_entries.append(
-			f'{{weapon_id:"{weapon.item_id}",'
-			f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/weapon",'
-			f'magazine_id:"{weapon.magazine_id}",'
-			f'mag_count:{weapon.default_mag_count},'
-			f'consumable:{consumable}}}'
-		)
-		pool_weights.append(weight)
+		catalog.append(f'{weapon.item_id}:{{weapon_id:"{weapon.item_id}",magazine_id:"{weapon.magazine_id}",mag_count:{weapon.default_mag_count},consumable:{consumable}}}')
+		if weight:
+			default_pool.append(f'{{weapon_id:"{weapon.item_id}",weight:{weight}}}')
+	catalog.append('monkey_bomb:{weapon_id:"monkey_bomb"}')
+	default_pool.append(f'{{weapon_id:"monkey_bomb",weight:{MONKEY_BOMB_WEIGHT}}}')
+	write_load_file(f"""
+data modify storage {ns}:zombies mystery_box_catalog set value {{{",".join(catalog)}}}
+execute unless data storage {ns}:config zombies.mystery_box_pool run data modify storage {ns}:config zombies.mystery_box_pool set value [{",".join(default_pool)}]
+""")
 
-	# Monkey Bomb: zombies-only tactical for hotbar.6 (wallbuys/give_tactical); holding monkey bombs counts as owned, so duplicates re-roll.
-	pool_entries.append(
-		f'{{weapon_id:"monkey_bomb",'
-		f'give_function:"{ns}:v{version}/zombies/mystery_box/default_give/monkey_bomb",'
-		f'magazine_id:"",'
-		f'mag_count:0,'
-		f'consumable:0b}}'
-	)
-	pool_weights.append(MONKEY_BOMB_WEIGHT)
-	default_pool_entries: str = ",".join(pool_entries)
-	default_pool_weights: str = ",".join(str(w) for w in pool_weights)
-
-	## The pool entry carries weapon_id, magazine_id, mag_count and consumable, so one give function serves every gun.
-	## Custom pools keep their own give_function.
-	write_versioned_function("zombies/mystery_box/default_give/weapon", f"""
-data modify storage {ns}:temp _wb_weapon set value {{}}
-data modify storage {ns}:temp _wb_weapon.weapon_id set from storage {ns}:zombies mystery_box.result.weapon_id
-data modify storage {ns}:temp _wb_weapon.name set from storage {ns}:zombies mystery_box.result.weapon_id
-data modify storage {ns}:temp _wb_weapon.consumable set from storage {ns}:zombies mystery_box.result.consumable
-data modify storage {ns}:temp _wb_weapon.magazine_id set from storage {ns}:zombies mystery_box.result.magazine_id
-data modify storage {ns}:temp _wb_weapon.mag_count set from storage {ns}:zombies mystery_box.result.mag_count
+	## Run as the collecting player; the result carries the catalog entry.
+	write_versioned_function("zombies/mystery_box/give_result", f"""
 scoreboard players set #wb_price {ns}.data 0
+execute if data storage {ns}:zombies mystery_box.result{{weapon_id:"monkey_bomb"}} run return run function {ns}:v{version}/zombies/wallbuys/give_tactical {{weapon_id:"monkey_bomb"}}
+
+data modify storage {ns}:temp _wb_weapon set from storage {ns}:zombies mystery_box.result
+data modify storage {ns}:temp _wb_weapon.name set from storage {ns}:zombies mystery_box.result.weapon_id
 function {ns}:v{version}/zombies/wallbuys/process_purchase with storage {ns}:temp _wb_weapon
 """)
 
-	## To the tactical slot (hotbar.6), not the gun flow.
-	write_versioned_function("zombies/mystery_box/default_give/monkey_bomb", f"""
-scoreboard players set #wb_price {ns}.data 0
-function {ns}:v{version}/zombies/wallbuys/give_tactical {{weapon_id:"monkey_bomb"}}
+	## Built once per game, before `#mgs:zombies/register_mystery_box_item` appends to it: the map's own pool when it has one, the global one otherwise.
+	## Weight 0 and ids missing from the catalog are left out.
+	write_versioned_function("zombies/mystery_box/build_pool", f"""
+data modify storage {ns}:zombies mystery_box_pool set value []
+data modify storage {ns}:zombies mystery_box_weights set value []
+scoreboard players set #mb_ray_index {ns}.data -1
+data modify storage {ns}:temp _mb_src set from storage {ns}:config zombies.mystery_box_pool
+execute if data storage {ns}:zombies game.map.mystery_box_pool run data modify storage {ns}:temp _mb_src set from storage {ns}:zombies game.map.mystery_box_pool
+function {ns}:v{version}/zombies/mystery_box/build_pool_next
+""")
+	write_versioned_function("zombies/mystery_box/build_pool_next", f"""
+execute unless data storage {ns}:temp _mb_src[0] run return 0
+
+execute store result score #mb_w {ns}.data run data get storage {ns}:temp _mb_src[0].weight
+execute if score #mb_w {ns}.data matches 1.. run function {ns}:v{version}/zombies/mystery_box/build_pool_add with storage {ns}:temp _mb_src[0]
+
+data remove storage {ns}:temp _mb_src[0]
+function {ns}:v{version}/zombies/mystery_box/build_pool_next
+""")
+	write_versioned_function("zombies/mystery_box/build_pool_add", f"""
+$execute unless data storage {ns}:zombies mystery_box_catalog.$(weapon_id) run return fail
+
+$data modify storage {ns}:temp _mb_id set value "$(weapon_id)"
+execute if data storage {ns}:temp {{_mb_id:"ray_gun"}} store result score #mb_ray_index {ns}.data run data get storage {ns}:zombies mystery_box_pool
+execute if data storage {ns}:temp {{_mb_id:"ray_gun"}} run scoreboard players operation #mb_ray_weight {ns}.data = #mb_w {ns}.data
+$data modify storage {ns}:zombies mystery_box_pool append from storage {ns}:zombies mystery_box_catalog.$(weapon_id)
+data modify storage {ns}:zombies mystery_box_weights append value 0
+execute store result storage {ns}:zombies mystery_box_weights[-1] int 1 run scoreboard players get #mb_w {ns}.data
 """)
 
-	write_versioned_function("zombies/mystery_box/ensure_default_pool", f"""
-data modify storage {ns}:zombies mystery_box_pool set value [{default_pool_entries}]
-data modify storage {ns}:zombies mystery_box_weights set value [{default_pool_weights}]
-""")
-
-	ray_gun_index: int = pool_ids.index("ray_gun")
-	ray_gun_weight: int = pool_weights[ray_gun_index]
+	## The Ray Gun's weight doubles after dry pulls, before round 25; a pool without it has nothing to weigh.
 	write_versioned_function("zombies/mystery_box/weigh_ray_gun", f"""
-data modify storage {ns}:zombies mystery_box_weights[{ray_gun_index}] set value {ray_gun_weight}
-execute if score #zb_round {ns}.data matches ..24 if score #mb_dry_ray_gun {ns}.data matches {RAY_GUN_DRY_PULLS + 1}.. run data modify storage {ns}:zombies mystery_box_weights[{ray_gun_index}] set value {2 * ray_gun_weight}
+execute if score #mb_ray_index {ns}.data matches ..-1 run return 0
+
+scoreboard players operation #mb_w {ns}.data = #mb_ray_weight {ns}.data
+execute if score #zb_round {ns}.data matches ..24 if score #mb_dry_ray_gun {ns}.data matches {RAY_GUN_DRY_PULLS + 1}.. run scoreboard players operation #mb_w {ns}.data += #mb_ray_weight {ns}.data
+execute store result storage {ns}:temp _mb_ray.i int 1 run scoreboard players get #mb_ray_index {ns}.data
+execute store result storage {ns}:temp _mb_ray.w int 1 run scoreboard players get #mb_w {ns}.data
+function {ns}:v{version}/zombies/mystery_box/weigh_ray_gun_at with storage {ns}:temp _mb_ray
 """)
+	write_versioned_function("zombies/mystery_box/weigh_ray_gun_at", f"$data modify storage {ns}:zombies mystery_box_weights[$(i)] set value $(w)")
 

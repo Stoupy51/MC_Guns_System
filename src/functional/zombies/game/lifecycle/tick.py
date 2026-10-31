@@ -172,6 +172,7 @@ execute if entity @s[tag={ns}.ww_active] unless entity @e[type=minecraft:mannequ
 scoreboard players set @s {ns}.mp.death_count 0
 
 scoreboard players add @s {ns}.zb.downs 1
+scoreboard players add @s {ns}.st.zb.downs 1
 
 function {ns}:v{version}/zombies/revive/on_down
 """)
