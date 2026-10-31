@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
-from .shared import MB_CLOSED_TF
+from .shared import INTERACTION_LIFT
 
 
 # Functions
@@ -21,18 +21,7 @@ kill @e[tag={ns}.mb_disabled]
 # Before summoning the boxes: a hidden interaction entity sits 512 blocks under its spot, and the chests are summoned `at @s`.
 function {ns}:v{version}/zombies/mystery_box/sync_interaction_visibility
 
-execute as @e[tag={ns}.mystery_box_pos,tag=!{ns}.mystery_box_active] at @s run function {ns}:v{version}/zombies/mystery_box/fire_sale_summon_box
-""")
-
-	write_versioned_function("zombies/mystery_box/fire_sale_summon_box", f"""
-data modify storage {ns}:temp _mb_fs.yaw set value 0.0f
-data modify storage {ns}:temp _mb_fs.yaw set from entity @s Rotation[0]
-function {ns}:v{version}/zombies/mystery_box/summon_temp_box with storage {ns}:temp _mb_fs
-""")
-
-	write_versioned_function("zombies/mystery_box/summon_temp_box", f"""
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_base","{ns}.mb_temp","{ns}.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{MB_CLOSED_TF}}}
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.mb_presence","{ns}.mb_lid","{ns}.mb_temp","{ns}.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{MB_CLOSED_TF}}}
+execute as @e[tag={ns}.mystery_box_pos,tag=!{ns}.mystery_box_active] at @s positioned ~ ~-{INTERACTION_LIFT} ~ run function {ns}:v{version}/zombies/mystery_box/summon_presence {{extra_tags:',"{ns}.mb_temp"'}}
 """)
 
 	# Clean up now if idle, else when the last pull resets, so a box in use is not removed mid-spin.

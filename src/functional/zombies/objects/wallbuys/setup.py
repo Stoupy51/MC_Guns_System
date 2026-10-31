@@ -87,10 +87,10 @@ execute if data storage {ns}:temp _wb_iter[0] run function {ns}:v{version}/zombi
 
 	write_versioned_function("zombies/wallbuys/place_at", f"""
 # Slightly in front of the wall, centred on the display height.
-$summon minecraft:interaction $(x) $(y) $(z) {{width:0.9f,height:1.0f,response:true,Rotation:$(rotation),Tags:["{ns}.wallbuy","{ns}.zombies_entity","bs.entity.interaction","{ns}.wb_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:0.9f,height:1.0f,response:true,Rotation:$(rotation),CustomName:"Wallbuy $(weapon_id)",Tags:["{ns}.wallbuy","{ns}.zombies_entity","bs.entity.interaction","{ns}.wb_new"]}}
 
 # Offset toward the wall face.
-$summon minecraft:item_display $(x) $(y) $(z) {{billboard:"fixed",item_display:"fixed",Rotation:$(rotation),Tags:["{ns}.wallbuy_display","{ns}.zombies_entity","{ns}.wb_new_display"],transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
+$summon minecraft:item_display $(x) $(y) $(z) {{billboard:"fixed",item_display:"fixed",Rotation:$(rotation),CustomName:"Wallbuy $(weapon_id) Model",Tags:["{ns}.wallbuy_display","{ns}.zombies_entity","{ns}.wb_new_display"],transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 """)
 
 	write_versioned_function("zombies/wallbuys/store_data", f"""

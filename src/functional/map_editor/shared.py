@@ -1,10 +1,5 @@
-""" The chat rule, the zombies element subset and the SNBT formatting helpers. """
+""" The chat rule and the zombies element subset. """
 # Imports
-from typing import cast
-
-from stewbeet import JsonDict
-from stouputils.typing import JsonList
-
 from ..map_editor_defs import ALL_ELEMENTS, ElementDef
 
 # Constants
@@ -12,39 +7,4 @@ SEP: str = '{"text":"============================================","color":"dark
 """ The horizontal rule every editor chat panel is framed with. """
 ZB_ELEMENTS: dict[str, ElementDef] = {etype: einfo for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type == "zb_object"}
 """ The zombies elements, which share one placement handler and one compound layout in storage. """
-
-# Functions
-def snbt_suggest(val: object) -> str:
-	""" Format a Python value as the SNBT a suggested command would carry.
-
-	Returns:
-		str: Its SNBT spelling, quoted and suffixed the way Minecraft expects.
-
-	>>> snbt_suggest([1, True, "a"])
-	'[1,1b,"a"]'
-	"""
-	if isinstance(val, bool):
-		return "1b" if val else "0b"
-	if isinstance(val, int):
-		return str(val)
-	if isinstance(val, float):
-		return f"{val}f"
-	if isinstance(val, str):
-		return f'"{val}"'
-	if isinstance(val, list):
-		return "[" + ",".join(snbt_suggest(v) for v in cast(JsonList, val)) + "]"
-	if isinstance(val, dict):
-		return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in cast(JsonDict, val).items()) + "}"
-	return str(val)
-
-def snbt_compound(d: JsonDict) -> str:
-	""" Convert a dict to an SNBT compound string.
-
-	Returns:
-		str: The compound, braces included.
-
-	>>> snbt_compound({"a": 1, "b": "x"})
-	'{a:1,b:"x"}'
-	"""
-	return "{" + ",".join(f"{k}:{snbt_suggest(v)}" for k, v in d.items()) + "}"
 

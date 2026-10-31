@@ -58,6 +58,7 @@ execute anchored eyes positioned ^ ^ ^0.5 summon item_display run function {ns}:
 
 	write_versioned_function("grenade/init", f"""
 tag @s add {ns}.grenade
+data modify entity @s CustomName set value "Grenade"
 
 # For damage attribution.
 data modify entity @s data.shooter set from entity @n[tag={ns}.ticking] UUID

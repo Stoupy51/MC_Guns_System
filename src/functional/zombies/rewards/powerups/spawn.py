@@ -45,7 +45,7 @@ tag @n[type=minecraft:item,tag={ns}.pu_item_new] remove {ns}.pu_item_new
 
 # Live count gating the per-item scans in game_tick. pu_item is Invulnerable, so it only dies through tracked paths.
 scoreboard players add #pu_active {ns}.data 1
-$execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{Tags:["{ns}.pu_text","{ns}.zombies_entity"],text:$(label),billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}}}
+$execute positioned $(x) $(y) $(z) run summon minecraft:text_display ~ ~1.0 ~ {{CustomName:"Power-up Label",Tags:["{ns}.pu_text","{ns}.zombies_entity"],text:$(label),billboard:"vertical",background:0,shadow:true,view_range:64.0f,transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.5f,1.5f,1.5f]}}}}
 
 {pu_snd(ns, "item/spawn", 0.7)}
 """)

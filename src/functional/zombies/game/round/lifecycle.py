@@ -8,7 +8,7 @@ def write_enemy_lifecycle() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
-	## Run from game_tick for every rising zombie.
+	## Run from game_tick for every rising enemy.
 	write_versioned_function("zombies/zombie_rise_tick", f"""
 execute store result storage {ns}:temp _rise.dy double 0.001 run scoreboard players get @s {ns}.zb.rise_step
 function {ns}:v{version}/zombies/zombie_rise_move with storage {ns}:temp _rise
@@ -37,38 +37,41 @@ tag @s remove {ns}.zb_rising
 # The stuck timeout counts from here, so a long rise does not eat into it.
 scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 
-# summon_zombie_at already joins the horde; a zombie that missed it would make escort traders flee it.
+# The build already joins the horde; an enemy that missed it would make escort traders flee it.
 team join {ns}.horde @s
 
-# Walk-to spawn: only once the rise is over, since the escort freezes the zombie.
+# Walk-to spawn: only once the rise is over, since the escort freezes the enemy.
 execute if data entity @s data.walk_to run function {ns}:v{version}/zombies/escort/start_to_target
 """)
 
-	## Intercept zombie death before vanilla event 60 (poof particles).
+	## Intercept enemy death before vanilla event 60 (poof particles).
 	write_versioned_function("zombies/death_watch_tick", f"""
 # From the marker passenger to its vehicle, once DeathTime starts.
 execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if data entity @s {{DeathTime:1s}} run function {ns}:v{version}/zombies/on_zombie_dying
 
 # Death groan keyed on Health, which is 0 the instant it dies: DeathTime is preset to -16, so the intercept above
-# lands 17 ticks late. zb_dying fires it once; dogs are skipped, they die with their own wolf vocals.
-execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if entity @s[tag={ns}.zombie_round,tag=!{ns}.zb_dog,tag=!{ns}.zb_dying] if data entity @s {{Health:0.0f}} run function {ns}:v{version}/zombies/vocals/death
+# lands 17 ticks late. zb_dying fires it once; other entities than zombies die with their own vocals.
+execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if entity @s[type=minecraft:zombie,tag={ns}.zombie_round,tag=!{ns}.zb_dying] if data entity @s {{Health:0.0f}} run function {ns}:v{version}/zombies/vocals/death
 """)
 
-	## Intercept a dying zombie before DeathTime reaches 20.
+	## Intercept a dying enemy before DeathTime reaches 20.
 	write_versioned_function("zombies/on_zombie_dying", f"""
 execute unless entity @s[tag={ns}.zombie_round] run return 0
 
 # Kill the death-watch marker while still mounted, so none are orphaned.
 kill @n[type=minecraft:marker,tag={ns}.death_watch,distance=..1]
 
-# Dogs never roll the drop table: a dog round only drops the Max Ammo of its last hound.
-execute unless entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/powerups/check_drop
+# Riders fight on as enemies of their own; the teleport below would take them along.
+execute on passengers run ride @s dismount
 
-# Armed zombies have a 5% chance to drop a Max Ammo, whatever killed them, on top of the usual roll.
-execute if entity @s[tag={ns}.zb_armed] if predicate {{type:"minecraft:random_chance",chance:0.05}} run function {ns}:v{version}/zombies/max_ammo_at_self
+# Special rounds never roll the drop table: they only drop the Max Ammo of their last enemy.
+execute unless score #zb_special_round {ns}.data matches 1 run function {ns}:v{version}/zombies/powerups/check_drop
 
-# Dogs: "was this the last one" needs an exact count.
-execute if entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/dog_death
+# Armed enemies have a 5% chance to drop a Max Ammo, whatever killed them, on top of the usual roll.
+execute if entity @s[tag={ns}.armed] if predicate {{type:"minecraft:random_chance",chance:0.05}} run function {ns}:v{version}/zombies/max_ammo_at_self
+
+# "Was this the last one" needs an exact count.
+execute if score #zb_special_round {ns}.data matches 1 run function {ns}:v{version}/zombies/special_death
 
 # Removed before vanilla death event 60 fires.
 tp @s ~ -10000 ~
@@ -84,14 +87,16 @@ scoreboard players operation #zb_spawn_batch_remaining {ns}.data = #zb_spawn_bat
 function {ns}:v{version}/zombies/spawn_batch_tick
 """)
 
-	## Spawns up to #zb_spawn_batch zombies, one per recursive call.
+	## Spawns up to #zb_spawn_batch enemies, one per recursive call.
 	write_versioned_function("zombies/spawn_batch_tick", f"""
 execute if score #zb_to_spawn {ns}.data matches ..0 run return 0
 
-# Dog rounds release one hound per timer tick, capped by how many are out.
-execute if score #zb_dog_round {ns}.data matches 1 run return run function {ns}:v{version}/zombies/spawn_dog_capped
+# Special rounds release one enemy per timer tick, capped by how many are out.
+execute if score #zb_special_round {ns}.data matches 1 run return run function {ns}:v{version}/zombies/spawn_special_capped
 
-function {ns}:v{version}/zombies/spawn_zombie
+# With no open spawn the enemy stays queued, and the watchdog ends a round that never gets one.
+function {ns}:v{version}/zombies/spawn_from/zombies
+execute if score #zb_spawned {ns}.data matches 0 run return 0
 scoreboard players remove #zb_to_spawn {ns}.data 1
 scoreboard players remove #zb_spawn_batch_remaining {ns}.data 1
 

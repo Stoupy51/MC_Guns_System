@@ -14,6 +14,9 @@ def write_stuck_and_bounds() -> None:
 # Run as a non-rising zombie_round, every 20 ticks on up to 24 random ones. Progress resets the timer.
 # Timeout: 400 ticks without moving (100 once already rescued), 300 if it moves without getting closer, less when far.
 
+# A rider goes where its mount goes, and a teleport would pull it off.
+execute on vehicle run return 0
+
 # Distance bucket to the nearest alive player, 4 (very far) to 0 (adjacent).
 scoreboard players set #cur_dist_bucket {ns}.data 4
 execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..96] run scoreboard players set #cur_dist_bucket {ns}.data 3
@@ -63,15 +66,12 @@ execute if score #stuck_delta {ns}.data >= #stuck_threshold {ns}.data run functi
 """)
 
 	write_versioned_function("zombies/on_stuck_zombie", f"""
-# Run as the stuck zombie: move it to a spawn near a player instead of killing it, back onto walkable ground.
+# Run as the stuck enemy: move it to an open spawn near a player instead of killing it, back onto walkable ground.
 
-# Dogs use their own markers: a zombie spawn may sit where only walkers belong, or outside the play bounds.
-execute unless entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/tag_spawns_near_players
-execute if entity @s[tag={ns}.zb_dog] run function {ns}:v{version}/zombies/tag_special_spawns_near_players
-
-# A spawn with an activation box stays out of reach until a player stands in it, as for a new spawn.
-execute as @e[tag={ns}.zb_near] if data entity @s data.abox run function {ns}:v{version}/zombies/filter_spawn_abox
-execute store success score #zb_near_found {ns}.data if entity @e[tag={ns}.zb_near]
+# The kind of spawn it came from: a zombie spawn may sit where only walkers belong, or outside the play bounds.
+execute unless score #zb_special_round {ns}.data matches 1 run function {ns}:v{version}/zombies/tag_zombies_spawns_near_players
+execute if score #zb_special_round {ns}.data matches 1 run function {ns}:v{version}/zombies/tag_special_spawns_near_players
+execute store success score #zb_near_found {ns}.data if entity @e[type=minecraft:marker,tag={ns}.zb_near]
 
 # Never the spawn it last used, unless it is the only candidate.
 scoreboard players operation #zb_last_sid {ns}.data = @s {ns}.zb.spawn.sid

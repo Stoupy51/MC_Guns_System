@@ -5,7 +5,7 @@ from stewbeet import Mem, write_versioned_function
 from ....core.feedback import ZombiesFeedback
 from ....helpers import MGS_TAG
 from ...common import ZombiesCommon
-from .shared import owned_gun_macro_cd
+from .shared import INTERACTION_LIFT, PULL_DROP, box_transformation, owned_gun_macro_cd, per_roll
 
 
 # Functions
@@ -112,9 +112,14 @@ tellraw @s [{MGS_TAG},{{"text":"The Mystery Box has no weapons available.","colo
 {ZombiesFeedback.zb_sound('deny')}
 """)
 
-	## Floats up from the per-display tick (anim 104).
+	## At the box's centre, turned like it, inside it; floats up from the per-display tick (anim 104).
 	write_versioned_function("zombies/mystery_box/spawn_display", f"""
-summon minecraft:item_display ~ ~-1.5 ~ {{Tags:["{ns}.mb_display","{ns}.zombies_entity","{ns}.mb_display_new"],item_display:"fixed",item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.4f,0.4f,0.4f]}},billboard:"fixed"}}
-tp @n[tag={ns}.mb_display_new] ~ ~-1.5 ~ ~ ~
+summon minecraft:item_display ~ ~-{INTERACTION_LIFT} ~ {{Tags:["{ns}.mb_display","{ns}.zombies_entity","{ns}.mb_display_new"],CustomName:"Mystery Box Pull",item_display:"fixed",item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},billboard:"fixed"}}
+tp @n[tag={ns}.mb_display_new] ~ ~-{INTERACTION_LIFT} ~ ~ ~
+scoreboard players operation @n[tag={ns}.mb_display_new] {ns}.mb.roll = @n[tag=bs.interaction.target] {ns}.mb.roll
+execute as @n[tag={ns}.mb_display_new] run function {ns}:v{version}/zombies/mystery_box/display_rest
 """)
+	write_versioned_function("zombies/mystery_box/display_rest", per_roll(
+		lambda roll: f"data merge entity @s {{transformation:{box_transformation(roll, (0.0, -PULL_DROP, 0.0), scale=0.4)}}}"
+	))
 

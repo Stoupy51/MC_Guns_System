@@ -76,6 +76,7 @@ execute as @n[tag={ns}.wf_new] run function #bs.interaction:on_hover {{run:"func
 
 # Summoned with the disabled model; sync_displays lights the active one.
 data modify storage {ns}:temp _wf_disp.tag set value "{ns}.wf_display"
+data modify storage {ns}:temp _wf_disp.name set value "Der Wunderfizz"
 data modify storage {ns}:temp _wf_disp.item_id set value ""
 data modify storage {ns}:temp _wf_disp.item_model set value ""
 data modify storage {ns}:temp _wf_disp.yaw set value 0.0
@@ -99,7 +100,7 @@ execute if data storage {ns}:temp _wf_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/wunderfizz/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.wunderfizz_machine","{ns}.zombies_entity","bs.entity.interaction","{ns}.wf_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),CustomName:"Der Wunderfizz",Tags:["{ns}.wunderfizz_machine","{ns}.zombies_entity","bs.entity.interaction","{ns}.wf_new"]}}
 """)
 
 	## Displays are persistent and linked to their spot by id, so roaming is a model swap.

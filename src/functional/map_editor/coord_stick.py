@@ -25,6 +25,9 @@ tag @s remove {ns}.coord_stick_user
 
 	## Runs at the aimed block.
 	write_versioned_function("utils/coord_stick_relative", f"""
+# Drawing a spawn's activation box from its form (see maps/editor/form/box_start).
+execute if entity @a[tag={ns}.coord_stick_user,tag={ns}.cs_abox] run return run function {ns}:v{version}/maps/editor/form/box_corner
+
 # 0: first click, 1: second click (origin saved).
 scoreboard players set #cs_state {ns}.data 0
 execute if data storage {ns}:temp coord_stick.origin run scoreboard players set #cs_state {ns}.data 1

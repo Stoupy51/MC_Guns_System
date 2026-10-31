@@ -48,6 +48,7 @@ scoreboard players add #slow_bullet_count {ns}.data 1
 
 	write_versioned_function("projectile/init", f"""
 tag @s add {ns}.slow_bullet
+data modify entity @s CustomName set value "Projectile"
 
 # For damage attribution.
 data modify entity @s data.shooter set from entity @n[tag={ns}.ticking] UUID

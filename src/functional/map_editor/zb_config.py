@@ -4,8 +4,10 @@ from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs
+from ..helpers.snbt import snbt
 from ..map_editor_defs import ALL_ELEMENTS, FIELD_DOCS, OPTIONAL_LIST_FIELDS, ElementDef
-from .shared import SEP, ZB_ELEMENTS, snbt_compound, snbt_suggest
+from .forms import FORM_ELEMENTS
+from .shared import SEP, ZB_ELEMENTS
 
 # Constants
 GROUP_ID_ELEMENTS: tuple[str, ...] = ("zombie_spawn", "player_spawn_zb", "special_spawn")
@@ -21,13 +23,19 @@ def write_editor_zb_config() -> None:
 	write_zb_defaults(ns)
 
 	write_versioned_function("maps/editor/handle_zb_configure", f"""
-# Within 10 blocks.
+# Within 10 blocks. A form opens for the editor who placed the egg.
+tag @p[tag={ns}.map_editor,distance=..6,sort=nearest] add {ns}.ed_form_user
 execute at @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/show_element_config
 execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
+tag @a remove {ns}.ed_form_user
 """)
 
-	# Run as the nearest marker: its type-specific fields.
+	# Run as the nearest marker: a form for the elements that have one, else its type-specific fields in chat.
 	write_versioned_function("maps/editor/show_element_config", "\n".join([
+		*(
+			f"execute if entity @s[tag={ns}.element.{etype}] run return run function {ns}:v{version}/maps/editor/form/open/{etype}"
+			for etype in FORM_ELEMENTS
+		),
 		f"tellraw @a[tag={ns}.map_editor] {SEP}",
 		*zb_object_config_lines(ns, version),
 		*marker_config_lines(ns),
@@ -40,7 +48,7 @@ execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @
 	light_dispatch: str = write_light_fields()
 	missing_defaults: str = "\n".join(
 		f"execute if entity @s[tag={ns}.element.{etype}] unless data entity @s data.{field} "
-		f"run data modify entity @s data.{field} set value {snbt_suggest(default_val)}"
+		f"run data modify entity @s data.{field} set value {snbt(default_val)}"
 		for etype, einfo in ZB_ELEMENTS.items()
 		for field, default_val in einfo.defaults.items()
 	)
@@ -78,7 +86,7 @@ tellraw @a[tag={ns}.map_editor] ["  ","{einfo.emoji} ",{{"text":"{einfo.name}","
 		for field, default_val in einfo.defaults.items():
 			edit_btn = Dialogs.btn(
 				"✎",
-				f"/data modify storage {ns}:temp map_edit.zb_defaults.{etype}.{field} set value {snbt_suggest(default_val)}",
+				f"/data modify storage {ns}:temp map_edit.zb_defaults.{etype}.{field} set value {snbt(default_val)}",
 				"aqua", f"Click to edit {field}", action="suggest_command"
 			)
 			handle_zb_defaults += (
@@ -94,7 +102,7 @@ tellraw @a[tag={ns}.map_editor] {SEP}
 
 	# On editor entry, zombies mode only.
 	element_defaults: str = "\n".join(
-		f"data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {snbt_compound(einfo.defaults)}" for etype, einfo in ZB_ELEMENTS.items()
+		f"data modify storage {ns}:temp map_edit.zb_defaults.{etype} set value {snbt(einfo.defaults)}" for etype, einfo in ZB_ELEMENTS.items()
 	)
 	write_versioned_function("maps/editor/init_zb_defaults", f"""
 data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0
@@ -121,7 +129,7 @@ def zb_object_config_lines(ns: str, version: str) -> list[str]:
 
 def field_config_row(ns: str, version: str, etype: str, field: str, default_val: object) -> str:
 	""" Tellraw component of one field row: its value, an edit button, a clear button for optional lists and an info tooltip when documented. """
-	snbt_val: str = snbt_suggest(default_val)
+	snbt_val: str = snbt(default_val)
 
 	# Door fields except link_id apply to every door with the same link_id; two entry points, since a macro cannot re-quote its argument.
 	if etype == "door" and field != "link_id":
@@ -258,7 +266,7 @@ execute if data {path}.Name run data modify {path}.id set from {path}.Name
 execute if data {path}.Properties run data modify {path}.properties set from {path}.Properties
 data remove {path}.Name
 data remove {path}.Properties
-execute unless data {path} run data modify {path} set value {snbt_suggest(einfo.defaults[field])}
+execute unless data {path} run data modify {path} set value {snbt(einfo.defaults[field])}
 """
 		write_versioned_function(f"maps/light_fields/{etype}", light_fields)
 	return "\n".join(

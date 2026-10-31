@@ -34,9 +34,9 @@ class BombVisuals:
 		Returns:
 			str: Three summon commands, one per line.
 		"""
-		return f"""summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.{marker_tag}","{ns}.multiplayer_entity"]}}
-summon minecraft:block_display ~ ~ ~ {{Tags:["{ns}.{vis_tag}","{ns}.multiplayer_entity"],block_state:"minecraft:tnt",transformation:{{translation:[-0.25f,{TNT_LIFT}f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
-summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.{hud_tag}","{ns}.multiplayer_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"white"}},{{"text":"{label}","color":"red","bold":true}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}"""
+		return f"""summon minecraft:marker ~ ~ ~ {{CustomName:"Planted Bomb",Tags:["{ns}.{marker_tag}","{ns}.multiplayer_entity"]}}
+summon minecraft:block_display ~ ~ ~ {{CustomName:"Planted Bomb Model",Tags:["{ns}.{vis_tag}","{ns}.multiplayer_entity"],block_state:"minecraft:tnt",transformation:{{translation:[-0.25f,{TNT_LIFT}f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}}}
+summon minecraft:text_display ~ ~ ~ {{CustomName:"Planted Bomb Timer",Tags:["{ns}.{hud_tag}","{ns}.multiplayer_entity"],billboard:"vertical",text:[{{"text":"💣 ","color":"white"}},{{"text":"{label}","color":"red","bold":true}}],transformation:{{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}"""
 
 	@staticmethod
 	def announce_site_lines(variant: GameModeVariant, message: str, color: str = "red", xp_key: str = "") -> str:

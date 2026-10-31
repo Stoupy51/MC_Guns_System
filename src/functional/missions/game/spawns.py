@@ -8,7 +8,7 @@ from ...core.spawning import CoreSpawning
 # Functions
 def write_missions_spawns() -> None:
 	write_versioned_function("missions/summon_spawns", f"""
-{CoreSpawning.spawn_category_lines("missions", "mission", "spawn_mission")}
+{CoreSpawning.spawn_category_lines("missions", "mission", "spawn_mission", "Mission Spawn")}
 """)
 
 	CoreSpawning.write_array_spawn_iter("missions")

@@ -1,6 +1,7 @@
 """ Gun-wielding mob AI: arms mobs with weapons and drives their firing loop. """
 # Imports
 from stewbeet import (
+	Item,
 	Mem,
 	write_function,
 	write_load_file,
@@ -8,9 +9,11 @@ from stewbeet import (
 	write_versioned_function,
 )
 
+from ..config.catalogs import PRIMARY_WEAPONS, SECONDARY_WEAPONS
 from ..config.stats.keys import (
 	ACCURACY_BASE,
 	COOLDOWN,
+	EXPLOSION_DAMAGE,
 	GRENADE_TYPE,
 	PELLET_COUNT,
 	PROJECTILE_SPEED,
@@ -178,21 +181,31 @@ scoreboard players operation #armed_mob_phase {ns}.data %= #100 {ns}.data
 execute if score #armed_mob_count {ns}.data matches 1.. if score #armed_mob_phase {ns}.data matches 0 store result score #armed_mob_count {ns}.data if entity @e[tag={ns}.armed]
 """)
 
-	write_versioned_function("mob/default/on_new", f"""
+	## Everything but the gun, which Missions draws at random and zombie spawns may name. $(entity) is an id without namespace.
+	write_versioned_function("mob/arm", f"""
 tag @s add {ns}.armed
-$data modify entity @s CustomName set value {{"text":"Armed $(entity) [Lv.$(level)]","color":"red"}}
+$data modify entity @s CustomName set value [{{"text":"","color":"red"}},"Armed ",{{"translate":"entity.minecraft.$(entity)"}}," [Lv.$(level)]"]
 data modify entity @s DeathLootTable set value "minecraft:empty"
 data modify entity @s drop_chances set value {{mainhand:0.0f,offhand:0.0f}}
 data modify entity @s PersistenceRequired set value true
 attribute @s minecraft:waypoint_transmit_range base set 32
-
-function {ns}:v{version}/utils/random_weapon {{slot:"weapon.mainhand"}}
 
 $scoreboard players set @s {ns}.mob.active_time $(active_time)
 $scoreboard players set @s {ns}.mob.sleep_time $(sleep_time)
 
 scoreboard players add #armed_mob_count {ns}.data 1
 """)
+	write_versioned_function("mob/default/on_new", f"""
+$function {ns}:v{version}/mob/arm {{entity:"$(entity)",level:$(level),active_time:$(active_time),sleep_time:$(sleep_time)}}
+function {ns}:v{version}/utils/random_weapon
+""")
+
+	guns: list[str] = [weapon.item_id for weapon in (*PRIMARY_WEAPONS, *SECONDARY_WEAPONS) if weapon.in_loadout]
+	# Missions keep the RPG-7: one death does not end a mission.
+	write_weapon_draw("utils/random_weapon", guns)
+	write_weapon_draw("utils/random_weapon_no_explosive", [
+		gun for gun in guns if EXPLOSION_DAMAGE not in Item.from_id(gun).components["custom_data"][ns]["stats"]
+	])
 	# Level 5: perfect accuracy, always active.
 	write_versioned_function("mob/default/on_new_lv5", f"""
 $function {ns}:v{version}/mob/default/on_new {{entity:"$(entity)",level:5,active_time:72000,sleep_time:0}}
@@ -210,4 +223,17 @@ tag @s add {ns}.mob_lv5
 		f"{ns}:mob/default/level_5",
 		f"""$execute summon $(entity) run function {ns}:v{version}/mob/default/on_new_lv5 {{entity:"$(entity)"}}"""
 	)
+
+
+def write_weapon_draw(path: str, weapon_ids: list[str]) -> None:
+	""" Write a function putting one of the weapons, each as likely, in the mainhand of @s. """
+	ns: str = Mem.ctx.project_id
+	picks: str = "\n".join(
+		f"execute if score #random {ns}.data matches {index} run return run loot replace entity @s weapon.mainhand loot {ns}:i/{weapon_id}"
+		for index, weapon_id in enumerate(weapon_ids, start=1)
+	)
+	write_versioned_function(path, f"""
+execute store result score #random {ns}.data run random value 1..{len(weapon_ids)}
+{picks}
+""")
 

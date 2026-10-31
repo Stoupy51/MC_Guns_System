@@ -107,7 +107,7 @@ scoreboard players operation @s {ns}.zb.wf_pid = #wf_pid_counter {ns}.data
 	## The orb spawns at the interaction entity, which setup_iter raised by 2 after placing the machine display.
 	## The alcove centre lands about 0.78 below it, hence the negative Y; scale 0.4 keeps the bottle clear of the walls.
 	write_versioned_function("zombies/wunderfizz/spawn_orb", f"""
-summon minecraft:item_display ~ ~-0.78 ~ {{Tags:["{ns}.wunderfizz_orb","{ns}.wf_orb_new","{ns}.zombies_entity"],Glowing:true,billboard:"vertical",item_display:"fixed",item:{{id:"minecraft:potion",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.2f,0.2f,0.2f]}}}}
+summon minecraft:item_display ~ ~-0.78 ~ {{CustomName:"Der Wunderfizz Bottle",Tags:["{ns}.wunderfizz_orb","{ns}.wf_orb_new","{ns}.zombies_entity"],Glowing:true,billboard:"vertical",item_display:"fixed",item:{{id:"minecraft:potion",count:1}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.2f,0.2f,0.2f]}}}}
 """)
 
 	write_versioned_function("zombies/wunderfizz/orb_tick", f"""

@@ -31,6 +31,13 @@ def generate_doors() -> None:
 		f'{{"score":{{"name":"#door_price","objective":"{ns}.data"}},"color":"yellow"}},'
 		f'{{"text":" points","color":"gray"}}]'
 	)
+	locked_until: str = f'{{"text":"Locked until round ","color":"red"}},{{"score":{{"name":"#door_min_round","objective":"{ns}.data"}},"color":"gold"}}'
+	door_hover_locked_message: str = (
+		f'[{{"text":"🛠 "}},'
+		f'{{"storage":"{ns}:temp","nbt":"_door_hover_name","color":"yellow","interpret":true}},'
+		f'{{"text":" - ","color":"gray"}},{locked_until}]'
+	)
+	deny_locked: str = ZombiesCommon.deny_cmd(ns, version, f"[{locked_until}]")
 	# Chip-in doors show the next chunk plus the group's progress instead of the full price
 	door_hover_partial_message: str = (
 		f'[{{"text":"🛠 "}},'
@@ -53,6 +60,8 @@ scoreboard objectives add {ns}.zb.door.rot dummy
 # Chip-in: chunk size (0 = off) and what the group paid; progress is global, so `paid` is mirrored on the whole link group.
 scoreboard objectives add {ns}.zb.door.partial dummy
 scoreboard objectives add {ns}.zb.door.paid dummy
+# Round from which the door can be bought, shared by its link group.
+scoreboard objectives add {ns}.zb.door.minr dummy
 """)
 
 	write_versioned_function("zombies/doors/setup", f"""
@@ -74,6 +83,7 @@ execute store result storage {ns}:temp _door.z int 1 run scoreboard players get 
 data modify storage {ns}:temp _door.block set from storage {ns}:temp _door_iter[0].block
 data modify storage {ns}:temp _door.facing set value 0
 execute store result storage {ns}:temp _door.facing int 1 run data get storage {ns}:temp _door_iter[0].rotation[0]
+execute store result storage {ns}:temp _door.link int 1 run data get storage {ns}:temp _door_iter[0].link_id
 
 # Name defaults to "Door".
 data modify storage {ns}:temp _door_name.name set value "Door"
@@ -90,9 +100,10 @@ execute store result score @e[tag={ns}.door_new] {ns}.zb.door.bgid run data get 
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.anim run data get storage {ns}:temp _door_iter[0].animation
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.rot run data get storage {ns}:temp _door_iter[0].rotation[0]
 
-# Maps saved before chip-in existed have no field: the failed read stores 0 (off).
+# A missing field (chip-in, round lock) reads as 0: off.
 scoreboard players set @e[tag={ns}.door_new] {ns}.zb.door.paid 0
 execute store result score @e[tag={ns}.door_new] {ns}.zb.door.partial run data get storage {ns}:temp _door_iter[0].partial_price
+execute store result score @e[tag={ns}.door_new] {ns}.zb.door.minr run data get storage {ns}:temp _door_iter[0].min_round
 
 execute store result storage {ns}:temp _door_name.id int 1 run data get storage {ns}:temp _door_iter[0].link_id
 function {ns}:v{version}/zombies/doors/store_name with storage {ns}:temp _door_name
@@ -108,9 +119,9 @@ execute if data storage {ns}:temp _door_iter[0] run function {ns}:v{version}/zom
 	write_versioned_function("zombies/doors/place_at", f"""
 $setblock $(x) $(y) $(z) $(block)
 
-$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{front_door_tags}}}
+$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{front_door_tags},CustomName:"Door link $(link)"}}
 
-$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^-{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{back_door_tags}}}
+$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^-{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{back_door_tags},CustomName:"Door link $(link) (back)"}}
 """)
 
 	## Read the interacted door's pricing: #door_total is the full price, #door_price what this click costs
@@ -133,6 +144,9 @@ execute if score #door_partial {ns}.data matches 1.. run scoreboard players oper
 	## Run as the player.
 	write_versioned_function("zombies/doors/on_right_click", f"""
 {ZombiesCommon.game_active_guard_cmd(ns)}
+
+execute store result score #door_min_round {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.minr
+execute if score #door_min_round {ns}.data > #zb_round {ns}.data run return run {deny_locked}
 
 function {ns}:v{version}/zombies/doors/read_price
 
@@ -229,6 +243,8 @@ execute if entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function 
 execute unless entity @e[tag=bs.interaction.target,tag={ns}.door_back] run function {ns}:v{version}/zombies/doors/get_hover_name with storage {ns}:temp _door_hover
 execute unless score #door_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{door_hover_message},priority:"conditional",freeze:5}}
 execute if score #door_partial {ns}.data matches 1.. run data modify storage smithed.actionbar:input message set value {{json:{door_hover_partial_message},priority:"conditional",freeze:5}}
+execute store result score #door_min_round {ns}.data run scoreboard players get @n[tag=bs.interaction.target] {ns}.zb.door.minr
+execute if score #door_min_round {ns}.data > #zb_round {ns}.data run data modify storage smithed.actionbar:input message set value {{json:{door_hover_locked_message},priority:"conditional",freeze:5}}
 function #smithed.actionbar:message
 """)
 

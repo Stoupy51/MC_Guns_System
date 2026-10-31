@@ -4,6 +4,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
 from ...common import ZombiesCommon
+from .shared import PULL_DROP, box_transformation, per_roll
 
 
 # Functions
@@ -31,7 +32,7 @@ scoreboard players remove @s {ns}.mb.anim 1
 execute if score @s {ns}.mb.timeslip matches 1 if score @s {ns}.mb.anim matches 1..103 run scoreboard players remove @s {ns}.mb.anim 1
 
 # One tick after spawn, which avoids same-tick interpolation glitches.
-execute if score @s {ns}.mb.anim matches 104 run data merge entity @s {{transformation:{{translation:[0f,0.8f,0f]}},start_interpolation:0,interpolation_duration:200}}
+execute if score @s {ns}.mb.anim matches 104 run function {ns}:v{version}/zombies/mystery_box/display_float
 
 # Random items, slowing down in stages.
 execute if score @s {ns}.mb.anim matches 1.. run function {ns}:v{version}/zombies/mystery_box/cycle_step_one
@@ -97,9 +98,8 @@ execute if data storage {ns}:zombies mystery_box.result.weapon_id run function {
 execute unless data storage {ns}:zombies mystery_box.result.weapon_id run data modify entity @s item set from storage {ns}:zombies mystery_box.result.display_item
 data modify entity @s item.components."minecraft:custom_data".{ns}.mb_result set from storage {ns}:zombies mystery_box.result
 
-# Over 7.5 s (150 ticks).
-data merge entity @s {{transformation:{{translation:[0f,1.5f,0f]}}}}
-data merge entity @s {{interpolation_duration:150,transformation:{{translation:[0f,0f,0f]}},start_interpolation:0}}
+# Sinks back into the box over 7.5 s (150 ticks).
+function {ns}:v{version}/zombies/mystery_box/display_result
 
 execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buyer {ns}.data run tellraw @s [{MGS_TAG},{{"text":"Mystery Box result ready! ","color":"light_purple"}},{{"text":"Right-click to collect!","color":"green","bold":true}}]
 """)
@@ -126,4 +126,15 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] if score @s {ns}.mb.pid = #this_buye
 	write_versioned_function("zombies/mystery_box/show_result_weapon_one", f"""
 $loot replace entity @s contents loot {ns}:i/$(weapon_id)
 """)
+
+	# Heights along the box's own up, from inside it (see display_rest).
+	write_versioned_function("zombies/mystery_box/display_float", per_roll(lambda roll: (
+		f"data merge entity @s {{transformation:{box_transformation(roll, (0.0, 0.8 - PULL_DROP, 0.0), scale=0.4)},start_interpolation:0,interpolation_duration:200}}"
+	)))
+	write_versioned_function("zombies/mystery_box/display_result", "\n".join((
+		per_roll(lambda roll: f"data merge entity @s {{transformation:{box_transformation(roll, (0.0, 1.5 - PULL_DROP, 0.0), scale=0.4)}}}"),
+		per_roll(lambda roll: (
+			f"data merge entity @s {{interpolation_duration:150,transformation:{box_transformation(roll, (0.0, -PULL_DROP, 0.0), scale=0.4)},start_interpolation:0}}"
+		)),
+	)))
 

@@ -1,4 +1,4 @@
-""" The Treyarch BO1 health curve every zombie type and the dogs scale from. """
+""" The Treyarch BO1 health curve every enemy scales from. """
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -30,16 +30,27 @@ scoreboard players operation #zb_hp {ns}.data /= #15 {ns}.data
 execute unless score #zb_hp {ns}.data matches 15..3072 run scoreboard players set #zb_hp {ns}.data 3072
 """)
 
-	## max_health stops at 1024, so the rest becomes absorption, which max_absorption allows up to 2048.
-	## zb.max_hp keeps the whole, for the damage dealt as a share of it.
+	## Gives @s #zb_hp health: max_health stops at 1024, so the rest becomes absorption, and zb.max_hp keeps the whole
+	## for damage dealt as a share of it.
 	write_versioned_function("zombies/apply_zombie_hp", f"""
-$scoreboard players set @s {ns}.zb.max_hp $(val)
-$attribute @s minecraft:max_health base set $(val)
+scoreboard players operation @s {ns}.zb.max_hp = #zb_hp {ns}.data
+
+# A modifier over the type's default base: any NBT write on a wolf (a rise ending, an escort freezing it) puts its base back to 8.
+attribute @s minecraft:max_health base reset
+attribute @s minecraft:max_health modifier remove {ns}:round_hp
+execute store result score #zb_hp_base {ns}.data run attribute @s minecraft:max_health base get
+scoreboard players operation #zb_hp_add {ns}.data = #zb_hp {ns}.data
+scoreboard players operation #zb_hp_add {ns}.data -= #zb_hp_base {ns}.data
+execute store result storage {ns}:temp _zb_hp.val int 1 run scoreboard players get #zb_hp_add {ns}.data
+function {ns}:v{version}/zombies/add_hp_modifier with storage {ns}:temp _zb_hp
 execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 function {ns}:v{version}/zombies/absorb_above_cap
 """)
+	write_versioned_function("zombies/add_hp_modifier", f"""
+$attribute @s minecraft:max_health modifier add {ns}:round_hp $(val) add_value
+""")
 
-	## Run as a zombie or a dog whose zb.max_hp is set.
+	## Run as an enemy whose zb.max_hp is set.
 	write_versioned_function("zombies/absorb_above_cap", f"""
 scoreboard players operation #zb_absorb {ns}.data = @s {ns}.zb.max_hp
 scoreboard players remove #zb_absorb {ns}.data 1024
@@ -50,11 +61,5 @@ function {ns}:v{version}/zombies/apply_zombie_absorption with storage {ns}:temp 
 	write_versioned_function("zombies/apply_zombie_absorption", """
 $attribute @s minecraft:max_absorption base set $(val)
 $data modify entity @s AbsorptionAmount set value $(val)f
-""")
-
-	## Dogs: $(val) is the amount above a wolf's base 8, as a modifier the taming reset cannot clear (see types/dog).
-	write_versioned_function("zombies/apply_dog_hp", f"""
-$attribute @s minecraft:max_health modifier add {ns}:dog_hp $(val) add_value
-execute store result entity @s Health float 1 run attribute @s minecraft:max_health get
 """)
 

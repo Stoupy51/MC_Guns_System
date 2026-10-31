@@ -27,7 +27,7 @@ function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"zombies",script
 
 execute if score #zb_to_spawn {ns}.data matches 1.. run function {ns}:v{version}/zombies/spawn_tick
 
-# Untyped: other enemies than zombies will rise too.
+# Untyped: a spawn's mob can be any entity.
 execute as @e[tag={ns}.zb_rising] at @s run function {ns}:v{version}/zombies/zombie_rise_tick
 execute as @e[type=minecraft:marker,tag={ns}.zb_rise_dust] at @s run function {ns}:v{version}/zombies/rise_dust_tick
 
@@ -36,10 +36,10 @@ execute if score #zb_has_bounds {ns}.data matches 1 as @e[tag={ns}.zombie_round]
 execute if score #zb_has_bounds {ns}.data matches 1 as @e[type=player,scores={{{ns}.zb.in_game=1}},gamemode=!creative,gamemode=!spectator] at @s run function {ns}:v{version}/zombies/check_bounds_player
 
 execute store result score #zb_alive {ns}.data if entity @e[tag={ns}.zombie_round]
-# Dogs still in their portal are not entities. #zb_dog_pending is only a fast gate: when it claims pending dogs,
+# Enemies still in their portal are not entities. #zb_portal_pending is only a fast gate: when it claims pending enemies,
 # it is resynced from the real portal count so a desynced counter cannot freeze the run.
-execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_dog_pending {ns}.data matches 1.. store result score #zb_dog_pending {ns}.data if entity @e[type=minecraft:marker,tag={ns}.dog_portal]
-execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_dog_pending {ns}.data matches ..0 run function {ns}:v{version}/zombies/round_complete
+execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_portal_pending {ns}.data matches 1.. store result score #zb_portal_pending {ns}.data if entity @e[type=minecraft:marker,tag={ns}.zb_portal]
+execute if score #zb_alive {ns}.data matches 0 if score #zb_to_spawn {ns}.data matches 0 if score #zb_portal_pending {ns}.data matches ..0 run function {ns}:v{version}/zombies/round_complete
 
 # Game over once nobody is left to revive anyone. Healthy: downed=0, not spectator (Who's Who owners included);
 # downed: downed=1, spectator; bled out: downed=0, spectator. Solo Quick Revive with uses left revives on its own.

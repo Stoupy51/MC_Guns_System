@@ -2,8 +2,9 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ..helpers.snbt import snbt
 from ..map_editor_defs import ALL_ELEMENTS, MODEL_DISPLAY_ELEMENTS
-from .shared import snbt_suggest
+from ..zombies.machines.mystery_box.shared import CENTER, PIVOT, ROLLS, box_offset, per_roll
 
 
 # Functions
@@ -40,6 +41,7 @@ execute if score #ed_disp_dirty {ns}.data matches 1 run function {ns}:v{version}
 data modify storage {ns}:temp _ed_sig set value {{}}
 data modify storage {ns}:temp _ed_sig.data set from entity @s data
 data remove storage {ns}:temp _ed_sig.data._disp_sig
+data remove storage {ns}:temp _ed_sig.data._ed
 data modify storage {ns}:temp _ed_sig.pos set from entity @s Pos
 execute store success score #ed_sig_changed {ns}.data run data modify entity @s data._disp_sig set from storage {ns}:temp _ed_sig
 execute if score #ed_sig_changed {ns}.data matches 1 run scoreboard players set #ed_disp_dirty {ns}.data 1
@@ -52,13 +54,13 @@ data modify storage {ns}:temp _ed_bar.yaw set value 0.0f
 execute if data entity @s data.yaw run data modify storage {ns}:temp _ed_bar.yaw set from entity @s data.yaw
 
 # No block configured yet: the element default.
-data modify storage {ns}:temp _ed_bar.block set value {snbt_suggest(ALL_ELEMENTS["barricade"].defaults["block_enabled"])}
+data modify storage {ns}:temp _ed_bar.block set value {snbt(ALL_ELEMENTS["barricade"].defaults["block_enabled"])}
 execute if data entity @s data.block_enabled run data modify storage {ns}:temp _ed_bar.block set from entity @s data.block_enabled
 
 execute align xyz positioned ~.5 ~.5 ~.5 run function {ns}:v{version}/maps/editor/displays/summon_barricade with storage {ns}:temp _ed_bar
 """)
 	write_versioned_function("maps/editor/displays/summon_barricade", f"""
-$summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw),0f],block_state:$(block),transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},Tags:["{ns}.editor_display"]}}
+$summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw),0f],block_state:$(block),transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},CustomName:"Barricade",Tags:["{ns}.editor_display"]}}
 """)
 
 	## Placed and scaled as the zombies wallbuys setup.
@@ -71,7 +73,7 @@ function {ns}:v{version}/maps/editor/displays/summon_wallbuy with storage {ns}:t
 """)
 	write_versioned_function("maps/editor/displays/summon_wallbuy", f"""
 # Up and toward the wall face, scale 0.6, as zombies/wallbuys/place_at.
-$summon minecraft:item_display ^ ^0.5 ^-0.49 {{Rotation:[$(yaw),0f],billboard:"fixed",item_display:"fixed",Tags:["{ns}.editor_display","{ns}._ed_new_disp"],transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
+$summon minecraft:item_display ^ ^0.5 ^-0.49 {{Rotation:[$(yaw),0f],billboard:"fixed",item_display:"fixed",CustomName:"Wallbuy",Tags:["{ns}.editor_display","{ns}._ed_new_disp"],transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 $execute as @n[tag={ns}._ed_new_disp] run loot replace entity @s contents loot {ns}:i/$(weapon_id)
 tag @e[tag={ns}._ed_new_disp] remove {ns}._ed_new_disp
 """)
@@ -80,6 +82,7 @@ tag @e[tag={ns}._ed_new_disp] remove {ns}._ed_new_disp
 	write_versioned_function("maps/editor/displays/perk_machine", f"""
 # Run as the perk machine marker, at it.
 data modify storage {ns}:temp _pk_disp.tag set value "{ns}.editor_display"
+data modify storage {ns}:temp _pk_disp.name set value "Perk Machine"
 data modify storage {ns}:temp _pk_disp.item_id set value ""
 data modify storage {ns}:temp _pk_disp.item_model set value ""
 data modify storage {ns}:temp _pk_disp.yaw set value 0.0f
@@ -97,6 +100,7 @@ execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function {n
 	write_versioned_function("maps/editor/displays/wunderfizz", f"""
 # Run as the Wunderfizz marker, at it.
 data modify storage {ns}:temp _wf_disp.tag set value "{ns}.editor_display"
+data modify storage {ns}:temp _wf_disp.name set value "Der Wunderfizz"
 data modify storage {ns}:temp _wf_disp.item_id set value ""
 data modify storage {ns}:temp _wf_disp.item_model set value ""
 data modify storage {ns}:temp _wf_disp.yaw set value 0.0f
@@ -112,6 +116,7 @@ execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function {n
 	write_versioned_function("maps/editor/displays/pap_machine", f"""
 # Run as the PaP marker, at it.
 data modify storage {ns}:temp _pap_disp.tag set value "{ns}.editor_display"
+data modify storage {ns}:temp _pap_disp.name set value "Pack-a-Punch"
 data modify storage {ns}:temp _pap_disp.item_id set value ""
 data modify storage {ns}:temp _pap_disp.item_model set value ""
 data modify storage {ns}:temp _pap_disp.yaw set value 0.0f
@@ -123,18 +128,28 @@ execute if data entity @s data.yaw run data modify storage {ns}:temp _pap_disp.y
 execute positioned ^ ^ ^-0.49 positioned ~ ~-0.4 ~ run function {ns}:v{version}/zombies/display/summon_machine_display with storage {ns}:temp _pap_disp
 """)
 
-	## Base and lid: in game the box interaction is at ^ ^2 ^0.3 from the map position and the chest 0.9 below it (see zombies/mystery_box).
+	## Base and lid at the box's centre, turned by its yaw, pitch and roll, as zombies/mystery_box/setup_pos_iter places them.
 	write_versioned_function("maps/editor/displays/mystery_box_pos", f"""
 # Run as the mystery box marker, at it.
-data modify storage {ns}:temp _ed_mb.yaw set value 0.0f
+data modify storage {ns}:temp _ed_mb set value {{yaw:0.0f,pitch:0.0f}}
 data modify storage {ns}:temp _ed_mb.yaw set from entity @s data.yaw
-execute positioned ^ ^2 ^0.3 run function {ns}:v{version}/maps/editor/displays/summon_mystery_box with storage {ns}:temp _ed_mb
+data modify storage {ns}:temp _ed_mb.pitch set from entity @s data.pitch
+scoreboard players set @s {ns}.mb.roll 0
+execute if data entity @s data.roll store result score @s {ns}.mb.roll run data get entity @s data.roll
+scoreboard players operation @s {ns}.mb.roll /= #90 {ns}.data
+scoreboard players operation @s {ns}.mb.roll %= #{ROLLS} {ns}.data
+function {ns}:v{version}/maps/editor/displays/turn_mystery_box with storage {ns}:temp _ed_mb
 """)
-	write_versioned_function("maps/editor/displays/summon_mystery_box", f"""
-# Same models and scale as zombies/mystery_box/summon_presence_display.
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_display"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_base"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2.4f,2.4f,2.4f]}}}}
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_display"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"{ns}:mystery_box_lid"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2.4f,2.4f,2.4f]}}}}
+	write_versioned_function("maps/editor/displays/turn_mystery_box", f"""
+$execute rotated $(yaw) $(pitch) run function {ns}:v{version}/maps/editor/displays/summon_mystery_box
 """)
+	write_versioned_function("maps/editor/displays/summon_mystery_box", per_roll(
+		lambda roll: f"execute positioned {PIVOT} positioned {box_offset(roll, *CENTER)} run function {ns}:v{version}/maps/editor/displays/mystery_box_parts"
+	))
+	write_versioned_function("maps/editor/displays/mystery_box_parts", "\n".join(
+		f'function {ns}:v{version}/zombies/mystery_box/summon_part {{tags:["{ns}.editor_display","{ns}.mb_part_new"],name:"Mystery Box",model:"{ns}:mystery_box_{part}"}}'
+		for part in ("base", "lid")
+	))
 
 	## Block-centred, as the zombies power setup.
 	write_versioned_function("maps/editor/displays/power_switch", f"""
@@ -144,6 +159,6 @@ data modify storage {ns}:temp _ed_ps.yaw set from entity @s data.yaw
 execute align xyz positioned ~.5 ~.5 ~.5 run function {ns}:v{version}/maps/editor/displays/summon_power_switch with storage {ns}:temp _ed_ps
 """)
 	write_versioned_function("maps/editor/displays/summon_power_switch", f"""
-$summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.editor_display"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
+$summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],CustomName:"Power Switch",Tags:["{ns}.editor_display"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
 """)
 

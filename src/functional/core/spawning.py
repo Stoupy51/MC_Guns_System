@@ -46,27 +46,29 @@ $execute unless data storage {ns}:$(mode) game{{state:"active"}} run tag @s add 
 		for tag in extra_spawn_tags:
 			tags += f',"{ns}.{tag}"'
 		write_versioned_function(f"{mode}/summon_spawn_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:[{tags}],data:{{yaw:$(yaw)}}}}
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:[{tags}],CustomName:"$(name)",data:{{yaw:$(yaw)}}}}
 """)
 
 	@staticmethod
-	def spawn_category_lines(mode: str, storage_key: str, spawn_tag: str) -> str:
+	def spawn_category_lines(mode: str, storage_key: str, spawn_tag: str, name: str) -> str:
 		""" Return the lines feeding one spawn category of a map into ``<mode>/summon_spawn_iter``.
 
 		Args:
 			mode: Path segment, e.g. "multiplayer" | "zombies" | "missions".
 			storage_key: The key under ``game.map.spawning_points`` holding this category.
 			spawn_tag: Tag suffix every marker of this category is summoned with.
+			name: In-game name of its markers, left in ``{ns}:temp _spawn_name``.
 		Returns:
-			str: Three commands, one per line.
+			str: Four commands, one per line.
 
-		>>> CoreSpawning.spawn_category_lines("zombies", "players", "spawn_zb_player").count("\\n")
-		2
+		>>> CoreSpawning.spawn_category_lines("zombies", "players", "spawn_zb_player", "Player Spawn").count("\\n")
+		3
 		"""
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
 		return f"""data modify storage {ns}:temp _spawn_iter set from storage {ns}:{mode} game.map.spawning_points.{storage_key}
 data modify storage {ns}:temp _spawn_tag set value "{ns}.{spawn_tag}"
+data modify storage {ns}:temp _spawn_name set value "{name}"
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/{mode}/summon_spawn_iter"""
 
 	@staticmethod
@@ -92,6 +94,7 @@ execute store result storage {ns}:temp _spos.y double 1 run scoreboard players g
 execute store result storage {ns}:temp _spos.z double 1 run scoreboard players get #sz {ns}.data
 execute store result storage {ns}:temp _spos.yaw double 0.01 run scoreboard players get #syaw {ns}.data
 data modify storage {ns}:temp _spos.tag set from storage {ns}:temp _spawn_tag
+data modify storage {ns}:temp _spos.name set from storage {ns}:temp _spawn_name
 
 function {ns}:v{version}/{mode}/summon_spawn_at with storage {ns}:temp _spos
 
@@ -171,6 +174,6 @@ execute if data storage {ns}:temp _oob_iter[0] run function {ns}:v{version}/shar
 """)
 
 			write_versioned_function("shared/summon_oob_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.$(mode)_entity"]}}
+$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.oob_point","{ns}.$(mode)_entity"],CustomName:"Out of Bounds"}}
 """)
 

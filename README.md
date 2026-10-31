@@ -172,13 +172,14 @@ Implemented gamemodes:
 - Full round loop (start round, spawn loop, round complete, next round).
 - Scaled zombie health/speed by round tiers.
 - Zonweeb special types: fast (round 5), tank (round 10), armed with a gun and a 5% Max Ammo drop (round 15), and one aura zombie shielding the horde (round 20).
+- Spawns choose their enemy: any entity, a gun, extra NBT and riders, round bounds, power, and how it arrives (floor, ceiling, portal, instant); special rounds use special spawns (hounds by default). See [specs/010-zombie-spawn-profiles](specs/010-zombie-spawn-profiles/spec.md).
 - Points, kills, downs tracking.
 - Strict slot-managed inventory (knife, gun slots, mags, equipment).
-- Door system with linked unlock groups.
+- Door system with linked unlock groups, each lockable until a round.
 - Wallbuys with buy/refill/replace behavior.
 - Power switch gating map systems.
 - Trap system (timed activation + cooldown, multiple trap types).
-- Mystery box with dynamic pool + rerolls + movement between positions.
+- Mystery box with dynamic pool + rerolls + movement between positions, each spot turned freely (yaw, pitch, quarter-turn roll).
 - Perk machines and perk ownership scoreboards.
 - Passive and active ability system.
 - Bonus systems (max ammo refill, nuke kill loop).
@@ -195,7 +196,7 @@ Available elements per mode:
 
 - ⚔️ Multiplayer: base coordinates, red/blue/general spawn points, out-of-bounds points, boundary corners, S&D / Domination / Hardpoint objective points.
 - 🎯 Missions: base coordinates, spawn points, enemy markers (with enemy function/config references), out-of-bounds points, boundary corners.
-- 🧟 Zombies: base coordinates, player/zombie spawns, wallbuys, doors, traps, perk machines, mystery box positions, power switch, out-of-bounds points, boundary corners. Each object is a compound with defaults/overrides (e.g. door price/link id, trap type/duration/cooldown, perk id/price, power requirement), so map behavior is authored without touching function code.
+- 🧟 Zombies: base coordinates, player/zombie/special spawns, wallbuys, doors, traps, perk machines, mystery box positions, power switch, out-of-bounds points, boundary corners. Each object is a compound with defaults/overrides (e.g. door price/link id, trap type/duration/cooldown, perk id/price, power requirement), so map behavior is authored without touching function code. The Configure egg opens a form for spawns and mystery box spots; a spawn's activation box and walk-to spot show as particles, and the form can draw the box with two Coord Stick clicks.
 
 Tips: place base coordinates first, validate boundaries early, ensure enough spawn points, verify door group/link consistency, and save frequently.
 
