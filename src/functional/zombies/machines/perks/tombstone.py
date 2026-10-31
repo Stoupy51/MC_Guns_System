@@ -38,7 +38,7 @@ execute if score @s {ns}.zb.tsp.{pid} matches 1 run scoreboard players set @s {n
 """
 
 	# A skeleton skull laid flat, raised and enlarged so it reads from across the map.
-	ts_tags: str = f'Tags:["{ns}.tombstone","{ns}.tombstone_new","{ns}.zombies_entity"]'
+	ts_tags: str = f'CustomName:"Tombstone",Tags:["{ns}.tombstone","{ns}.tombstone_new","{ns}.zombies_entity"]'
 	ts_item: str = 'item:{id:"minecraft:skeleton_skull",count:1},item_display:"ground"'
 	ts_transform: str = (
 		"transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],"

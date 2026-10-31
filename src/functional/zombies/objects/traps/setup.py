@@ -109,15 +109,15 @@ execute if data storage {ns}:temp _trap_iter[0] run function {ns}:v{version}/zom
 
 	write_versioned_function("zombies/traps/place_at", f"""
 # height -2.0 makes a downward hitbox, raised 2 blocks right after, so it covers the 2-block turret (as the perk machine does).
-$execute positioned $(ix) $(iy) $(iz) run summon minecraft:interaction ~ ~2 ~ {{width:1.1f,height:-2.0f,response:true,Tags:["{ns}.trap_interact","{ns}.zombies_entity","bs.entity.interaction","{ns}._trap_new_i","{ns}._trap_new_bs"]}}
+$execute positioned $(ix) $(iy) $(iz) run summon minecraft:interaction ~ ~2 ~ {{width:1.1f,height:-2.0f,response:true,CustomName:"Trap",Tags:["{ns}.trap_interact","{ns}.zombies_entity","bs.entity.interaction","{ns}._trap_new_i","{ns}._trap_new_bs"]}}
 
-$summon minecraft:marker $(cx) $(cy) $(cz) {{Tags:["{ns}.trap_center","{ns}.zombies_entity","{ns}._trap_new_m"]}}
+$summon minecraft:marker $(cx) $(cy) $(cz) {{CustomName:"Trap Centre",Tags:["{ns}.trap_center","{ns}.zombies_entity","{ns}._trap_new_m"]}}
 """)
 
 	## Both models are built around their origin (the head around its pivot), so they are summoned in place; teleport_duration smooths the re-aim.
 	## The base sits on the floor at the block centre, the head mount 1.625 up in the base's yoke (1.5 to 1.75).
 	write_versioned_function("zombies/traps/place_turret_at", f"""
-$execute positioned $(cx) $(cy) $(cz) run summon minecraft:item_display ~ ~.5 ~ {{Rotation:[$(yaw)f,0f],Tags:["{ns}.trap_base","{ns}.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:iron_block",count:1,components:{{"minecraft:item_model":"{ns}:turret_base"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2f,2f,2f]}}}}
-$execute positioned $(cx) $(cy) $(cz) positioned ~ ~1.625 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],Tags:["{ns}.trap_head","{ns}.zombies_entity","{ns}._trap_new_head"],item_display:"fixed",billboard:"fixed",teleport_duration:5,item:{{id:"minecraft:netherite_block",count:1,components:{{"minecraft:item_model":"{ns}:turret_head"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
+$execute positioned $(cx) $(cy) $(cz) run summon minecraft:item_display ~ ~.5 ~ {{Rotation:[$(yaw)f,0f],CustomName:"Turret Base",Tags:["{ns}.trap_base","{ns}.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:iron_block",count:1,components:{{"minecraft:item_model":"{ns}:turret_base"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2f,2f,2f]}}}}
+$execute positioned $(cx) $(cy) $(cz) positioned ~ ~1.625 ~ run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],CustomName:"Turret Head",Tags:["{ns}.trap_head","{ns}.zombies_entity","{ns}._trap_new_head"],item_display:"fixed",billboard:"fixed",teleport_duration:5,item:{{id:"minecraft:netherite_block",count:1,components:{{"minecraft:item_model":"{ns}:turret_head"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
 """)
 

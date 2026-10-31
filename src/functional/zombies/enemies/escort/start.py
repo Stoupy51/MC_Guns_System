@@ -28,15 +28,16 @@ team add {ns}.horde
 team modify {ns}.horde collisionRule pushOtherTeams
 """)
 
-	# Stuck zombies try an escort before the teleport rescue.
+	# Stuck zombies try an escort before the teleport rescue, except on special rounds, whose packs outrun the trader.
 	write_versioned_function("zombies/on_stuck_zombie", f"""
-# Not for dogs: the escort freezes its passenger with an NBT write, which resets a wolf's MAX_HEALTH base to 8
-# (TamableAnimal.setTame), and dogs outrun the trader anyway.
-execute unless entity @s[tag={ns}.zb_dog] unless entity @s[tag={ns}.zb_escort_failed] if score #zb_escort_count {ns}.data matches ..{MAX_ESCORTS - 1} run return run function {ns}:v{version}/zombies/escort/start
+execute unless score #zb_special_round {ns}.data matches 1 unless entity @s[tag={ns}.zb_escort_failed] if score #zb_escort_count {ns}.data matches ..{MAX_ESCORTS - 1} run return run function {ns}:v{version}/zombies/escort/start
 """, prepend=True)
 
 	# Run as the stuck zombie, at it.
 	write_versioned_function("zombies/escort/start", f"""
+# A rider goes where its mount goes; the escort would pull it off.
+execute on vehicle run return fail
+
 # The trader walks and drags the frozen zombie. The team join covers zombies summoned before a mid-game /reload added the team.
 tag @s add {ns}.zb_escorted
 team join {ns}.horde @s

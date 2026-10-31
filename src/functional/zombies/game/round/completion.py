@@ -1,4 +1,4 @@
-""" Ending a round, the dog-round reward and grenade replenishment. """
+""" Ending a round, the special-round reward and grenade replenishment. """
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -15,7 +15,7 @@ def write_round_completion() -> None:
 # -1 stops this from firing again every tick.
 scoreboard players set #zb_to_spawn {ns}.data -1
 
-# No Max Ammo fallback here: it drops at the last hound's body (dog_death), never at a player.
+# No Max Ammo fallback here: it drops at the body of a special round's last enemy (special_death), never at a player.
 
 function #{ns}:zombies/on_round_end
 
@@ -30,26 +30,26 @@ scoreboard players set #zb_next_round {ns}.data 100
 function {ns}:v{version}/zombies/revive/round_respawn
 """)
 
-	## #zb_alive only counts materialized dogs, so with portals still telegraphing every late kill looked like the last.
-	## Count the live pack without this corpse, plus the portals that have not struck.
-	write_versioned_function("zombies/dog_death", f"""
-tag @s remove {ns}.zb_dog
+	## #zb_alive only counts enemies that came in, so with portals still telegraphing every late kill looked like the last.
+	## Count the live ones without this corpse, plus the portals that have not struck.
+	write_versioned_function("zombies/special_death", f"""
+tag @s remove {ns}.zombie_round
 
-scoreboard players operation #zb_dog_left {ns}.data = #zb_dog_pending {ns}.data
-scoreboard players operation #zb_dog_left {ns}.data += #zb_to_spawn {ns}.data
-execute store result score #zb_dog_alive {ns}.data if entity @e[tag={ns}.zb_dog]
-scoreboard players operation #zb_dog_left {ns}.data += #zb_dog_alive {ns}.data
+scoreboard players operation #zb_special_left {ns}.data = #zb_portal_pending {ns}.data
+scoreboard players operation #zb_special_left {ns}.data += #zb_to_spawn {ns}.data
+execute store result score #zb_special_alive {ns}.data if entity @e[tag={ns}.zombie_round]
+scoreboard players operation #zb_special_left {ns}.data += #zb_special_alive {ns}.data
 
-# ammo_done also covers two hounds dying in the same tick.
-execute if score #zb_dog_left {ns}.data matches ..0 if score #zb_dog_ammo_done {ns}.data matches 0 run function {ns}:v{version}/zombies/dog_max_ammo_at_self
+# ammo_done also covers two enemies dying in the same tick.
+execute if score #zb_special_left {ns}.data matches ..0 if score #zb_special_ammo_done {ns}.data matches 0 run function {ns}:v{version}/zombies/special_max_ammo
 """)
 
-	write_versioned_function("zombies/dog_max_ammo_at_self", f"""
-scoreboard players set #zb_dog_ammo_done {ns}.data 1
+	write_versioned_function("zombies/special_max_ammo", f"""
+scoreboard players set #zb_special_ammo_done {ns}.data 1
 function {ns}:v{version}/zombies/max_ammo_at_self
 """)
 
-	## Run as the last hound or an armed zombie where it died. A fixed reward, so it skips the shuffle bag and the drop roll.
+	## Run as a special round's last enemy or an armed one where it died. A fixed reward, so it skips the shuffle bag and the drop roll.
 	write_versioned_function("zombies/max_ammo_at_self", f"""
 scoreboard players add #pu_uid {ns}.data 1
 data modify storage {ns}:temp _pu_spawn set value {{x:0,y:0,z:0,uid:0,type:"max_ammo"}}

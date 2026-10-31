@@ -5,7 +5,7 @@ Every half-second the monkey redirects nearby zombies through the escort taxi: e
 On arrival a zombie holds, frozen: the monkey has no aggro of its own, so a released zombie would walk straight back to the player.
 Everything reverts once the monkey is gone.
 
-Dogs are excluded: the escort freezes its passenger with NoAI, and any NBT write on a wolf resets its max health to 8 (see escort).
+Special rounds are left out: their packs outrun the escort trader.
 """
 # Imports
 from stewbeet import Mem, write_versioned_function
@@ -51,14 +51,16 @@ execute if score #monkey_phase {ns}.data matches 0 run function {ns}:v{version}/
 
 	# Not capped by MAX_ESCORTS: a monkey lives about 9 s and the whole horde should come to it.
 	pull_candidates: str = (
-		f"@e[tag={ns}.zombie_round,tag=!{ns}.zb_dog,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,"
+		f"@e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,"
 		f"tag=!{ns}.zb_escort_failed,distance={MONKEY_REGRAB_FLOOR}..{MONKEY_ATTRACT_RADIUS}]"
 	)
 	write_versioned_function("zombies/monkey/attract", f"""
+execute if score #zb_special_round {ns}.data matches 1 run return 0
+
 # Zombies already escorted (stuck rescue, PaP lure) are redirected by flagging their trader.
 execute as @e[tag={ns}.zombie_round,tag={ns}.zb_escorted,distance=..{MONKEY_ATTRACT_RADIUS}] at @s run function {ns}:v{version}/zombies/escort/redirect_to_monkey
 
-# Every other zombie gets a monkey escort. Not dogs (the escort cannot freeze a wolf); zombies already at the monkey are skipped.
+# Every other zombie gets a monkey escort; zombies already at the monkey are skipped.
 execute as {pull_candidates} at @s run function {ns}:v{version}/zombies/monkey/pull_one
 """)
 

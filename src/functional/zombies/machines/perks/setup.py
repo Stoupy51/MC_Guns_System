@@ -63,6 +63,8 @@ execute store result storage {ns}:temp _pk.x int 1 run scoreboard players get #p
 execute store result storage {ns}:temp _pk.y int 1 run scoreboard players get #pky {ns}.data
 execute store result storage {ns}:temp _pk.z int 1 run scoreboard players get #pkz {ns}.data
 data modify storage {ns}:temp _pk.rotation set from storage {ns}:temp _pk_iter[0].rotation
+data modify storage {ns}:temp _pk.perk_id set value ""
+data modify storage {ns}:temp _pk.perk_id set from storage {ns}:temp _pk_iter[0].perk_id
 
 function {ns}:v{version}/zombies/perks/place_at with storage {ns}:temp _pk
 
@@ -97,6 +99,7 @@ execute as @n[tag={ns}.pk_new] run function #bs.interaction:on_hover {{run:"func
 
 # Potion by default; maps can override display_item and item_model.
 data modify storage {ns}:temp _pk_disp.tag set value "{ns}.pk_display"
+data modify storage {ns}:temp _pk_disp.name set value "Perk Machine"
 data modify storage {ns}:temp _pk_disp.item_id set value ""
 data modify storage {ns}:temp _pk_disp.item_model set value ""
 data modify storage {ns}:temp _pk_disp.yaw set value 0.0
@@ -123,7 +126,7 @@ $data modify storage {ns}:temp _pk_disp.item_model set value "{ns}:perk_machine_
 """)
 
 	write_versioned_function("zombies/perks/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.perk_machine","{ns}.zombies_entity","bs.entity.interaction","{ns}.pk_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),CustomName:"Perk Machine $(perk_id)",Tags:["{ns}.perk_machine","{ns}.zombies_entity","bs.entity.interaction","{ns}.pk_new"]}}
 """)
 
 	write_versioned_function("zombies/perks/store_data", f"""

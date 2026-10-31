@@ -12,9 +12,11 @@ from .displays import write_editor_displays
 from .doors import write_editor_doors
 from .enter import write_editor_enter
 from .exit import write_editor_exit
+from .forms import write_editor_forms
 from .handlers import write_editor_handlers
 from .manage import write_editor_manage
 from .menu import write_editor_menu
+from .names import write_editor_names
 from .place import write_editor_place
 from .save import write_editor_save
 from .summon import write_editor_summon
@@ -35,10 +37,12 @@ def generate_map_editor() -> None:
 	write_editor_destroy()
 	write_editor_config()
 	write_editor_zb_config()
+	write_editor_forms()
 	write_editor_doors()
 	write_editor_save()
 	write_editor_exit()
 	write_editor_displays()
+	write_editor_names()
 	write_editor_tick()
 	write_coord_stick()
 

@@ -3,8 +3,9 @@
 from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
+from ..helpers.snbt import snbt
 from ..map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, MODE_LIST
-from .shared import ZB_ELEMENTS, snbt_suggest
+from .shared import ZB_ELEMENTS
 
 # Constants
 SAVED_TYPES: tuple[str, ...] = ("spawn", "point", "enemy", "start_command", "respawn_command", "zb_object")
@@ -205,13 +206,16 @@ execute store result storage {ns}:temp _save_zb.pos[0] int 1 run scoreboard play
 execute store result storage {ns}:temp _save_zb.pos[1] int 1 run scoreboard players get #ay {ns}.data
 execute store result storage {ns}:temp _save_zb.pos[2] int 1 run scoreboard players get #az {ns}.data
 
-# Pitch is always 0.
+# Pitch is 0 unless the element has one (the mystery box).
 data modify storage {ns}:temp _save_zb.rotation set value [0.0f, 0.0f]
 data modify storage {ns}:temp _save_zb.rotation[0] set from entity @s data.yaw
+execute if data entity @s data.pitch run data modify storage {ns}:temp _save_zb.rotation[1] set from entity @s data.pitch
 
-# yaw lives in the rotation array.
+# yaw and pitch live in the rotation array; the rest is the editor's own.
 data remove storage {ns}:temp _save_zb.yaw
+data remove storage {ns}:temp _save_zb.pitch
 data remove storage {ns}:temp _save_zb._disp_sig
+data remove storage {ns}:temp _save_zb._ed
 {strip_dispatch}
 
 $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_zb
@@ -268,7 +272,7 @@ def write_strip_light_fields() -> str:
 		write_versioned_function(f"maps/editor/strip_light_fields/{etype}", "\n".join(
 			f"""data remove storage {ns}:temp _light
 data modify storage {ns}:temp _light set from storage {ns}:temp _save_zb.{field}
-execute store success score #light_differs {ns}.data run data modify storage {ns}:temp _light set value {snbt_suggest(ALL_ELEMENTS[etype].defaults[field])}
+execute store success score #light_differs {ns}.data run data modify storage {ns}:temp _light set value {snbt(ALL_ELEMENTS[etype].defaults[field])}
 execute if score #light_differs {ns}.data matches 0 run data remove storage {ns}:temp _save_zb.{field}"""
 			for field in fields
 		))

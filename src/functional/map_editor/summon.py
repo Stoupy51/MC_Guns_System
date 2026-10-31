@@ -205,6 +205,13 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{versi
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.respawn_command","{ns}.new_respawn_cmd_marker"]}}
 """)
 
+	# Elements that can tilt keep their pitch in data while edited, like their yaw.
+	pitch_lines: str = "\n".join(
+		f"execute if data storage {ns}:temp _zb_iter[0].rotation[1] as @n[tag={ns}.new_zb_marker,tag={ns}.element.{etype}] "
+		f"run data modify entity @s data.pitch set from storage {ns}:temp _zb_iter[0].rotation[1]"
+		for etype, einfo in ALL_ELEMENTS.items() if "pitch" in einfo.defaults
+	)
+
 	# List of compounds {pos:[x,y,z], rotation:[yaw,pitch], ...}; the tag comes from {ns}:temp _zb_iter_tag.
 	write_versioned_function("maps/editor/summon_zb_object_iter", f"""
 execute store result score #rx {ns}.data run data get storage {ns}:temp _zb_iter[0].pos[0]
@@ -231,6 +238,7 @@ execute as @n[tag={ns}.new_zb_marker] run function {ns}:v{version}/maps/editor/b
 # The entity Rotation is synced too, for model displays.
 execute if data storage {ns}:temp _zb_iter[0].rotation as @n[tag={ns}.new_zb_marker] run data modify entity @s data.yaw set from storage {ns}:temp _zb_iter[0].rotation[0]
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s Rotation[0] set from entity @s data.yaw
+{pitch_lines}
 
 tag @e[tag={ns}.new_zb_marker] remove {ns}.new_zb_marker
 

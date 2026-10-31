@@ -1,6 +1,6 @@
 """ Black Ops 2 zombie vocals: the four sound channels and the per-player budgets that keep them readable.
 
-Round zombies are summoned Silent, so every sound they make is played from here.
+Zombie enemies are made Silent, so every sound they make is played from here; other entities keep their own.
 BO2 splits zombie vocals into ambient, attack and sprint (plus crawlers) and picks the set from the zombie's gait.
 The files confirm it: sprint clips run 3.0-5.3 s, every other bark 0.4-2.2 s.
 
@@ -90,7 +90,7 @@ def generate_vocals() -> None:
 	# HORDE_MIN_INTERVAL caps the rate: a bigger horde is louder and reaches further, not more frequent.
 	write_versioned_function("zombies/horde_ambient", f"""
 # Run as an in-game player.
-execute store result score #horde_count {ns}.data if entity @e[tag={ns}.zombie_round,distance=..{VOCAL_RANGE}]
+execute store result score #horde_count {ns}.data if entity @e[type=minecraft:zombie,tag={ns}.zombie_round,distance=..{VOCAL_RANGE}]
 
 # Nothing nearby: wait a full cycle before the next entity scan.
 execute if score #horde_count {ns}.data matches ..0 run scoreboard players set @s {ns}.zb.horde_cd {HORDE_MAX_INTERVAL}
@@ -106,20 +106,20 @@ execute store result storage {ns}:temp _horde.vol double 0.01 run scoreboard pla
 
 # Sprint channel first, like BO2: the sprinter closing in, one scream at a time (SPRINT_LOCKOUT), never pitch-shifted.
 scoreboard players set #horde_sprint {ns}.data 0
-execute unless score @s {ns}.zb.vox_sprint > #total_tick {ns}.data store success score #horde_sprint {ns}.data at @n[tag={ns}.zb_sprint,tag={ns}.zombie_round,distance=..{VOCAL_RANGE},sort=random] run function {ns}:v{version}/zombies/vocals/horde_sprint with storage {ns}:temp _horde
+execute unless score @s {ns}.zb.vox_sprint > #total_tick {ns}.data store success score #horde_sprint {ns}.data at @n[type=minecraft:zombie,tag={ns}.zb_sprint,tag={ns}.zombie_round,distance=..{VOCAL_RANGE},sort=random] run function {ns}:v{version}/zombies/vocals/horde_sprint with storage {ns}:temp _horde
 execute if score #horde_sprint {ns}.data matches 1 run scoreboard players operation @s {ns}.zb.vox_sprint = #total_tick {ns}.data
 execute if score #horde_sprint {ns}.data matches 1 run scoreboard players add @s {ns}.zb.vox_sprint {SPRINT_LOCKOUT}
 
 # Behind channel: `rotated ~180 0` puts ^ ^ ^{BEHIND_DISTANCE} straight behind the player at their height. Rolled, so it is rare.
 execute if score #horde_sprint {ns}.data matches 0 store result score #horde_behind_roll {ns}.data run random value 1..100
 scoreboard players set #horde_behind {ns}.data 0
-execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind_roll {ns}.data matches ..{BEHIND_CHANCE} store success score #horde_behind {ns}.data rotated ~180 0 positioned ^ ^ ^{BEHIND_DISTANCE} at @n[tag={ns}.zombie_round,distance=..{BEHIND_RADIUS}] run function {ns}:v{version}/zombies/vocals/horde_behind
+execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind_roll {ns}.data matches ..{BEHIND_CHANCE} store success score #horde_behind {ns}.data rotated ~180 0 positioned ^ ^ ^{BEHIND_DISTANCE} at @n[type=minecraft:zombie,tag={ns}.zombie_round,distance=..{BEHIND_RADIUS}] run function {ns}:v{version}/zombies/vocals/horde_behind
 
 # Otherwise a short groan from a random nearby zombie, so it comes from the right direction;
 # random pitch 0.70 to 1.05 keeps 6 clips from sounding repetitive.
 execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind {ns}.data matches 0 store result score #horde_pitch {ns}.data run random value 70..105
 execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind {ns}.data matches 0 store result storage {ns}:temp _horde.pitch double 0.01 run scoreboard players get #horde_pitch {ns}.data
-execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind {ns}.data matches 0 at @e[tag={ns}.zombie_round,distance=..{VOCAL_RANGE},sort=random,limit=1] run function {ns}:v{version}/zombies/vocals/horde_ambient with storage {ns}:temp _horde
+execute if score #horde_sprint {ns}.data matches 0 if score #horde_behind {ns}.data matches 0 at @e[type=minecraft:zombie,tag={ns}.zombie_round,distance=..{VOCAL_RANGE},sort=random,limit=1] run function {ns}:v{version}/zombies/vocals/horde_ambient with storage {ns}:temp _horde
 
 # Next vocal in {HORDE_MAX_INTERVAL} ticks / nearby count: a lone zombie every {HORDE_MAX_INTERVAL / 20:.1f} s,
 # {-(-HORDE_MAX_INTERVAL // HORDE_MIN_INTERVAL)}+ zombies at the {HORDE_MIN_INTERVAL / 20:.1f} s floor.
@@ -146,11 +146,11 @@ $playsound {ns}:{VOCAL_SPRINT} hostile @s ~ ~ ~ $(vol) 1.0
 return 1
 """)
 
-	## Melee grunt, run as the player just hit, played from the attacker so a hit from behind sounds like one. Not for dogs.
+	## Melee grunt, run as the player just hit, played from the attacker so a hit from behind sounds like one.
 	write_versioned_function("zombies/vocals/attack", f"""
 scoreboard players operation @s {ns}.zb.vox_attack = #total_tick {ns}.data
 scoreboard players add @s {ns}.zb.vox_attack {ATTACK_LOCKOUT}
-execute at @n[tag={ns}.zombie_round,tag=!{ns}.zb_dog,distance=..{ATTACK_REACH}] run playsound {ns}:{VOCAL_ATTACK} hostile @s ~ ~ ~ 1.0 1.0
+execute at @n[type=minecraft:zombie,tag={ns}.zombie_round,distance=..{ATTACK_REACH}] run playsound {ns}:{VOCAL_ATTACK} hostile @s ~ ~ ~ 1.0 1.0
 """)
 
 	## Death groan, run as the zombie on the tick its Health reached 0. Budgeted per player, so a Nuke thins out.

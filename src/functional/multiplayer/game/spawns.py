@@ -13,11 +13,11 @@ def write_multiplayer_spawns() -> None:
 
 	## Run at game start.
 	write_versioned_function("multiplayer/summon_spawns", f"""
-{CoreSpawning.spawn_category_lines("multiplayer", "red", "spawn_red")}
+{CoreSpawning.spawn_category_lines("multiplayer", "red", "spawn_red", "Red Spawn")}
 
-{CoreSpawning.spawn_category_lines("multiplayer", "blue", "spawn_blue")}
+{CoreSpawning.spawn_category_lines("multiplayer", "blue", "spawn_blue", "Blue Spawn")}
 
-{CoreSpawning.spawn_category_lines("multiplayer", "general", "spawn_general")}
+{CoreSpawning.spawn_category_lines("multiplayer", "general", "spawn_general", "General Spawn")}
 """)
 
 	CoreSpawning.write_array_spawn_iter("multiplayer")

@@ -1,6 +1,6 @@
 """ Game tick hooks and the bulk-kill cleanup. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import Mem, write_tag, write_versioned_function
 
 
 # Functions
@@ -21,27 +21,28 @@ function {ns}:v{version}/zombies/watchdog_tick
 # Once a second, at most one aura zombie (types/aura is unique).
 execute if score #zb_tick_mod {ns}.data matches 0 as @e[type=minecraft:zombie,tag={ns}.zb_aura,limit=1] at @s run function {ns}:v{version}/zombies/aura_tick
 
-# Gated on the round kind, not #zb_dog_pending: a portal orphaned by a desynced counter would never tick, strike or die.
-execute if score #zb_dog_round {ns}.data matches 1 as @e[type=minecraft:marker,tag={ns}.dog_portal] at @s run function {ns}:v{version}/zombies/dog_portal_tick
+# Not gated on #zb_portal_pending: a portal orphaned by a desynced counter would never tick, strike or die.
+execute as @e[type=minecraft:marker,tag={ns}.zb_portal] at @s run function {ns}:v{version}/zombies/portal_tick
 
-# A dog that missed its scaling is a vanilla 8 HP wolf. types/dog tags what it scales, so this normally matches nothing.
-execute if score #zb_dog_round {ns}.data matches 1 as @e[type=minecraft:wolf,tag={ns}.zb_dog,tag=!{ns}.zb_scaled] run function {ns}:v{version}/zombies/types/dog
-
-# Wolves hunt nothing without an anger target. `angry_at` alone is enough (setTarget runs from it on reload);
-# AngerTime does nothing, the saved anger_end_time outranks it. #zb_tick_mod is total_tick % 20.
-execute if score #zb_dog_round {ns}.data matches 1 if score #zb_tick_mod {ns}.data matches 0 as @e[type=minecraft:wolf,tag={ns}.zb_dog,tag=!{ns}.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,gamemode=!creative] UUID
+# Wolves, bees, golems and other neutral mobs hunt nothing without an anger target. `angry_at` alone is enough (setTarget
+# runs from it on reload); AngerTime does nothing, the saved anger_end_time outranks it. #zb_tick_mod is total_tick % 20.
+execute if score #zb_tick_mod {ns}.data matches 0 as @e[type=#{ns}:v{version}/zombies/neutral,tag={ns}.zombie_round,tag=!{ns}.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,gamemode=!creative] UUID
 
 # Each player's cooldown is refreshed by horde_ambient from the zombie count near them; it also owns the sprint channel.
-# Skipped on dog rounds: dogs are not Silent, their growls are the ambience.
 scoreboard players remove @a[scores={{{ns}.zb.in_game=1,{ns}.zb.horde_cd=1..}}] {ns}.zb.horde_cd 1
-execute if score #zb_dog_round {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.horde_cd=..0}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/horde_ambient
+execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.horde_cd=..0}},gamemode=!spectator] at @s run function {ns}:v{version}/zombies/horde_ambient
 """)
+
+	# The mobs that only attack once angered; every other one picks its target on its own.
+	write_tag(f"{ns}:v{version}/zombies/neutral", Mem.ctx.data.entity_type_tags, [
+		"minecraft:wolf", "minecraft:bee", "minecraft:iron_golem", "minecraft:polar_bear", "minecraft:enderman", "minecraft:zombified_piglin",
+	])
 
 	write_versioned_function("zombies/stop", f"""
 kill @e[type=minecraft:marker,tag={ns}.death_watch]
 
 # zombies_entity cleanup removes the portals, but the counter must be zeroed or the next game's round would never complete.
-kill @e[type=minecraft:marker,tag={ns}.dog_portal]
-scoreboard players set #zb_dog_pending {ns}.data 0
+kill @e[type=minecraft:marker,tag={ns}.zb_portal]
+scoreboard players set #zb_portal_pending {ns}.data 0
 """)
 

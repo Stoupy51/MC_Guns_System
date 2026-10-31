@@ -43,13 +43,13 @@ scoreboard players set #kino_met_count {ns}.data 0
 execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~ ~2 ~2 cobblestone
 
 ## Teleporter
-execute positioned ~-57 ~-1 ~9 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.teleporter","{ns}.kino.teleporter_theater","bs.entity.interaction"],width:1.0f,height:2.0f}}
-execute positioned ~ ~ ~ run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.teleporter","{ns}.kino.teleporter_lobby","bs.entity.interaction"],width:1.0f,height:1.0f}}
+execute positioned ~-57 ~-1 ~9 run summon interaction ~ ~ ~ {{CustomName:"Kino Teleporter (theater)",Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.teleporter","{ns}.kino.teleporter_theater","bs.entity.interaction"],width:1.0f,height:2.0f}}
+execute positioned ~ ~ ~ run summon interaction ~ ~ ~ {{CustomName:"Kino Teleporter (lobby)",Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.teleporter","{ns}.kino.teleporter_lobby","bs.entity.interaction"],width:1.0f,height:1.0f}}
 
 ## Meteorites
-execute positioned ~-12 ~0 ~-5 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.meteorite_1","bs.entity.interaction"],width:1.1f,height:2.1f}}
-execute positioned ~-58 ~-2 ~-22 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.meteorite_2","bs.entity.interaction"],width:1.1f,height:2.1f}}
-execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {{Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.meteorite_3","bs.entity.interaction"],width:1.1f,height:2.1f}}
+execute positioned ~-12 ~0 ~-5 run summon interaction ~ ~ ~ {{CustomName:"Kino Meteorite 1",Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.meteorite_1","bs.entity.interaction"],width:1.1f,height:2.1f}}
+execute positioned ~-58 ~-2 ~-22 run summon interaction ~ ~ ~ {{CustomName:"Kino Meteorite 2",Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.meteorite_2","bs.entity.interaction"],width:1.1f,height:2.1f}}
+execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {{CustomName:"Kino Meteorite 3",Tags:["{ns}.kino","{ns}.zombies_entity","{ns}.kino.meteorite_3","bs.entity.interaction"],width:1.1f,height:2.1f}}
 
 execute as @e[tag={ns}.kino] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/maps/zombies/kino_der_toten/on_right_click",executor:"target"}}
 execute as @e[tag={ns}.kino.teleporter] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/on_hover",executor:"source"}}
@@ -269,7 +269,7 @@ scoreboard players set #kino_met_count {ns}.data 0
 	# setup_lure: when every player hides in the PaP room, the horde gathers at the theater centre instead of the PaP door (see escort).
 	# Runs from #{ns}:zombies/setup_lure positioned at the map base, so the marker sits at base + (~-49 ~-3 ~0).
 	write_versioned_function("maps/zombies/kino_der_toten/setup_lure",
-		f'execute if data storage {ns}:zombies game{{map_id:"kino_der_toten"}} positioned ~-49 ~-3 ~0 run summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.lure_center","{ns}.zombies_entity"]}}',
+		f'execute if data storage {ns}:zombies game{{map_id:"kino_der_toten"}} positioned ~-49 ~-3 ~0 run summon minecraft:marker ~ ~ ~ {{CustomName:"Lure Centre",Tags:["{ns}.lure_center","{ns}.zombies_entity"]}}',
 		tags=[f"{ns}:zombies/setup_lure"]
 	)
 

@@ -1,4 +1,4 @@
-""" Starting a round and the zombie/dog count curves that size it. """
+""" Starting a round and the normal and special count curves that size it. """
 # Imports
 from stewbeet import Mem, write_versioned_function
 
@@ -19,18 +19,26 @@ execute store result score #zb_round {ns}.data run data get storage {ns}:zombies
 scoreboard players add #zb_round {ns}.data 1
 execute store result storage {ns}:zombies game.round int 1 run scoreboard players get #zb_round {ns}.data
 
-# Dog round: every 5th round from 5, only on maps with special spawn markers.
-scoreboard players set #zb_dog_round {ns}.data 0
-scoreboard players operation #zb_dog_mod {ns}.data = #zb_round {ns}.data
-scoreboard players operation #zb_dog_mod {ns}.data %= #5 {ns}.data
-execute if score #zb_has_special {ns}.data matches 1 if score #zb_round {ns}.data matches 5.. if score #zb_dog_mod {ns}.data matches 0 run scoreboard players set #zb_dog_round {ns}.data 1
+function {ns}:v{version}/zombies/spawns/check_rounds
+
+# Special round: every 5th round from 5, when a special spawn is open and in its round bounds.
+scoreboard players set #zb_special_round {ns}.data 0
+scoreboard players operation #zb_special_mod {ns}.data = #zb_round {ns}.data
+scoreboard players operation #zb_special_mod {ns}.data %= #5 {ns}.data
+execute if score #zb_round {ns}.data matches 5.. if score #zb_special_mod {ns}.data matches 0 if entity @e[type=minecraft:marker,tag={ns}.spawn_special,tag={ns}.spawn_unlocked,tag={ns}.spawn_round_ok] run scoreboard players set #zb_special_round {ns}.data 1
+
+# The round's tier, for armed enemies: rounds 1-5 give 1, 6-10 give 2, 11-15 give 3, 16+ give 4.
+scoreboard players set #zb_level {ns}.data 4
+execute if score #zb_round {ns}.data matches ..15 run scoreboard players set #zb_level {ns}.data 3
+execute if score #zb_round {ns}.data matches ..10 run scoreboard players set #zb_level {ns}.data 2
+execute if score #zb_round {ns}.data matches ..5 run scoreboard players set #zb_level {ns}.data 1
 
 # Clamped at 4, used by both round-size formulas.
 execute store result score #zb_player_count {ns}.data if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator]
 execute if score #zb_player_count {ns}.data matches 5.. run scoreboard players set #zb_player_count {ns}.data 4
 
-execute if score #zb_dog_round {ns}.data matches 0 run function {ns}:v{version}/zombies/calc_round_count_zombies
-execute if score #zb_dog_round {ns}.data matches 1 run function {ns}:v{version}/zombies/calc_round_count_dogs
+execute if score #zb_special_round {ns}.data matches 0 run function {ns}:v{version}/zombies/calc_round_count_zombies
+execute if score #zb_special_round {ns}.data matches 1 run function {ns}:v{version}/zombies/calc_round_count_special
 
 # zb_to_spawn counts down as they spawn; the power-up drop chance needs the total (see powerups/check_drop).
 scoreboard players operation #zb_round_total {ns}.data = #zb_to_spawn {ns}.data
@@ -51,12 +59,12 @@ function #{ns}:zombies/on_round_start
 
 function {ns}:v{version}/zombies/refresh_sidebar
 
-execute if score #zb_dog_round {ns}.data matches 0 run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"red"}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" has begun!","color":"red"}}]
-execute if score #zb_dog_round {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_start_generic ambient @s ~ ~ ~ 0.3 1.0
+execute if score #zb_special_round {ns}.data matches 0 run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Round ","color":"red"}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" has begun!","color":"red"}}]
+execute if score #zb_special_round {ns}.data matches 0 as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/round_start_generic ambient @s ~ ~ ~ 0.3 1.0
 
-# Dog rounds have their own announcement and howl instead of the round jingle.
-execute if score #zb_dog_round {ns}.data matches 1 run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_red","bold":true}},"🐺 ",{{"text":"Round ","color":"dark_red"}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":": the hounds are loose!","color":"dark_red"}}]
-execute if score #zb_dog_round {ns}.data matches 1 as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound minecraft:entity.wolf.howl ambient @s ~ ~ ~ 1.0 0.6
+# Special rounds have their own announcement and howl instead of the round jingle; what comes depends on the map's special spawns.
+execute if score #zb_special_round {ns}.data matches 1 run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_red","bold":true}},"⚠ ",{{"text":"Round ","color":"dark_red"}},{{"score":{{"name":"#zb_round","objective":"{ns}.data"}},"color":"gold","bold":true}},{{"text":" is a special round!","color":"dark_red"}}]
+execute if score #zb_special_round {ns}.data matches 1 as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound minecraft:entity.wolf.howl ambient @s ~ ~ ~ 1.0 0.6
 """)
 
 	early_round_lines: str = "\n".join(
@@ -79,7 +87,7 @@ execute if score #zb_to_spawn {ns}.data matches 257.. run scoreboard players set
 
 	## min(48, min(12, 4 + round / 3) x min(4, players)): short bursts, not another attrition wave.
 	## Solo: r5 5, r10 7, r20 10, 12 from r25. 4+ players: r5 20, r10 28, r20 40, 48 from r25.
-	write_versioned_function("zombies/calc_round_count_dogs", f"""
+	write_versioned_function("zombies/calc_round_count_special", f"""
 scoreboard players operation #zb_to_spawn {ns}.data = #zb_round {ns}.data
 scoreboard players operation #zb_to_spawn {ns}.data /= #3 {ns}.data
 scoreboard players add #zb_to_spawn {ns}.data 4
@@ -87,11 +95,11 @@ execute if score #zb_to_spawn {ns}.data matches 13.. run scoreboard players set 
 scoreboard players operation #zb_to_spawn {ns}.data *= #zb_player_count {ns}.data
 execute if score #zb_to_spawn {ns}.data matches 49.. run scoreboard players set #zb_to_spawn {ns}.data 48
 
-# Hounds come in packs scaled by players (solo 3, 4 players 6), refilled as they die (BO).
-scoreboard players operation #zb_dog_cap {ns}.data = #zb_player_count {ns}.data
-scoreboard players add #zb_dog_cap {ns}.data 2
+# They come in packs scaled by players (solo 3, 4 players 6), refilled as they die, like BO hounds.
+scoreboard players operation #zb_special_cap {ns}.data = #zb_player_count {ns}.data
+scoreboard players add #zb_special_cap {ns}.data 2
 
 # The guaranteed Max Ammo of this round.
-scoreboard players set #zb_dog_ammo_done {ns}.data 0
+scoreboard players set #zb_special_ammo_done {ns}.data 0
 """)
 

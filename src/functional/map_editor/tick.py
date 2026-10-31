@@ -26,9 +26,9 @@ def write_editor_tick() -> None:
 	# Nor the white rotation tick.
 	model_excluded: str = "".join(f",tag=!{ns}.element.{etype}" for etype in MODEL_DISPLAY_ELEMENTS)
 
-	# Run as the nearest marker.
+	# Run as the nearest marker, whose name tells its configuration (see sync_marker).
 	write_versioned_function("maps/editor/actionbar_nearest", "\n".join(
-		f'execute if entity @s[tag={ns}.element.{etype}] run return run title @a[tag={ns}.check_nearest] actionbar [{{"text":"{einfo.emoji} ","color":"{einfo.color}"}},{{"text":"{einfo.name}"}}]'
+		f'execute if entity @s[tag={ns}.element.{etype}] run return run title @a[tag={ns}.check_nearest] actionbar [{{"text":"{einfo.emoji} ","color":"{einfo.color}"}},{{"selector":"@s"}}]'
 		for etype, einfo in ALL_ELEMENTS.items() if einfo.save_type != "config"
 	))
 
@@ -49,10 +49,10 @@ execute unless score #ed_global_tick {ns}.data = #total_tick {ns}.data run funct
 # The other editors skip the call above.
 scoreboard players operation #ed_global_tick {ns}.data = #total_tick {ns}.data
 
-# Checked once a second and rebuilt only after an edit: syncing a marker's rotation is an NBT read and write, and yaw only changes on edits.
+# Checked once a second and rebuilt only after an edit: a marker's rotation, name and shapes only change with its data.
 scoreboard players operation #ed_disp_phase {ns}.data = #total_tick {ns}.data
 scoreboard players operation #ed_disp_phase {ns}.data %= #20 {ns}.data
-execute if score #ed_disp_phase {ns}.data matches 0 as @e[type=minecraft:marker,tag={ns}.map_element] run data modify entity @s Rotation[0] set from entity @s data.yaw
+execute if score #ed_disp_phase {ns}.data matches 0 as @e[type=minecraft:marker,tag={ns}.map_element] run function {ns}:v{version}/maps/editor/sync_marker
 execute if score #ed_disp_phase {ns}.data matches 0 run function {ns}:v{version}/maps/editor/displays/sync
 
 # Every 4 ticks: dust lingers about a second, so it looks the same with a quarter of the commands and packets.
@@ -66,5 +66,9 @@ execute if score #ed_part_phase {ns}.data matches 0 run function {ns}:v{version}
 execute as @e[type=minecraft:marker,tag={ns}.map_element{model_excluded}] at @s positioned ^ ^ ^0.5 run particle dust{{color:[1.0,1.0,1.0],scale:0.5}} ~ ~1.69 ~ 0.1 0.1 0.1 0 5 normal {editor_viewers}
 
 {particles}
+
+# Activation boxes and walk-to spots of the spawns near an editor (see spawn_shapes).
+execute as @a[scores={{{ns}.mp.map_edit=1}}] at @s as @e[type=minecraft:marker,tag={ns}.ed_box,distance=..32] run function {ns}:v{version}/maps/editor/draw_box with entity @s data._ed.box
+execute as @a[scores={{{ns}.mp.map_edit=1}}] at @s as @e[type=minecraft:marker,tag={ns}.ed_walk,distance=..32] run function {ns}:v{version}/maps/editor/draw_walk with entity @s data._ed.walk
 """)
 

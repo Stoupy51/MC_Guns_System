@@ -28,7 +28,7 @@ kill @s
 
 	## Run as the active interaction entity: a rising teddy bear and the move timer.
 	write_versioned_function("zombies/wunderfizz/move_start", f"""
-execute positioned ~ ~-1.5 ~ run summon minecraft:item_display ~ ~ ~ {{Tags:["{ns}.wf_bear","{ns}.zombies_entity","{ns}.wf_bear_new"],item_display:"fixed",billboard:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
+execute positioned ~ ~-1.5 ~ run summon minecraft:item_display ~ ~ ~ {{CustomName:"Der Wunderfizz Bear",Tags:["{ns}.wf_bear","{ns}.zombies_entity","{ns}.wf_bear_new"],item_display:"fixed",billboard:"fixed",transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}}}
 loot replace entity @n[tag={ns}.wf_bear_new] contents loot {ns}:zombies/roaming_bear
 data merge entity @n[tag={ns}.wf_bear_new] {{teleport_duration:2}}
 tag @e[tag={ns}.wf_bear_new] remove {ns}.wf_bear_new

@@ -98,6 +98,7 @@ scoreboard players set @n[tag={ns}.pap_new] {ns}.pap_anim -1
 
 # netherite_block by default; maps can override display_item and item_model.
 data modify storage {ns}:temp _pap_disp.tag set value "{ns}.pap_display"
+data modify storage {ns}:temp _pap_disp.name set value "Pack-a-Punch"
 data modify storage {ns}:temp _pap_disp.item_id set value ""
 data modify storage {ns}:temp _pap_disp.item_model set value ""
 data modify storage {ns}:temp _pap_disp.yaw set value 0.0
@@ -125,7 +126,7 @@ execute if data storage {ns}:temp _pap_iter[0] run function {ns}:v{version}/zomb
 """)
 
 	write_versioned_function("zombies/pap/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:1.69f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.pap_machine","{ns}.zombies_entity","bs.entity.interaction","{ns}.pap_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:1.69f,height:-2.0f,response:true,Rotation:$(rotation),CustomName:"Pack-a-Punch",Tags:["{ns}.pap_machine","{ns}.zombies_entity","bs.entity.interaction","{ns}.pap_new"]}}
 """)
 
 	write_versioned_function("zombies/pap/store_data", f"""

@@ -1,7 +1,7 @@
 """ Power switch system.
 
 A one-time activatable wall switch (custom breaker-box model) that enables power for the map.
-Elements with power:true (perk machines, traps) require power to be active.
+Elements with power:true (perk machines, traps, zombie spawns) require power to be active.
 The switch renders as an item_display using the {ns}:power_switch model (database/items.py).
 Activating it swaps to {ns}:power_switch_on, recoloring the handle and indicator light green.
 """
@@ -49,9 +49,9 @@ execute if data storage {ns}:temp _pw_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/power/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:0.9f,height:0.9f,response:true,Tags:["{ns}.power_switch","{ns}.zombies_entity","bs.entity.interaction","_pw_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:0.9f,height:0.9f,response:true,CustomName:"Power Switch",Tags:["{ns}.power_switch","{ns}.zombies_entity","bs.entity.interaction","_pw_new"]}}
 
-$execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],Tags:["{ns}.power_switch_disp","{ns}.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
+$execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],CustomName:"Power Switch Model",Tags:["{ns}.power_switch_disp","{ns}.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
 
 execute as @e[tag=_pw_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/zombies/power/on_activate",executor:"source"}}
 execute as @e[tag=_pw_new] run function #bs.interaction:on_hover {{run:"function {ns}:v{version}/zombies/power/on_hover",executor:"source"}}
@@ -65,6 +65,7 @@ tag @e[tag=_pw_new] remove _pw_new
 execute if score #zb_power {ns}.data matches 1 run return run {deny_already_on}
 
 scoreboard players set #zb_power {ns}.data 1
+tag @e[type=minecraft:marker,tag={ns}.spawn_point] add {ns}.spawn_powered
 
 execute as @e[tag={ns}.power_switch] at @s run particle minecraft:electric_spark ~ ~1 ~ 0.5 0.5 0.5 0.1 20
 execute as @e[tag={ns}.power_switch] at @s run playsound minecraft:entity.firework_rocket.twinkle_far ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 2 1

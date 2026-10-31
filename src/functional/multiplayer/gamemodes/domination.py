@@ -68,8 +68,8 @@ execute if data storage {ns}:temp _dom_iter[0] run function {ns}:v{version}/mult
 """)
 
 		self.sub("summon_point_at", f"""
-$summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.dom_point","{ns}.multiplayer_entity","{ns}.dom_label_$(label)"]}}
-$summon minecraft:text_display $(x) $(y) $(z) {{Tags:["{ns}.dom_label","{ns}.multiplayer_entity","{ns}.dom_$(label)"],billboard:"vertical",text:{{"text":"$(label)","color":"yellow","bold":true}},transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
+$summon minecraft:marker $(x) $(y) $(z) {{CustomName:"Domination Point $(label)",Tags:["{ns}.dom_point","{ns}.multiplayer_entity","{ns}.dom_label_$(label)"]}}
+$summon minecraft:text_display $(x) $(y) $(z) {{CustomName:"Domination Label $(label)",Tags:["{ns}.dom_label","{ns}.multiplayer_entity","{ns}.dom_$(label)"],billboard:"vertical",text:{{"text":"$(label)","color":"yellow","bold":true}},transformation:{{translation:[0.0f,2.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[3.0f,3.0f,3.0f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}},shadow:true,see_through:true}}
 """)
 
 		self.sub("tick", f"""
