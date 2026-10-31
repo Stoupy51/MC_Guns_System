@@ -7,7 +7,7 @@
 # Any spawn, kill or portal strike moves it.
 scoreboard players operation #zb_wd_fp mgs.data = #zb_alive mgs.data
 scoreboard players operation #zb_wd_fp mgs.data += #zb_to_spawn mgs.data
-scoreboard players operation #zb_wd_fp mgs.data += #zb_dog_pending mgs.data
+scoreboard players operation #zb_wd_fp mgs.data += #zb_portal_pending mgs.data
 
 # Anything alive is progress: kiting is a normal state, and unreachable zombies are the stuck system's job.
 scoreboard players set #zb_wd_moved mgs.data 0

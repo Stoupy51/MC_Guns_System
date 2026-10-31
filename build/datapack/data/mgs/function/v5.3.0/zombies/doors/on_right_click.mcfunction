@@ -8,6 +8,9 @@
 
 execute unless data storage mgs:zombies game{state:"active"} run return fail
 
+execute store result score #door_min_round mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.door.minr
+execute if score #door_min_round mgs.data > #zb_round mgs.data run return run function mgs:v5.3.0/zombies/deny/message {msg:'[{"translate":"mgs.locked_until_round","fallback":"Locked until round ","color":"red"},{"score":{"name":"#door_min_round","objective":"mgs.data"},"color":"gold"}]'}
+
 function mgs:v5.3.0/zombies/doors/read_price
 
 execute unless score @s mgs.zb.points >= #door_price mgs.data run return run function mgs:v5.3.0/zombies/deny/not_enough_points {score:"#door_price",obj:"mgs.data"}

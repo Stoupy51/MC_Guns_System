@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "box_start.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/forms.py"
+	],
+	"names": [],
+	"mappings": "AAmMwD;;;;;;AACxD;AACA;AACA;AACA"
+}

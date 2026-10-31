@@ -1,10 +1,9 @@
 
 #> mgs:v5.3.0/zombies/absorb_above_cap
 #
-# @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
+# @executed	as @n[tag=mgs.zb_new]
 #
 # @within	mgs:v5.3.0/zombies/apply_zombie_hp
-#			mgs:v5.3.0/zombies/types/dog
 #
 
 scoreboard players operation #zb_absorb mgs.data = @s mgs.zb.max_hp

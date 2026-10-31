@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "box_corner.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/forms.py"
+	],
+	"names": [],
+	"mappings": "AA6MyD;;;;;;;;AACzD;AACA;AACA;AACA;AACA"
+}

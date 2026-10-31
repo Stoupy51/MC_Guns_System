@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "instant.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/arrival.py"
+	],
+	"names": [],
+	"mappings": "AAyCqD;;;;;;;;AACrD;AACA;AACA;AACA"
+}

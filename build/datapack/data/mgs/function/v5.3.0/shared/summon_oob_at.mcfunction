@@ -9,5 +9,5 @@
 #			mode (unknown)
 #
 
-$summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.oob_point","mgs.$(mode)_entity"]}
+$summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.oob_point","mgs.$(mode)_entity"],CustomName:"Out of Bounds"}
 

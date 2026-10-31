@@ -3,8 +3,9 @@
 	"file": "cleanup.mcfunction",
 	"sourceRoot": "../../../../../../../..",
 	"sources": [
+		"src/functional/map_editor/forms.py",
 		"src/functional/map_editor/exit.py"
 	],
 	"names": [],
-	"mappings": "AAmBiD;;;;;;;;;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAwMiD;;;;;;;;;AACjD;ACtLiD;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

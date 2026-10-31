@@ -24,9 +24,8 @@ execute if data storage mgs:zombies mystery_box.result.weapon_id run function mg
 execute unless data storage mgs:zombies mystery_box.result.weapon_id run data modify entity @s item set from storage mgs:zombies mystery_box.result.display_item
 data modify entity @s item.components."minecraft:custom_data".mgs.mb_result set from storage mgs:zombies mystery_box.result
 
-# Over 7.5 s (150 ticks).
-data merge entity @s {transformation:{translation:[0f,1.5f,0f]}}
-data merge entity @s {interpolation_duration:150,transformation:{translation:[0f,0f,0f]},start_interpolation:0}
+# Sinks back into the box over 7.5 s (150 ticks).
+function mgs:v5.3.0/zombies/mystery_box/display_result
 
 execute as @a[scores={mgs.zb.in_game=1}] if score @s mgs.mb.pid = #this_buyer mgs.data run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mystery_box_result_ready","fallback":"Mystery Box result ready! ","color":"light_purple"},{"translate":"mgs.right_click_to_collect","fallback":"Right-click to collect!","color":"green","bold":true}]
 

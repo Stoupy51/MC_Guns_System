@@ -4,7 +4,7 @@
 # @executed	at @s
 #
 # @within	mgs:v5.3.0/zombies/on_zombie_dying
-#			mgs:v5.3.0/zombies/dog_max_ammo_at_self
+#			mgs:v5.3.0/zombies/special_max_ammo
 #
 
 scoreboard players add #pu_uid mgs.data 1

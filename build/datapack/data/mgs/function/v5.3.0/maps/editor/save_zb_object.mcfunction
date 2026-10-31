@@ -37,13 +37,16 @@ execute store result storage mgs:temp _save_zb.pos[0] int 1 run scoreboard playe
 execute store result storage mgs:temp _save_zb.pos[1] int 1 run scoreboard players get #ay mgs.data
 execute store result storage mgs:temp _save_zb.pos[2] int 1 run scoreboard players get #az mgs.data
 
-# Pitch is always 0.
+# Pitch is 0 unless the element has one (the mystery box).
 data modify storage mgs:temp _save_zb.rotation set value [0.0f, 0.0f]
 data modify storage mgs:temp _save_zb.rotation[0] set from entity @s data.yaw
+execute if data entity @s data.pitch run data modify storage mgs:temp _save_zb.rotation[1] set from entity @s data.pitch
 
-# yaw lives in the rotation array.
+# yaw and pitch live in the rotation array; the rest is the editor's own.
 data remove storage mgs:temp _save_zb.yaw
+data remove storage mgs:temp _save_zb.pitch
 data remove storage mgs:temp _save_zb._disp_sig
+data remove storage mgs:temp _save_zb._ed
 execute if entity @s[tag=mgs.element.barricade] run function mgs:v5.3.0/maps/editor/strip_light_fields/barricade
 
 $data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_zb

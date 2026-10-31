@@ -11,7 +11,7 @@
 
 # Run as the machine, at it; $(slot) is the player's weapon slot (hotbar.1 to hotbar.3).
 
-execute positioned ~ ~-2 ~ positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.6 {Tags:["mgs.pap_weapon_display","mgs.zombies_entity"],billboard:"fixed",item_display:"fixed",transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.4f,0.4f,0.4f]}}
+execute positioned ~ ~-2 ~ positioned ~ ~0.8 ~ run summon minecraft:item_display ^ ^ ^0.6 {CustomName:"Pack-a-Punch Weapon",Tags:["mgs.pap_weapon_display","mgs.zombies_entity"],billboard:"fixed",item_display:"fixed",transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.4f,0.4f,0.4f]}}
 
 data modify entity @n[tag=mgs.pap_weapon_display,distance=..2] Rotation set from entity @s Rotation
 $item replace entity @n[tag=mgs.pap_weapon_display,distance=..2] contents from entity @p[tag=mgs.pap_owner] $(slot)

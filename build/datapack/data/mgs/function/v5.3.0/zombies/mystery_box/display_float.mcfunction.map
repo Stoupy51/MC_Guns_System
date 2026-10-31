@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "display_float.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/spin.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAkIC;AAAA;AAAA;AAAA"
+}

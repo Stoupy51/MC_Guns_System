@@ -25,7 +25,7 @@ scoreboard players operation @s mgs.zb.tsp.dying_wish = @s mgs.zb.perk.dying_wis
 scoreboard players operation @s mgs.zb.tsp.widows_wine = @s mgs.zb.perk.widows_wine
 
 # Tagged with the owner's downed_id, then moved to the death spot.
-summon minecraft:item_display ~ ~ ~ {Tags:["mgs.tombstone","mgs.tombstone_new","mgs.zombies_entity"],Glowing:true,billboard:"vertical",teleport_duration:1,item:{id:"minecraft:skeleton_skull",count:1},item_display:"ground",transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.3f,0f],scale:[1.2f,1.2f,1.2f]}}
+summon minecraft:item_display ~ ~ ~ {CustomName:"Tombstone",Tags:["mgs.tombstone","mgs.tombstone_new","mgs.zombies_entity"],Glowing:true,billboard:"vertical",teleport_duration:1,item:{id:"minecraft:skeleton_skull",count:1},item_display:"ground",transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.3f,0f],scale:[1.2f,1.2f,1.2f]}}
 scoreboard players operation @n[tag=mgs.tombstone_new] mgs.zb.downed_id = @s mgs.zb.downed_id
 scoreboard players set @n[tag=mgs.tombstone_new] mgs.zb.ts.state 0
 scoreboard players set @n[tag=mgs.tombstone_new] mgs.zb.ts.timer 0

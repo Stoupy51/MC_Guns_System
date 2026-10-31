@@ -9,6 +9,9 @@
 # Run as a non-rising zombie_round, every 20 ticks on up to 24 random ones. Progress resets the timer.
 # Timeout: 400 ticks without moving (100 once already rescued), 300 if it moves without getting closer, less when far.
 
+# A rider goes where its mount goes, and a teleport would pull it off.
+execute on vehicle run return 0
+
 # Distance bucket to the nearest alive player, 4 (very far) to 0 (adjacent).
 scoreboard players set #cur_dist_bucket mgs.data 4
 execute if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..96] run scoreboard players set #cur_dist_bucket mgs.data 3

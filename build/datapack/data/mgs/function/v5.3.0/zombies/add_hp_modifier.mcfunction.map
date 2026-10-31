@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "add_hp_modifier.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/mob/health.py"
+	],
+	"names": [],
+	"mappings": "AAgDqD;;;;;;;;;;AACrD;AACA"
+}

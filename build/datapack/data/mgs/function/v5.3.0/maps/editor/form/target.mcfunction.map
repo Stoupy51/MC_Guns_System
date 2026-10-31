@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "target.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/forms.py"
+	],
+	"names": [],
+	"mappings": "AA4BqD;;;;;;;;;;AACrD;AACA;AACA"
+}

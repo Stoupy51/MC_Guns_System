@@ -12,7 +12,7 @@ function mgs:v5.3.0/shared/maps/call_script_at_base {mode:"zombies",script:"tick
 
 execute if score #zb_to_spawn mgs.data matches 1.. run function mgs:v5.3.0/zombies/spawn_tick
 
-# Untyped: other enemies than zombies will rise too.
+# Untyped: a spawn's mob can be any entity.
 execute as @e[tag=mgs.zb_rising] at @s run function mgs:v5.3.0/zombies/zombie_rise_tick
 execute as @e[type=minecraft:marker,tag=mgs.zb_rise_dust] at @s run function mgs:v5.3.0/zombies/rise_dust_tick
 
@@ -21,10 +21,10 @@ execute if score #zb_has_bounds mgs.data matches 1 as @e[tag=mgs.zombie_round] a
 execute if score #zb_has_bounds mgs.data matches 1 as @e[type=player,scores={mgs.zb.in_game=1},gamemode=!creative,gamemode=!spectator] at @s run function mgs:v5.3.0/zombies/check_bounds_player
 
 execute store result score #zb_alive mgs.data if entity @e[tag=mgs.zombie_round]
-# Dogs still in their portal are not entities. #zb_dog_pending is only a fast gate: when it claims pending dogs,
+# Enemies still in their portal are not entities. #zb_portal_pending is only a fast gate: when it claims pending enemies,
 # it is resynced from the real portal count so a desynced counter cannot freeze the run.
-execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_dog_pending mgs.data matches 1.. store result score #zb_dog_pending mgs.data if entity @e[type=minecraft:marker,tag=mgs.dog_portal]
-execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_dog_pending mgs.data matches ..0 run function mgs:v5.3.0/zombies/round_complete
+execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_portal_pending mgs.data matches 1.. store result score #zb_portal_pending mgs.data if entity @e[type=minecraft:marker,tag=mgs.zb_portal]
+execute if score #zb_alive mgs.data matches 0 if score #zb_to_spawn mgs.data matches 0 if score #zb_portal_pending mgs.data matches ..0 run function mgs:v5.3.0/zombies/round_complete
 
 # Game over once nobody is left to revive anyone. Healthy: downed=0, not spectator (Who's Who owners included);
 # downed: downed=1, spectator; bled out: downed=0, spectator. Solo Quick Revive with uses left revives on its own.
@@ -68,6 +68,8 @@ kill @e[type=experience_orb]
 
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5.3.0/zombies/check_kill_points
 
+execute if score #zb_tick_mod mgs.data matches 0 run function mgs:v5.3.0/zombies/spawns/check_boxes
+
 # Before vanilla death particles.
 function mgs:v5.3.0/zombies/death_watch_tick
 
@@ -80,20 +82,16 @@ function mgs:v5.3.0/zombies/watchdog_tick
 # Once a second, at most one aura zombie (types/aura is unique).
 execute if score #zb_tick_mod mgs.data matches 0 as @e[type=minecraft:zombie,tag=mgs.zb_aura,limit=1] at @s run function mgs:v5.3.0/zombies/aura_tick
 
-# Gated on the round kind, not #zb_dog_pending: a portal orphaned by a desynced counter would never tick, strike or die.
-execute if score #zb_dog_round mgs.data matches 1 as @e[type=minecraft:marker,tag=mgs.dog_portal] at @s run function mgs:v5.3.0/zombies/dog_portal_tick
+# Not gated on #zb_portal_pending: a portal orphaned by a desynced counter would never tick, strike or die.
+execute as @e[type=minecraft:marker,tag=mgs.zb_portal] at @s run function mgs:v5.3.0/zombies/portal_tick
 
-# A dog that missed its scaling is a vanilla 8 HP wolf. types/dog tags what it scales, so this normally matches nothing.
-execute if score #zb_dog_round mgs.data matches 1 as @e[type=minecraft:wolf,tag=mgs.zb_dog,tag=!mgs.zb_scaled] run function mgs:v5.3.0/zombies/types/dog
-
-# Wolves hunt nothing without an anger target. `angry_at` alone is enough (setTarget runs from it on reload);
-# AngerTime does nothing, the saved anger_end_time outranks it. #zb_tick_mod is total_tick % 20.
-execute if score #zb_dog_round mgs.data matches 1 if score #zb_tick_mod mgs.data matches 0 as @e[type=minecraft:wolf,tag=mgs.zb_dog,tag=!mgs.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={mgs.zb.in_game=1},gamemode=!spectator,gamemode=!creative] UUID
+# Wolves, bees, golems and other neutral mobs hunt nothing without an anger target. `angry_at` alone is enough (setTarget
+# runs from it on reload); AngerTime does nothing, the saved anger_end_time outranks it. #zb_tick_mod is total_tick % 20.
+execute if score #zb_tick_mod mgs.data matches 0 as @e[type=#mgs:v5.3.0/zombies/neutral,tag=mgs.zombie_round,tag=!mgs.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={mgs.zb.in_game=1},gamemode=!spectator,gamemode=!creative] UUID
 
 # Each player's cooldown is refreshed by horde_ambient from the zombie count near them; it also owns the sprint channel.
-# Skipped on dog rounds: dogs are not Silent, their growls are the ambience.
 scoreboard players remove @a[scores={mgs.zb.in_game=1,mgs.zb.horde_cd=1..}] mgs.zb.horde_cd 1
-execute if score #zb_dog_round mgs.data matches 0 as @a[scores={mgs.zb.in_game=1,mgs.zb.horde_cd=..0},gamemode=!spectator] at @s run function mgs:v5.3.0/zombies/horde_ambient
+execute as @a[scores={mgs.zb.in_game=1,mgs.zb.horde_cd=..0},gamemode=!spectator] at @s run function mgs:v5.3.0/zombies/horde_ambient
 
 execute if score #zb_escort_count mgs.data matches 1.. as @e[tag=mgs.zb_escorted] at @s run function mgs:v5.3.0/zombies/escort/zombie_tick
 

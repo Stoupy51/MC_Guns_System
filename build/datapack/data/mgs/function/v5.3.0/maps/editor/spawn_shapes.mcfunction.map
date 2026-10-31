@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spawn_shapes.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/names.py"
+	],
+	"names": [],
+	"mappings": "AAkHsD;;;;;;;;AACtD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "special_max_ammo.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/completion.py"
+	],
+	"names": [],
+	"mappings": "AA8CsD;;;;;;;;AACtD;AACA;AACA"
+}

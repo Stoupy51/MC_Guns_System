@@ -9,6 +9,9 @@
 #			mgs:v5.3.0/zombies/monkey/pull_one
 #
 
+# A rider goes where its mount goes; the escort would pull it off.
+execute on vehicle run return fail
+
 # The trader walks and drags the frozen zombie. The team join covers zombies summoned before a mid-game /reload added the team.
 tag @s add mgs.zb_escorted
 team join mgs.horde @s

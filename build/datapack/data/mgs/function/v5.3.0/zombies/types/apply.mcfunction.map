@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "apply.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/types/__init__.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AA2DC;AAAA;AAAA;AAAA"
+}

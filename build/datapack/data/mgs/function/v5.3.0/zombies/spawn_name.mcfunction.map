@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spawn_name.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/spawns.py"
+	],
+	"names": [],
+	"mappings": "AAmHgD;;;;;;;;;;AAChD;AACA"
+}

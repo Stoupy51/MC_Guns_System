@@ -33,6 +33,7 @@ scoreboard players set @n[tag=mgs.pap_new] mgs.pap_anim -1
 
 # netherite_block by default; maps can override display_item and item_model.
 data modify storage mgs:temp _pap_disp.tag set value "mgs.pap_display"
+data modify storage mgs:temp _pap_disp.name set value "Pack-a-Punch"
 data modify storage mgs:temp _pap_disp.item_id set value ""
 data modify storage mgs:temp _pap_disp.item_model set value ""
 data modify storage mgs:temp _pap_disp.yaw set value 0.0

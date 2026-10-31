@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "give_gun.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/mob/build.py"
+	],
+	"names": [],
+	"mappings": "AAmFkD;;;;;;;;;;AAClD;AACA"
+}

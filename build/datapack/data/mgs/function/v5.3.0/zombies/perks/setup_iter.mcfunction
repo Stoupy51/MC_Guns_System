@@ -18,6 +18,8 @@ execute store result storage mgs:temp _pk.x int 1 run scoreboard players get #pk
 execute store result storage mgs:temp _pk.y int 1 run scoreboard players get #pky mgs.data
 execute store result storage mgs:temp _pk.z int 1 run scoreboard players get #pkz mgs.data
 data modify storage mgs:temp _pk.rotation set from storage mgs:temp _pk_iter[0].rotation
+data modify storage mgs:temp _pk.perk_id set value ""
+data modify storage mgs:temp _pk.perk_id set from storage mgs:temp _pk_iter[0].perk_id
 
 function mgs:v5.3.0/zombies/perks/place_at with storage mgs:temp _pk
 
@@ -65,6 +67,7 @@ execute as @n[tag=mgs.pk_new] run function #bs.interaction:on_hover {run:"functi
 
 # Potion by default; maps can override display_item and item_model.
 data modify storage mgs:temp _pk_disp.tag set value "mgs.pk_display"
+data modify storage mgs:temp _pk_disp.name set value "Perk Machine"
 data modify storage mgs:temp _pk_disp.item_id set value ""
 data modify storage mgs:temp _pk_disp.item_model set value ""
 data modify storage mgs:temp _pk_disp.yaw set value 0.0

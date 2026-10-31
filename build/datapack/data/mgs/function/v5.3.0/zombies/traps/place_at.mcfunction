@@ -12,7 +12,7 @@
 #
 
 # height -2.0 makes a downward hitbox, raised 2 blocks right after, so it covers the 2-block turret (as the perk machine does).
-$execute positioned $(ix) $(iy) $(iz) run summon minecraft:interaction ~ ~2 ~ {width:1.1f,height:-2.0f,response:true,Tags:["mgs.trap_interact","mgs.zombies_entity","bs.entity.interaction","mgs._trap_new_i","mgs._trap_new_bs"]}
+$execute positioned $(ix) $(iy) $(iz) run summon minecraft:interaction ~ ~2 ~ {width:1.1f,height:-2.0f,response:true,CustomName:"Trap",Tags:["mgs.trap_interact","mgs.zombies_entity","bs.entity.interaction","mgs._trap_new_i","mgs._trap_new_bs"]}
 
-$summon minecraft:marker $(cx) $(cy) $(cz) {Tags:["mgs.trap_center","mgs.zombies_entity","mgs._trap_new_m"]}
+$summon minecraft:marker $(cx) $(cy) $(cz) {CustomName:"Trap Centre",Tags:["mgs.trap_center","mgs.zombies_entity","mgs._trap_new_m"]}
 

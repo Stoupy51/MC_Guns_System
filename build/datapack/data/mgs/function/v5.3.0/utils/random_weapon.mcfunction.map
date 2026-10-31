@@ -3,8 +3,8 @@
 	"file": "random_weapon.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/main/assets.py"
+		"src/functional/mob_ai.py"
 	],
 	"names": [],
-	"mappings": "AAmBiD;;;;;;;;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AA0OgC;;;;;;AAChC;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA"
 }

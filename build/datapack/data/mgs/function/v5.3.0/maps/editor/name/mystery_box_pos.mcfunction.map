@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "mystery_box_pos.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/names.py"
+	],
+	"names": [],
+	"mappings": "AAwGwD;;;;;;;AACxD;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "do_spawn.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/spawning.py"
+	],
+	"names": [],
+	"mappings": "AA6D8C;;;;;;;;;AAC9C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

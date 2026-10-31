@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "sync_marker.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/names.py"
+	],
+	"names": [],
+	"mappings": "AA8BqD;;;;;;;;AACrD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

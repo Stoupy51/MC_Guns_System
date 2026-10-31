@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hound.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/mob/presets.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAgFC;AAAA;AAAA"
+}

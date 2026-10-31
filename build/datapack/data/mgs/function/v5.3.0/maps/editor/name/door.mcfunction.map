@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "door.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/names.py"
+	],
+	"names": [],
+	"mappings": "AAwGwD;;;;;;;AACxD;AACA;AACA"
+}

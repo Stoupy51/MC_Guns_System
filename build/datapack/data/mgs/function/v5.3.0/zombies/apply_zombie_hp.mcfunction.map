@@ -3,8 +3,8 @@
 	"file": "apply_zombie_hp.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/zombies/enemies/types/curve.py"
+		"src/functional/zombies/enemies/mob/health.py"
 	],
 	"names": [],
-	"mappings": "AAkCqD;;;;;;;;;;;;;;AACrD;AACA;AACA;AACA;AACA"
+	"mappings": "AAkCqD;;;;;;;;;;;;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

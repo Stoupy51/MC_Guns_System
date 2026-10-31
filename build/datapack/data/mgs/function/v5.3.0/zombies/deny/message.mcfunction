@@ -19,6 +19,7 @@
 #			mgs:v5.3.0/zombies/pap/upgrade_core {msg:'{"translate":"mgs.selected_slot_does_not_contain_a_weapon","fallback":"Selected slot does not contain a weapon.","color":"red"}'}
 #			mgs:v5.3.0/zombies/pap/upgrade_core {msg:'{"translate":"mgs.this_weapon_cannot_be_pack_a_punched","fallback":"This weapon cannot be Pack-a-Punched.","color":"red"}'}
 #			mgs:v5.3.0/zombies/power/on_activate {msg:'{"translate":"mgs.power_is_already_on","fallback":"Power is already on.","color":"yellow"}'}
+#			mgs:v5.3.0/zombies/doors/on_right_click {msg:'[{"translate":"mgs.locked_until_round","fallback":"Locked until round ","color":"red"},{"score":{"name":"#door_min_round","objective":"mgs.data"},"color":"gold"}]'}
 #			mgs:v5.3.0/zombies/wallbuys/buy_knife {msg:'{"translate":"mgs.you_already_own_this_knife","fallback":"You already own this knife.","color":"yellow"}'}
 #			mgs:v5.3.0/zombies/wallbuys/refill_lethal {msg:'{"translate":"mgs.your_equipment_is_already_full","fallback":"Your equipment is already full.","color":"yellow"}'}
 #			mgs:v5.3.0/zombies/wallbuys/refill_tactical {msg:'{"translate":"mgs.your_equipment_is_already_full","fallback":"Your equipment is already full.","color":"yellow"}'}

@@ -13,7 +13,7 @@ scoreboard players remove @s mgs.mb.anim 1
 execute if score @s mgs.mb.timeslip matches 1 if score @s mgs.mb.anim matches 1..103 run scoreboard players remove @s mgs.mb.anim 1
 
 # One tick after spawn, which avoids same-tick interpolation glitches.
-execute if score @s mgs.mb.anim matches 104 run data merge entity @s {transformation:{translation:[0f,0.8f,0f]},start_interpolation:0,interpolation_duration:200}
+execute if score @s mgs.mb.anim matches 104 run function mgs:v5.3.0/zombies/mystery_box/display_float
 
 # Random items, slowing down in stages.
 execute if score @s mgs.mb.anim matches 1.. run function mgs:v5.3.0/zombies/mystery_box/cycle_step_one

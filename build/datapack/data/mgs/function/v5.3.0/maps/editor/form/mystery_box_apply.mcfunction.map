@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "mystery_box_apply.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/forms.py"
+	],
+	"names": [],
+	"mappings": "AAqLgE;AAChE;;;;;;;;;;;;AACA;AACA;AACA;AACA"
+}

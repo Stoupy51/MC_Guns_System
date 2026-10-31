@@ -13,17 +13,24 @@ scoreboard players operation #mbx mgs.data += #gm_base_x mgs.data
 scoreboard players operation #mby mgs.data += #gm_base_y mgs.data
 scoreboard players operation #mbz mgs.data += #gm_base_z mgs.data
 
-execute store result storage mgs:temp _mbpos.x double 1 run scoreboard players get #mbx mgs.data
-execute store result storage mgs:temp _mbpos.y double 1 run scoreboard players get #mby mgs.data
-execute store result storage mgs:temp _mbpos.z double 1 run scoreboard players get #mbz mgs.data
-data modify storage mgs:temp _mbpos.rotation set from storage mgs:temp _mb_iter[0].rotation
-
-function mgs:v5.3.0/zombies/mystery_box/summon_pos_at with storage mgs:temp _mbpos
-execute as @n[tag=mgs.mb_new] at @s run tp @s ^ ^2 ^0.3
+execute store result storage mgs:temp _mb_pos.x double 1 run scoreboard players get #mbx mgs.data
+execute store result storage mgs:temp _mb_pos.y double 1 run scoreboard players get #mby mgs.data
+execute store result storage mgs:temp _mb_pos.z double 1 run scoreboard players get #mbz mgs.data
+data modify storage mgs:temp _mb_pos.rotation set from storage mgs:temp _mb_iter[0].rotation
 
 # Shared later by its pull display.
 scoreboard players add #mb_box_counter mgs.data 1
+execute store result storage mgs:temp _mb_pos.box int 1 run scoreboard players get #mb_box_counter mgs.data
+
+function mgs:v5.3.0/zombies/mystery_box/summon_pos_at with storage mgs:temp _mb_pos
 scoreboard players operation @n[tag=mgs.mb_new] mgs.mb.box = #mb_box_counter mgs.data
+
+# Roll in degrees, kept as quarter turns.
+execute store result score #mb_roll mgs.data run data get storage mgs:temp _mb_iter[0].roll
+scoreboard players operation #mb_roll mgs.data /= #90 mgs.data
+scoreboard players operation #mb_roll mgs.data %= #4 mgs.data
+scoreboard players operation @n[tag=mgs.mb_new] mgs.mb.roll = #mb_roll mgs.data
+execute as @n[tag=mgs.mb_new] at @s run function mgs:v5.3.0/zombies/mystery_box/place
 
 data modify storage mgs:temp _mb_name set value ""
 execute if data storage mgs:temp _mb_iter[0].location_name run data modify storage mgs:temp _mb_name set from storage mgs:temp _mb_iter[0].location_name

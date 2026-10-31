@@ -9,9 +9,9 @@ execute unless data storage mgs:zombies game{state:"active"} run return run tell
 
 scoreboard players set #zb_wd_ticks mgs.data 0
 
-# Hidden blockers: a desynced dog-portal counter, and portals that never struck (their dogs are lost either way).
-scoreboard players set #zb_dog_pending mgs.data 0
-kill @e[tag=mgs.dog_portal]
+# Hidden blockers: a desynced portal counter, and portals that never struck (their enemies are lost either way).
+scoreboard players set #zb_portal_pending mgs.data 0
+kill @e[type=minecraft:marker,tag=mgs.zb_portal]
 
 # So recovery cannot race the countdown landing a tick later.
 scoreboard players set #zb_next_round mgs.data 0
@@ -21,7 +21,7 @@ tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"transla
 # round_complete ran (it parks #zb_to_spawn at -1) but start_round never landed.
 execute if score #zb_to_spawn mgs.data matches ..-1 run return run function mgs:v5.3.0/zombies/start_round
 
-# Empty map, nothing queued, round never closed.
+# Empty map with nothing queued, or enemies queued with no spawn open to them: the round never closed.
 kill @e[tag=mgs.zombie_round]
 scoreboard players set #zb_to_spawn mgs.data 0
 function mgs:v5.3.0/zombies/round_complete

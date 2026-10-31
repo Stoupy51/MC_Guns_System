@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "random_weapon_no_explosive.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/mob_ai.py"
+	],
+	"names": [],
+	"mappings": "AA0OgC;;;;;;;;AAChC;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA"
+}
