@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "first_login.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/stats/identity.py"
+	],
+	"names": [],
+	"mappings": "AAiD+C;;;;;;;;;;;AAC/C;AACA;AACA;AACA"
+}

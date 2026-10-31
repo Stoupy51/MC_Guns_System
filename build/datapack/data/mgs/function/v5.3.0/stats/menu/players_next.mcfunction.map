@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "players_next.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": "AA8MqD;;;;;;;;;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

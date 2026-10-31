@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "holo_show.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA0VmD;;;;;;;;AACnD;AACA;AACA;AAAA;AAAA;AAAA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -14,6 +14,7 @@ execute if entity @s[gamemode=spectator] run return 0
 # Healed so the player never really dies.
 effect give @s instant_health 1 100 true
 scoreboard players add @s mgs.mi.deaths 1
+scoreboard players add @s mgs.st.mi.deaths 1
 
 # Hit effects, hitmarker and DPS, for hits.
 execute if data storage mgs:input with.amount run function #mgs:signals/damage with storage mgs:input with

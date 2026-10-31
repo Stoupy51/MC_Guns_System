@@ -17,4 +17,5 @@ data modify storage mgs:temp map_edit.zb_defaults.pap_machine set value {name:"P
 data modify storage mgs:temp map_edit.zb_defaults.mystery_box_pos set value {can_start_on:1b,display_item:"",item_model:"",location_name:"",pitch:0.0f,roll:0}
 data modify storage mgs:temp map_edit.zb_defaults.power_switch set value {}
 data modify storage mgs:temp map_edit.zb_defaults.barricade set value {block_enabled:{id:"minecraft:oak_fence_gate",properties:{open:"false"}},block_disabled:{id:"minecraft:oak_fence_gate",properties:{open:"true"}},radius:2}
+data modify storage mgs:temp map_edit.zb_defaults.leaderboard set value {board:"level_zb",map_id:"",players:"all"}
 

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "edit_global.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/pool_menu.py"
+	],
+	"names": [],
+	"mappings": "AAiCkE;;;;;;;;AAClE;AACA;AACA"
+}

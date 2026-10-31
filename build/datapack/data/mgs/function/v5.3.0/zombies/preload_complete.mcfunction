@@ -70,3 +70,7 @@ execute if data storage mgs:zombies game.map.wunderfizz[0] run function mgs:v5.3
 
 execute if data storage mgs:zombies game.map.traps[0] run function mgs:v5.3.0/zombies/traps/setup
 
+data modify storage mgs:temp _lb_iter set from storage mgs:zombies game.map.leaderboards
+execute if data storage mgs:temp _lb_iter[0] run function mgs:v5.3.0/stats/board/holo_setup
+execute if data storage mgs:zombies game.map.leaderboards[0] run schedule function mgs:v5.3.0/stats/board/holo_tick 1s replace
+

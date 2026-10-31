@@ -1,3 +1,5 @@
 {
-	"values": []
+	"values": [
+		"mgs:v5.3.0/stats/zb/on_game_end"
+	]
 }

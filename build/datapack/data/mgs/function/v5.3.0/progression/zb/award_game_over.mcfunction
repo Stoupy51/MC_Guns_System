@@ -11,3 +11,5 @@ scoreboard players operation @s mgs.zb.xp_total += #xp_gain mgs.data
 scoreboard players operation @s mgs.zb.xp_prog += #xp_gain mgs.data
 function mgs:v5.3.0/progression/zb/settle
 
+scoreboard players add @s mgs.st.zb.games 1
+

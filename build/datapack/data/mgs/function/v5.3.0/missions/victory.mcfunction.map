@@ -3,8 +3,9 @@
 	"file": "victory.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
+		"src/functional/stats/snapshot.py",
 		"src/functional/missions/game/tick.py"
 	],
 	"names": [],
-	"mappings": "AA4E8C;;;;;;AAC9C;AACA;AACA;AACA;AACA;AACA;AAAA;AAAA;AAAA;AAAA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": ";;;;;;AA8D8C;ACcA;AAC9C;AACA;AACA;AACA;AACA;AACA;AAAA;AAAA;AAAA;AAAA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

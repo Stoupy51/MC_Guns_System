@@ -3,8 +3,8 @@
 	"file": "try_plant.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/bomb/snd/bomb.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AAmC2B;;;;;;;;AAC3B;AACA;AACA"
+	"mappings": "AAmCE;;;;;;;;AAAA;AAAA;AAAA"
 }

@@ -73,4 +73,7 @@ execute if entity @s[tag=mgs.element.mystery_box_pos] unless data entity @s data
 execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.block_enabled run data modify entity @s data.block_enabled set value {id:"minecraft:oak_fence_gate",properties:{open:"false"}}
 execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.block_disabled run data modify entity @s data.block_disabled set value {id:"minecraft:oak_fence_gate",properties:{open:"true"}}
 execute if entity @s[tag=mgs.element.barricade] unless data entity @s data.radius run data modify entity @s data.radius set value 2
+execute if entity @s[tag=mgs.element.leaderboard] unless data entity @s data.board run data modify entity @s data.board set value "level_zb"
+execute if entity @s[tag=mgs.element.leaderboard] unless data entity @s data.map_id run data modify entity @s data.map_id set value ""
+execute if entity @s[tag=mgs.element.leaderboard] unless data entity @s data.players run data modify entity @s data.players set value "all"
 

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "zb_map_view.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA8NqD;;;;;;;;;;;AACrD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

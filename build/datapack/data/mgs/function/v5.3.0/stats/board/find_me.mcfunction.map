@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "find_me.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA8QiD;;;;;;;;;AACjD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fetch_entry.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AA2EoD"
+}

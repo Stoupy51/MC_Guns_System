@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "maps_button.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AA4MqD"
+}

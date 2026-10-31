@@ -11,3 +11,5 @@ scoreboard players add @s mgs.zb.xp_total 2
 scoreboard players add @s mgs.zb.xp_prog 2
 function mgs:v5.3.0/progression/zb/settle
 
+scoreboard players add @s mgs.st.zb.traps 1
+

@@ -3,8 +3,9 @@
 	"file": "award_hp_capture.mcfunction",
 	"sourceRoot": "../../../../../../../..",
 	"sources": [
-		"src/functional/progression/curve.py"
+		"src/functional/progression/curve.py",
+		"src/functional/stats/snapshot.py"
 	],
 	"names": [],
-	"mappings": "AAyG+D;;;;;;;;;AAC/D;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA;AACA"
+	"mappings": "AAyG+D;;;;;;;;;AAC/D;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA;AACA;ACnF8E"
 }

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "row_mi_map.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;;AA4JsD"
+}

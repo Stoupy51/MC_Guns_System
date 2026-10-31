@@ -1,8 +1,6 @@
 
 #> mgs:v5.3.0/maps/editor/refresh_marker
 #
-# @executed	as @e[type=minecraft:marker,tag=mgs.map_element]
-#
 # @within	mgs:v5.3.0/maps/editor/sync_marker
 #
 
@@ -43,4 +41,5 @@ execute if entity @s[tag=mgs.element.pap_machine] run return run function mgs:v5
 execute if entity @s[tag=mgs.element.mystery_box_pos] run return run function mgs:v5.3.0/maps/editor/name/mystery_box_pos
 execute if entity @s[tag=mgs.element.power_switch] run return run function mgs:v5.3.0/maps/editor/name/power_switch
 execute if entity @s[tag=mgs.element.barricade] run return run function mgs:v5.3.0/maps/editor/name/barricade
+execute if entity @s[tag=mgs.element.leaderboard] run return run function mgs:v5.3.0/maps/editor/name/leaderboard
 

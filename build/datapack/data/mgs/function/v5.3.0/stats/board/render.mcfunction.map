@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "render.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AAoHgD;;;;;;;;;;;;AAChD;AACA;AACA;AACA;AACA"
+}

@@ -22,6 +22,7 @@ data modify storage mgs:temp map_edit.map.start_commands set value []
 data modify storage mgs:temp map_edit.map.spawning_points.special set value []
 data modify storage mgs:temp map_edit.map.barricades set value []
 data modify storage mgs:temp map_edit.map.wunderfizz set value []
+data modify storage mgs:temp map_edit.map.leaderboards set value []
 
 # Rebuild from markers
 execute as @e[tag=mgs.element.player_spawn_zb] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"spawning_points.players"}
@@ -39,4 +40,5 @@ execute as @e[tag=mgs.element.start_command] at @s run function mgs:v5.3.0/maps/
 execute as @e[tag=mgs.element.special_spawn] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"spawning_points.special"}
 execute as @e[tag=mgs.element.barricade] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"barricades"}
 execute as @e[tag=mgs.element.wunderfizz] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"wunderfizz"}
+execute as @e[tag=mgs.element.leaderboard] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"leaderboards"}
 

@@ -3,8 +3,8 @@
 	"file": "player_wins.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/free_for_all.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AAgC0B;;;;;;;;;;AAC1B;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAmCE;;;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
 }

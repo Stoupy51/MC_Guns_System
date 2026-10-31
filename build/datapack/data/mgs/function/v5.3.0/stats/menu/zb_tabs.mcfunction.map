@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "zb_tabs.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": "AA4JyD;AACzD;AACA;AACA;;;;;;;;;;;;AACA"
+}

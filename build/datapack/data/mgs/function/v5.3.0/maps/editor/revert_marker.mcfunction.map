@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "revert_marker.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/destroy.py"
+	],
+	"names": [],
+	"mappings": "AA4DuD;;;;;;AACvD;AACA;AACA;AACA;AACA;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA"
+}

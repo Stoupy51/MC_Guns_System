@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reset_uuid.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/__init__.py"
+	],
+	"names": [],
+	"mappings": "AAoCoD;;;;;;;;AACpD;AACA;AACA"
+}

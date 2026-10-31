@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "players_button_view.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAoOgE"
+}

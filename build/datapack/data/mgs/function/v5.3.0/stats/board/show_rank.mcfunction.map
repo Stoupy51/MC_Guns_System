@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "show_rank.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AAuRmD"
+}

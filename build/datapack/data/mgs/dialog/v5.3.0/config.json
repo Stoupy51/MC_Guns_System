@@ -15,7 +15,9 @@
 		{"label": ["","🎯 ",{"translate": "mgs.missions","fallback": "Missions","color": "gold"}],"tooltip": {"translate": "mgs.open_the_mission_setup_menu","fallback": "Open the mission setup menu"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/missions/setup"}},
 		{"label": ["","⚙ ",{"translate": "mgs.global_settings","fallback": "Global Settings","color": "gold"}],"tooltip": {"translate": "mgs.server_wide_gameplay_settings","fallback": "Server-wide gameplay settings"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/global"}},
 		{"label": ["","⚡ ",{"translate": "mgs.personal_cheats","fallback": "Personal Cheats","color": "light_purple"}],"tooltip": {"translate": "mgs.self_only_powerups","fallback": "Self-only powerups"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.3.0/config/personal"}},
-		{"label": ["","🗺 ",{"translate": "mgs.map_editor","fallback": "Map Editor","color": "yellow"}],"tooltip": {"translate": "mgs.open_the_map_editor","fallback": "Open the map editor"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/maps/editor/menu"}}
+		{"label": ["","🗺 ",{"translate": "mgs.map_editor","fallback": "Map Editor","color": "yellow"}],"tooltip": {"translate": "mgs.open_the_map_editor","fallback": "Open the map editor"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/maps/editor/menu"}},
+		{"label": ["","📊 ",{"translate": "mgs.reset_player_stats","fallback": "Reset Player Stats","color": "red"}],"tooltip": {"translate": "mgs.pick_a_player_whose_stats_go_back_to_zero_levels_are_kept","fallback": "Pick a player whose stats go back to zero (levels are kept)"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/stats/admin/players {page:0}"}},
+		{"label": ["","🏆 ",{"translate": "mgs.reset_leaderboard","fallback": "Reset Leaderboard","color": "red"}],"tooltip": {"translate": "mgs.empty_one_zombies_or_missions_maps_leaderboard","fallback": "Empty one Zombies or Missions map's leaderboard"},"action": {"type": "run_command","command": "/function mgs:v5.3.0/stats/admin/boards"}}
 	],
 	"columns": 3,
 	"exit_action": {

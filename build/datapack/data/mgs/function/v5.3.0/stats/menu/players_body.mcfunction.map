@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "players_body.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": "AA4MqD"
+}

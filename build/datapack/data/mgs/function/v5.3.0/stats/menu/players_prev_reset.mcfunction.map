@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "players_prev_reset.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": "AAqO8D"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "join_roster.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/snapshot.py"
+	],
+	"names": [],
+	"mappings": "AA8E2D;;;;;;;;AAC3D;AACA;AACA"
+}

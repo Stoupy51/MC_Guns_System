@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "levels.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AAgFgD;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

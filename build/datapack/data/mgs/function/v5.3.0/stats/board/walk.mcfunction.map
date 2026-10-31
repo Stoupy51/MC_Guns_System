@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "walk.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AAuD8C;;;;;;;;;AAC9C;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -3,8 +3,9 @@
 	"file": "give_starting_loadout.mcfunction",
 	"sourceRoot": "../../../../../../../..",
 	"sources": [
-		"src/functional/zombies/player/inventory/loadout.py"
+		"src/functional/zombies/player/inventory/loadout.py",
+		"src/functional/zombies/player/knife_camo.py"
 	],
 	"names": [],
-	"mappings": "AAeqE;;;;;;;;;;AACrE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAeqE;;;;;;;;;;AACrE;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;ACsBC;AAAA;AAAA;AAAA"
 }

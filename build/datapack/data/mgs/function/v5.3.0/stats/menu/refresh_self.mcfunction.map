@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "refresh_self.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": "AA4EqD;;;;;;;;AACrD;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "gamemode_win.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/snapshot.py"
+	],
+	"names": [],
+	"mappings": "AA8BmD;;;;;;;;;;AACnD;AACA;AACA"
+}

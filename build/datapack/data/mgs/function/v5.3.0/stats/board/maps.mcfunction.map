@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "maps.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA2L8C;AAC9C;;;;;;;;;;;;;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

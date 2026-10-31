@@ -3,8 +3,8 @@
 	"file": "rotate.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/hardpoint.py"
+		"src/functional/multiplayer/gamemodes/base.py"
 	],
 	"names": [],
-	"mappings": "AA0JqB;;;;;;AACrB;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAmCE;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
 }

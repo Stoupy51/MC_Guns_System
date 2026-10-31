@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "holo_tick.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA0UmD;;;;;;;AACnD;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "players_uuid.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/menus.py"
+	],
+	"names": [],
+	"mappings": "AA2NqD;;;;;;;;;;AACrD;AACA;AACA"
+}

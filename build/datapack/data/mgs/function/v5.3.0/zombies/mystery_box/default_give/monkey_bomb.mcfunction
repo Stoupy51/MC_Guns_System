@@ -1,9 +1,0 @@
-
-#> mgs:v5.3.0/zombies/mystery_box/default_give/monkey_bomb
-#
-# @within	string in mgs:v5.3.0/zombies/mystery_box/ensure_default_pool
-#
-
-scoreboard players set #wb_price mgs.data 0
-function mgs:v5.3.0/zombies/wallbuys/give_tactical {weapon_id:"monkey_bomb"}
-

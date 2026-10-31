@@ -4,6 +4,7 @@
 # @executed	as @a
 #
 # @within	mgs:v5.3.0/progression/tick_player
+#			mgs:v5.3.0/stats/login
 #
 
 scoreboard players add @s mgs.mp.xp_total 0

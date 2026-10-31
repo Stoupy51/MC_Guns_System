@@ -330,6 +330,8 @@ scoreboard players add #zb_escort_mode mgs.data 0
 team add mgs.horde
 team modify mgs.horde collisionRule pushOtherTeams
 
+scoreboard objectives add mgs.zb.knife_camo dummy
+
 # Shared by a box's interaction entity and its pull display.
 scoreboard objectives add mgs.mb.box dummy
 # >0 spinning, <=0 ready window.
@@ -342,6 +344,9 @@ scoreboard objectives add mgs.mb.willmove dummy
 # so the buyer is stored per display (mb.buyer).
 scoreboard objectives add mgs.mb.pid dummy
 scoreboard objectives add mgs.mb.buyer dummy
+
+data modify storage mgs:zombies mystery_box_catalog set value {ak47:{weapon_id:"ak47",magazine_id:"ak47_mag",mag_count:3,consumable:0b},m16a4:{weapon_id:"m16a4",magazine_id:"m16a4_mag",mag_count:3,consumable:0b},famas:{weapon_id:"famas",magazine_id:"famas_mag",mag_count:3,consumable:0b},aug:{weapon_id:"aug",magazine_id:"aug_mag",mag_count:3,consumable:0b},m4a1:{weapon_id:"m4a1",magazine_id:"m4a1_mag",mag_count:3,consumable:0b},fnfal:{weapon_id:"fnfal",magazine_id:"fnfal_mag",mag_count:3,consumable:0b},g3a3:{weapon_id:"g3a3",magazine_id:"g3a3_mag",mag_count:3,consumable:0b},scar17:{weapon_id:"scar17",magazine_id:"scar17_mag",mag_count:3,consumable:0b},mp5:{weapon_id:"mp5",magazine_id:"mp5_mag",mag_count:4,consumable:0b},mp7:{weapon_id:"mp7",magazine_id:"mp7_mag",mag_count:4,consumable:0b},mac10:{weapon_id:"mac10",magazine_id:"mac10_mag",mag_count:4,consumable:0b},ppsh41:{weapon_id:"ppsh41",magazine_id:"ppsh41_mag",mag_count:3,consumable:0b},sten:{weapon_id:"sten",magazine_id:"sten_mag",mag_count:3,consumable:0b},m249:{weapon_id:"m249",magazine_id:"m249_mag",mag_count:3,consumable:0b},rpk:{weapon_id:"rpk",magazine_id:"rpk_mag",mag_count:3,consumable:0b},svd:{weapon_id:"svd",magazine_id:"svd_mag",mag_count:3,consumable:0b},m82:{weapon_id:"m82",magazine_id:"m82_mag",mag_count:3,consumable:0b},mosin:{weapon_id:"mosin",magazine_id:"mosin_bullet",mag_count:10,consumable:1b},m24:{weapon_id:"m24",magazine_id:"m24_bullet",mag_count:10,consumable:1b},spas12:{weapon_id:"spas12",magazine_id:"spas12_shell",mag_count:16,consumable:1b},m500:{weapon_id:"m500",magazine_id:"m500_shell",mag_count:12,consumable:1b},m590:{weapon_id:"m590",magazine_id:"m590_shell",mag_count:16,consumable:1b},rpg7:{weapon_id:"rpg7",magazine_id:"rpg7_rocket",mag_count:3,consumable:1b},m1911:{weapon_id:"m1911",magazine_id:"m1911_mag",mag_count:2,consumable:0b},m9:{weapon_id:"m9",magazine_id:"m9_mag",mag_count:2,consumable:0b},deagle:{weapon_id:"deagle",magazine_id:"deagle_mag",mag_count:2,consumable:0b},makarov:{weapon_id:"makarov",magazine_id:"makarov_mag",mag_count:2,consumable:0b},glock17:{weapon_id:"glock17",magazine_id:"glock17_mag",mag_count:2,consumable:0b},glock18:{weapon_id:"glock18",magazine_id:"glock18_mag",mag_count:2,consumable:0b},vz61:{weapon_id:"vz61",magazine_id:"vz61_mag",mag_count:2,consumable:0b},ray_gun:{weapon_id:"ray_gun",magazine_id:"element_115",mag_count:3,consumable:1b},monkey_bomb:{weapon_id:"monkey_bomb"}}
+execute unless data storage mgs:config zombies.mystery_box_pool run data modify storage mgs:config zombies.mystery_box_pool set value [{weapon_id:"ak47",weight:1},{weapon_id:"m16a4",weight:1},{weapon_id:"famas",weight:1},{weapon_id:"aug",weight:1},{weapon_id:"m4a1",weight:1},{weapon_id:"fnfal",weight:1},{weapon_id:"g3a3",weight:1},{weapon_id:"scar17",weight:1},{weapon_id:"mp5",weight:1},{weapon_id:"mp7",weight:1},{weapon_id:"mac10",weight:1},{weapon_id:"ppsh41",weight:1},{weapon_id:"sten",weight:1},{weapon_id:"m249",weight:1},{weapon_id:"rpk",weight:1},{weapon_id:"svd",weight:1},{weapon_id:"m82",weight:1},{weapon_id:"mosin",weight:1},{weapon_id:"m24",weight:1},{weapon_id:"spas12",weight:1},{weapon_id:"m500",weight:1},{weapon_id:"m590",weight:1},{weapon_id:"rpg7",weight:1},{weapon_id:"m9",weight:1},{weapon_id:"deagle",weight:1},{weapon_id:"makarov",weight:1},{weapon_id:"glock17",weight:1},{weapon_id:"glock18",weight:1},{weapon_id:"vz61",weight:1},{weapon_id:"ray_gun",weight:1},{weapon_id:"monkey_bomb",weight:1}]
 
 # Quarter turns of a box about its front axis, on its interaction and every display of it.
 scoreboard objectives add mgs.mb.roll dummy
@@ -620,6 +625,51 @@ scoreboard objectives add mgs.mp.by dummy
 scoreboard objectives add mgs.mp.bz dummy
 
 execute unless data storage mgs:missions game run data modify storage mgs:missions game set value {state:"lobby",map_id:""}
+
+scoreboard objectives add mgs.st.login custom:leave_game
+scoreboard objectives add mgs.st.zb.games dummy
+scoreboard objectives add mgs.st.zb.rounds dummy
+scoreboard objectives add mgs.st.zb.downs dummy
+scoreboard objectives add mgs.st.zb.deaths dummy
+scoreboard objectives add mgs.st.zb.points_earned dummy
+scoreboard objectives add mgs.st.zb.doors dummy
+scoreboard objectives add mgs.st.zb.boxes dummy
+scoreboard objectives add mgs.st.zb.wallbuys dummy
+scoreboard objectives add mgs.st.zb.traps dummy
+scoreboard objectives add mgs.st.zb.powerups dummy
+scoreboard objectives add mgs.st.zb.barricades dummy
+scoreboard objectives add mgs.st.zb.power dummy
+scoreboard objectives add mgs.st.zb.time dummy
+scoreboard objectives add mgs.st.mp.games dummy
+scoreboard objectives add mgs.st.mp.losses dummy
+scoreboard objectives add mgs.st.mp.deaths dummy
+scoreboard objectives add mgs.st.mp.captures dummy
+scoreboard objectives add mgs.st.mp.plants dummy
+scoreboard objectives add mgs.st.mp.defuses dummy
+scoreboard objectives add mgs.st.mp.time dummy
+scoreboard objectives add mgs.st.mi.games dummy
+scoreboard objectives add mgs.st.mi.headshots dummy
+scoreboard objectives add mgs.st.mi.deaths dummy
+scoreboard objectives add mgs.st.mi.time dummy
+scoreboard objectives add mgs.st.mp.ffa.games dummy
+scoreboard objectives add mgs.st.mp.ffa.wins dummy
+scoreboard objectives add mgs.st.mp.tdm.games dummy
+scoreboard objectives add mgs.st.mp.tdm.wins dummy
+scoreboard objectives add mgs.st.mp.dom.games dummy
+scoreboard objectives add mgs.st.mp.dom.wins dummy
+scoreboard objectives add mgs.st.mp.hp.games dummy
+scoreboard objectives add mgs.st.mp.hp.wins dummy
+scoreboard objectives add mgs.st.mp.snd.games dummy
+scoreboard objectives add mgs.st.mp.snd.wins dummy
+scoreboard objectives add mgs.st.mp.demo.games dummy
+scoreboard objectives add mgs.st.mp.demo.wins dummy
+scoreboard objectives add mgs.st.index dummy
+scoreboard objectives add mgs.st.zb.game_id dummy
+scoreboard objectives add mgs.st.mp.game_id dummy
+scoreboard objectives add mgs.st.mi.game_id dummy
+execute unless score #st_zb_game mgs.data matches 0.. run scoreboard players set #st_zb_game mgs.data 0
+execute unless score #st_mp_game mgs.data matches 0.. run scoreboard players set #st_mp_game mgs.data 0
+execute unless score #st_mi_game mgs.data matches 0.. run scoreboard players set #st_mi_game mgs.data 0
 
 scoreboard objectives add mgs.mp.map_edit dummy
 scoreboard objectives add mgs.mp.map_idx dummy

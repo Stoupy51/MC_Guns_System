@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "login_as.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/stats/identity.py"
+	],
+	"names": [],
+	"mappings": "AAiC4C;;;;;;;;;;;AAC5C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

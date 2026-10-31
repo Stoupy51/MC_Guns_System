@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "game_end.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/snapshot.py"
+	],
+	"names": [],
+	"mappings": "AAmFwD;;;;;;AACxD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

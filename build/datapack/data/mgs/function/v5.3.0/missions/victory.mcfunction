@@ -4,6 +4,8 @@
 # @within	mgs:v5.3.0/missions/game_tick
 #
 
+scoreboard players set #st_mi_won mgs.data 1
+
 # Mission kills from the totalKillCount delta.
 execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kills = @s mgs.mi.kill_total
 execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kills -= @s mgs.mi.kill_base

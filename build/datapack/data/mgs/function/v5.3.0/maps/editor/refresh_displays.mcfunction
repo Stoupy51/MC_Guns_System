@@ -6,6 +6,7 @@
 # @within	mgs:v5.3.0/maps/editor/enter [ at @s ]
 #			mgs:v5.3.0/maps/editor/handle_zb_object
 #			mgs:v5.3.0/maps/editor/handle_destroy
+#			mgs:v5.3.0/maps/editor/revert
 #			mgs:v5.3.0/maps/editor/displays/sync
 #
 

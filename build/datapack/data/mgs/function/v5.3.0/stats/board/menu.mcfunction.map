@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "menu.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AA0K8C;AAC9C;;;;;;;;AACA;AACA"
+}

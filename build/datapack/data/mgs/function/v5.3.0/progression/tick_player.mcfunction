@@ -6,6 +6,10 @@
 # @within	mgs:v5.3.0/tick [ as @a ]
 #
 
+execute if score @s mgs.mi.in_game matches 1 if data storage mgs:missions game{state:"active"} run function mgs:v5.3.0/stats/mi/second
+execute if score @s mgs.mp.in_game matches 1 if data storage mgs:multiplayer game{state:"active"} run function mgs:v5.3.0/stats/mp/second
+execute if score @s mgs.zb.in_game matches 1 if data storage mgs:zombies game{state:"active"} run function mgs:v5.3.0/stats/zb/second
+execute unless score @s mgs.st.login matches 0 run function mgs:v5.3.0/stats/login
 execute unless score @s mgs.adv.caught matches 1 run function mgs:v5.3.0/progression/adv/catch_up
 
 execute unless score @s mgs.mp.xp_level matches 1.. run function mgs:v5.3.0/progression/mp/init

@@ -8,6 +8,7 @@
 
 # Not a real down: undo the downs++ that on_respawn added.
 scoreboard players remove @s mgs.zb.downs 1
+scoreboard players remove @s mgs.st.zb.downs 1
 
 # 60 s x uses.
 scoreboard players add @s mgs.zb.dw_uses 1

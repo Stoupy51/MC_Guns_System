@@ -32,9 +32,21 @@ execute if entity @s[tag=mgs.element.pap_machine] run tellraw @a[tag=mgs.map_edi
 execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mystery_box_pos_removed","fallback":"Mystery Box Pos removed!","color":"light_purple"}]
 execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.power_switch_removed","fallback":"Power Switch removed!","color":"green"}]
 execute if entity @s[tag=mgs.element.barricade] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.barricade_removed","fallback":"Barricade removed!","color":"aqua"}]
+execute if entity @s[tag=mgs.element.leaderboard] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.leaderboard_removed","fallback":"Leaderboard removed!","color":"gold"}]
 
-# Elements with compound data (zb_object, enemy, spawn).
-execute if data entity @s data run tellraw @a[tag=mgs.map_editor] ["  ",{"translate":"mgs.data","fallback":"Data: ","color":"gray"},{"entity":"@s","nbt":"data","color":"white"}]
+# What Revert summons again, without the blocks the editor computes back from the rest. Each removal keeps its own entry, the last 32 of the session.
+scoreboard players add #ed_removed_id mgs.data 1
+data modify storage mgs:temp _ed_removed set value {marker:{}}
+execute store result storage mgs:temp _ed_removed.id int 1 run scoreboard players get #ed_removed_id mgs.data
+data modify storage mgs:temp _ed_removed.marker.Pos set from entity @s Pos
+data modify storage mgs:temp _ed_removed.marker.Rotation set from entity @s Rotation
+data modify storage mgs:temp _ed_removed.marker.Tags set from entity @s Tags
+data modify storage mgs:temp _ed_removed.marker.data set from entity @s data
+data remove storage mgs:temp _ed_removed.marker.data._ed
+data remove storage mgs:temp _ed_removed.marker.data._disp_sig
+data modify storage mgs:temp map_edit.removed append from storage mgs:temp _ed_removed
+execute if data storage mgs:temp map_edit.removed[32] run data remove storage mgs:temp map_edit.removed[0]
+function mgs:v5.3.0/maps/editor/removed_message with storage mgs:temp _ed_removed
 
 kill @s
 

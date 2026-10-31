@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "dispatch.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": "AAgLkD;;;;;;;;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

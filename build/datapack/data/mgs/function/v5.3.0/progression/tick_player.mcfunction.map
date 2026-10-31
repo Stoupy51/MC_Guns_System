@@ -3,9 +3,11 @@
 	"file": "tick_player.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
+		"src/functional/stats/snapshot.py",
+		"src/functional/stats/identity.py",
 		"src/functional/progression/advancements/hooks.py",
 		"src/functional/progression/__init__.py"
 	],
 	"names": [],
-	"mappings": ";;;;;;;;AAqFsD;ACnBD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": ";;;;;;;;AAqEE;AAAA;AAAA;ACnDmD;ACmEC;ACnBD;AACrD;AACA;AACA;AACA;AACA;AACA;AACA"
 }

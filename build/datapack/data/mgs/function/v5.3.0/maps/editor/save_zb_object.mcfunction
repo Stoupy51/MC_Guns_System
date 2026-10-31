@@ -15,6 +15,7 @@
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"spawning_points.special"} [ as @e[tag=mgs.element.special_spawn] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"barricades"} [ as @e[tag=mgs.element.barricade] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"wunderfizz"} [ as @e[tag=mgs.element.wunderfizz] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"leaderboards"} [ as @e[tag=mgs.element.leaderboard] & at @s ]
 #
 # @args		path (string)
 #

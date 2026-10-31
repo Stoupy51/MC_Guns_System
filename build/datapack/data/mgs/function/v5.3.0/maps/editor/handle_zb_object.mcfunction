@@ -46,6 +46,9 @@ execute if entity @s[tag=mgs.element.power_switch] run data modify storage mgs:t
 execute if entity @s[tag=mgs.element.barricade] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.barricade"
 execute if entity @s[tag=mgs.element.barricade] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.barricade
 
+execute if entity @s[tag=mgs.element.leaderboard] run data modify storage mgs:temp _zbpos.tag set value "mgs.element.leaderboard"
+execute if entity @s[tag=mgs.element.leaderboard] run data modify storage mgs:temp _zb_new set from storage mgs:temp map_edit.zb_defaults.leaderboard
+
 function mgs:v5.3.0/maps/editor/summon_zb_marker with storage mgs:temp _zbpos
 
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from storage mgs:temp _zb_new
@@ -96,4 +99,5 @@ execute if entity @s[tag=mgs.element.pap_machine] run tellraw @a[tag=mgs.map_edi
 execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mystery_box_pos_placed","fallback":"Mystery Box Pos placed!","color":"light_purple"}]
 execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.power_switch_placed","fallback":"Power Switch placed!","color":"green"}]
 execute if entity @s[tag=mgs.element.barricade] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.barricade_placed","fallback":"Barricade placed!","color":"aqua"}]
+execute if entity @s[tag=mgs.element.leaderboard] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.leaderboard_placed","fallback":"Leaderboard placed!","color":"gold"}]
 

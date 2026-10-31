@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "insert_at.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/stats/boards.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;AAgEmD"
+}
