@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "roll.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/types/__init__.py"
+	],
+	"names": [],
+	"mappings": "AAqDgD;;;;;;;;AAChD;AACA;AAAA;AAAA;AAAA;AACA"
+}

@@ -11,10 +11,11 @@
 #			mgs:v5.3.0/maps/editor/displays/pap_machine with storage mgs:temp _pap_disp [ positioned ^ ^ ^-0.49 & positioned ~ ~-0.4 ~ ]
 #
 # @args		yaw (unknown)
+#			name (unknown)
 #			tag (unknown)
 #			item_id (unknown)
 #			item_model (unknown)
 #
 
-$summon minecraft:item_display ~ ~1.0 ~ {Rotation:[$(yaw)f,0f],Tags:["$(tag)","mgs.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{id:"$(item_id)",count:1,components:{"minecraft:item_model":"$(item_model)"}},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.25f,1.25f,1.25f]}}
+$summon minecraft:item_display ~ ~1.0 ~ {Rotation:[$(yaw)f,0f],CustomName:"$(name)",Tags:["$(tag)","mgs.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{id:"$(item_id)",count:1,components:{"minecraft:item_model":"$(item_model)"}},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1.25f,1.25f,1.25f]}}
 

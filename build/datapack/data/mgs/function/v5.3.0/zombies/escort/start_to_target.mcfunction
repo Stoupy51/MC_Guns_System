@@ -1,9 +1,10 @@
 
 #> mgs:v5.3.0/zombies/escort/start_to_target
 #
-# @executed	at @s
+# @executed	as @n[tag=mgs.zb_new_root] & at @s
 #
-# @within	mgs:v5.3.0/zombies/zombie_finish_rise
+# @within	mgs:v5.3.0/zombies/arrival/land [ as @n[tag=mgs.zb_new_root] & at @s ]
+#			mgs:v5.3.0/zombies/zombie_finish_rise
 #
 
 execute if score #zb_escort_count mgs.data matches 16.. run return 0

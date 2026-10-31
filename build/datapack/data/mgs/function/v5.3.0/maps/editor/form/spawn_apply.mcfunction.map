@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "spawn_apply.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/forms.py"
+	],
+	"names": [],
+	"mappings": "AAqC0D;;;;;;;;;;;;;;;;;;;;AAC1D;AACA;AACA;AACA;AACA;AACA"
+}

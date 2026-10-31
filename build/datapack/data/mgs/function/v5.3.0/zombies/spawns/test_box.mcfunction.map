@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "test_box.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/spawns.py"
+	],
+	"names": [],
+	"mappings": "AAsMqD;;;;;;;;;;;;;;;AACrD;AACA"
+}

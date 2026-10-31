@@ -8,6 +8,7 @@
 #
 
 tag @s add mgs.slow_bullet
+data modify entity @s CustomName set value "Projectile"
 
 # For damage attribution.
 data modify entity @s data.shooter set from entity @n[tag=mgs.ticking] UUID

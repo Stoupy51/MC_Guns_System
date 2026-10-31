@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "special_spawn.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/forms.py"
+	],
+	"names": [],
+	"mappings": "AA+G4D;;;;;;;;;AAC5D;AACA;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA;AACA;AAEA;AACA;AACA;AACA;AACA"
+}

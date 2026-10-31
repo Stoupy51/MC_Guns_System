@@ -14,8 +14,8 @@ scoreboard players remove #zb_spawn_batch mgs.data 1
 scoreboard players operation #zb_spawn_batch mgs.data /= #50 mgs.data
 scoreboard players add #zb_spawn_batch mgs.data 1
 
-# Dog rounds pace on the concurrency cap of spawn_dog_capped, not on the zombie curve,
+# Special rounds pace on the concurrency cap of spawn_special_capped, not on the zombie curve,
 # which reaches 1 tick by round 20 and would release a whole pack in one second.
-execute if score #zb_dog_round mgs.data matches 1 run scoreboard players set #zb_spawn_timer mgs.data 20
-execute if score #zb_dog_round mgs.data matches 1 run scoreboard players set #zb_spawn_batch mgs.data 1
+execute if score #zb_special_round mgs.data matches 1 run scoreboard players set #zb_spawn_timer mgs.data 20
+execute if score #zb_special_round mgs.data matches 1 run scoreboard players set #zb_spawn_batch mgs.data 1
 

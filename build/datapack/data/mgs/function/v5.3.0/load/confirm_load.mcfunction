@@ -310,6 +310,10 @@ execute unless data storage mgs:zombies game.variant run data modify storage mgs
 # Extended through a function tag.
 execute unless data storage mgs:zombies mystery_box_pool run data modify storage mgs:zombies mystery_box_pool set value []
 
+# A spawn's round bounds, min_round and max_round (no limit stored as the int maximum).
+scoreboard objectives add mgs.zb.spawn.rmin dummy
+scoreboard objectives add mgs.zb.spawn.rmax dummy
+
 # Ticks left before the teleport-rescue fallback.
 scoreboard objectives add mgs.zb.escort_ttl dummy
 
@@ -338,6 +342,9 @@ scoreboard objectives add mgs.mb.willmove dummy
 # so the buyer is stored per display (mb.buyer).
 scoreboard objectives add mgs.mb.pid dummy
 scoreboard objectives add mgs.mb.buyer dummy
+
+# Quarter turns of a box about its front axis, on its interaction and every display of it.
+scoreboard objectives add mgs.mb.roll dummy
 
 scoreboard objectives add mgs.zb.pap.id dummy
 scoreboard objectives add mgs.zb.pap.price dummy
@@ -400,6 +407,8 @@ scoreboard objectives add mgs.zb.door.rot dummy
 # Chip-in: chunk size (0 = off) and what the group paid; progress is global, so `paid` is mirrored on the whole link group.
 scoreboard objectives add mgs.zb.door.partial dummy
 scoreboard objectives add mgs.zb.door.paid dummy
+# Round from which the door can be bought, shared by its link group.
+scoreboard objectives add mgs.zb.door.minr dummy
 
 scoreboard objectives add mgs.zb.wb.id dummy
 scoreboard objectives add mgs.zb.wb.price dummy
@@ -644,6 +653,7 @@ scoreboard players set #90 mgs.data 90
 scoreboard players set #100 mgs.data 100
 scoreboard players set #200 mgs.data 200
 scoreboard players set #300 mgs.data 300
+scoreboard players set #360 mgs.data 360
 scoreboard players set #1000 mgs.data 1000
 scoreboard players set #1011 mgs.data 1011
 scoreboard players set #1200 mgs.data 1200

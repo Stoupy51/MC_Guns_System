@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "reopen.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/forms.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAuPC;AAAA"
+}

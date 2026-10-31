@@ -7,6 +7,7 @@
 #
 
 tag @s add mgs.grenade
+data modify entity @s CustomName set value "Grenade"
 
 # For damage attribution.
 data modify entity @s data.shooter set from entity @n[tag=mgs.ticking] UUID

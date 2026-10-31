@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "rise.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/arrival.py"
+	],
+	"names": [],
+	"mappings": "AAiCkD;;;;;;;;;AAClD;AACA;AACA;AACA;AACA;AACA"
+}

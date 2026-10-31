@@ -13,13 +13,13 @@ scoreboard players set #kino_met_count mgs.data 0
 execute positioned ~-19 ~0 ~-1 run fill ~ ~ ~ ~ ~2 ~2 cobblestone
 
 ## Teleporter
-execute positioned ~-57 ~-1 ~9 run summon interaction ~ ~ ~ {Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.teleporter","mgs.kino.teleporter_theater","bs.entity.interaction"],width:1.0f,height:2.0f}
-execute positioned ~ ~ ~ run summon interaction ~ ~ ~ {Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.teleporter","mgs.kino.teleporter_lobby","bs.entity.interaction"],width:1.0f,height:1.0f}
+execute positioned ~-57 ~-1 ~9 run summon interaction ~ ~ ~ {CustomName:"Kino Teleporter (theater)",Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.teleporter","mgs.kino.teleporter_theater","bs.entity.interaction"],width:1.0f,height:2.0f}
+execute positioned ~ ~ ~ run summon interaction ~ ~ ~ {CustomName:"Kino Teleporter (lobby)",Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.teleporter","mgs.kino.teleporter_lobby","bs.entity.interaction"],width:1.0f,height:1.0f}
 
 ## Meteorites
-execute positioned ~-12 ~0 ~-5 run summon interaction ~ ~ ~ {Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.meteorite_1","bs.entity.interaction"],width:1.1f,height:2.1f}
-execute positioned ~-58 ~-2 ~-22 run summon interaction ~ ~ ~ {Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.meteorite_2","bs.entity.interaction"],width:1.1f,height:2.1f}
-execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.meteorite_3","bs.entity.interaction"],width:1.1f,height:2.1f}
+execute positioned ~-12 ~0 ~-5 run summon interaction ~ ~ ~ {CustomName:"Kino Meteorite 1",Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.meteorite_1","bs.entity.interaction"],width:1.1f,height:2.1f}
+execute positioned ~-58 ~-2 ~-22 run summon interaction ~ ~ ~ {CustomName:"Kino Meteorite 2",Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.meteorite_2","bs.entity.interaction"],width:1.1f,height:2.1f}
+execute positioned ~-54 ~4 ~39 run summon interaction ~ ~ ~ {CustomName:"Kino Meteorite 3",Tags:["mgs.kino","mgs.zombies_entity","mgs.kino.meteorite_3","bs.entity.interaction"],width:1.1f,height:2.1f}
 
 execute as @e[tag=mgs.kino] run function #bs.interaction:on_right_click {run:"function mgs:v5.3.0/maps/zombies/kino_der_toten/on_right_click",executor:"target"}
 execute as @e[tag=mgs.kino.teleporter] run function #bs.interaction:on_hover {run:"function mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_hover",executor:"source"}

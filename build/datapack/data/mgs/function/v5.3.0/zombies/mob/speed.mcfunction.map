@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "speed.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/mob/presets.py"
+	],
+	"names": [],
+	"mappings": "AAmE+C;;;;;;;;AAC/C;AACA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

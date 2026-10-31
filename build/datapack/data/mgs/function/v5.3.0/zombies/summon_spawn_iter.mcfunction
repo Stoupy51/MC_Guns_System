@@ -5,10 +5,14 @@
 #			mgs:v5.3.0/zombies/summon_spawn_iter
 #
 
-execute store result score #sx mgs.data run data get storage mgs:temp _spawn_iter[0].pos[0]
-execute store result score #sy mgs.data run data get storage mgs:temp _spawn_iter[0].pos[1]
-execute store result score #sz mgs.data run data get storage mgs:temp _spawn_iter[0].pos[2]
-execute store result score #syaw mgs.data run data get storage mgs:temp _spawn_iter[0].rotation[0] 100
+# The kind's defaults stand in for the fields the map leaves out.
+data modify storage mgs:temp _spawn set from storage mgs:temp _spawn_defaults
+data modify storage mgs:temp _spawn merge from storage mgs:temp _spawn_iter[0]
+
+execute store result score #sx mgs.data run data get storage mgs:temp _spawn.pos[0]
+execute store result score #sy mgs.data run data get storage mgs:temp _spawn.pos[1]
+execute store result score #sz mgs.data run data get storage mgs:temp _spawn.pos[2]
+execute store result score #syaw mgs.data run data get storage mgs:temp _spawn.rotation[0] 100
 
 scoreboard players operation #sx mgs.data += #gm_base_x mgs.data
 scoreboard players operation #sy mgs.data += #gm_base_y mgs.data
@@ -20,30 +24,16 @@ execute store result storage mgs:temp _spos.z double 1 run scoreboard players ge
 execute store result storage mgs:temp _spos.yaw double 0.01 run scoreboard players get #syaw mgs.data
 data modify storage mgs:temp _spos.tag set from storage mgs:temp _spawn_tag
 
-function mgs:v5.3.0/zombies/summon_spawn_at with storage mgs:temp _spos
-
-# Defaults to group 0.
-scoreboard players set @n[tag=mgs.new_spawn] mgs.zb.spawn.gid 0
-execute store result score @n[tag=mgs.new_spawn] mgs.zb.spawn.gid run data get storage mgs:temp _spawn_iter[0].group_id
-
-# Zombies remember their spawn so they never reuse it.
+# "Zombie Spawn #12 (group 2)": zombies remember their spawn's id so the stuck rescue never reuses it.
 scoreboard players add #zb_spawn_sid mgs.data 1
-scoreboard players operation @n[tag=mgs.new_spawn] mgs.zb.spawn.sid = #zb_spawn_sid mgs.data
+data modify storage mgs:temp _spawn_label set value {group_id:0}
+data modify storage mgs:temp _spawn_label.name set from storage mgs:temp _spawn_name
+data modify storage mgs:temp _spawn_label.group_id set from storage mgs:temp _spawn.group_id
+execute store result storage mgs:temp _spawn_label.sid int 1 run scoreboard players get #zb_spawn_sid mgs.data
+function mgs:v5.3.0/zombies/spawn_name with storage mgs:temp _spawn_label
 
-# Zombie spawns only: the absolute box [x, y, z, dx, dy, dz] (all 6 needed), so a player standing in it gates the spawn.
-execute if data storage mgs:temp _spawn_iter[0].activation_box[5] run function mgs:v5.3.0/zombies/store_spawn_abox
-
-# Zombie spawns only: zombies spawned here are escorted to this absolute spot.
-execute if data storage mgs:temp _spawn_iter[0].walk_to[2] run function mgs:v5.3.0/zombies/store_spawn_walk_to
-
-# Zombie spawns only: the rise duration (20 ticks for maps saved without it) and its direction.
-scoreboard players set @n[tag=mgs.new_spawn] mgs.zb.rise_tick 20
-execute if data storage mgs:temp _spawn_iter[0].rise_ticks store result score @n[tag=mgs.new_spawn] mgs.zb.rise_tick run data get storage mgs:temp _spawn_iter[0].rise_ticks
-execute if score @n[tag=mgs.new_spawn] mgs.zb.rise_tick matches ..0 run scoreboard players set @n[tag=mgs.new_spawn] mgs.zb.rise_tick 1
-execute store result score #zb_from_ceiling mgs.data run data get storage mgs:temp _spawn_iter[0].from_ceiling
-execute if score #zb_from_ceiling mgs.data matches 1 run tag @n[tag=mgs.new_spawn] add mgs.spawn_from_ceiling
-
-tag @n[tag=mgs.new_spawn] remove mgs.new_spawn
+function mgs:v5.3.0/zombies/summon_spawn_at with storage mgs:temp _spos
+execute as @n[type=minecraft:marker,tag=mgs.new_spawn] run function mgs:v5.3.0/zombies/spawn_setup
 
 data remove storage mgs:temp _spawn_iter[0]
 execute if data storage mgs:temp _spawn_iter[0] run function mgs:v5.3.0/zombies/summon_spawn_iter

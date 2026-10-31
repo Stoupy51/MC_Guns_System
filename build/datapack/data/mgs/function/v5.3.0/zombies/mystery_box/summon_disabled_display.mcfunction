@@ -7,8 +7,6 @@
 #
 
 execute if entity @n[tag=mgs.mb_display,distance=..3] run return 0
-data modify storage mgs:temp _mb_dis.yaw set value 0.0f
-data modify storage mgs:temp _mb_dis.yaw set from entity @s Rotation[0]
-execute unless entity @s[tag=mgs.roam_hidden] run function mgs:v5.3.0/zombies/mystery_box/summon_disabled_at with storage mgs:temp _mb_dis
-execute if entity @s[tag=mgs.roam_hidden] positioned ~ ~512 ~ run function mgs:v5.3.0/zombies/mystery_box/summon_disabled_at with storage mgs:temp _mb_dis
+execute unless entity @s[tag=mgs.roam_hidden] positioned ~ ~-0.9 ~ run function mgs:v5.3.0/zombies/mystery_box/summon_part {tags:["mgs.mb_disabled","mgs.zombies_entity","mgs.mb_part_new"],name:"Mystery Box (inactive)",model:"mgs:mystery_box_disabled"}
+execute if entity @s[tag=mgs.roam_hidden] positioned ~ ~511.1 ~ run function mgs:v5.3.0/zombies/mystery_box/summon_part {tags:["mgs.mb_disabled","mgs.zombies_entity","mgs.mb_part_new"],name:"Mystery Box (inactive)",model:"mgs:mystery_box_disabled"}
 

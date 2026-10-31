@@ -28,3 +28,7 @@ execute at @e[type=minecraft:marker,tag=mgs.element.special_spawn] run particle 
 execute at @e[type=minecraft:marker,tag=mgs.element.door] run particle dust{color:[1.0,0.6,0.0],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1 normal @a[scores={mgs.mp.map_edit=1},distance=..48]
 execute at @e[type=minecraft:marker,tag=mgs.element.trap] run particle dust{color:[1.0,0.2,0.2],scale:1.0} ~ ~1 ~ 0.3 0.5 0.3 0 1 normal @a[scores={mgs.mp.map_edit=1},distance=..48]
 
+# Activation boxes and walk-to spots of the spawns near an editor (see spawn_shapes).
+execute as @a[scores={mgs.mp.map_edit=1}] at @s as @e[type=minecraft:marker,tag=mgs.ed_box,distance=..32] run function mgs:v5.3.0/maps/editor/draw_box with entity @s data._ed.box
+execute as @a[scores={mgs.mp.map_edit=1}] at @s as @e[type=minecraft:marker,tag=mgs.ed_walk,distance=..32] run function mgs:v5.3.0/maps/editor/draw_walk with entity @s data._ed.walk
+

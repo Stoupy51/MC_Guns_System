@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "sink_slow.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/move.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAuFE;AAAA;AAAA;AAAA"
+}

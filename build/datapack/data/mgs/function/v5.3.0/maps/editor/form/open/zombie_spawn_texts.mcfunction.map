@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "zombie_spawn_texts.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/forms.py"
+	],
+	"names": [],
+	"mappings": "AA2HkE;;;;;;;;;;;;AAClE;AACA;AACA;AACA;AACA;AACA;AACA"
+}

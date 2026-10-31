@@ -4,7 +4,7 @@
 # @within	mgs:v5.3.0/zombies/mystery_box/move_anim_tick
 #
 
-execute as @n[tag=mgs.mystery_box_active] at @s as @e[tag=mgs.mb_presence,tag=!mgs.mb_temp] run tp @s ~ ~-0.9 ~
+execute as @n[tag=mgs.mystery_box_active] at @s positioned ~ ~-0.9 ~ as @e[tag=mgs.mb_presence,tag=!mgs.mb_temp] run tp @s ~ ~ ~
 
 scoreboard players set #mb_move_timer mgs.data 0
 data remove storage mgs:zombies mystery_box.result

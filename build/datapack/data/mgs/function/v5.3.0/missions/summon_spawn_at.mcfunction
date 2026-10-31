@@ -7,8 +7,9 @@
 #			y (unknown)
 #			z (unknown)
 #			tag (unknown)
+#			name (unknown)
 #			yaw (unknown)
 #
 
-$summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.spawn_point","$(tag)","mgs.missions_entity"],data:{yaw:$(yaw)}}
+$summon minecraft:marker $(x) $(y) $(z) {Tags:["mgs.spawn_point","$(tag)","mgs.missions_entity"],CustomName:"$(name)",data:{yaw:$(yaw)}}
 

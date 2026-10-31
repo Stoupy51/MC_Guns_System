@@ -1,14 +1,13 @@
 
 #> mgs:v5.3.0/maps/editor/displays/summon_mystery_box
 #
-# @executed	positioned ^ ^2 ^0.3
+# @executed	at @s
 #
-# @within	mgs:v5.3.0/maps/editor/displays/mystery_box_pos with storage mgs:temp _ed_mb [ positioned ^ ^2 ^0.3 ]
-#
-# @args		yaw (unknown)
+# @within	mgs:v5.3.0/maps/editor/displays/turn_mystery_box
 #
 
-# Same models and scale as zombies/mystery_box/summon_presence_display.
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {Rotation:[$(yaw),0f],Tags:["mgs.editor_display"],item_display:"fixed",billboard:"fixed",item:{id:"minecraft:chest",count:1,components:{"minecraft:item_model":"mgs:mystery_box_base"}},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2.4f,2.4f,2.4f]}}
-$execute positioned ~ ~-0.9 ~ run summon minecraft:item_display ~ ~ ~ {Rotation:[$(yaw),0f],Tags:["mgs.editor_display"],item_display:"fixed",billboard:"fixed",item:{id:"minecraft:chest",count:1,components:{"minecraft:item_model":"mgs:mystery_box_lid"}},transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[2.4f,2.4f,2.4f]}}
+execute if score @s mgs.mb.roll matches 0 run execute positioned ~ ~0.5 ~ positioned ^ ^0.6 ^0.3 run function mgs:v5.3.0/maps/editor/displays/mystery_box_parts
+execute if score @s mgs.mb.roll matches 1 run execute positioned ~ ~0.5 ~ positioned ^-0.6 ^ ^0.3 run function mgs:v5.3.0/maps/editor/displays/mystery_box_parts
+execute if score @s mgs.mb.roll matches 2 run execute positioned ~ ~0.5 ~ positioned ^ ^-0.6 ^0.3 run function mgs:v5.3.0/maps/editor/displays/mystery_box_parts
+execute if score @s mgs.mb.roll matches 3 run execute positioned ~ ~0.5 ~ positioned ^0.6 ^ ^0.3 run function mgs:v5.3.0/maps/editor/displays/mystery_box_parts
 

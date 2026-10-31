@@ -8,6 +8,7 @@
 
 # Run as the PaP marker, at it.
 data modify storage mgs:temp _pap_disp.tag set value "mgs.editor_display"
+data modify storage mgs:temp _pap_disp.name set value "Pack-a-Punch"
 data modify storage mgs:temp _pap_disp.item_id set value ""
 data modify storage mgs:temp _pap_disp.item_model set value ""
 data modify storage mgs:temp _pap_disp.yaw set value 0.0f

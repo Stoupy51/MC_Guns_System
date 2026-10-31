@@ -31,6 +31,7 @@ execute as @n[tag=mgs.new_zb_marker] run function mgs:v5.3.0/maps/editor/backfil
 # The entity Rotation is synced too, for model displays.
 execute if data storage mgs:temp _zb_iter[0].rotation as @n[tag=mgs.new_zb_marker] run data modify entity @s data.yaw set from storage mgs:temp _zb_iter[0].rotation[0]
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s Rotation[0] set from entity @s data.yaw
+execute if data storage mgs:temp _zb_iter[0].rotation[1] as @n[tag=mgs.new_zb_marker,tag=mgs.element.mystery_box_pos] run data modify entity @s data.pitch set from storage mgs:temp _zb_iter[0].rotation[1]
 
 tag @e[tag=mgs.new_zb_marker] remove mgs.new_zb_marker
 

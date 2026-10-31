@@ -4,6 +4,7 @@
 # @within	string in mgs:v5.3.0/maps/editor/show_element_config {field:\"price\",value:1000}
 #			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"partial_price\",value:0}
 #			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"back_group_id\",value:-1}
+#			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"min_round\",value:0}
 #			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"animation\",value:0}
 #
 # @args		field (string)

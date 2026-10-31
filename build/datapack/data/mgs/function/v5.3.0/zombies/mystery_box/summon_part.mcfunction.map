@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_part.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/machines/mystery_box/positions.py"
+	],
+	"names": [],
+	"mappings": "AA4F6D;;;;;;;;;;;;;;;;;AAC7D;AACA;AACA;AACA;AACA;AACA"
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "wolf.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/mob/presets.py"
+	],
+	"names": [],
+	"mappings": "AA2DgF;;;;;;;;AAChF;AACA;AACA;AACA;AACA"
+}

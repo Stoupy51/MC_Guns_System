@@ -7,6 +7,8 @@
 #			mgs:v5.3.0/maps/editor/exit
 #
 
+tag @s remove mgs.cs_abox
+
 kill @e[tag=mgs.map_element]
 kill @e[tag=mgs.editor_display]
 

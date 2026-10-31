@@ -3,8 +3,8 @@
 	"file": "apply_zombie_absorption.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/zombies/enemies/types/curve.py"
+		"src/functional/zombies/enemies/mob/health.py"
 	],
 	"names": [],
-	"mappings": "AAiD6D;;;;;;;;;;AAC7D;AACA;AACA"
+	"mappings": "AA4D6D;;;;;;;;;;AAC7D;AACA;AACA"
 }

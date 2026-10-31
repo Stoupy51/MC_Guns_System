@@ -14,7 +14,10 @@ tag @s add mgs.mb_bear
 # Only the destination's grayed crate goes, once it is known (move_anim_transition).
 
 loot replace entity @s contents loot mgs:zombies/roaming_bear
-data merge entity @s {transformation:{translation:[0f,1.25f,0f],scale:[0.75f,0.75f,0.75f]}}
+execute if score @s mgs.mb.roll matches 0 run data merge entity @s {transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0.65f,0f],scale:[0.75f,0.75f,0.75f]}}
+execute if score @s mgs.mb.roll matches 1 run data merge entity @s {transformation:{left_rotation:[0f,0f,0.7071f,0.7071f],right_rotation:[0f,0f,0f,1f],translation:[-0.65f,0f,0f],scale:[0.75f,0.75f,0.75f]}}
+execute if score @s mgs.mb.roll matches 2 run data merge entity @s {transformation:{left_rotation:[0f,0f,1f,0f],right_rotation:[0f,0f,0f,1f],translation:[0f,-0.65f,0f],scale:[0.75f,0.75f,0.75f]}}
+execute if score @s mgs.mb.roll matches 3 run data merge entity @s {transformation:{left_rotation:[0f,0f,0.7071f,-0.7071f],right_rotation:[0f,0f,0f,1f],translation:[0.65f,0f,0f],scale:[0.75f,0.75f,0.75f]}}
 
 # The moving box eats the pull: refund the buyer.
 scoreboard players operation #this_buyer mgs.data = @s mgs.mb.buyer

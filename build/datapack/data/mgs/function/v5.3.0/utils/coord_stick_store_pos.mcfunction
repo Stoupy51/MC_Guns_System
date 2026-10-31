@@ -3,7 +3,8 @@
 #
 # @executed	as @e[type=player,sort=random] & at @s
 #
-# @within	mgs:v5.3.0/utils/coord_stick_relative
+# @within	mgs:v5.3.0/maps/editor/form/box_corner
+#			mgs:v5.3.0/utils/coord_stick_relative
 #
 
 execute store result score #cs_pos_x mgs.data run data get entity @s Pos[0]

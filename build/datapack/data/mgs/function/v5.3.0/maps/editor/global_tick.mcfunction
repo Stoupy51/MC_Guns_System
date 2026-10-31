@@ -9,10 +9,10 @@
 # The other editors skip the call above.
 scoreboard players operation #ed_global_tick mgs.data = #total_tick mgs.data
 
-# Checked once a second and rebuilt only after an edit: syncing a marker's rotation is an NBT read and write, and yaw only changes on edits.
+# Checked once a second and rebuilt only after an edit: a marker's rotation, name and shapes only change with its data.
 scoreboard players operation #ed_disp_phase mgs.data = #total_tick mgs.data
 scoreboard players operation #ed_disp_phase mgs.data %= #20 mgs.data
-execute if score #ed_disp_phase mgs.data matches 0 as @e[type=minecraft:marker,tag=mgs.map_element] run data modify entity @s Rotation[0] set from entity @s data.yaw
+execute if score #ed_disp_phase mgs.data matches 0 as @e[type=minecraft:marker,tag=mgs.map_element] run function mgs:v5.3.0/maps/editor/sync_marker
 execute if score #ed_disp_phase mgs.data matches 0 run function mgs:v5.3.0/maps/editor/displays/sync
 
 # Every 4 ticks: dust lingers about a second, so it looks the same with a quarter of the commands and packets.

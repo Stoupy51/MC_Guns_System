@@ -21,6 +21,7 @@ execute store result storage mgs:temp _spos.y double 1 run scoreboard players ge
 execute store result storage mgs:temp _spos.z double 1 run scoreboard players get #sz mgs.data
 execute store result storage mgs:temp _spos.yaw double 0.01 run scoreboard players get #syaw mgs.data
 data modify storage mgs:temp _spos.tag set from storage mgs:temp _spawn_tag
+data modify storage mgs:temp _spos.name set from storage mgs:temp _spawn_name
 
 function mgs:v5.3.0/multiplayer/summon_spawn_at with storage mgs:temp _spos
 

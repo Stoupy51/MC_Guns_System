@@ -10,18 +10,26 @@ execute store result score #zb_round mgs.data run data get storage mgs:zombies g
 scoreboard players add #zb_round mgs.data 1
 execute store result storage mgs:zombies game.round int 1 run scoreboard players get #zb_round mgs.data
 
-# Dog round: every 5th round from 5, only on maps with special spawn markers.
-scoreboard players set #zb_dog_round mgs.data 0
-scoreboard players operation #zb_dog_mod mgs.data = #zb_round mgs.data
-scoreboard players operation #zb_dog_mod mgs.data %= #5 mgs.data
-execute if score #zb_has_special mgs.data matches 1 if score #zb_round mgs.data matches 5.. if score #zb_dog_mod mgs.data matches 0 run scoreboard players set #zb_dog_round mgs.data 1
+function mgs:v5.3.0/zombies/spawns/check_rounds
+
+# Special round: every 5th round from 5, when a special spawn is open and in its round bounds.
+scoreboard players set #zb_special_round mgs.data 0
+scoreboard players operation #zb_special_mod mgs.data = #zb_round mgs.data
+scoreboard players operation #zb_special_mod mgs.data %= #5 mgs.data
+execute if score #zb_round mgs.data matches 5.. if score #zb_special_mod mgs.data matches 0 if entity @e[type=minecraft:marker,tag=mgs.spawn_special,tag=mgs.spawn_unlocked,tag=mgs.spawn_round_ok] run scoreboard players set #zb_special_round mgs.data 1
+
+# The round's tier, for armed enemies: rounds 1-5 give 1, 6-10 give 2, 11-15 give 3, 16+ give 4.
+scoreboard players set #zb_level mgs.data 4
+execute if score #zb_round mgs.data matches ..15 run scoreboard players set #zb_level mgs.data 3
+execute if score #zb_round mgs.data matches ..10 run scoreboard players set #zb_level mgs.data 2
+execute if score #zb_round mgs.data matches ..5 run scoreboard players set #zb_level mgs.data 1
 
 # Clamped at 4, used by both round-size formulas.
 execute store result score #zb_player_count mgs.data if entity @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
 execute if score #zb_player_count mgs.data matches 5.. run scoreboard players set #zb_player_count mgs.data 4
 
-execute if score #zb_dog_round mgs.data matches 0 run function mgs:v5.3.0/zombies/calc_round_count_zombies
-execute if score #zb_dog_round mgs.data matches 1 run function mgs:v5.3.0/zombies/calc_round_count_dogs
+execute if score #zb_special_round mgs.data matches 0 run function mgs:v5.3.0/zombies/calc_round_count_zombies
+execute if score #zb_special_round mgs.data matches 1 run function mgs:v5.3.0/zombies/calc_round_count_special
 
 # zb_to_spawn counts down as they spawn; the power-up drop chance needs the total (see powerups/check_drop).
 scoreboard players operation #zb_round_total mgs.data = #zb_to_spawn mgs.data
@@ -42,12 +50,12 @@ function #mgs:zombies/on_round_start
 
 function mgs:v5.3.0/zombies/refresh_sidebar
 
-execute if score #zb_dog_round mgs.data matches 0 run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round_2","fallback":"Round ","color":"red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"red"}, {"translate":"mgs.has_begun","fallback":"has begun!"}]]
-execute if score #zb_dog_round mgs.data matches 0 as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_start_generic ambient @s ~ ~ ~ 0.3 1.0
+execute if score #zb_special_round mgs.data matches 0 run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.round_2","fallback":"Round ","color":"red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"red"}, {"translate":"mgs.has_begun","fallback":"has begun!"}]]
+execute if score #zb_special_round mgs.data matches 0 as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/round_start_generic ambient @s ~ ~ ~ 0.3 1.0
 
-# Dog rounds have their own announcement and howl instead of the round jingle.
-execute if score #zb_dog_round mgs.data matches 1 run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_red","bold":true},"🐺 ",{"translate":"mgs.round_2","fallback":"Round ","color":"dark_red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":": ","color":"dark_red"}, {"translate":"mgs.the_hounds_are_loose","fallback":"the hounds are loose!"}]]
-execute if score #zb_dog_round mgs.data matches 1 as @a[scores={mgs.zb.in_game=1}] at @s run playsound minecraft:entity.wolf.howl ambient @s ~ ~ ~ 1.0 0.6
+# Special rounds have their own announcement and howl instead of the round jingle; what comes depends on the map's special spawns.
+execute if score #zb_special_round mgs.data matches 1 run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_red","bold":true},"⚠ ",{"translate":"mgs.round_2","fallback":"Round ","color":"dark_red"},{"score":{"name":"#zb_round","objective":"mgs.data"},"color":"gold","bold":true},[{"text":" ","color":"dark_red"}, {"translate":"mgs.is_a_special_round","fallback":"is a special round!"}]]
+execute if score #zb_special_round mgs.data matches 1 as @a[scores={mgs.zb.in_game=1}] at @s run playsound minecraft:entity.wolf.howl ambient @s ~ ~ ~ 1.0 0.6
 
 # +2, capped at 4.
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5.3.0/zombies/inventory/replenish_grenades

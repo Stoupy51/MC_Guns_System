@@ -48,8 +48,8 @@ execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.3.0/zombies/reset_p
 kill @e[type=minecraft:marker,tag=mgs.death_watch]
 
 # zombies_entity cleanup removes the portals, but the counter must be zeroed or the next game's round would never complete.
-kill @e[type=minecraft:marker,tag=mgs.dog_portal]
-scoreboard players set #zb_dog_pending mgs.data 0
+kill @e[type=minecraft:marker,tag=mgs.zb_portal]
+scoreboard players set #zb_portal_pending mgs.data 0
 
 scoreboard players set #zb_escort_count mgs.data 0
 

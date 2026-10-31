@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "rounds_from.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/names.py"
+	],
+	"names": [],
+	"mappings": "AA0E0D;;;;;;;;;;AAC1D;AACA"
+}

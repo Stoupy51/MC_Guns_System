@@ -3,8 +3,8 @@
 	"file": "absorb_above_cap.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/zombies/enemies/types/curve.py"
+		"src/functional/zombies/enemies/mob/health.py"
 	],
 	"names": [],
-	"mappings": "AA0CsD;;;;;;;;;AACtD;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAqDsD;;;;;;;;AACtD;AACA;AACA;AACA;AACA;AACA"
 }

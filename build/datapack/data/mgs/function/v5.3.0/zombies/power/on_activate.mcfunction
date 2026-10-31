@@ -11,6 +11,7 @@ execute unless data storage mgs:zombies game{state:"active"} run return fail
 execute if score #zb_power mgs.data matches 1 run return run function mgs:v5.3.0/zombies/deny/message {msg:'{"translate":"mgs.power_is_already_on","fallback":"Power is already on.","color":"yellow"}'}
 
 scoreboard players set #zb_power mgs.data 1
+tag @e[type=minecraft:marker,tag=mgs.spawn_point] add mgs.spawn_powered
 
 execute as @e[tag=mgs.power_switch] at @s run particle minecraft:electric_spark ~ ~1 ~ 0.5 0.5 0.5 0.1 20
 execute as @e[tag=mgs.power_switch] at @s run playsound minecraft:entity.firework_rocket.twinkle_far ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 2 1

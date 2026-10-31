@@ -36,7 +36,7 @@ execute unless data storage mgs:temp rv_name run data modify storage mgs:temp rv
 item replace entity @n[tag=mgs.downed_new] weapon.mainhand with minecraft:air
 
 # see_through, so the name reads through walls and zombies.
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.downed_hud","mgs.downed_hud_new","mgs.zombies_entity"],billboard:"vertical",shadow:1b,see_through:1b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"text":"...","color":"yellow"},{"text":" ↓","color":"yellow"}]}
+summon minecraft:text_display ~ ~ ~ {CustomName:"Downed Player Label",Tags:["mgs.downed_hud","mgs.downed_hud_new","mgs.zombies_entity"],billboard:"vertical",shadow:1b,see_through:1b,teleport_duration:1,transformation:{translation:[0.0f,0.0f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},text:[{"text":"...","color":"yellow"},{"text":" ↓","color":"yellow"}]}
 function mgs:v5.3.0/zombies/revive/set_hud_name with storage mgs:temp
 
 scoreboard players operation @n[tag=mgs.downed_hud_new] mgs.zb.downed_id = @s mgs.zb.downed_id

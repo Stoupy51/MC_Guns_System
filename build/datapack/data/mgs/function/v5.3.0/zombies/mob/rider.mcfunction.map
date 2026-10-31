@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "rider.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/enemies/mob/build.py"
+	],
+	"names": [],
+	"mappings": "AA8F+C;;;;;;;;;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

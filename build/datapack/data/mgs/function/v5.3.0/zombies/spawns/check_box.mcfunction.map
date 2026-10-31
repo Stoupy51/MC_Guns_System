@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "check_box.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/spawns.py"
+	],
+	"names": [],
+	"mappings": "AAkMsD;;;;;;;;AACtD;AACA;AACA"
+}

@@ -10,7 +10,7 @@
 #
 
 # Up and toward the wall face, scale 0.6, as zombies/wallbuys/place_at.
-$summon minecraft:item_display ^ ^0.5 ^-0.49 {Rotation:[$(yaw),0f],billboard:"fixed",item_display:"fixed",Tags:["mgs.editor_display","mgs._ed_new_disp"],transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}
+$summon minecraft:item_display ^ ^0.5 ^-0.49 {Rotation:[$(yaw),0f],billboard:"fixed",item_display:"fixed",CustomName:"Wallbuy",Tags:["mgs.editor_display","mgs._ed_new_disp"],transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}
 $execute as @n[tag=mgs._ed_new_disp] run loot replace entity @s contents loot mgs:i/$(weapon_id)
 tag @e[tag=mgs._ed_new_disp] remove mgs._ed_new_disp
 

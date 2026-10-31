@@ -24,8 +24,8 @@ kill @e[tag=mgs.demo_bomb,distance=..2]
 kill @e[tag=mgs.demo_bomb_vis,distance=..2]
 kill @e[tag=mgs.demo_bomb_hud,distance=..2]
 setblock ~ ~ ~ air
-summon minecraft:block_display ~ ~ ~ {Tags:["mgs.demo_rubble","mgs.multiplayer_entity"],block_state:"minecraft:polished_blackstone",transformation:{translation:[-0.3f,0.0f,-0.3f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.6f,0.2f,0.6f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.demo_wreck","mgs.multiplayer_entity"],billboard:"vertical",text:[{"text":"💥 ","color":"white"},{"translate":"mgs.destroyed","fallback":"DESTROYED","color":"dark_gray"}],transformation:{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
+summon minecraft:block_display ~ ~ ~ {CustomName:"Demolition Rubble",Tags:["mgs.demo_rubble","mgs.multiplayer_entity"],block_state:"minecraft:polished_blackstone",transformation:{translation:[-0.3f,0.0f,-0.3f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.6f,0.2f,0.6f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
+summon minecraft:text_display ~ ~ ~ {CustomName:"Demolition Wreck Label",Tags:["mgs.demo_wreck","mgs.multiplayer_entity"],billboard:"vertical",text:[{"text":"💥 ","color":"white"},{"translate":"mgs.destroyed","fallback":"DESTROYED","color":"dark_gray"}],transformation:{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
 
 execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_a_destroyed","fallback":"BOMB SITE A DESTROYED!","color":"red","bold":true}]
 execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_site_a_destroyed","fallback":"BOMB SITE A DESTROYED!","color":"red","bold":true},[" ",{"text":"+20 XP","color":"gold"}]]

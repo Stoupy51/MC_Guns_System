@@ -36,6 +36,7 @@ execute as @n[tag=mgs.wf_new] run function #bs.interaction:on_hover {run:"functi
 
 # Summoned with the disabled model; sync_displays lights the active one.
 data modify storage mgs:temp _wf_disp.tag set value "mgs.wf_display"
+data modify storage mgs:temp _wf_disp.name set value "Der Wunderfizz"
 data modify storage mgs:temp _wf_disp.item_id set value ""
 data modify storage mgs:temp _wf_disp.item_model set value ""
 data modify storage mgs:temp _wf_disp.yaw set value 0.0

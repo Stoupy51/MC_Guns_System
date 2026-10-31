@@ -11,6 +11,7 @@
 data modify storage mgs:temp _ed_sig set value {}
 data modify storage mgs:temp _ed_sig.data set from entity @s data
 data remove storage mgs:temp _ed_sig.data._disp_sig
+data remove storage mgs:temp _ed_sig.data._ed
 data modify storage mgs:temp _ed_sig.pos set from entity @s Pos
 execute store success score #ed_sig_changed mgs.data run data modify entity @s data._disp_sig set from storage mgs:temp _ed_sig
 execute if score #ed_sig_changed mgs.data matches 1 run scoreboard players set #ed_disp_dirty mgs.data 1

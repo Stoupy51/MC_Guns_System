@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "special_death.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/completion.py"
+	],
+	"names": [],
+	"mappings": "AAkCmD;;;;;;;;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

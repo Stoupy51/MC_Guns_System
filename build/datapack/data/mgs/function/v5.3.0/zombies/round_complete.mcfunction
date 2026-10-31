@@ -8,7 +8,7 @@
 # -1 stops this from firing again every tick.
 scoreboard players set #zb_to_spawn mgs.data -1
 
-# No Max Ammo fallback here: it drops at the last hound's body (dog_death), never at a player.
+# No Max Ammo fallback here: it drops at the body of a special round's last enemy (special_death), never at a player.
 
 function #mgs:zombies/on_round_end
 

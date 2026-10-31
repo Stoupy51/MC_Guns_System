@@ -3,8 +3,8 @@
 	"file": "summon_rise_dust.mcfunction",
 	"sourceRoot": "../../../../../../..",
 	"sources": [
-		"src/functional/zombies/game/round/spawning.py"
+		"src/functional/zombies/game/round/arrival.py"
 	],
 	"names": [],
-	"mappings": "AAiIsD;;;;;;;;;;;AACtD;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAuDsD;;;;;;;;;;;AACtD;AACA;AACA;AACA;AACA;AACA"
 }

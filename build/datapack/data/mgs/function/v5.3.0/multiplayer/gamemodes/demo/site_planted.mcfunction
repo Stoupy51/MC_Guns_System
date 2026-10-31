@@ -15,9 +15,9 @@ tag @a remove mgs.xp_earner
 tag @a[tag=mgs.demo_atk,predicate=mgs:v5.3.0/is_sneaking,gamemode=!spectator,distance=..3.0] add mgs.xp_earner
 execute as @a[tag=mgs.xp_earner] run function mgs:v5.3.0/progression/mp/award_bomb_plant
 
-summon minecraft:marker ~ ~ ~ {Tags:["mgs.demo_bomb","mgs.multiplayer_entity"]}
-summon minecraft:block_display ~ ~ ~ {Tags:["mgs.demo_bomb_vis","mgs.multiplayer_entity"],block_state:"minecraft:tnt",transformation:{translation:[-0.25f,0.625f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
-summon minecraft:text_display ~ ~ ~ {Tags:["mgs.demo_bomb_hud","mgs.multiplayer_entity"],billboard:"vertical",text:[{"text":"💣 ","color":"white"},{"translate":"mgs.planted","fallback":"PLANTED","color":"red","bold":true}],transformation:{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
+summon minecraft:marker ~ ~ ~ {CustomName:"Planted Bomb",Tags:["mgs.demo_bomb","mgs.multiplayer_entity"]}
+summon minecraft:block_display ~ ~ ~ {CustomName:"Planted Bomb Model",Tags:["mgs.demo_bomb_vis","mgs.multiplayer_entity"],block_state:"minecraft:tnt",transformation:{translation:[-0.25f,0.625f,-0.25f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[0.5f,0.5f,0.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]}}
+summon minecraft:text_display ~ ~ ~ {CustomName:"Planted Bomb Timer",Tags:["mgs.demo_bomb_hud","mgs.multiplayer_entity"],billboard:"vertical",text:[{"text":"💣 ","color":"white"},{"translate":"mgs.planted","fallback":"PLANTED","color":"red","bold":true}],transformation:{translation:[0.0f,1.4f,0.0f],left_rotation:[0.0f,0.0f,0.0f,1.0f],scale:[1.5f,1.5f,1.5f],right_rotation:[0.0f,0.0f,0.0f,1.0f]},shadow:true,see_through:true}
 
 execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_planted_at_a","fallback":"BOMB PLANTED AT A!","color":"red","bold":true}]
 execute if entity @s[tag=mgs.demo_site_A] run tellraw @a[tag=mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_planted_at_a","fallback":"BOMB PLANTED AT A!","color":"red","bold":true},[" ",{"text":"+20 XP","color":"gold"}]]

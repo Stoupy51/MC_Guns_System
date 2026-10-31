@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "hardpoint.mcfunction",
+	"sourceRoot": "../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/names.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAiGyD"
+}

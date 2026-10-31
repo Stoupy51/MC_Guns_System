@@ -1,7 +1,7 @@
 
 #> mgs:v5.3.0/zombies/set_speed
 #
-# @executed	as @n[tag=mgs.zb_near,sort=random] & at @s
+# @executed	as @n[tag=mgs.zb_new]
 #
 # @within	mgs:v5.3.0/zombies/types/fast with storage mgs:temp _zb_speed
 #			mgs:v5.3.0/zombies/types/tank with storage mgs:temp _zb_speed

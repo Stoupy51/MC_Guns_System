@@ -15,5 +15,5 @@ kill @e[tag=mgs.mb_disabled]
 # Before summoning the boxes: a hidden interaction entity sits 512 blocks under its spot, and the chests are summoned `at @s`.
 function mgs:v5.3.0/zombies/mystery_box/sync_interaction_visibility
 
-execute as @e[tag=mgs.mystery_box_pos,tag=!mgs.mystery_box_active] at @s run function mgs:v5.3.0/zombies/mystery_box/fire_sale_summon_box
+execute as @e[tag=mgs.mystery_box_pos,tag=!mgs.mystery_box_active] at @s positioned ~ ~-0.9 ~ run function mgs:v5.3.0/zombies/mystery_box/summon_presence {extra_tags:',"mgs.mb_temp"'}
 

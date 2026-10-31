@@ -6,6 +6,9 @@
 # @within	mgs:v5.3.0/utils/coord_stick {run:"function mgs:v5.3.0/utils/coord_stick_relative",with:{}}
 #
 
+# Drawing a spawn's activation box from its form (see maps/editor/form/box_start).
+execute if entity @a[tag=mgs.coord_stick_user,tag=mgs.cs_abox] run return run function mgs:v5.3.0/maps/editor/form/box_corner
+
 # 0: first click, 1: second click (origin saved).
 scoreboard players set #cs_state mgs.data 0
 execute if data storage mgs:temp coord_stick.origin run scoreboard players set #cs_state mgs.data 1

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tag_zombies_spawns_near_players.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/spawning.py"
+	],
+	"names": [],
+	"mappings": "AAkC0E;;;;;;;;;AAC1E;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}
