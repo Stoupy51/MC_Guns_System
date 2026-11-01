@@ -63,7 +63,7 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"search_and_destroy": ElementDef(name="S&D / Demolition", color="gold",         particle=[1.0, 0.6, 0.0], particle_scale=1.0, has_rotation=False, egg_model="minecraft:fox_spawn_egg",         save_type="point",           save_path="search_and_destroy",      emoji="💣"),
 	"domination":         ElementDef(name="Domination Point", color="green",        particle=[0.0, 1.0, 0.0], particle_scale=1.0, has_rotation=False, egg_model="minecraft:creeper_spawn_egg",     save_type="point",           save_path="domination",              emoji="🏴"),
 	"hardpoint":          ElementDef(name="Hardpoint Zone",   color="dark_purple",  particle=[0.5, 0.0, 0.5], particle_scale=1.0, has_rotation=False, egg_model="minecraft:warden_spawn_egg",      save_type="point",           save_path="hardpoint",               emoji="⚡"),
-	"start_command":      ElementDef(name="Start Command",    color="aqua",         particle=[0.0, 0.9, 0.9], particle_scale=1.0, has_rotation=False, egg_model="minecraft:allay_spawn_egg",       save_type="start_command",   save_path="start_commands",          emoji="⚙"),
+	"start_command":      ElementDef(name="Start Command",    color="aqua",         particle=[0.0, 0.9, 0.9], particle_scale=1.0, has_rotation=False, egg_model="minecraft:sniffer_spawn_egg",     save_type="start_command",   save_path="start_commands",          emoji="⚙"),
 	"respawn_command":    ElementDef(name="Respawn Command",  color="dark_aqua",    particle=[0.0, 0.7, 0.7], particle_scale=1.0, has_rotation=False, egg_model="minecraft:vex_spawn_egg",         save_type="respawn_command", save_path="respawn_commands",        emoji="↺"),
 	# Mission elements
 	"mission_spawn":      ElementDef(name="Mission Spawn",    color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:villager_spawn_egg",    save_type="spawn",           save_path="spawning_points.mission", emoji="●"),
@@ -87,6 +87,7 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"barricade":            ElementDef(name="Barricade",          color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",    save_type="zb_object",       save_path="barricades",                emoji="🧱", defaults={"block_enabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "false"}}, "block_disabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "true"}}, "radius": 2}, light_fields=("block_enabled", "block_disabled")),
 	"leaderboard":          ElementDef(name="Leaderboard",        color="gold",         particle=[1.0, 0.8, 0.0], particle_scale=1.0, has_rotation=False, egg_model="minecraft:parrot_spawn_egg",      save_type="zb_object",       save_path="leaderboards",              emoji="🏆", defaults={"board": "level_zb", "map_id": "", "players": "all"}),
 }
+# TODO: EMPECHER DE SAVE UNE MAP ALORS QU'ON A DEJA SAVE (On était 2 à éditer la map, l'un a save, l'autre a save aussi et ça écrase la map de l'autre mais avec plus aucune entité)
 
 # Shown as real in-game models in the editor instead of dust, each through maps/editor/displays/<etype>, which mirrors the game's own display setup.
 MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "wunderfizz", "pap_machine", "mystery_box_pos", "power_switch", "barricade")

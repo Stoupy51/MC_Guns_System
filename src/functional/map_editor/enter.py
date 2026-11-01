@@ -91,6 +91,7 @@ execute as @a[scores={{{ns}.mp.map_edit=1}}] run function {ns}:v{version}/maps/e
 
 tellraw @a[scores={{{ns}.mp.map_edit=1}}] [{MGS_TAG},{{"text":"Editor session synced for all players.","color":"aqua"}}]
 """)
+	# TODO: Replace "invite_all" to /execute as @a run function {ns}:v{version}/maps/editor/invite, so we can invite specific players, and not just all of them.
 
 	write_versioned_function("maps/editor/load_map_data", f"""
 $data modify storage {ns}:temp map_edit.map set from storage {ns}:maps $(mode)[$(idx)]

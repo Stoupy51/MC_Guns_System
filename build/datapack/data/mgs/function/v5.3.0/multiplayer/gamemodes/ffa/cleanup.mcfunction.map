@@ -3,8 +3,8 @@
 	"file": "cleanup.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/free_for_all.py"
 	],
 	"names": [],
-	"mappings": ";;;;;;AAmCE"
+	"mappings": ";;;;;;AAoDsB"
 }

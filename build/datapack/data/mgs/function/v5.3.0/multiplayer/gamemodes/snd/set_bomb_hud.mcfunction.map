@@ -3,8 +3,8 @@
 	"file": "set_bomb_hud.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/bomb/snd/bomb.py"
 	],
 	"names": [],
-	"mappings": "AAmCE;;;;;;;;AAAA;AAAA"
+	"mappings": "AAgF8B;;;;;;;;AAC9B;AACA"
 }

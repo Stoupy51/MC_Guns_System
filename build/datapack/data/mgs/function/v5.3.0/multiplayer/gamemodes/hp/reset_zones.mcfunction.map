@@ -3,8 +3,8 @@
 	"file": "reset_zones.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/hardpoint.py"
 	],
 	"names": [],
-	"mappings": "AAmCE;;;;;;AAAA;AAAA;AAAA"
+	"mappings": "AAsK0B;;;;;;AAC1B;AACA;AACA"
 }
