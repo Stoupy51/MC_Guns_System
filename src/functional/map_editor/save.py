@@ -3,9 +3,7 @@
 from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
-from ..helpers.snbt import snbt
 from ..map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, MODE_LIST
-from .shared import ZB_ELEMENTS
 
 # Constants
 SAVED_TYPES: tuple[str, ...] = ("spawn", "point", "enemy", "start_command", "respawn_command", "zb_object")
@@ -43,6 +41,10 @@ tellraw @s [{MGS_TAG},{{"text":"Map saved!","color":"green"}}]
 """)
 
 	write_versioned_function("maps/editor/do_save", f"""
+# Markers left by an older session, and the extra ones of a kind sharing a block, are not saved.
+execute as @e[type=minecraft:marker,tag={ns}.map_element] run function {ns}:v{version}/maps/editor/session_check
+function {ns}:v{version}/maps/editor/remove_duplicates
+
 # The default enemy function changed this session survives the reload.
 data modify storage {ns}:temp _session_enemy_fn set from storage {ns}:temp map_edit.map.default_enemy_function
 
@@ -185,8 +187,7 @@ data modify storage {ns}:temp _save_respawn_cmd.command set from entity @s data.
 $data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_respawn_cmd
 """)
 
-	## Macro: path is wallbuys, doors, ...
-	strip_dispatch: str = write_strip_light_fields()
+	## Macro: etype is wallbuy, door, ...
 	write_versioned_function("maps/editor/save_zb_object", f"""
 # Run as the marker, at it.
 execute store result score #ax {ns}.data run data get entity @s Pos[0]
@@ -206,19 +207,17 @@ execute store result storage {ns}:temp _save_zb.pos[0] int 1 run scoreboard play
 execute store result storage {ns}:temp _save_zb.pos[1] int 1 run scoreboard players get #ay {ns}.data
 execute store result storage {ns}:temp _save_zb.pos[2] int 1 run scoreboard players get #az {ns}.data
 
-# Pitch is 0 unless the element has one (the mystery box).
-data modify storage {ns}:temp _save_zb.rotation set value [0.0f, 0.0f]
-data modify storage {ns}:temp _save_zb.rotation[0] set from entity @s data.yaw
-execute if data entity @s data.pitch run data modify storage {ns}:temp _save_zb.rotation[1] set from entity @s data.pitch
-
-# yaw and pitch live in the rotation array; the rest is the editor's own.
+# Yaw in whole degrees from 0 to 359, left out at 0. The rotation a marker of an older map carries is rebuilt on load.
+execute store result score #yaw {ns}.data run data get entity @s data.yaw
+scoreboard players operation #yaw {ns}.data %= #360 {ns}.data
+execute if score #yaw {ns}.data matches ..-1 run scoreboard players add #yaw {ns}.data 360
 data remove storage {ns}:temp _save_zb.yaw
-data remove storage {ns}:temp _save_zb.pitch
+data remove storage {ns}:temp _save_zb.rotation
+execute unless score #yaw {ns}.data matches 0 store result storage {ns}:temp _save_zb.yaw int 1 run scoreboard players get #yaw {ns}.data
+
 data remove storage {ns}:temp _save_zb._disp_sig
 data remove storage {ns}:temp _save_zb._ed
-{strip_dispatch}
-
-$data modify storage {ns}:temp map_edit.map.$(path) append from storage {ns}:temp _save_zb
+$function {ns}:v{version}/maps/compact/$(etype)
 """)
 
 	## At the map's index, in its mode.
@@ -231,7 +230,10 @@ def write_save_lists(ns: str, version: str) -> None:
 	""" Write one `save_lists/<mode>` function per editor mode: empty each saved list, then rebuild it from its markers. """
 	for mode_key, mode_info in EDITOR_MODES.items():
 		saved: list[str] = [etype for etype in mode_info.slots if ALL_ELEMENTS[etype].save_type in SAVED_TYPES]
-		resets: str = "\n".join(f"data modify storage {ns}:temp map_edit.map.{ALL_ELEMENTS[etype].save_path} set value []" for etype in saved)
+		resets: str = "\n".join([
+			*(f"data modify storage {ns}:temp map_edit.map.{ALL_ELEMENTS[etype].save_path} set value []" for etype in saved),
+			*([f"data remove storage {ns}:temp map_edit.map.shared"] if any(ALL_ELEMENTS[etype].shared_fields for etype in saved) else []),
+		])
 		rebuilds: str = "\n".join(
 			f"execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/{save_call(etype)}" for etype in saved
 		)
@@ -254,30 +256,8 @@ def save_call(etype: str) -> str:
 	einfo = ALL_ELEMENTS[etype]
 	if einfo.save_type == "enemy":
 		return "save_enemy"
+	if einfo.save_type == "zb_object":
+		return f'save_zb_object {{etype:"{etype}"}}'
 	list_path: str = einfo.save_path.split(".")[-1] if einfo.save_type == "spawn" else einfo.save_path
 	return f'save_{einfo.save_type} {{path:"{list_path}"}}'
-
-
-def write_strip_light_fields() -> str:
-	""" Write one function per element with light fields, dropping from `_save_zb` each one that holds its default.
-
-	Returns:
-		The lines save_zb_object runs to dispatch to them.
-	"""
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
-	light_elements: dict[str, tuple[str, ...]] = {etype: einfo.light_fields for etype, einfo in ZB_ELEMENTS.items() if einfo.light_fields}
-	for etype, fields in light_elements.items():
-		# `set value` on an equal compound changes nothing, so its success says whether the field differs from the default.
-		write_versioned_function(f"maps/editor/strip_light_fields/{etype}", "\n".join(
-			f"""data remove storage {ns}:temp _light
-data modify storage {ns}:temp _light set from storage {ns}:temp _save_zb.{field}
-execute store success score #light_differs {ns}.data run data modify storage {ns}:temp _light set value {snbt(ALL_ELEMENTS[etype].defaults[field])}
-execute if score #light_differs {ns}.data matches 0 run data remove storage {ns}:temp _save_zb.{field}"""
-			for field in fields
-		))
-	return "\n".join(
-		f"execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/strip_light_fields/{etype}"
-		for etype in light_elements
-	)
 

@@ -12,6 +12,8 @@ def write_editor_enter() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
+	zombies_mode: int = MODE_LIST.index("zombies")
+
 	# Macro with mode and idx.
 	mode_score_lines = "\n".join(
 		f'execute if data storage {ns}:temp map_edit{{mode:"{mk}"}} run scoreboard players set @s {ns}.mp.map_mode {i}'
@@ -24,6 +26,7 @@ $data modify storage {ns}:temp map_edit.mode set value "$(mode)"
 
 {mode_score_lines}
 
+function {ns}:v{version}/maps/editor/next_session
 scoreboard players set @s {ns}.mp.map_edit 1
 tag @s add {ns}.map_editor
 
@@ -33,6 +36,11 @@ execute store result storage {ns}:temp map_edit.idx int 1 run scoreboard players
 
 function {ns}:v{version}/maps/editor/load_map_data with storage {ns}:temp map_edit
 data remove storage {ns}:temp map_edit.removed
+
+# A zombies map is stored small: the markers are summoned from it whole (see map_editor/storage_format.py).
+execute if score @s {ns}.mp.map_mode matches {zombies_mode} run data modify storage {ns}:temp _inf_map set from storage {ns}:temp map_edit.map
+execute if score @s {ns}.mp.map_mode matches {zombies_mode} run function {ns}:v{version}/maps/inflate
+execute if score @s {ns}.mp.map_mode matches {zombies_mode} run data modify storage {ns}:temp map_edit.map set from storage {ns}:temp _inf_map
 
 gamemode creative @s
 clear @s
@@ -56,7 +64,7 @@ execute at @s run function {ns}:v{version}/maps/editor/refresh_displays
 function {ns}:v{version}/maps/editor/give_tools
 
 # Zombies mode only.
-execute if score @s {ns}.mp.map_mode matches {MODE_LIST.index("zombies")} run function {ns}:v{version}/maps/editor/init_zb_defaults
+execute if score @s {ns}.mp.map_mode matches {zombies_mode} run function {ns}:v{version}/maps/editor/init_zb_defaults
 
 tellraw @s [{MGS_TAG},{{"text":"Entered map editor for: ","color":"green"}},{{"text":"","color":"white"}},{{"storage":"{ns}:temp","nbt":"map_edit.map.name","interpret":true}}]
 tellraw @s [{MGS_TAG},{{"text":"Place eggs to add elements. DESTROY egg (hotbar 9) removes nearest element.","color":"yellow"}}]

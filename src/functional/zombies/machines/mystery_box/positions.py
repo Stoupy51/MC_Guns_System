@@ -81,7 +81,7 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 
 	# The rotation is [yaw, pitch]: interactions keep it for the box's displays and its caret frame, though their hitbox never turns.
 	write_versioned_function("zombies/mystery_box/summon_pos_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.zombies_entity","{ns}.mb_new","bs.entity.interaction"],CustomName:"Mystery Box #$(box)"}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.zombies_entity","{ns}.mb_new","bs.entity.interaction"]}}
 """)
 
 	## Run as a new box interaction, at its map position and turned as the box: up to its centre, then above it.
@@ -91,7 +91,7 @@ $summon minecraft:interaction $(x) $(y) $(z) {{width:2.0f,height:-2.0f,response:
 
 	## Run as a box interaction, positioned where the part goes: the part is turned like the box.
 	write_versioned_function("zombies/mystery_box/summon_part", f"""
-$summon minecraft:item_display ~ ~ ~ {{Tags:$(tags),CustomName:"$(name)",item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"$(model)"}}}},transformation:{box_transformation(0)}}}
+$summon minecraft:item_display ~ ~ ~ {{Tags:$(tags),item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:chest",count:1,components:{{"minecraft:item_model":"$(model)"}}}},transformation:{box_transformation(0)}}}
 tp @n[tag={ns}.mb_part_new] ~ ~ ~ ~ ~
 scoreboard players operation @n[tag={ns}.mb_part_new] {ns}.mb.roll = @s {ns}.mb.roll
 execute as @n[tag={ns}.mb_part_new] run function {ns}:v{version}/zombies/mystery_box/roll_closed
@@ -104,11 +104,10 @@ tag @n[tag={ns}.mb_part_new] remove {ns}.mb_part_new
 	))
 
 	## Run as a box interaction, at the box's centre. Base and lid share mb_presence, so they move and despawn together.
-	presence_parts: dict[str, str] = {"base": "Mystery Box", "lid": "Mystery Box Lid"}
 	write_versioned_function("zombies/mystery_box/summon_presence", "\n".join(
 		f'$function {ns}:v{version}/zombies/mystery_box/summon_part {{tags:["{ns}.mb_presence","{ns}.mb_{part}","{ns}.zombies_entity","{ns}.mb_part_new"$(extra_tags)],'
-		f'name:"{name}",model:"{ns}:mystery_box_{part}"}}'
-		for part, name in presence_parts.items()
+		f'model:"{ns}:mystery_box_{part}"}}'
+		for part in ("base", "lid")
 	))
 
 	## Unusable boxes (not active, no Fire Sale, no pull in progress) have their interaction moved 512 blocks away, so it cannot be hovered or eat a gun click.
@@ -148,7 +147,7 @@ execute if score #zb_fire_sale_timer {ns}.data matches ..0 as @e[tag={ns}.myster
 	## Skips a box with a pull in progress (its result shows there), and shifts back up 512 for a hidden entity (see interaction_hide).
 	disabled_part: str = (
 		f'function {ns}:v{version}/zombies/mystery_box/summon_part '
-		f'{{tags:["{ns}.mb_disabled","{ns}.zombies_entity","{ns}.mb_part_new"],name:"Mystery Box (inactive)",model:"{ns}:mystery_box_disabled"}}'
+		f'{{tags:["{ns}.mb_disabled","{ns}.zombies_entity","{ns}.mb_part_new"],model:"{ns}:mystery_box_disabled"}}'
 	)
 	write_versioned_function("zombies/mystery_box/summon_disabled_display", f"""
 execute if entity @n[tag={ns}.mb_display,distance=..3] run return 0

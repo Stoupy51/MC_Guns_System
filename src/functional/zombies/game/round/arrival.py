@@ -55,7 +55,7 @@ tag @n[tag={ns}.zb_new_root] remove {ns}.zb_new_root
 	## Run as the spawn marker, on the surface the enemy breaks through, which sheds debris for the whole rise.
 	write_versioned_function("zombies/summon_rise_dust", f"""
 $execute positioned ~ ~$(block_y) ~ run function #bs.block:get_type
-summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.zb_rise_dust","{ns}.zombies_entity","{ns}.zb_rise_dust_new"],CustomName:"Rise Dust"}}
+summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.zb_rise_dust","{ns}.zombies_entity","{ns}.zb_rise_dust_new"]}}
 data modify entity @n[tag={ns}.zb_rise_dust_new] data.block set from storage bs:out block.type
 scoreboard players operation @n[tag={ns}.zb_rise_dust_new] {ns}.zb.rise_tick = @s {ns}.zb.rise_tick
 tag @n[tag={ns}.zb_rise_dust_new] remove {ns}.zb_rise_dust_new
@@ -63,7 +63,7 @@ tag @n[tag={ns}.zb_rise_dust_new] remove {ns}.zb_rise_dust_new
 
 	## The spot sparks for 1.5 s, then a bolt delivers the enemy (BO2 hellhounds). The portal keeps the compound until then.
 	write_versioned_function("zombies/arrival/portal", f"""
-summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.zb_portal","{ns}.zombies_entity","{ns}.zb_portal_new"],CustomName:"Spawn Portal"}}
+summon minecraft:marker ~ ~ ~ {{Tags:["{ns}.zb_portal","{ns}.zombies_entity","{ns}.zb_portal_new"]}}
 data modify entity @n[tag={ns}.zb_portal_new] data.mob set from storage {ns}:temp _mob
 execute if data entity @s data.walk_to run data modify entity @n[tag={ns}.zb_portal_new] data.walk_to set from entity @s data.walk_to
 scoreboard players set @n[tag={ns}.zb_portal_new] {ns}.zb.rise_tick 30

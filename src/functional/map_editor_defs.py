@@ -40,16 +40,17 @@ class ElementDef:
 	egg_model: str
 	save_type: str
 	""" "base" (single, handled specially), "spawn" ([x,y,z,yaw] list), "point" ([x,y,z] list),
-	"zb_object" (compound objects with pos/rotation/group_id + extra fields), "enemy", "config",
+	"zb_object" (compounds with pos, yaw and their own fields, see map_editor/storage_format.py), "enemy", "config",
 	"start_command", "respawn_command". """
 	emoji: str
 	save_path: str = ""
 	""" Dotted key under the mode's storage where instances are written (empty for base/config). """
 	defaults: JsonDict = dc_field(default_factory=dict[str, Any])
-	""" Per-element default config, written on placement (only zb_object elements use it). """
-	light_fields: tuple[str, ...] = ()
-	""" Block-state `defaults` a saved map leaves out while they hold their default, filled back in on load.
-	Keeps maps small and lets them survive block-state format changes; `Name`/`Properties` states are upgraded to `id`/`properties`. """
+	""" Per-element default config, written on placement (only zb_object elements use it).
+	A saved map leaves out every field holding its default, so changing a default changes the maps that relied on it. """
+	shared_fields: tuple[str, ...] = ()
+	""" Block-state `defaults` a map saves once, under `shared.<etype>`, from the first element saved: the others leave them out while they hold the same.
+	`Name`/`Properties` states of maps saved before 26.3 are upgraded to `id`/`properties` on load. """
 	config_uses_default_function: bool = False
 	requires_offhand_block: bool = False
 
@@ -84,8 +85,8 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"pap_machine":        ElementDef(name="Pack-a-Punch",     color="dark_red",     particle=[0.8, 0.1, 0.1], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:creaking_spawn_egg",    save_type="zb_object",       save_path="pap_machines",            emoji="🔥", defaults={"name": "Pack-a-Punch", "price": 5000, "power": True, "display_item": "", "item_model": ""}),
 	"mystery_box_pos":    ElementDef(name="Mystery Box Pos",  color="light_purple", particle=[1.0, 0.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:evoker_spawn_egg",      save_type="zb_object",       save_path="mystery_box.positions",   emoji="📦", defaults={"can_start_on": True, "display_item": "", "item_model": "", "location_name": "", "pitch": 0.0, "roll": 0}),
 	"power_switch":       ElementDef(name="Power Switch",     color="green",        particle=[0.0, 1.0, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:slime_spawn_egg",       save_type="zb_object",       save_path="power_switch",            emoji="⚡", defaults={}),
-	"barricade":            ElementDef(name="Barricade",          color="aqua",         particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",    save_type="zb_object",       save_path="barricades",                emoji="🧱", defaults={"block_enabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "false"}}, "block_disabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "true"}}, "radius": 2}, light_fields=("block_enabled", "block_disabled")),
-	"leaderboard":          ElementDef(name="Leaderboard",        color="gold",         particle=[1.0, 0.8, 0.0], particle_scale=1.0, has_rotation=False, egg_model="minecraft:parrot_spawn_egg",      save_type="zb_object",       save_path="leaderboards",              emoji="🏆", defaults={"board": "level_zb", "map_id": "", "players": "all"}),
+	"barricade":          ElementDef(name="Barricade",        color="aqua",       particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",      save_type="zb_object",       save_path="barricades",              emoji="🧱", defaults={"block_enabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "false"}}, "block_disabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "true"}}, "radius": 2}, shared_fields=("block_enabled", "block_disabled")),
+	"leaderboard":        ElementDef(name="Leaderboard",      color="gold",       particle=[1.0, 0.8, 0.0], particle_scale=1.0, has_rotation=False, egg_model="minecraft:parrot_spawn_egg",        save_type="zb_object",       save_path="leaderboards",            emoji="🏆", defaults={"board": "level_zb", "map_id": "", "players": "all"}),
 }
 # TODO: EMPECHER DE SAVE UNE MAP ALORS QU'ON A DEJA SAVE (On était 2 à éditer la map, l'un a save, l'autre a save aussi et ça écrase la map de l'autre mais avec plus aucune entité)
 

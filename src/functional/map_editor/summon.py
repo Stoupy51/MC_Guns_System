@@ -232,9 +232,6 @@ function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zb
 
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from storage {ns}:temp _zb_iter[0]
 
-# Fields older maps lack, which the config UI would show as blank rows.
-execute as @n[tag={ns}.new_zb_marker] run function {ns}:v{version}/maps/editor/backfill_zb_defaults
-
 # The entity Rotation is synced too, for model displays.
 execute if data storage {ns}:temp _zb_iter[0].rotation as @n[tag={ns}.new_zb_marker] run data modify entity @s data.yaw set from storage {ns}:temp _zb_iter[0].rotation[0]
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s Rotation[0] set from entity @s data.yaw

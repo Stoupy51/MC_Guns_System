@@ -65,9 +65,6 @@ function {ns}:v{version}/zombies/barricades/place_at with storage {ns}:temp _bpl
 # All zb_object data (block_enabled, block_disabled, radius, ...).
 execute as @n[tag={ns}._barricade_new_d] run data modify entity @s data set from storage {ns}:temp _barricade_iter[0]
 
-# Fill the blocks a map leaves out at their default, and upgrade pre-26.3 block states.
-execute as @n[tag={ns}._barricade_new_d] run function {ns}:v{version}/maps/light_fields/barricade
-
 execute as @n[tag={ns}._barricade_new_d] run data modify entity @s block_state set from entity @s data.block_enabled
 
 scoreboard players operation @n[tag={ns}._barricade_new_d] {ns}.zb.barricade.id = #barricade_counter {ns}.data
@@ -85,6 +82,6 @@ execute if data storage {ns}:temp _barricade_iter[0] run function {ns}:v{version
 """)
 
 	write_versioned_function("zombies/barricades/place_at", f"""
-$execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],block_state:"minecraft:air",transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},CustomName:"Barricade",Tags:["{ns}.barricade_display","{ns}.zombies_entity","{ns}._barricade_new_d"]}}
+$execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],block_state:"minecraft:air",transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},Tags:["{ns}.barricade_display","{ns}.zombies_entity","{ns}._barricade_new_d"]}}
 """)
 

@@ -17,7 +17,7 @@ class SpawnKind:
 	tag: str
 	""" Tag suffix of its markers. """
 	name: str
-	""" In-game name of its markers, followed by their id and group. """
+	""" Title of its editor form. """
 	defaults: JsonDict = field(default_factory=dict[str, Any])
 	""" What an entry without one of these fields behaves as, and what the editor places new ones with. """
 
@@ -60,7 +60,7 @@ scoreboard objectives add {ns}.zb.spawn.rmax dummy
 
 	categories: str = "\n\n".join(
 		f"data modify storage {ns}:temp _spawn_defaults set value {snbt(kind.defaults)}\n"
-		+ CoreSpawning.spawn_category_lines("zombies", kind.key, kind.tag, kind.name)
+		+ CoreSpawning.spawn_category_lines("zombies", kind.key, kind.tag)
 		for kind in (PLAYER_SPAWNS, *ENEMY_SPAWNS)
 	)
 	write_versioned_function("zombies/summon_spawns", f"""
@@ -98,23 +98,14 @@ execute store result storage {ns}:temp _spos.z double 1 run scoreboard players g
 execute store result storage {ns}:temp _spos.yaw double 0.01 run scoreboard players get #syaw {ns}.data
 data modify storage {ns}:temp _spos.tag set from storage {ns}:temp _spawn_tag
 
-# "Zombie Spawn #12 (group 2)": zombies remember their spawn's id so the stuck rescue never reuses it.
+# Zombies remember their spawn's id so the stuck rescue never reuses it.
 scoreboard players add #zb_spawn_sid {ns}.data 1
-data modify storage {ns}:temp _spawn_label set value {{group_id:0}}
-data modify storage {ns}:temp _spawn_label.name set from storage {ns}:temp _spawn_name
-data modify storage {ns}:temp _spawn_label.group_id set from storage {ns}:temp _spawn.group_id
-execute store result storage {ns}:temp _spawn_label.sid int 1 run scoreboard players get #zb_spawn_sid {ns}.data
-function {ns}:v{version}/zombies/spawn_name with storage {ns}:temp _spawn_label
 
 function {ns}:v{version}/zombies/summon_spawn_at with storage {ns}:temp _spos
 execute as @n[type=minecraft:marker,tag={ns}.new_spawn] run function {ns}:v{version}/zombies/spawn_setup
 
 data remove storage {ns}:temp _spawn_iter[0]
 execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/zombies/summon_spawn_iter
-""")
-
-	write_versioned_function("zombies/spawn_name", f"""
-$data modify storage {ns}:temp _spos.name set value "$(name) #$(sid) (group $(group_id))"
 """)
 
 	arrival_tags: str = "\n".join(

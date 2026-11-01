@@ -19,6 +19,11 @@ execute unless entity @a[scores={{{ns}.zb.in_game=1}}] run return run tellraw @s
 
 {GameLifecycle.mode_start_map_bootstrap_lines(ns, "zombies", normalize_legacy=False)}
 
+# The saved map is small: the game reads it whole (see map_editor/storage_format.py).
+data modify storage {ns}:temp _inf_map set from storage {ns}:zombies game.map
+function {ns}:v{version}/maps/inflate
+data modify storage {ns}:zombies game.map set from storage {ns}:temp _inf_map
+
 # in_game is the opt-in flag, so it stays. The XP spend tracker is reset too, or the reset reads as points spent (see xp).
 scoreboard players set @a {ns}.zb.points 500
 scoreboard players set @a {ns}.zb.xp_pts_prev 500

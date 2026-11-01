@@ -23,6 +23,7 @@ kill @e[tag={ns}.editor_display]
 
 scoreboard players set @s {ns}.mp.map_edit 0
 tag @s remove {ns}.map_editor
+function {ns}:v{version}/maps/editor/next_session
 
 clear @s
 """)

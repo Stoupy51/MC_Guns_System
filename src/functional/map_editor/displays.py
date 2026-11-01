@@ -18,7 +18,10 @@ def write_editor_displays() -> None:
 	write_versioned_function("maps/editor/refresh_displays", f"""
 kill @e[tag={ns}.editor_display]
 {"\n".join(
-	f"execute as @e[type=minecraft:marker,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/displays/{etype}"
+	f"execute as @e[type=minecraft:marker,tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/displays/{etype}\n"
+	f'execute as @e[tag={ns}.ed_disp_new] run data modify entity @s CustomName set value "{ALL_ELEMENTS[etype].name} Model"\n'
+	f"tag @e[tag={ns}.ed_disp_new] add {ns}.editor_display\n"
+	f"tag @e[tag={ns}.ed_disp_new] remove {ns}.ed_disp_new"
 	for etype in MODEL_DISPLAY_ELEMENTS
 )}
 
@@ -60,7 +63,7 @@ execute if data entity @s data.block_enabled run data modify storage {ns}:temp _
 execute align xyz positioned ~.5 ~.5 ~.5 run function {ns}:v{version}/maps/editor/displays/summon_barricade with storage {ns}:temp _ed_bar
 """)
 	write_versioned_function("maps/editor/displays/summon_barricade", f"""
-$summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw),0f],block_state:$(block),transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},CustomName:"Barricade",Tags:["{ns}.editor_display"]}}
+$summon minecraft:block_display ~ ~ ~ {{Rotation:[$(yaw),0f],block_state:$(block),transformation:{{left_rotation:[0f,0f,0f,1f],scale:[1f,1f,1f],translation:[-0.5f,-0.5f,-0.5f],right_rotation:[0f,0f,0f,1f]}},Tags:["{ns}.ed_disp_new"]}}
 """)
 
 	## Placed and scaled as the zombies wallbuys setup.
@@ -73,7 +76,7 @@ function {ns}:v{version}/maps/editor/displays/summon_wallbuy with storage {ns}:t
 """)
 	write_versioned_function("maps/editor/displays/summon_wallbuy", f"""
 # Up and toward the wall face, scale 0.6, as zombies/wallbuys/place_at.
-$summon minecraft:item_display ^ ^0.5 ^-0.49 {{Rotation:[$(yaw),0f],billboard:"fixed",item_display:"fixed",CustomName:"Wallbuy",Tags:["{ns}.editor_display","{ns}._ed_new_disp"],transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
+$summon minecraft:item_display ^ ^0.5 ^-0.49 {{Rotation:[$(yaw),0f],billboard:"fixed",item_display:"fixed",Tags:["{ns}.ed_disp_new","{ns}._ed_new_disp"],transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.6f,0.6f,0.6f]}}}}
 $execute as @n[tag={ns}._ed_new_disp] run loot replace entity @s contents loot {ns}:i/$(weapon_id)
 tag @e[tag={ns}._ed_new_disp] remove {ns}._ed_new_disp
 """)
@@ -81,8 +84,7 @@ tag @e[tag={ns}._ed_new_disp] remove {ns}._ed_new_disp
 	## As zombies/perks/setup_iter: potion by default with per-perk models; the map's display_item and item_model win.
 	write_versioned_function("maps/editor/displays/perk_machine", f"""
 # Run as the perk machine marker, at it.
-data modify storage {ns}:temp _pk_disp.tag set value "{ns}.editor_display"
-data modify storage {ns}:temp _pk_disp.name set value "Perk Machine"
+data modify storage {ns}:temp _pk_disp.tag set value "{ns}.ed_disp_new"
 data modify storage {ns}:temp _pk_disp.item_id set value ""
 data modify storage {ns}:temp _pk_disp.item_model set value ""
 data modify storage {ns}:temp _pk_disp.yaw set value 0.0f
@@ -99,8 +101,7 @@ execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function {n
 	## As zombies/wunderfizz/setup_iter.
 	write_versioned_function("maps/editor/displays/wunderfizz", f"""
 # Run as the Wunderfizz marker, at it.
-data modify storage {ns}:temp _wf_disp.tag set value "{ns}.editor_display"
-data modify storage {ns}:temp _wf_disp.name set value "Der Wunderfizz"
+data modify storage {ns}:temp _wf_disp.tag set value "{ns}.ed_disp_new"
 data modify storage {ns}:temp _wf_disp.item_id set value ""
 data modify storage {ns}:temp _wf_disp.item_model set value ""
 data modify storage {ns}:temp _wf_disp.yaw set value 0.0f
@@ -115,8 +116,7 @@ execute align xyz positioned ~.5 ~-.37 ~.5 positioned ^ ^ ^-0.49 run function {n
 	## As zombies/pap/setup_iter.
 	write_versioned_function("maps/editor/displays/pap_machine", f"""
 # Run as the PaP marker, at it.
-data modify storage {ns}:temp _pap_disp.tag set value "{ns}.editor_display"
-data modify storage {ns}:temp _pap_disp.name set value "Pack-a-Punch"
+data modify storage {ns}:temp _pap_disp.tag set value "{ns}.ed_disp_new"
 data modify storage {ns}:temp _pap_disp.item_id set value ""
 data modify storage {ns}:temp _pap_disp.item_model set value ""
 data modify storage {ns}:temp _pap_disp.yaw set value 0.0f
@@ -147,7 +147,7 @@ $execute rotated $(yaw) $(pitch) run function {ns}:v{version}/maps/editor/displa
 		lambda roll: f"execute positioned {PIVOT} positioned {box_offset(roll, *CENTER)} run function {ns}:v{version}/maps/editor/displays/mystery_box_parts"
 	))
 	write_versioned_function("maps/editor/displays/mystery_box_parts", "\n".join(
-		f'function {ns}:v{version}/zombies/mystery_box/summon_part {{tags:["{ns}.editor_display","{ns}.mb_part_new"],name:"Mystery Box",model:"{ns}:mystery_box_{part}"}}'
+		f'function {ns}:v{version}/zombies/mystery_box/summon_part {{tags:["{ns}.ed_disp_new","{ns}.mb_part_new"],model:"{ns}:mystery_box_{part}"}}'
 		for part in ("base", "lid")
 	))
 
@@ -159,6 +159,6 @@ data modify storage {ns}:temp _ed_ps.yaw set from entity @s data.yaw
 execute align xyz positioned ~.5 ~.5 ~.5 run function {ns}:v{version}/maps/editor/displays/summon_power_switch with storage {ns}:temp _ed_ps
 """)
 	write_versioned_function("maps/editor/displays/summon_power_switch", f"""
-$summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],CustomName:"Power Switch",Tags:["{ns}.editor_display"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
+$summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw),0f],Tags:["{ns}.ed_disp_new"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
 """)
 

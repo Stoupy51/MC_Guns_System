@@ -5,7 +5,7 @@ from stewbeet import McFunction, Mem, write_versioned_function
 from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs
 from ..map_editor_defs import ALL_ELEMENTS
-from .shared import ZB_ELEMENTS
+from .shared import GROUP_ID_ELEMENTS, ZB_ELEMENTS
 
 
 # Functions
@@ -153,6 +153,10 @@ execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp
 execute if entity @s[tag={ns}.element.{etype}] run data modify storage {ns}:temp _zb_new set from storage {ns}:temp map_edit.zb_defaults.{etype}
 """
 
+	group_id_lines: str = "\n".join(
+		f"execute as @n[tag={ns}.new_zb_marker,tag={ns}.element.{etype}] run data modify entity @s data.group_id set from storage {ns}:temp map_edit.zb_defaults.group_id"
+		for etype in GROUP_ID_ELEMENTS
+	)
 	zb_messages: str = "\n".join(
 		f'execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"{einfo.name} placed!","color":"{einfo.color}"}}]'
 		for etype, einfo in ZB_ELEMENTS.items()
@@ -169,7 +173,7 @@ function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zb
 
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from storage {ns}:temp _zb_new
 
-execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data.group_id set from storage {ns}:temp map_edit.zb_defaults.group_id
+{group_id_lines}
 
 execute store result score #yaw {ns}.data run data get entity @p[tag={ns}.map_editor,distance=..6,sort=nearest] Rotation[0]
 

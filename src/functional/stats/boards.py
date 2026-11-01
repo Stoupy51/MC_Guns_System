@@ -323,7 +323,7 @@ function {base}/holo_path with storage {ns}:temp _lb_h
 $data modify storage {ns}:temp _lb_h.path set value "$(board)"
 $execute if data storage {ns}:temp _lb_h{{board:"zb_map"}} run data modify storage {ns}:temp _lb_h.path set value 'zb_map."$(map_id)"."$(players)"'
 $execute if data storage {ns}:temp _lb_h{{board:"mi_map"}} run data modify storage {ns}:temp _lb_h.path set value 'mi_map."$(map_id)"'
-$summon minecraft:marker $(x).5 $(y) $(z).5 {{CustomName:"Leaderboard",Tags:["{ns}.leaderboard","{ns}.zombies_entity","{ns}.lb_new"]}}
+$summon minecraft:marker $(x).5 $(y) $(z).5 {{Tags:["{ns}.leaderboard","{ns}.zombies_entity","{ns}.lb_new"]}}
 data modify entity @n[type=minecraft:marker,tag={ns}.lb_new] data.lb set from storage {ns}:temp _lb_h
 tag @e[type=minecraft:marker,tag={ns}.lb_new] remove {ns}.lb_new
 """)

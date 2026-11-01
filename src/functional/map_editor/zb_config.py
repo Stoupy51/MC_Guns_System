@@ -8,14 +8,9 @@ from ..helpers import MGS_TAG
 from ..helpers.dialogs import Dialogs
 from ..helpers.snbt import snbt
 from ..helpers.text import Text
-from ..map_editor_defs import ALL_ELEMENTS, FIELD_DOCS, OPTIONAL_LIST_FIELDS, ElementDef
+from ..map_editor_defs import ALL_ELEMENTS, FIELD_DOCS, OPTIONAL_LIST_FIELDS
 from .forms import FORM_ELEMENTS
-from .shared import SEP, ZB_ELEMENTS
-
-# Constants
-GROUP_ID_ELEMENTS: tuple[str, ...] = ("zombie_spawn", "player_spawn_zb", "special_spawn")
-""" Spawn-type elements showing a group_id row.
-Doors carry none: a door's link_id is its front-room group, and back_group_id is the back room. """
+from .shared import GROUP_ID_ELEMENTS, SEP, ZB_ELEMENTS
 
 
 # Functions
@@ -26,17 +21,15 @@ def write_editor_zb_config() -> None:
 	write_zb_defaults(ns)
 
 	write_versioned_function("maps/editor/handle_zb_configure", f"""
-# Within 10 blocks. A form opens for the editor who placed the egg.
-tag @p[tag={ns}.map_editor,distance=..6,sort=nearest] add {ns}.ed_form_user
+# Within 10 blocks.
 execute at @s as @n[tag={ns}.map_element,distance=..10] run function {ns}:v{version}/maps/editor/show_element_config
 execute at @s unless entity @n[tag={ns}.map_element,distance=..10] run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"No element found within 10 blocks!","color":"red"}}]
-tag @a remove {ns}.ed_form_user
 """)
 
-	# Run as the nearest marker: a form for the elements that have one, else its type-specific fields in chat.
+	# Run as the nearest marker: its type-specific fields in chat. An element with a form becomes the target its Form button opens.
 	write_versioned_function("maps/editor/show_element_config", "\n".join([
 		*(
-			f"execute if entity @s[tag={ns}.element.{etype}] run return run function {ns}:v{version}/maps/editor/form/open/{etype}"
+			f"execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/editor/form/target"
 			for etype in FORM_ELEMENTS
 		),
 		f"tellraw @a[tag={ns}.map_editor] {SEP}",
@@ -45,20 +38,6 @@ tag @a remove {ns}.ed_form_user
 		*base_coordinates_config_lines(ns),
 		f"tellraw @a[tag={ns}.map_editor] {SEP}",
 	]))
-
-	# Markers from an already-saved map get fields added to `defaults` since then (partial_price on doors and perk machines),
-	# so the config UI shows the default instead of a blank row; a set value is never touched.
-	light_dispatch: str = write_light_fields()
-	missing_defaults: str = "\n".join(
-		f"execute if entity @s[tag={ns}.element.{etype}] unless data entity @s data.{field} "
-		f"run data modify entity @s data.{field} set value {snbt(default_val)}"
-		for etype, einfo in ZB_ELEMENTS.items()
-		for field, default_val in einfo.defaults.items()
-	)
-	write_versioned_function("maps/editor/backfill_zb_defaults", f"""
-{light_dispatch}
-{missing_defaults}
-""")
 
 
 def write_zb_defaults(ns: str) -> None:
@@ -114,11 +93,13 @@ data modify storage {ns}:temp map_edit.zb_defaults.group_id set value 0
 
 
 def zb_object_config_lines(ns: str, version: str) -> list[str]:
-	""" Config panel lines of every zombies element: a title, group_id for spawns, then one row per default field. """
+	""" Config panel lines of every zombies element: a title (with a Form button when it has one), group_id for spawns, then one row per default field. """
+	form_btn: str = Dialogs.btn("📝 Form", f"/function {ns}:v{version}/maps/editor/form/open_target", "aqua", "Edit it in a form", action="run_command")
 	lines: list[str] = []
 	for etype, einfo in ZB_ELEMENTS.items():
 		shown: str = f"execute if entity @s[tag={ns}.element.{etype}] run tellraw @a[tag={ns}.map_editor] "
-		lines.append(shown + f'["  ","{einfo.emoji} ",{{"text":"{einfo.name} Configuration","color":"{einfo.color}","bold":true}}]')
+		title: str = f'{{"text":"{einfo.name} Configuration","color":"{einfo.color}","bold":true}}'
+		lines.append(shown + (f'["  ","{einfo.emoji} ",{title},"  ",{form_btn}]' if etype in FORM_ELEMENTS else f'["  ","{einfo.emoji} ",{title}]'))
 		if etype in GROUP_ID_ELEMENTS:
 			group_id_edit_btn = Dialogs.btn(
 				"✎",
@@ -246,33 +227,4 @@ def base_coordinates_config_lines(ns: str) -> list[str]:
 		shown + f'["    ",{{"text":"tick_command: ","color":"gray"}},{{"entity":"@s","nbt":"data.tick_command","color":"white"}}," ",{edit_tick_cmd_btn}," ",{clear_tick_cmd_btn}]',
 		shown + '["    ","💎 ",{"text":"Commands run at the base: start_command once when the game starts, tick_command every game tick.","color":"dark_gray","italic":true}]',
 	]
-
-
-def write_light_fields() -> str:
-	""" Write maps/light_fields/<etype>, restoring the fields a saved map leaves out and upgrading pre-26.3 block states.
-
-	Returns:
-		The lines an editor marker runs to dispatch to them.
-	"""
-	ns: str = Mem.ctx.project_id
-	version: str = Mem.ctx.project_version
-	light_elements: dict[str, ElementDef] = {etype: einfo for etype, einfo in ZB_ELEMENTS.items() if einfo.light_fields}
-	for etype, einfo in light_elements.items():
-		light_fields: McFunction = f"""
-# @s = an entity holding one saved {etype} compound in data (editor marker or in-game display)
-"""
-		for field in einfo.light_fields:
-			path: str = f"entity @s data.{field}"
-			light_fields += f"""
-execute if data {path}.Name run data modify {path}.id set from {path}.Name
-execute if data {path}.Properties run data modify {path}.properties set from {path}.Properties
-data remove {path}.Name
-data remove {path}.Properties
-execute unless data {path} run data modify {path} set value {snbt(einfo.defaults[field])}
-"""
-		write_versioned_function(f"maps/light_fields/{etype}", light_fields)
-	return "\n".join(
-		f"execute if entity @s[tag={ns}.element.{etype}] run function {ns}:v{version}/maps/light_fields/{etype}"
-		for etype in light_elements
-	)
 

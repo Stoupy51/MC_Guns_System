@@ -188,7 +188,7 @@ https://github.com/user-attachments/assets/69d14336-9af0-47ef-a5da-538b0f668787
 
 ## 🗺️ Map Editor
 
-A generic in-game authoring tool shared by Multiplayer, Missions, and Zombies. Instead of hardcoding coordinates in functions, each map is a storage compound (id, name, base_coordinates, boundaries, mode-specific element arrays) stored in a per-mode list. Element positions are saved relative to base_coordinates and converted to absolute world positions at runtime, so maps are portable and shareable between worlds/projects.
+A generic in-game authoring tool shared by Multiplayer, Missions, and Zombies. Instead of hardcoding coordinates in functions, each map is a storage compound (id, name, base_coordinates, boundaries, mode-specific element arrays) stored in a per-mode list. Element positions are saved relative to base_coordinates and converted to absolute world positions at runtime, so maps are portable and shareable between worlds/projects. Zombies maps leave out the fields holding their default and group door blocks by link (`src/functional/map_editor/storage_format.py`); a map in the older, longer format still loads and shrinks at its next save.
 
 Workflow: open the editor from the config menu (Game Setup), pick a mode tab, then select or create a map. The editor loads the map into temporary storage, spawns markers for existing elements, and gives you editor tools (spawn eggs and utility items). Place eggs to add elements, configure them via per-element handlers (the DESTROY egg removes the nearest one, and its chat message has a Revert button), then save: live markers are read back, converted to relative positions, and the map compound is rebuilt. Exiting cleans up all editor entities/items/tags.
 
@@ -196,7 +196,7 @@ Available elements per mode:
 
 - ⚔️ Multiplayer: base coordinates, red/blue/general spawn points, out-of-bounds points, boundary corners, S&D / Domination / Hardpoint objective points.
 - 🎯 Missions: base coordinates, spawn points, enemy markers (with enemy function/config references), out-of-bounds points, boundary corners.
-- 🧟 Zombies: base coordinates, player/zombie/special spawns, wallbuys, doors, traps, perk machines, mystery box positions, power switch, out-of-bounds points, boundary corners. Each object is a compound with defaults/overrides (e.g. door price/link id, trap type/duration/cooldown, perk id/price, power requirement), so map behavior is authored without touching function code. The Configure egg opens a form for spawns and mystery box spots; a spawn's activation box and walk-to spot show as particles, and the form can draw the box with two Coord Stick clicks.
+- 🧟 Zombies: base coordinates, player/zombie/special spawns, wallbuys, doors, traps, perk machines, mystery box positions, power switch, out-of-bounds points, boundary corners. Each object is a compound with defaults/overrides (e.g. door price/link id, trap type/duration/cooldown, perk id/price, power requirement), so map behavior is authored without touching function code. The Configure egg lists an element's fields in chat, with a Form button for spawns and mystery box spots; a spawn's activation box and walk-to spot show as particles, and the form can draw the box with two Coord Stick clicks.
 
 Tips: place base coordinates first, validate boundaries early, ensure enough spawn points, verify door group/link consistency, and save frequently.
 

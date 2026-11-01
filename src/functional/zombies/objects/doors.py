@@ -83,7 +83,6 @@ execute store result storage {ns}:temp _door.z int 1 run scoreboard players get 
 data modify storage {ns}:temp _door.block set from storage {ns}:temp _door_iter[0].block
 data modify storage {ns}:temp _door.facing set value 0
 execute store result storage {ns}:temp _door.facing int 1 run data get storage {ns}:temp _door_iter[0].rotation[0]
-execute store result storage {ns}:temp _door.link int 1 run data get storage {ns}:temp _door_iter[0].link_id
 
 # Name defaults to "Door".
 data modify storage {ns}:temp _door_name.name set value "Door"
@@ -119,9 +118,9 @@ execute if data storage {ns}:temp _door_iter[0] run function {ns}:v{version}/zom
 	write_versioned_function("zombies/doors/place_at", f"""
 $setblock $(x) $(y) $(z) $(block)
 
-$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{front_door_tags},CustomName:"Door link $(link)"}}
+$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{front_door_tags}}}
 
-$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^-{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{back_door_tags},CustomName:"Door link $(link) (back)"}}
+$execute positioned $(x) $(y) $(z) rotated $(facing) 0 run summon minecraft:interaction ^ ^ ^-{interaction_offset} {{width:1.5f,height:1.1f,response:true,Tags:{back_door_tags}}}
 """)
 
 	## Read the interacted door's pricing: #door_total is the full price, #door_price what this click costs

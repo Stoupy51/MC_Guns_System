@@ -15,7 +15,7 @@ from ..zombies.machines.mystery_box.shared import ROLLS
 # Constants
 SPAWN_FORMS: dict[str, SpawnKind] = {"zombie_spawn": ZOMBIE_SPAWNS, "special_spawn": SPECIAL_SPAWNS}
 FORM_ELEMENTS: tuple[str, ...] = (*SPAWN_FORMS, "mystery_box_pos")
-""" Elements the Configure egg opens a form for, rather than listing their fields in chat. """
+""" Elements whose Configure panel in chat has a Form button. """
 
 
 # Functions
@@ -31,6 +31,15 @@ def write_editor_forms() -> None:
 	write_versioned_function("maps/editor/form/target", f"""
 tag @e[type=minecraft:marker,tag={ns}.ed_form_target] remove {ns}.ed_form_target
 tag @s add {ns}.ed_form_target
+""")
+
+	## Run as the editor clicking the Form button of a chat panel.
+	write_versioned_function("maps/editor/form/open_target", f"""
+execute unless score @s {ns}.mp.map_edit matches 1 run return fail
+execute unless entity {target} run return run {gone}
+tag @s add {ns}.ed_form_user
+execute as {target} run function {form}/reopen
+tag @s remove {ns}.ed_form_user
 """)
 
 	for etype, kind in SPAWN_FORMS.items():
@@ -258,7 +267,7 @@ execute as {target} run function {form}/reopen
 tag @a remove {ns}.ed_form_user
 """)
 	write_versioned_function("maps/editor/form/reopen", "\n".join(
-		f"execute if entity @s[tag={ns}.element.{etype}] run function {form}/open/{etype}" for etype in SPAWN_FORMS
+		f"execute if entity @s[tag={ns}.element.{etype}] run function {form}/open/{etype}" for etype in FORM_ELEMENTS
 	))
 
 

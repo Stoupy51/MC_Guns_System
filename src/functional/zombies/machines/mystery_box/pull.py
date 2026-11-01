@@ -113,7 +113,7 @@ tellraw @s [{MGS_TAG},{{"text":"The Mystery Box has no weapons available.","colo
 
 	## At the box's centre, turned like it, inside it; floats up from the per-display tick (anim 104).
 	write_versioned_function("zombies/mystery_box/spawn_display", f"""
-summon minecraft:item_display ~ ~-{INTERACTION_LIFT} ~ {{Tags:["{ns}.mb_display","{ns}.zombies_entity","{ns}.mb_display_new"],CustomName:"Mystery Box Pull",item_display:"fixed",item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},billboard:"fixed"}}
+summon minecraft:item_display ~ ~-{INTERACTION_LIFT} ~ {{Tags:["{ns}.mb_display","{ns}.zombies_entity","{ns}.mb_display_new"],item_display:"fixed",item:{{id:"minecraft:nether_star",count:1,components:{{"minecraft:item_model":"air"}}}},billboard:"fixed"}}
 tp @n[tag={ns}.mb_display_new] ~ ~-{INTERACTION_LIFT} ~ ~ ~
 scoreboard players operation @n[tag={ns}.mb_display_new] {ns}.mb.roll = @n[tag=bs.interaction.target] {ns}.mb.roll
 execute as @n[tag={ns}.mb_display_new] run function {ns}:v{version}/zombies/mystery_box/display_rest
