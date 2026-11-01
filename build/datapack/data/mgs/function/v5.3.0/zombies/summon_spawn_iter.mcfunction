@@ -24,13 +24,8 @@ execute store result storage mgs:temp _spos.z double 1 run scoreboard players ge
 execute store result storage mgs:temp _spos.yaw double 0.01 run scoreboard players get #syaw mgs.data
 data modify storage mgs:temp _spos.tag set from storage mgs:temp _spawn_tag
 
-# "Zombie Spawn #12 (group 2)": zombies remember their spawn's id so the stuck rescue never reuses it.
+# Zombies remember their spawn's id so the stuck rescue never reuses it.
 scoreboard players add #zb_spawn_sid mgs.data 1
-data modify storage mgs:temp _spawn_label set value {group_id:0}
-data modify storage mgs:temp _spawn_label.name set from storage mgs:temp _spawn_name
-data modify storage mgs:temp _spawn_label.group_id set from storage mgs:temp _spawn.group_id
-execute store result storage mgs:temp _spawn_label.sid int 1 run scoreboard players get #zb_spawn_sid mgs.data
-function mgs:v5.3.0/zombies/spawn_name with storage mgs:temp _spawn_label
 
 function mgs:v5.3.0/zombies/summon_spawn_at with storage mgs:temp _spos
 execute as @n[type=minecraft:marker,tag=mgs.new_spawn] run function mgs:v5.3.0/zombies/spawn_setup

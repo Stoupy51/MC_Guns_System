@@ -12,12 +12,33 @@
 
 kill @e[tag=mgs.editor_display]
 execute as @e[type=minecraft:marker,tag=mgs.element.wallbuy] at @s run function mgs:v5.3.0/maps/editor/displays/wallbuy
+execute as @e[tag=mgs.ed_disp_new] run data modify entity @s CustomName set value "Wallbuy Model"
+tag @e[tag=mgs.ed_disp_new] add mgs.editor_display
+tag @e[tag=mgs.ed_disp_new] remove mgs.ed_disp_new
 execute as @e[type=minecraft:marker,tag=mgs.element.perk_machine] at @s run function mgs:v5.3.0/maps/editor/displays/perk_machine
+execute as @e[tag=mgs.ed_disp_new] run data modify entity @s CustomName set value "Perk Machine Model"
+tag @e[tag=mgs.ed_disp_new] add mgs.editor_display
+tag @e[tag=mgs.ed_disp_new] remove mgs.ed_disp_new
 execute as @e[type=minecraft:marker,tag=mgs.element.wunderfizz] at @s run function mgs:v5.3.0/maps/editor/displays/wunderfizz
+execute as @e[tag=mgs.ed_disp_new] run data modify entity @s CustomName set value "Der Wunderfizz Model"
+tag @e[tag=mgs.ed_disp_new] add mgs.editor_display
+tag @e[tag=mgs.ed_disp_new] remove mgs.ed_disp_new
 execute as @e[type=minecraft:marker,tag=mgs.element.pap_machine] at @s run function mgs:v5.3.0/maps/editor/displays/pap_machine
+execute as @e[tag=mgs.ed_disp_new] run data modify entity @s CustomName set value "Pack-a-Punch Model"
+tag @e[tag=mgs.ed_disp_new] add mgs.editor_display
+tag @e[tag=mgs.ed_disp_new] remove mgs.ed_disp_new
 execute as @e[type=minecraft:marker,tag=mgs.element.mystery_box_pos] at @s run function mgs:v5.3.0/maps/editor/displays/mystery_box_pos
+execute as @e[tag=mgs.ed_disp_new] run data modify entity @s CustomName set value "Mystery Box Pos Model"
+tag @e[tag=mgs.ed_disp_new] add mgs.editor_display
+tag @e[tag=mgs.ed_disp_new] remove mgs.ed_disp_new
 execute as @e[type=minecraft:marker,tag=mgs.element.power_switch] at @s run function mgs:v5.3.0/maps/editor/displays/power_switch
+execute as @e[tag=mgs.ed_disp_new] run data modify entity @s CustomName set value "Power Switch Model"
+tag @e[tag=mgs.ed_disp_new] add mgs.editor_display
+tag @e[tag=mgs.ed_disp_new] remove mgs.ed_disp_new
 execute as @e[type=minecraft:marker,tag=mgs.element.barricade] at @s run function mgs:v5.3.0/maps/editor/displays/barricade
+execute as @e[tag=mgs.ed_disp_new] run data modify entity @s CustomName set value "Barricade Model"
+tag @e[tag=mgs.ed_disp_new] add mgs.editor_display
+tag @e[tag=mgs.ed_disp_new] remove mgs.ed_disp_new
 
 # Snapshot of what was drawn, so displays/sync only rebuilds after a real edit.
 tag @e[type=minecraft:marker,tag=mgs.element.wallbuy] add mgs.model_display

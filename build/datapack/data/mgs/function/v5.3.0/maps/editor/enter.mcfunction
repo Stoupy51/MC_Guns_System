@@ -14,6 +14,7 @@ execute if data storage mgs:temp map_edit{mode:"multiplayer"} run scoreboard pla
 execute if data storage mgs:temp map_edit{mode:"zombies"} run scoreboard players set @s mgs.mp.map_mode 1
 execute if data storage mgs:temp map_edit{mode:"missions"} run scoreboard players set @s mgs.mp.map_mode 2
 
+function mgs:v5.3.0/maps/editor/next_session
 scoreboard players set @s mgs.mp.map_edit 1
 tag @s add mgs.map_editor
 
@@ -23,6 +24,11 @@ execute store result storage mgs:temp map_edit.idx int 1 run scoreboard players 
 
 function mgs:v5.3.0/maps/editor/load_map_data with storage mgs:temp map_edit
 data remove storage mgs:temp map_edit.removed
+
+# A zombies map is stored small: the markers are summoned from it whole (see map_editor/storage_format.py).
+execute if score @s mgs.mp.map_mode matches 1 run data modify storage mgs:temp _inf_map set from storage mgs:temp map_edit.map
+execute if score @s mgs.mp.map_mode matches 1 run function mgs:v5.3.0/maps/inflate
+execute if score @s mgs.mp.map_mode matches 1 run data modify storage mgs:temp map_edit.map set from storage mgs:temp _inf_map
 
 gamemode creative @s
 clear @s

@@ -7,8 +7,7 @@
 #			y (unknown)
 #			z (unknown)
 #			rotation (unknown)
-#			box (unknown)
 #
 
-$summon minecraft:interaction $(x) $(y) $(z) {width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["mgs.mystery_box_pos","mgs.zombies_entity","mgs.mb_new","bs.entity.interaction"],CustomName:"Mystery Box #$(box)"}
+$summon minecraft:interaction $(x) $(y) $(z) {width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["mgs.mystery_box_pos","mgs.zombies_entity","mgs.mb_new","bs.entity.interaction"]}
 

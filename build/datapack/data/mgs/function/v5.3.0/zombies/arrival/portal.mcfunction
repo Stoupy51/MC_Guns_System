@@ -6,7 +6,7 @@
 # @within	mgs:v5.3.0/zombies/do_spawn
 #
 
-summon minecraft:marker ~ ~ ~ {Tags:["mgs.zb_portal","mgs.zombies_entity","mgs.zb_portal_new"],CustomName:"Spawn Portal"}
+summon minecraft:marker ~ ~ ~ {Tags:["mgs.zb_portal","mgs.zombies_entity","mgs.zb_portal_new"]}
 data modify entity @n[tag=mgs.zb_portal_new] data.mob set from storage mgs:temp _mob
 execute if data entity @s data.walk_to run data modify entity @n[tag=mgs.zb_portal_new] data.walk_to set from entity @s data.walk_to
 scoreboard players set @n[tag=mgs.zb_portal_new] mgs.zb.rise_tick 30

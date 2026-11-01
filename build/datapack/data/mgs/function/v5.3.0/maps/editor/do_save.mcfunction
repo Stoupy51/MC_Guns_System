@@ -7,6 +7,10 @@
 #			mgs:v5.3.0/maps/editor/save_only
 #
 
+# Markers left by an older session, and the extra ones of a kind sharing a block, are not saved.
+execute as @e[type=minecraft:marker,tag=mgs.map_element] run function mgs:v5.3.0/maps/editor/session_check
+function mgs:v5.3.0/maps/editor/remove_duplicates
+
 # The default enemy function changed this session survives the reload.
 data modify storage mgs:temp _session_enemy_fn set from storage mgs:temp map_edit.map.default_enemy_function
 

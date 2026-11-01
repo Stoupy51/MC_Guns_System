@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "door.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/storage_format.py"
+	],
+	"names": [],
+	"mappings": "AAsL+C;;;;;;;;;AAC/C;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

@@ -25,9 +25,6 @@ function mgs:v5.3.0/maps/editor/summon_zb_marker with storage mgs:temp _zbpos
 
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from storage mgs:temp _zb_iter[0]
 
-# Fields older maps lack, which the config UI would show as blank rows.
-execute as @n[tag=mgs.new_zb_marker] run function mgs:v5.3.0/maps/editor/backfill_zb_defaults
-
 # The entity Rotation is synced too, for model displays.
 execute if data storage mgs:temp _zb_iter[0].rotation as @n[tag=mgs.new_zb_marker] run data modify entity @s data.yaw set from storage mgs:temp _zb_iter[0].rotation[0]
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s Rotation[0] set from entity @s data.yaw

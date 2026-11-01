@@ -3,7 +3,8 @@
 #
 # @executed	at @s & as @n[tag=mgs.map_element,distance=..10]
 #
-# @within	mgs:v5.3.0/maps/editor/form/open/zombie_spawn
+# @within	mgs:v5.3.0/maps/editor/show_element_config
+#			mgs:v5.3.0/maps/editor/form/open/zombie_spawn
 #			mgs:v5.3.0/maps/editor/form/open/special_spawn
 #			mgs:v5.3.0/maps/editor/form/open/mystery_box_pos
 #

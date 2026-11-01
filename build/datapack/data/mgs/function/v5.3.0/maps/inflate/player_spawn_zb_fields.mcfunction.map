@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "player_spawn_zb_fields.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/storage_format.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAmDE;AAAA"
+}

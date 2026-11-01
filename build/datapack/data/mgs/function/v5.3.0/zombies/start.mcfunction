@@ -25,6 +25,11 @@ data modify storage mgs:zombies game.map set from storage mgs:temp map_load.resu
 # Set state to preparing
 data modify storage mgs:zombies game.state set value "preparing"
 
+# The saved map is small: the game reads it whole (see map_editor/storage_format.py).
+data modify storage mgs:temp _inf_map set from storage mgs:zombies game.map
+function mgs:v5.3.0/maps/inflate
+data modify storage mgs:zombies game.map set from storage mgs:temp _inf_map
+
 # in_game is the opt-in flag, so it stays. The XP spend tracker is reset too, or the reset reads as points spent (see xp).
 scoreboard players set @a mgs.zb.points 500
 scoreboard players set @a mgs.zb.xp_pts_prev 500

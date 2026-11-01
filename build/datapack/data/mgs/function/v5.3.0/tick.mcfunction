@@ -52,3 +52,7 @@ execute if data storage mgs:multiplayer game{state:"preparing"} run function mgs
 execute if data storage mgs:missions game{state:"active"} run function mgs:v5.3.0/missions/game_tick
 execute if data storage mgs:missions game{state:"preparing"} run function mgs:v5.3.0/missions/prep_tick
 
+scoreboard players operation #ed_sweep mgs.data = #total_tick mgs.data
+scoreboard players operation #ed_sweep mgs.data %= #20 mgs.data
+execute if score #ed_sweep mgs.data matches 0 run function mgs:v5.3.0/maps/editor/sweep
+

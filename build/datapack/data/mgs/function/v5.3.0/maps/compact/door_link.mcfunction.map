@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "door_link.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/storage_format.py"
+	],
+	"names": [],
+	"mappings": "AAwIoD;;;;;;;;;;;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

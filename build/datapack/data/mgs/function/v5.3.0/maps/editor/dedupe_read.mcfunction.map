@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "dedupe_read.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/leftovers.py"
+	],
+	"names": [],
+	"mappings": "AA2DqD;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;AACrD;AACA;AACA;AACA"
+}

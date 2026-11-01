@@ -1,10 +1,9 @@
 
 #> mgs:v5.3.0/maps/editor/form/open/zombie_spawn
 #
-# @executed	at @s & as @n[tag=mgs.map_element,distance=..10]
+# @executed	as @n[type=minecraft:marker,tag=mgs.ed_form_target]
 #
-# @within	mgs:v5.3.0/maps/editor/show_element_config
-#			mgs:v5.3.0/maps/editor/form/reopen
+# @within	mgs:v5.3.0/maps/editor/form/reopen
 #
 
 function mgs:v5.3.0/maps/editor/form/target

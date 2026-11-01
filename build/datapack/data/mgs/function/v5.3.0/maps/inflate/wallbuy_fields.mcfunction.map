@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "wallbuy_fields.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/storage_format.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAmDE;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+}

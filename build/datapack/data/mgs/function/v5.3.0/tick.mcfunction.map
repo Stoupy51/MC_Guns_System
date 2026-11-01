@@ -12,8 +12,9 @@
 		"src/functional/progression/__init__.py",
 		"src/functional/zombies/game/lifecycle/tick.py",
 		"src/functional/multiplayer/game/tick.py",
-		"src/functional/missions/game/tick.py"
+		"src/functional/missions/game/tick.py",
+		"src/functional/map_editor/leftovers.py"
 	],
 	"names": [],
-	"mappings": ";;;;;;AA+HE;AAAA;AAAA;ACjCe;AACjB;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AC6BiB;AACjB;AACA;AACA;ACnBA;ACzEiB;AACjB;AACA;AACA;AACA;AC6HA;AACA;AACA;AACA;AACA;AACA;AACA;ACzGA;AACA;AACA;AACA;AACA;AC/DA;AACA;AACA;AACA;ACHA;AACA;ACAiB;AACjB;AACA;AACA"
+	"mappings": ";;;;;;AA+HE;AAAA;AAAA;ACjCe;AACjB;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AC6BiB;AACjB;AACA;AACA;ACnBA;ACzEiB;AACjB;AACA;AACA;AACA;AC6HA;AACA;AACA;AACA;AACA;AACA;AACA;ACzGA;AACA;AACA;AACA;AACA;AC/DA;AACA;AACA;AACA;ACHA;AACA;AACA;ACAA;AACA;ACGiB;AACjB;AACA;AACA;AACA"
 }

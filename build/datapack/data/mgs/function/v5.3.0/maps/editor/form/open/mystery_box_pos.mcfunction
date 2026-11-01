@@ -1,9 +1,9 @@
 
 #> mgs:v5.3.0/maps/editor/form/open/mystery_box_pos
 #
-# @executed	at @s & as @n[tag=mgs.map_element,distance=..10]
+# @executed	as @n[type=minecraft:marker,tag=mgs.ed_form_target]
 #
-# @within	mgs:v5.3.0/maps/editor/show_element_config
+# @within	mgs:v5.3.0/maps/editor/form/reopen
 #
 
 function mgs:v5.3.0/maps/editor/form/target

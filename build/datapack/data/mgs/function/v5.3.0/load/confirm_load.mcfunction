@@ -683,6 +683,12 @@ execute unless data storage mgs:maps multiplayer run data modify storage mgs:map
 execute unless data storage mgs:maps zombies run data modify storage mgs:maps zombies set value []
 execute unless data storage mgs:maps missions run data modify storage mgs:maps missions set value []
 
+execute store result score #max_commands mgs.data run gamerule max_command_sequence_length
+execute if score #max_commands mgs.data matches ..262143 run gamerule max_command_sequence_length 262144
+
+scoreboard objectives add mgs.ed.session dummy
+scoreboard players add #ed_session mgs.data 0
+
 # Set scoreboard constants for mgs.data
 scoreboard players set #1 mgs.data 1
 scoreboard players set #2 mgs.data 2

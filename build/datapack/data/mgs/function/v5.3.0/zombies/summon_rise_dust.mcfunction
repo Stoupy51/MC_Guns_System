@@ -10,7 +10,7 @@
 #
 
 $execute positioned ~ ~$(block_y) ~ run function #bs.block:get_type
-summon minecraft:marker ~ ~ ~ {Tags:["mgs.zb_rise_dust","mgs.zombies_entity","mgs.zb_rise_dust_new"],CustomName:"Rise Dust"}
+summon minecraft:marker ~ ~ ~ {Tags:["mgs.zb_rise_dust","mgs.zombies_entity","mgs.zb_rise_dust_new"]}
 data modify entity @n[tag=mgs.zb_rise_dust_new] data.block set from storage bs:out block.type
 scoreboard players operation @n[tag=mgs.zb_rise_dust_new] mgs.zb.rise_tick = @s mgs.zb.rise_tick
 tag @n[tag=mgs.zb_rise_dust_new] remove mgs.zb_rise_dust_new

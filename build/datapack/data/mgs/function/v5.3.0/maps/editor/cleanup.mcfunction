@@ -14,6 +14,7 @@ kill @e[tag=mgs.editor_display]
 
 scoreboard players set @s mgs.mp.map_edit 0
 tag @s remove mgs.map_editor
+function mgs:v5.3.0/maps/editor/next_session
 
 clear @s
 

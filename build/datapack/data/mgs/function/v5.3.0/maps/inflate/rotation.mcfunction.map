@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "rotation.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/storage_format.py"
+	],
+	"names": [],
+	"mappings": "AA8DmD;;;;;;;;;;;;;;;;;;;;AACnD;AACA;AACA;AACA;AACA;AACA"
+}

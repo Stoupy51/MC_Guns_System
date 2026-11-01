@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "power_switch.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/storage_format.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;AAqCE;AAAA"
+}

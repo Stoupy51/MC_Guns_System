@@ -3,21 +3,21 @@
 #
 # @executed	as @e[tag=mgs.element.player_spawn_zb] & at @s
 #
-# @within	mgs:v5.3.0/maps/editor/save_lists/zombies {path:"spawning_points.players"} [ as @e[tag=mgs.element.player_spawn_zb] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"spawning_points.zombies"} [ as @e[tag=mgs.element.zombie_spawn] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"wallbuys"} [ as @e[tag=mgs.element.wallbuy] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"doors"} [ as @e[tag=mgs.element.door] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"traps"} [ as @e[tag=mgs.element.trap] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"perks"} [ at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"mystery_box.positions"} [ as @e[tag=mgs.element.mystery_box_pos] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"power_switch"} [ as @e[tag=mgs.element.power_switch] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"pap_machines"} [ at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"spawning_points.special"} [ as @e[tag=mgs.element.special_spawn] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"barricades"} [ as @e[tag=mgs.element.barricade] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"wunderfizz"} [ as @e[tag=mgs.element.wunderfizz] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"leaderboards"} [ as @e[tag=mgs.element.leaderboard] & at @s ]
+# @within	mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"player_spawn_zb"} [ as @e[tag=mgs.element.player_spawn_zb] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"zombie_spawn"} [ as @e[tag=mgs.element.zombie_spawn] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"wallbuy"} [ as @e[tag=mgs.element.wallbuy] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"door"} [ as @e[tag=mgs.element.door] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"trap"} [ as @e[tag=mgs.element.trap] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"perk_machine"} [ at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"mystery_box_pos"} [ as @e[tag=mgs.element.mystery_box_pos] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"power_switch"} [ as @e[tag=mgs.element.power_switch] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"pap_machine"} [ at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"special_spawn"} [ as @e[tag=mgs.element.special_spawn] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"barricade"} [ as @e[tag=mgs.element.barricade] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"wunderfizz"} [ as @e[tag=mgs.element.wunderfizz] & at @s ]
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"leaderboard"} [ as @e[tag=mgs.element.leaderboard] & at @s ]
 #
-# @args		path (string)
+# @args		etype (string)
 #
 
 # Run as the marker, at it.
@@ -38,17 +38,15 @@ execute store result storage mgs:temp _save_zb.pos[0] int 1 run scoreboard playe
 execute store result storage mgs:temp _save_zb.pos[1] int 1 run scoreboard players get #ay mgs.data
 execute store result storage mgs:temp _save_zb.pos[2] int 1 run scoreboard players get #az mgs.data
 
-# Pitch is 0 unless the element has one (the mystery box).
-data modify storage mgs:temp _save_zb.rotation set value [0.0f, 0.0f]
-data modify storage mgs:temp _save_zb.rotation[0] set from entity @s data.yaw
-execute if data entity @s data.pitch run data modify storage mgs:temp _save_zb.rotation[1] set from entity @s data.pitch
-
-# yaw and pitch live in the rotation array; the rest is the editor's own.
+# Yaw in whole degrees from 0 to 359, left out at 0. The rotation a marker of an older map carries is rebuilt on load.
+execute store result score #yaw mgs.data run data get entity @s data.yaw
+scoreboard players operation #yaw mgs.data %= #360 mgs.data
+execute if score #yaw mgs.data matches ..-1 run scoreboard players add #yaw mgs.data 360
 data remove storage mgs:temp _save_zb.yaw
-data remove storage mgs:temp _save_zb.pitch
+data remove storage mgs:temp _save_zb.rotation
+execute unless score #yaw mgs.data matches 0 store result storage mgs:temp _save_zb.yaw int 1 run scoreboard players get #yaw mgs.data
+
 data remove storage mgs:temp _save_zb._disp_sig
 data remove storage mgs:temp _save_zb._ed
-execute if entity @s[tag=mgs.element.barricade] run function mgs:v5.3.0/maps/editor/strip_light_fields/barricade
-
-$data modify storage mgs:temp map_edit.map.$(path) append from storage mgs:temp _save_zb
+$function mgs:v5.3.0/maps/compact/$(etype)
 

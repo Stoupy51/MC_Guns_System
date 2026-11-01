@@ -23,22 +23,23 @@ data modify storage mgs:temp map_edit.map.spawning_points.special set value []
 data modify storage mgs:temp map_edit.map.barricades set value []
 data modify storage mgs:temp map_edit.map.wunderfizz set value []
 data modify storage mgs:temp map_edit.map.leaderboards set value []
+data remove storage mgs:temp map_edit.map.shared
 
 # Rebuild from markers
-execute as @e[tag=mgs.element.player_spawn_zb] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"spawning_points.players"}
-execute as @e[tag=mgs.element.zombie_spawn] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"spawning_points.zombies"}
-execute as @e[tag=mgs.element.wallbuy] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"wallbuys"}
-execute as @e[tag=mgs.element.door] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"doors"}
-execute as @e[tag=mgs.element.trap] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"traps"}
-execute as @e[tag=mgs.element.perk_machine] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"perks"}
-execute as @e[tag=mgs.element.mystery_box_pos] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"mystery_box.positions"}
-execute as @e[tag=mgs.element.power_switch] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"power_switch"}
+execute as @e[tag=mgs.element.player_spawn_zb] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"player_spawn_zb"}
+execute as @e[tag=mgs.element.zombie_spawn] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"zombie_spawn"}
+execute as @e[tag=mgs.element.wallbuy] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"wallbuy"}
+execute as @e[tag=mgs.element.door] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"door"}
+execute as @e[tag=mgs.element.trap] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"trap"}
+execute as @e[tag=mgs.element.perk_machine] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"perk_machine"}
+execute as @e[tag=mgs.element.mystery_box_pos] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"mystery_box_pos"}
+execute as @e[tag=mgs.element.power_switch] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"power_switch"}
 execute as @e[tag=mgs.element.out_of_bounds] at @s run function mgs:v5.3.0/maps/editor/save_point {path:"out_of_bounds"}
 execute as @e[tag=mgs.element.boundary] at @s run function mgs:v5.3.0/maps/editor/save_point {path:"boundaries"}
-execute as @e[tag=mgs.element.pap_machine] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"pap_machines"}
+execute as @e[tag=mgs.element.pap_machine] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"pap_machine"}
 execute as @e[tag=mgs.element.start_command] at @s run function mgs:v5.3.0/maps/editor/save_start_command {path:"start_commands"}
-execute as @e[tag=mgs.element.special_spawn] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"spawning_points.special"}
-execute as @e[tag=mgs.element.barricade] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"barricades"}
-execute as @e[tag=mgs.element.wunderfizz] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"wunderfizz"}
-execute as @e[tag=mgs.element.leaderboard] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {path:"leaderboards"}
+execute as @e[tag=mgs.element.special_spawn] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"special_spawn"}
+execute as @e[tag=mgs.element.barricade] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"barricade"}
+execute as @e[tag=mgs.element.wunderfizz] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"wunderfizz"}
+execute as @e[tag=mgs.element.leaderboard] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"leaderboard"}
 

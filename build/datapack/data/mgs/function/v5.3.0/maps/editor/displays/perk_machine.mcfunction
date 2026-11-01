@@ -7,8 +7,7 @@
 #
 
 # Run as the perk machine marker, at it.
-data modify storage mgs:temp _pk_disp.tag set value "mgs.editor_display"
-data modify storage mgs:temp _pk_disp.name set value "Perk Machine"
+data modify storage mgs:temp _pk_disp.tag set value "mgs.ed_disp_new"
 data modify storage mgs:temp _pk_disp.item_id set value ""
 data modify storage mgs:temp _pk_disp.item_model set value ""
 data modify storage mgs:temp _pk_disp.yaw set value 0.0f

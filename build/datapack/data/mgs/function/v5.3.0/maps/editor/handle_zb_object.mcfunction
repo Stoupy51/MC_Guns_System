@@ -53,7 +53,9 @@ function mgs:v5.3.0/maps/editor/summon_zb_marker with storage mgs:temp _zbpos
 
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from storage mgs:temp _zb_new
 
-execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id
+execute as @n[tag=mgs.new_zb_marker,tag=mgs.element.zombie_spawn] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id
+execute as @n[tag=mgs.new_zb_marker,tag=mgs.element.player_spawn_zb] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id
+execute as @n[tag=mgs.new_zb_marker,tag=mgs.element.special_spawn] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id
 
 execute store result score #yaw mgs.data run data get entity @p[tag=mgs.map_editor,distance=..6,sort=nearest] Rotation[0]
 

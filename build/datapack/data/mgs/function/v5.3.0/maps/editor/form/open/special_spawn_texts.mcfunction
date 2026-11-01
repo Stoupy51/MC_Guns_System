@@ -1,7 +1,7 @@
 
 #> mgs:v5.3.0/maps/editor/form/open/special_spawn_texts
 #
-# @executed	at @s & as @n[tag=mgs.map_element,distance=..10]
+# @executed	as @n[type=minecraft:marker,tag=mgs.ed_form_target]
 #
 # @within	mgs:v5.3.0/maps/editor/form/open/special_spawn with entity @s data
 #

@@ -27,9 +27,6 @@ function mgs:v5.3.0/zombies/barricades/place_at with storage mgs:temp _bplace
 # All zb_object data (block_enabled, block_disabled, radius, ...).
 execute as @n[tag=mgs._barricade_new_d] run data modify entity @s data set from storage mgs:temp _barricade_iter[0]
 
-# Fill the blocks a map leaves out at their default, and upgrade pre-26.3 block states.
-execute as @n[tag=mgs._barricade_new_d] run function mgs:v5.3.0/maps/light_fields/barricade
-
 execute as @n[tag=mgs._barricade_new_d] run data modify entity @s block_state set from entity @s data.block_enabled
 
 scoreboard players operation @n[tag=mgs._barricade_new_d] mgs.zb.barricade.id = #barricade_counter mgs.data

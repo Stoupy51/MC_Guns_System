@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "sweep.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/leftovers.py"
+	],
+	"names": [],
+	"mappings": "AA4B+C;;;;;;AAC/C;AACA;AACA;AACA"
+}

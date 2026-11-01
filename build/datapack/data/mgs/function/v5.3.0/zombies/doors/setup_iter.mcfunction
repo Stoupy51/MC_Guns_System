@@ -18,7 +18,6 @@ execute store result storage mgs:temp _door.z int 1 run scoreboard players get #
 data modify storage mgs:temp _door.block set from storage mgs:temp _door_iter[0].block
 data modify storage mgs:temp _door.facing set value 0
 execute store result storage mgs:temp _door.facing int 1 run data get storage mgs:temp _door_iter[0].rotation[0]
-execute store result storage mgs:temp _door.link int 1 run data get storage mgs:temp _door_iter[0].link_id
 
 # Name defaults to "Door".
 data modify storage mgs:temp _door_name.name set value "Door"
