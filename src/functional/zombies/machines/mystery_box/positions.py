@@ -2,7 +2,17 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from .shared import CENTER, INTERACTION_LIFT, LID_OPEN_ROTATION, LID_OPEN_TRANSLATION, PIVOT, ROLLS, box_offset, box_transformation, per_roll
+from .shared import (
+	CENTER,
+	INTERACTION_LIFT,
+	LID_OPEN_ROTATION,
+	LID_OPEN_TRANSLATION,
+	PIVOT,
+	ROLLS,
+	box_offset,
+	box_transformation,
+	per_roll,
+)
 
 
 # Functions

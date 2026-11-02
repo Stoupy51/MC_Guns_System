@@ -17,6 +17,7 @@ Requirements:
   ffmpeg must be installed and on your PATH
 """
 
+import contextlib
 import os
 import shutil
 import subprocess
@@ -87,10 +88,8 @@ def pitch_shift(audio: AudioSegment, semitones: float) -> AudioSegment:
         return AudioSegment.from_ogg(dst)
     finally:
         for p in (src, dst):
-            try:
+            with contextlib.suppress(FileNotFoundError):
                 os.unlink(p)
-            except FileNotFoundError:
-                pass
 
 
 def apply_pap_processing(audio: AudioSegment) -> AudioSegment:

@@ -11,7 +11,8 @@ COMPRESSION = "64k"
 def compress_file(args):
 	src, dst = args
 	previous_size = os.path.getsize(src)
-	subprocess.run(["ffmpeg", "-i", src, "-c:a", "libvorbis", "-b:a", COMPRESSION, dst], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+	command = ["ffmpeg", "-i", src, "-c:a", "libvorbis", "-b:a", COMPRESSION, dst]
+	subprocess.run(command, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
 
 	# Remove original & rename temp
 	file_size = os.path.getsize(dst)
