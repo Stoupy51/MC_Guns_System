@@ -27,7 +27,6 @@
 #			mgs:v5.3.0/maps/editor/dedupe/mystery_box_pos [ as @e[type=minecraft:marker,tag=...,distance=..0.01] ]
 #			mgs:v5.3.0/maps/editor/dedupe/power_switch [ as @e[type=minecraft:marker,tag=...,distance=..0.01] ]
 #			mgs:v5.3.0/maps/editor/dedupe/barricade [ as @e[type=minecraft:marker,tag=...,distance=..0.01] ]
-#			mgs:v5.3.0/maps/editor/dedupe/leaderboard [ as @e[type=minecraft:marker,tag=...,distance=..0.01] ]
 #
 
 data modify storage mgs:temp _dedupe_other set from entity @s data

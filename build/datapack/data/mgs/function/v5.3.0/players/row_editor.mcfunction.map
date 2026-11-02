@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "row_editor.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/core/player_menus.py"
+	],
+	"names": [],
+	"mappings": "AA6FE;AAAA"
+}

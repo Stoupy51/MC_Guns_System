@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "editor_invite.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/enter.py"
+	],
+	"names": [],
+	"mappings": "AAiGmD;;;;;;;;;AACnD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

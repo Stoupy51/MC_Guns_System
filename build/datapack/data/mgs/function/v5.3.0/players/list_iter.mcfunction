@@ -5,6 +5,7 @@
 #			mgs:v5.3.0/players/list_multiplayer
 #			mgs:v5.3.0/players/list_zombies
 #			mgs:v5.3.0/players/list_missions
+#			mgs:v5.3.0/players/list_editor
 #
 
 execute unless data storage mgs:temp _plr_iter[0] run return fail

@@ -74,8 +74,3 @@ data modify storage mgs:temp _inf_src set from storage mgs:temp _inf_map.barrica
 execute if data storage mgs:temp _inf_src[0] run data modify storage mgs:temp _inf_map.barricades set value []
 execute if data storage mgs:temp _inf_src[0] run function mgs:v5.3.0/maps/inflate/barricade
 
-data modify storage mgs:temp _inf_src set value []
-data modify storage mgs:temp _inf_src set from storage mgs:temp _inf_map.leaderboards
-execute if data storage mgs:temp _inf_src[0] run data modify storage mgs:temp _inf_map.leaderboards set value []
-execute if data storage mgs:temp _inf_src[0] run function mgs:v5.3.0/maps/inflate/leaderboard
-

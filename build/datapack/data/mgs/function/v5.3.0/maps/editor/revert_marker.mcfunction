@@ -34,5 +34,4 @@ execute if entity @s[tag=mgs.element.pap_machine] run tellraw @a[tag=mgs.map_edi
 execute if entity @s[tag=mgs.element.mystery_box_pos] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mystery_box_pos_restored","fallback":"Mystery Box Pos restored!","color":"light_purple"}]
 execute if entity @s[tag=mgs.element.power_switch] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.power_switch_restored","fallback":"Power Switch restored!","color":"green"}]
 execute if entity @s[tag=mgs.element.barricade] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.barricade_restored","fallback":"Barricade restored!","color":"aqua"}]
-execute if entity @s[tag=mgs.element.leaderboard] run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.leaderboard_restored","fallback":"Leaderboard restored!","color":"gold"}]
 

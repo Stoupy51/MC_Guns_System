@@ -11,5 +11,4 @@
 #
 
 kill @e[type=minecraft:text_display,tag=mgs.lb_text]
-tag @e[type=minecraft:marker,tag=mgs.leaderboard] remove mgs.lb_shown
 

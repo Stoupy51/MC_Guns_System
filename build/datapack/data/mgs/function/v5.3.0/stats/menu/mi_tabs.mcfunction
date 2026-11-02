@@ -11,6 +11,6 @@
 #
 
 $data modify storage mgs:temp dialog.actions set value [{label:{translate:"mgs.zombies",fallback:"Zombies",color:"gray"},action:{type:"run_command",command:"/trigger mgs.player.config set $(trigger_zb)"}},{label:{translate:"mgs.multiplayer",fallback:"Multiplayer",color:"gray"},action:{type:"run_command",command:"/trigger mgs.player.config set $(trigger_mp)"}},{label:{translate:"mgs.missions",fallback:"Missions",color:"gold"},action:{type:"run_command",command:"/trigger mgs.player.config set $(trigger_mi)"}}]
-data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.players_2",fallback:"Players",color:"yellow"},action:{type:"run_command",command:"/trigger mgs.player.config set 90000"}}
+data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.players",fallback:"Players",color:"yellow"},action:{type:"run_command",command:"/trigger mgs.player.config set 90000"}}
 data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.settings",fallback:"Settings",color:"aqua"},action:{type:"run_command",command:"/trigger mgs.player.config set 1"}}
 

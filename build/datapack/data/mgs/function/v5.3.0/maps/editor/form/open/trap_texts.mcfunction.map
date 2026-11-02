@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "trap_texts.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/machine_forms.py"
+	],
+	"names": [],
+	"mappings": "AA8O8D;;;;;;;;;;;AAC9D;AACA;AACA;AACA;AACA"
+}

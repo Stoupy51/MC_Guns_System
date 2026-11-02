@@ -15,7 +15,6 @@
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"special_spawn"} [ as @e[tag=mgs.element.special_spawn] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"barricade"} [ as @e[tag=mgs.element.barricade] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"wunderfizz"} [ as @e[tag=mgs.element.wunderfizz] & at @s ]
-#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"leaderboard"} [ as @e[tag=mgs.element.leaderboard] & at @s ]
 #
 # @args		etype (string)
 #

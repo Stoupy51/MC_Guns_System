@@ -27,7 +27,6 @@
 #			mgs:v5.3.0/maps/editor/dedupe/mystery_box_pos
 #			mgs:v5.3.0/maps/editor/dedupe/power_switch
 #			mgs:v5.3.0/maps/editor/dedupe/barricade
-#			mgs:v5.3.0/maps/editor/dedupe/leaderboard
 #
 
 data modify storage mgs:temp _dedupe set from entity @s data

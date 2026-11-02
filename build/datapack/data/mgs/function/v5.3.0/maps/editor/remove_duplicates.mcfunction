@@ -30,7 +30,6 @@ execute as @e[type=minecraft:marker,tag=mgs.element.pap_machine] at @s run funct
 execute as @e[type=minecraft:marker,tag=mgs.element.mystery_box_pos] at @s run function mgs:v5.3.0/maps/editor/dedupe/mystery_box_pos
 execute as @e[type=minecraft:marker,tag=mgs.element.power_switch] at @s run function mgs:v5.3.0/maps/editor/dedupe/power_switch
 execute as @e[type=minecraft:marker,tag=mgs.element.barricade] at @s run function mgs:v5.3.0/maps/editor/dedupe/barricade
-execute as @e[type=minecraft:marker,tag=mgs.element.leaderboard] at @s run function mgs:v5.3.0/maps/editor/dedupe/leaderboard
 tag @e[type=minecraft:marker,tag=mgs.ed_keep] remove mgs.ed_keep
 execute store result score #ed_dups mgs.data run kill @e[type=minecraft:marker,tag=mgs.ed_dup]
 execute if score #ed_dups mgs.data matches 1.. run tellraw @a[tag=mgs.map_editor] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"score":{"name":"#ed_dups","objective":"mgs.data"},"color":"white"},{"translate":"mgs.duplicate_elements_removed_same_kind_block_and_values","fallback":" duplicate elements removed (same kind, block and values).","color":"yellow"}]

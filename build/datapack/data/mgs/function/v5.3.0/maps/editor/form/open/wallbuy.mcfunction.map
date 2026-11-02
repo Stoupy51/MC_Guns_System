@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "wallbuy.mcfunction",
+	"sourceRoot": "../../../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/machine_forms.py"
+	],
+	"names": [],
+	"mappings": "AA2H2D;;;;;;;;AAC3D;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

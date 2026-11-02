@@ -15,7 +15,6 @@
 #			mgs:v5.3.0/maps/inflate/mystery_box_pos_fields
 #			mgs:v5.3.0/maps/inflate/power_switch_fields
 #			mgs:v5.3.0/maps/inflate/barricade_fields
-#			mgs:v5.3.0/maps/inflate/leaderboard_fields
 #
 
 execute if data storage mgs:temp _inf.rotation run return 0

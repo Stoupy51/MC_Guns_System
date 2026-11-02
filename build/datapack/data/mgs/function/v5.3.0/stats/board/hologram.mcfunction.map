@@ -1,10 +1,10 @@
 {
 	"version": 3,
-	"file": "holo_setup.mcfunction",
+	"file": "hologram.mcfunction",
 	"sourceRoot": "../../../../../../../..",
 	"sources": [
 		"src/functional/stats/boards.py"
 	],
 	"names": [],
-	"mappings": "AA4SoD;;;;;;;AACpD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+	"mappings": "AAwTkD;;;;;;;;;;;AAClD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }

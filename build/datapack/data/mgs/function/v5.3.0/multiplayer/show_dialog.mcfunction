@@ -50,9 +50,13 @@
 #			mgs:v5.3.0/maps/editor/settings with storage mgs:temp
 #			mgs:v5.3.0/maps/editor/export with storage mgs:temp
 #			mgs:v5.3.0/maps/editor/delete_confirm with storage mgs:temp
+#			mgs:v5.3.0/players/list_editor with storage mgs:temp
 #			mgs:v5.3.0/maps/editor/form/open/zombie_spawn with storage mgs:temp [ as @a[tag=mgs.ed_form_user] ]
 #			mgs:v5.3.0/maps/editor/form/open/special_spawn with storage mgs:temp [ as @a[tag=mgs.ed_form_user] ]
 #			mgs:v5.3.0/maps/editor/form/open/mystery_box_pos with storage mgs:temp [ as @a[tag=mgs.ed_form_user] ]
+#			mgs:v5.3.0/maps/editor/form/open/wallbuy with storage mgs:temp [ as @a[tag=mgs.ed_form_user] ]
+#			mgs:v5.3.0/maps/editor/form/open/perk_machine with storage mgs:temp [ as @a[tag=mgs.ed_form_user] ]
+#			mgs:v5.3.0/maps/editor/form/open/trap with storage mgs:temp [ as @a[tag=mgs.ed_form_user] ]
 #
 # @args		dialog (unknown)
 #

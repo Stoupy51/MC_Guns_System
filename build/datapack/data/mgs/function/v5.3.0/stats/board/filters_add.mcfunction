@@ -14,7 +14,7 @@
 
 $data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.all",fallback:"All",color:"aqua"},action:{type:"run_command",command:"/trigger mgs.player.config set $(f0)"}}
 $data modify storage mgs:temp dialog.actions append value {label:[{text:"1 ",color:"aqua"}, {translate:"mgs.player",fallback:"player"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f1)"}}
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"2 ",color:"aqua"}, {translate:"mgs.players_3",fallback:"players"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f2)"}}
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"3 ",color:"aqua"}, {translate:"mgs.players_3",fallback:"players"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f3)"}}
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"4 ",color:"aqua"}, {translate:"mgs.players_3",fallback:"players"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f4)"}}
+$data modify storage mgs:temp dialog.actions append value {label:[{text:"2 ",color:"aqua"}, {translate:"mgs.players_2",fallback:"players"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f2)"}}
+$data modify storage mgs:temp dialog.actions append value {label:[{text:"3 ",color:"aqua"}, {translate:"mgs.players_2",fallback:"players"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f3)"}}
+$data modify storage mgs:temp dialog.actions append value {label:[{text:"4 ",color:"aqua"}, {translate:"mgs.players_2",fallback:"players"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f4)"}}
 
