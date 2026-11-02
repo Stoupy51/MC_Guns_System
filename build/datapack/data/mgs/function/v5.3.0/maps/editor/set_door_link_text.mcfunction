@@ -1,7 +1,7 @@
 
 #> mgs:v5.3.0/maps/editor/set_door_link_text
 #
-# @within	string in mgs:v5.3.0/maps/editor/show_element_config {field:\"name\",value:\"Door\"}
+# @within	string in mgs:v5.3.0/maps/editor/show_element_config {field:\"title\",value:\"Door\"}
 #			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"back_name\",value:\"Door\"}
 #			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"block\",value:\"\"}
 #			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"sound\",value:\"\"}

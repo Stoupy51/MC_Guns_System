@@ -686,6 +686,15 @@ execute unless data storage mgs:maps missions run data modify storage mgs:maps m
 execute store result score #max_commands mgs.data run gamerule max_command_sequence_length
 execute if score #max_commands mgs.data matches ..262143 run gamerule max_command_sequence_length 262144
 
+# Whole maps an older version of the pack left behind in temp storage, each now removed right after use.
+data remove storage mgs:temp map_load
+data remove storage mgs:temp _map_entry
+data remove storage mgs:temp _lb_view
+data remove storage mgs:temp map_menu
+data remove storage mgs:temp _export
+data remove storage mgs:temp _dup
+data remove storage mgs:temp _inf_map
+
 scoreboard objectives add mgs.ed.session dummy
 scoreboard players add #ed_session mgs.data 0
 

@@ -8,5 +8,6 @@
 #			rounds (unknown)
 #
 
-$data modify entity @s CustomName set value "Door link $(link_id) $(price)pts$(rounds)"
+$data modify entity @s data.name set value "Door link $(link_id) $(price)pts$(rounds)"
+data modify entity @s CustomName set from entity @s data.name
 

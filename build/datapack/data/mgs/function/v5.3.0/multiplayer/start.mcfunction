@@ -20,6 +20,7 @@ function mgs:v5.3.0/multiplayer/load_map_from_storage with storage mgs:multiplay
 execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.map_not_found_select_a_valid_map","fallback":"Map not found! Select a valid map.","color":"red"}]
 
 data modify storage mgs:multiplayer game.map set from storage mgs:temp map_load.result
+data remove storage mgs:temp map_load
 
 execute unless data storage mgs:multiplayer game.map.respawn_commands if data storage mgs:multiplayer game.map.respawn_command[0] run data modify storage mgs:multiplayer game.map.respawn_commands set from storage mgs:multiplayer game.map.respawn_command
 execute unless data storage mgs:multiplayer game.map.respawn_commands if data storage mgs:multiplayer game.map.respawn_command.command run data modify storage mgs:multiplayer game.map.respawn_commands set value []

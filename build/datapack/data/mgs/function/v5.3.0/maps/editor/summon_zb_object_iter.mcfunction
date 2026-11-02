@@ -24,6 +24,7 @@ data modify storage mgs:temp _zbpos.tag set from storage mgs:temp _zb_iter_tag
 function mgs:v5.3.0/maps/editor/summon_zb_marker with storage mgs:temp _zbpos
 
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from storage mgs:temp _zb_iter[0]
+execute as @n[tag=mgs.new_zb_marker] run function mgs:v5.3.0/maps/editor/name_to_title
 
 # The entity Rotation is synced too, for model displays.
 execute if data storage mgs:temp _zb_iter[0].rotation as @n[tag=mgs.new_zb_marker] run data modify entity @s data.yaw set from storage mgs:temp _zb_iter[0].rotation[0]

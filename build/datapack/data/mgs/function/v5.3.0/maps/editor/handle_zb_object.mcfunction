@@ -52,6 +52,7 @@ execute if entity @s[tag=mgs.element.leaderboard] run data modify storage mgs:te
 function mgs:v5.3.0/maps/editor/summon_zb_marker with storage mgs:temp _zbpos
 
 execute as @n[tag=mgs.new_zb_marker] run data modify entity @s data set from storage mgs:temp _zb_new
+execute as @n[tag=mgs.new_zb_marker] run function mgs:v5.3.0/maps/editor/name_to_title
 
 execute as @n[tag=mgs.new_zb_marker,tag=mgs.element.zombie_spawn] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id
 execute as @n[tag=mgs.new_zb_marker,tag=mgs.element.player_spawn_zb] run data modify entity @s data.group_id set from storage mgs:temp map_edit.zb_defaults.group_id

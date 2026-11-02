@@ -6,5 +6,6 @@
 # @args		location_name (unknown)
 #
 
-$data modify entity @s CustomName set value "Mystery Box $(location_name)"
+$data modify entity @s data.name set value "Mystery Box $(location_name)"
+data modify entity @s CustomName set from entity @s data.name
 

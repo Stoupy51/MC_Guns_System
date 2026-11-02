@@ -11,6 +11,8 @@
 data modify storage mgs:temp _inf_shared set value {}
 data modify storage mgs:temp _inf_shared set from storage mgs:temp _inf_map.shared
 data remove storage mgs:temp _inf_map.shared
+execute unless data storage mgs:temp _inf_map.barricades run data modify storage mgs:temp _inf_map.barricades set from storage mgs:temp _inf_map.barriers
+data remove storage mgs:temp _inf_map.barriers
 
 data modify storage mgs:temp _inf_src set value []
 data modify storage mgs:temp _inf_src set from storage mgs:temp _inf_map.spawning_points.zombies

@@ -13,6 +13,7 @@ data modify storage mgs:temp _map_entry set from storage mgs:temp _map_iter[0]
 data modify storage mgs:temp _map_entry.mode set from storage mgs:temp _map_select_mode
 
 function mgs:v5.3.0/shared/maps/select_entry with storage mgs:temp _map_entry
+data remove storage mgs:temp _map_entry
 
 data remove storage mgs:temp _map_iter[0]
 scoreboard players add #map_idx mgs.data 1

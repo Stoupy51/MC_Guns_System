@@ -21,6 +21,7 @@ data modify storage mgs:temp map_menu.mode set value "zombies"
 scoreboard players set #map_menu_idx mgs.data 0
 
 execute if data storage mgs:temp map_menu.list[0] run function mgs:v5.3.0/maps/editor/menu_entry
+data remove storage mgs:temp map_menu
 
 execute unless data storage mgs:maps zombies[0] run tellraw @s ["  ",{"translate":"mgs.no_maps_created_yet","fallback":"No maps created yet.","color":"gray","italic":true}]
 

@@ -8,5 +8,6 @@
 # @args		map_id (unknown)
 #
 
-$function mgs:v5.3.0/shared/maps/load {id:"$(map_id)",mode:"multiplayer",override:{}}
+data remove storage mgs:temp map_load
+$execute store success score #map_load_found mgs.data run data modify storage mgs:temp map_load.result set from storage mgs:maps multiplayer[{id:"$(map_id)"}]
 

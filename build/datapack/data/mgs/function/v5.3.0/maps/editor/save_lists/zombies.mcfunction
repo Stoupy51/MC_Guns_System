@@ -24,6 +24,7 @@ data modify storage mgs:temp map_edit.map.barricades set value []
 data modify storage mgs:temp map_edit.map.wunderfizz set value []
 data modify storage mgs:temp map_edit.map.leaderboards set value []
 data remove storage mgs:temp map_edit.map.shared
+data remove storage mgs:temp map_edit.map.barriers
 
 # Rebuild from markers
 execute as @e[tag=mgs.element.player_spawn_zb] at @s run function mgs:v5.3.0/maps/editor/save_zb_object {etype:"player_spawn_zb"}

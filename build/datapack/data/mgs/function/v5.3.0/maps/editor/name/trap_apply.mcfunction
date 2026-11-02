@@ -6,5 +6,6 @@
 # @args		type (unknown)
 #
 
-$data modify entity @s CustomName set value "Trap type $(type)"
+$data modify entity @s data.name set value "Trap type $(type)"
+data modify entity @s CustomName set from entity @s data.name
 

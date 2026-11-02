@@ -29,6 +29,7 @@ data remove storage mgs:temp map_edit.removed
 execute if score @s mgs.mp.map_mode matches 1 run data modify storage mgs:temp _inf_map set from storage mgs:temp map_edit.map
 execute if score @s mgs.mp.map_mode matches 1 run function mgs:v5.3.0/maps/inflate
 execute if score @s mgs.mp.map_mode matches 1 run data modify storage mgs:temp map_edit.map set from storage mgs:temp _inf_map
+data remove storage mgs:temp _inf_map
 
 gamemode creative @s
 clear @s

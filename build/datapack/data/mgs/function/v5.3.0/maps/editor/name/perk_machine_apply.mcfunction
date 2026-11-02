@@ -6,5 +6,6 @@
 # @args		perk_id (unknown)
 #
 
-$data modify entity @s CustomName set value "Perk Machine $(perk_id)"
+$data modify entity @s data.name set value "Perk Machine $(perk_id)"
+data modify entity @s CustomName set from entity @s data.name
 

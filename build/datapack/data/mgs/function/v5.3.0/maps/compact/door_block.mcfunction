@@ -9,8 +9,6 @@
 
 data modify storage mgs:temp _door_block set value {}
 data modify storage mgs:temp _door_block.pos set from storage mgs:temp _save_zb.pos
-execute if data storage mgs:temp _save_zb.yaw run data modify storage mgs:temp _door_block.yaw set from storage mgs:temp _save_zb.yaw
 data remove storage mgs:temp _save_zb.pos
-data remove storage mgs:temp _save_zb.yaw
 function mgs:v5.3.0/maps/compact/door_link with storage mgs:temp _save_zb
 

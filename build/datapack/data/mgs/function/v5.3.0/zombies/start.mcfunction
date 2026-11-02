@@ -21,6 +21,7 @@ function mgs:v5.3.0/zombies/load_map_from_storage with storage mgs:zombies game
 execute unless score #map_load_found mgs.data matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.map_not_found_select_a_valid_map","fallback":"Map not found! Select a valid map.","color":"red"}]
 
 data modify storage mgs:zombies game.map set from storage mgs:temp map_load.result
+data remove storage mgs:temp map_load
 
 # Set state to preparing
 data modify storage mgs:zombies game.state set value "preparing"
@@ -29,6 +30,7 @@ data modify storage mgs:zombies game.state set value "preparing"
 data modify storage mgs:temp _inf_map set from storage mgs:zombies game.map
 function mgs:v5.3.0/maps/inflate
 data modify storage mgs:zombies game.map set from storage mgs:temp _inf_map
+data remove storage mgs:temp _inf_map
 
 # in_game is the opt-in flag, so it stays. The XP spend tracker is reset too, or the reset reads as points spent (see xp).
 scoreboard players set @a mgs.zb.points 500

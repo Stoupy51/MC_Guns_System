@@ -6,5 +6,6 @@
 # @args		weapon_id (unknown)
 #
 
-$data modify entity @s CustomName set value "Wallbuy $(weapon_id)"
+$data modify entity @s data.name set value "Wallbuy $(weapon_id)"
+data modify entity @s CustomName set from entity @s data.name
 

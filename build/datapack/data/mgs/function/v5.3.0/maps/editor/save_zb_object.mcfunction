@@ -38,15 +38,22 @@ execute store result storage mgs:temp _save_zb.pos[0] int 1 run scoreboard playe
 execute store result storage mgs:temp _save_zb.pos[1] int 1 run scoreboard players get #ay mgs.data
 execute store result storage mgs:temp _save_zb.pos[2] int 1 run scoreboard players get #az mgs.data
 
-# Yaw in whole degrees from 0 to 359, left out at 0. The rotation a marker of an older map carries is rebuilt on load.
-execute store result score #yaw mgs.data run data get entity @s data.yaw
+# Yaw rounded to whole degrees from 0 to 359, left out at 0 (3600 keeps a negative yaw positive). The rotation a marker of an older map carries is rebuilt on load.
+execute store result score #yaw mgs.data run data get entity @s data.yaw 10
+scoreboard players add #yaw mgs.data 3605
+scoreboard players operation #yaw mgs.data /= #10 mgs.data
 scoreboard players operation #yaw mgs.data %= #360 mgs.data
-execute if score #yaw mgs.data matches ..-1 run scoreboard players add #yaw mgs.data 360
 data remove storage mgs:temp _save_zb.yaw
 data remove storage mgs:temp _save_zb.rotation
 execute unless score #yaw mgs.data matches 0 store result storage mgs:temp _save_zb.yaw int 1 run scoreboard players get #yaw mgs.data
 
+# The editor's own data, and the element's name back from title (see AXIOM_KEYS).
 data remove storage mgs:temp _save_zb._disp_sig
 data remove storage mgs:temp _save_zb._ed
+data remove storage mgs:temp _save_zb.name
+data remove storage mgs:temp _save_zb.min
+data remove storage mgs:temp _save_zb.max
+execute if data storage mgs:temp _save_zb.title run data modify storage mgs:temp _save_zb.name set from storage mgs:temp _save_zb.title
+data remove storage mgs:temp _save_zb.title
 $function mgs:v5.3.0/maps/compact/$(etype)
 

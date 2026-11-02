@@ -6,6 +6,8 @@
 
 tag @s remove mgs.ed_box
 tag @s remove mgs.ed_walk
+data remove entity @s data.min
+data remove entity @s data.max
 execute store result score #ed_x mgs.data run data get entity @s Pos[0]
 execute store result score #ed_y mgs.data run data get entity @s Pos[1]
 execute store result score #ed_z mgs.data run data get entity @s Pos[2]

@@ -10,5 +10,6 @@
 #			power_flag (unknown)
 #
 
-$data modify entity @s CustomName set value "Zombie Spawn $(group)$(rounds) $(entity)$(arrival_flag)$(power_flag)"
+$data modify entity @s data.name set value "Zombie Spawn $(group)$(rounds) $(entity)$(arrival_flag)$(power_flag)"
+data modify entity @s CustomName set from entity @s data.name
 

@@ -6,5 +6,6 @@
 # @args		group (unknown)
 #
 
-$data modify entity @s CustomName set value "Player Spawn $(group)"
+$data modify entity @s data.name set value "Player Spawn $(group)"
+data modify entity @s CustomName set from entity @s data.name
 
