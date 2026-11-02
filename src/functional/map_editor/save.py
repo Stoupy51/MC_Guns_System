@@ -24,7 +24,7 @@ def write_editor_save() -> None:
 	write_versioned_function("maps/editor/save_exit", f"""
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
-function {ns}:v{version}/maps/editor/do_save
+execute unless function {ns}:v{version}/maps/editor/do_save run return fail
 
 function {ns}:v{version}/maps/editor/cleanup
 tellraw @s [{MGS_TAG},{{"text":"Map saved and editor closed!","color":"green"}}]
@@ -33,7 +33,7 @@ tellraw @s [{MGS_TAG},{{"text":"Map saved and editor closed!","color":"green"}}]
 	write_versioned_function("maps/editor/save_only", f"""
 execute unless score @s {ns}.mp.map_edit matches 1 run return fail
 
-function {ns}:v{version}/maps/editor/do_save
+execute unless function {ns}:v{version}/maps/editor/do_save run return fail
 
 # The save clears the tools.
 function {ns}:v{version}/maps/editor/give_tools
@@ -41,7 +41,15 @@ function {ns}:v{version}/maps/editor/give_tools
 tellraw @s [{MGS_TAG},{{"text":"Map saved!","color":"green"}}]
 """)
 
+	## Returns 1 once saved. A save writes the map from the markers alone, so it is refused when some could not be loaded or none is.
 	write_versioned_function("maps/editor/do_save", f"""
+execute if data storage {ns}:temp map_edit{{unsafe:1b}} run tellraw @s [{MGS_TAG},{{"text":"Not saved: some elements of this map could not be loaded, and a save would erase them.","color":"red"}}]
+execute if data storage {ns}:temp map_edit{{unsafe:1b}} run return fail
+execute if data storage {ns}:temp map_edit{{loading:1b}} run tellraw @s [{MGS_TAG},{{"text":"Not saved: the elements of this map are still loading.","color":"red"}}]
+execute if data storage {ns}:temp map_edit{{loading:1b}} run return fail
+execute unless entity @e[type=minecraft:marker,tag={ns}.map_element] run tellraw @s [{MGS_TAG},{{"text":"Not saved: no element of this map is loaded, and a save would erase them all.","color":"red"}}]
+execute unless entity @e[type=minecraft:marker,tag={ns}.map_element] run return fail
+
 # Markers left by an older session, and the extra ones of a kind sharing a block, are not saved.
 execute as @e[type=minecraft:marker,tag={ns}.map_element] run function {ns}:v{version}/maps/editor/session_check
 function {ns}:v{version}/maps/editor/remove_duplicates
@@ -70,6 +78,7 @@ execute store result score #base_z {ns}.data run data get storage {ns}:temp map_
 {save_dispatch}
 
 function {ns}:v{version}/maps/editor/write_back with storage {ns}:temp map_edit
+return 1
 """)
 
 	write_save_lists(ns, version)

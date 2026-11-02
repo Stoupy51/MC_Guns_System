@@ -64,6 +64,7 @@ execute if data storage {ns}:temp map_edit.map.tick_command run data modify enti
 		write_versioned_function(f"maps/editor/summon_existing/{mode_key}", summon_existing or "# No mode-specific elements to summon")
 
 	write_versioned_function("maps/editor/summon_base_marker", f"""
+$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.base_coordinates"]}}
 """)
 
@@ -95,6 +96,7 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/ma
 """)
 
 	write_versioned_function("maps/editor/summon_spawn_marker", f"""
+$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_spawn_marker"]}}
 """)
 
@@ -121,6 +123,7 @@ execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/ma
 """)
 
 	write_versioned_function("maps/editor/summon_point_marker", f"""
+$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)"]}}
 """)
 
@@ -148,6 +151,7 @@ execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{versio
 """)
 
 	write_versioned_function("maps/editor/summon_enemy_marker", f"""
+$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.enemy","{ns}.new_enemy_marker"]}}
 """)
 
@@ -175,6 +179,7 @@ execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version
 """)
 
 	write_versioned_function("maps/editor/summon_start_command_marker", f"""
+$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.start_command","{ns}.new_start_cmd_marker"]}}
 """)
 
@@ -202,6 +207,7 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{versi
 """)
 
 	write_versioned_function("maps/editor/summon_respawn_command_marker", f"""
+$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.respawn_command","{ns}.new_respawn_cmd_marker"]}}
 """)
 
@@ -245,6 +251,7 @@ execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/
 """)
 
 	write_versioned_function("maps/editor/summon_zb_marker", f"""
+$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_zb_marker"]}}
 """)
 

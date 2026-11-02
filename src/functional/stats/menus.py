@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from stewbeet import Mem, write_versioned_function
 
 from ...config.catalogs import TRIG_PLAYER_STATS_BASE, TRIG_PLAYERS_PAGE_BASE
+from ..helpers.dialogs import Dialogs
 from ..multiplayer.gamemodes.dispatch import GAMEMODES
 from .catalog import GAMEMODE_NAMES, MODES, MULTIPLAYER, StatMode
 
@@ -141,23 +142,24 @@ def write_mode_page(ns: str, version: str, index: int, mode: StatMode) -> None:
 		]
 	body: str = ',"\\n",'.join(lines)
 
-	tabs: str = ",".join(
-		f'{{label:{{text:"{other.label}",color:"{"gold" if other is mode else "gray"}"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(trigger_{other.key})"}}}}'
-		for other in MODES
-	)
+	# The tabs sit in the body, above the stats: a dialog draws its buttons below its body, where they would move with each tab's length.
+	trigger: str = f"/trigger {ns}.player.config set"
+	tabs: str = ',"  ",'.join([
+		*(Dialogs.btn(other.label, f"{trigger} $(trigger_{other.key})", "gold" if other is mode else "gray", action="run_command") for other in MODES),
+		Dialogs.btn("Players", f"{trigger} {TRIG_PLAYERS_PAGE_BASE}", "yellow", action="run_command"),
+		Dialogs.btn("Settings", f"{trigger} 1", "aqua", action="run_command"),
+	])
 	write_versioned_function(f"stats/menu/{mode.key}_dialog", f"""
 $scoreboard players set #st_t {ns}.data $(i)
 scoreboard players operation #st_t {ns}.data *= #{STAT_PAGES} {ns}.data
 scoreboard players add #st_t {ns}.data {TRIG_PLAYER_STATS_BASE - 1}
 {chr(10).join(f"execute store result storage {ns}:temp _sv.t.trigger_{other.key} int 1 run scoreboard players add #st_t {ns}.data 1" for other in MODES)}
-$data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["",{{text:"$(name)",color:"gold",bold:true}},{{text:" - {mode.label}",color:"yellow"}}],body:[{{type:"minecraft:plain_message",width:300,contents:["",{body}]}}],actions:[],columns:3,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
+$data modify storage {ns}:temp dialog set value {{type:"minecraft:notice",title:["",{{text:"$(name)",color:"gold",bold:true}},{{text:" - {mode.label}",color:"yellow"}}],body:[{{type:"minecraft:plain_message",width:300,contents:["",{body}]}}],action:{{label:{{translate:"gui.done"}}}}}}
 function {base}/{mode.key}_tabs with storage {ns}:temp _sv.t
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 	write_versioned_function(f"stats/menu/{mode.key}_tabs", f"""
-$data modify storage {ns}:temp dialog.actions set value [{tabs}]
-data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Players",color:"yellow"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_PLAYERS_PAGE_BASE}"}}}}
-data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Settings",color:"aqua"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 1"}}}}
+$data modify storage {ns}:temp dialog.body prepend value {{type:"minecraft:plain_message",width:300,contents:["",{tabs}]}}
 """)
 
 
@@ -227,6 +229,7 @@ $function {base}/players_button_$(kind) with storage {ns}:temp _sp
 """)
 	for kind, (button, page) in actions.items():
 		write_versioned_function(f"stats/menu/players_button_{kind}", f'$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"$(name)",color:"yellow"}},action:{{type:"run_command",command:"{button}"}}}}')
-		write_versioned_function(f"stats/menu/players_prev_{kind}", f'$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Previous page",color:"aqua"}},action:{{type:"run_command",command:"{page}"}}}}')
-		write_versioned_function(f"stats/menu/players_more_{kind}", f'$data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Next page",color:"aqua"}},action:{{type:"run_command",command:"{page}"}}}}')
+		# On the line above the player buttons, which the last page has fewer of.
+		write_versioned_function(f"stats/menu/players_prev_{kind}", f'$data modify storage {ns}:temp dialog.body[0].contents append value ["  ",{Dialogs.btn("Previous page", page, "aqua", action="run_command")}]')
+		write_versioned_function(f"stats/menu/players_more_{kind}", f'$data modify storage {ns}:temp dialog.body[0].contents append value ["  ",{Dialogs.btn("Next page", page, "aqua", action="run_command")}]')
 

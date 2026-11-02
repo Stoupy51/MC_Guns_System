@@ -87,7 +87,6 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"power_switch":       ElementDef(name="Power Switch",     color="green",        particle=[0.0, 1.0, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:slime_spawn_egg",       save_type="zb_object",       save_path="power_switch",            emoji="⚡", defaults={}),
 	"barricade":          ElementDef(name="Barricade",        color="aqua",       particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",      save_type="zb_object",       save_path="barricades",              emoji="🧱", defaults={"block_enabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "false"}}, "block_disabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "true"}}, "radius": 2}, shared_fields=("block_enabled", "block_disabled")),
 }
-# TODO: EMPECHER DE SAVE UNE MAP ALORS QU'ON A DEJA SAVE (On était 2 à éditer la map, l'un a save, l'autre a save aussi et ça écrase la map de l'autre mais avec plus aucune entité)
 
 # Shown as real in-game models in the editor instead of dust, each through maps/editor/displays/<etype>, which mirrors the game's own display setup.
 MODEL_DISPLAY_ELEMENTS: tuple[str, ...] = ("wallbuy", "perk_machine", "wunderfizz", "pap_machine", "mystery_box_pos", "power_switch", "barricade")

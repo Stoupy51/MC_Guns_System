@@ -18,11 +18,13 @@ tellraw @s [{MGS_TAG},{{"text":"Exited map editor (changes discarded).","color":
 
 	# Shared by save_exit and exit.
 	write_versioned_function("maps/editor/cleanup", f"""
-kill @e[tag={ns}.map_element]
-kill @e[tag={ns}.editor_display]
-
 scoreboard players set @s {ns}.mp.map_edit 0
 tag @s remove {ns}.map_editor
+
+# The other editors keep the session, its markers and its loaded chunks.
+execute unless entity @a[tag={ns}.map_editor] run kill @e[tag={ns}.map_element]
+execute unless entity @a[tag={ns}.map_editor] run kill @e[tag={ns}.editor_display]
+execute unless entity @a[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/force_unload with storage {ns}:temp map_edit.force
 function {ns}:v{version}/maps/editor/next_session
 execute unless entity @a[scores={{{ns}.mp.map_edit=1}}] run data remove storage {ns}:temp map_edit
 

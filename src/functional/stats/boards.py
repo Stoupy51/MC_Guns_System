@@ -8,6 +8,7 @@ from stewbeet import Mem, write_function, write_versioned_function
 
 from ...config.catalogs import TRIG_LB_MI_MAP_BASE, TRIG_LB_ZB_MAP_BASE, TRIG_LEADERBOARDS
 from ..helpers import MGS_TAG
+from ..helpers.dialogs import Dialogs
 
 # Constants
 TOP: int = 10
@@ -248,15 +249,17 @@ function {base}/show with storage {ns}:temp _lb_view
 """)
 
 	## Macro {path, kind, title, filters}, `filters` rendered as 1 or 0: the top rows, the viewer's rank, and for a Zombies map the player count filters.
+	# Filters and Back sit in the body, above the rows: a dialog draws its buttons below its body, where they would move with each board's length.
 	filter_buttons: list[str] = [
-		f'{{label:{{text:"{label}",color:"aqua"}},action:{{type:"run_command",command:"{trigger} $(f{index})"}}}}'
+		Dialogs.btn(label, f"{trigger} $(f{index})", "aqua", action="run_command")
 		for index, label in enumerate(("All", "1 player", "2 players", "3 players", "4 players"))
 	]
+	back: str = Dialogs.btn("Back", f"{trigger} {TRIG_LEADERBOARDS}", "gray", action="run_command")
 	write_versioned_function("stats/board/show", f"""
 $function {base}/render {{path:'$(path)',kind:"$(kind)"}}
-$data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🏆 ",{{text:"$(title)",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",width:300,contents:[""]}}],actions:[],columns:3,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
-data modify storage {ns}:temp dialog.body[0].contents append from storage {ns}:temp _lb_lines[]
-execute unless data storage {ns}:temp _lb_lines[0] run data modify storage {ns}:temp dialog.body[0].contents append value {{text:"No entries yet",color:"gray"}}
+$data modify storage {ns}:temp dialog set value {{type:"minecraft:notice",title:["","🏆 ",{{text:"$(title)",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",width:300,contents:[""]}},{{type:"minecraft:plain_message",width:300,contents:[""]}}],action:{{label:{{translate:"gui.done"}}}}}}
+data modify storage {ns}:temp dialog.body[1].contents append from storage {ns}:temp _lb_lines[]
+execute unless data storage {ns}:temp _lb_lines[0] run data modify storage {ns}:temp dialog.body[1].contents append value {{text:"No entries yet",color:"gray"}}
 
 $data modify storage {ns}:temp _lb_walk set from storage {ns}:stats leaderboards.$(path)
 data modify storage {ns}:temp _lb_me set from entity @s UUID
@@ -267,7 +270,7 @@ execute if score #lb_found {ns}.data matches 1 run function {base}/show_rank wit
 
 $data modify storage {ns}:temp _lb_f set value $(filters)
 execute if data storage {ns}:temp {{_lb_f:1}} run function {base}/filters with storage {ns}:temp _lb_view
-data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Back",color:"gray"}},action:{{type:"run_command",command:"{trigger} {TRIG_LEADERBOARDS}"}}}}
+data modify storage {ns}:temp dialog.body[0].contents append value {back}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 	write_versioned_function("stats/board/find_me", f"""
@@ -285,7 +288,7 @@ return run function {base}/find_me
 		*(f"execute store result storage {ns}:temp _lb_view.f{index} int 1 run scoreboard players add #lb_t {ns}.data {min(index, 1)}" for index in range(5)),
 		f"function {base}/filters_add with storage {ns}:temp _lb_view",
 	)))
-	write_versioned_function("stats/board/filters_add", "\n".join(f"$data modify storage {ns}:temp dialog.actions append value {button}" for button in filter_buttons))
+	write_versioned_function("stats/board/filters_add", "\n".join(f'$data modify storage {ns}:temp dialog.body[0].contents append value [{button},"  "]' for button in filter_buttons))
 
 
 def write_holograms(ns: str, version: str) -> None:
