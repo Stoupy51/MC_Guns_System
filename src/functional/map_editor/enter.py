@@ -78,7 +78,7 @@ function {ns}:v{version}/maps/editor/force_load with storage {ns}:temp map_edit.
 
 # The markers once those chunks have loaded; no save until then.
 data modify storage {ns}:temp map_edit.loading set value 1b
-schedule function {ns}:v{version}/maps/editor/summon_all 20t replace
+schedule function {ns}:v{version}/maps/editor/summon_all 40t replace
 
 function {ns}:v{version}/maps/editor/give_tools
 
@@ -99,10 +99,32 @@ tellraw @s [{MGS_TAG},{{"text":"Use ","color":"gray"}},{Dialogs.btn("Save & Exit
 	write_versioned_function("maps/editor/summon_all", f"""
 execute unless entity @a[tag={ns}.map_editor] run return 0
 scoreboard players set #ed_unloaded {ns}.data 0
+scoreboard players set #ed_retry {ns}.data 0
+data modify storage {ns}:temp map_edit.missed set value []
+data modify storage {ns}:temp map_edit.kept set value []
 execute as @a[tag={ns}.map_editor,limit=1] run function {ns}:v{version}/maps/editor/summon_in with storage {ns}:temp map_edit.force
 data remove storage {ns}:temp map_edit.loading
+function {ns}:v{version}/maps/editor/summon_report
+""")
+
+	## Run as an editor by the Retry button of the warning: summons only the elements the last pass could not load.
+	write_versioned_function("maps/editor/summon_retry", f"""
+execute unless score @s {ns}.mp.map_edit matches 1 run return fail
+execute unless data storage {ns}:temp map_edit{{unsafe:1b}} run return fail
+scoreboard players set #ed_unloaded {ns}.data 0
+scoreboard players set #ed_retry {ns}.data 1
+data modify storage {ns}:temp map_edit.missed_before set from storage {ns}:temp map_edit.missed
+data modify storage {ns}:temp map_edit.missed set value []
+function {ns}:v{version}/maps/editor/summon_in with storage {ns}:temp map_edit.force
+scoreboard players set #ed_retry {ns}.data 0
+data remove storage {ns}:temp map_edit.missed_before
+function {ns}:v{version}/maps/editor/summon_report
+execute if score #ed_unloaded {ns}.data matches 0 run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"text":"Every element is loaded. Saving is on.","color":"green"}}]
+""")
+	write_versioned_function("maps/editor/summon_report", f"""
+execute if score #ed_unloaded {ns}.data matches 0 run data remove storage {ns}:temp map_edit.unsafe
 execute if score #ed_unloaded {ns}.data matches 1.. run data modify storage {ns}:temp map_edit.unsafe set value 1b
-execute if score #ed_unloaded {ns}.data matches 1.. run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"score":{{"name":"#ed_unloaded","objective":"{ns}.data"}},"color":"white"}},{{"text":" elements lie more than {FORCE_RADIUS} blocks from the base and could not be loaded. Saving is off for this session, so they are not lost.","color":"red"}}]
+execute if score #ed_unloaded {ns}.data matches 1.. run tellraw @a[tag={ns}.map_editor] [{MGS_TAG},{{"score":{{"name":"#ed_unloaded","objective":"{ns}.data"}},"color":"white"}},{{"text":" elements lie more than {FORCE_RADIUS} blocks from the base and could not be loaded. Saving is off for this session, so they are not lost. ","color":"red"}},{Dialogs.btn("Retry", f"/function {ns}:v{version}/maps/editor/summon_retry", "gold", "Load them again, once the chunks are loaded", action="run_command")}]
 """)
 	write_versioned_function("maps/editor/summon_in", f"""
 $execute in $(dimension) run function {ns}:v{version}/maps/editor/summon_existing

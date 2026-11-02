@@ -24,6 +24,7 @@ tag @s remove {ns}.map_editor
 # The other editors keep the session, its markers and its loaded chunks.
 execute unless entity @a[tag={ns}.map_editor] run kill @e[tag={ns}.map_element]
 execute unless entity @a[tag={ns}.map_editor] run kill @e[tag={ns}.editor_display]
+execute unless entity @a[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/release_kept
 execute unless entity @a[tag={ns}.map_editor] run function {ns}:v{version}/maps/editor/force_unload with storage {ns}:temp map_edit.force
 function {ns}:v{version}/maps/editor/next_session
 execute unless entity @a[scores={{{ns}.mp.map_edit=1}}] run data remove storage {ns}:temp map_edit

@@ -36,6 +36,31 @@ def write_editor_summon() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
+	## A retry only summons what the previous pass could not load (map_edit.missed_before), so existing markers are neither duplicated nor brought back after a deletion.
+	retry_guard: str = (
+		f"$execute if score #ed_retry {ns}.data matches 1 unless data storage {ns}:temp map_edit.missed_before[{{x:$(x),y:$(y),z:$(z)}}] run return 0\n"
+		f"$execute unless loaded $(x) $(y) $(z) run return run function {ns}:v{version}/maps/editor/note_unloaded {{x:$(x),y:$(y),z:$(z)}}\n"
+		f"$execute if score #ed_retry {ns}.data matches 1 run function {ns}:v{version}/maps/editor/keep_loaded {{x:$(x),z:$(z)}}"
+	)
+	## A chunk loaded by walking there would unload again, and a save would lose its elements: the retry forceloads it until the session ends.
+	write_versioned_function("maps/editor/keep_loaded", f"""
+$data modify storage {ns}:temp map_edit.kept append value {{x:$(x),z:$(z)}}
+data modify storage {ns}:temp map_edit.kept[-1].dimension set from storage {ns}:temp map_edit.force.dimension
+function {ns}:v{version}/maps/editor/keep_loaded_add with storage {ns}:temp map_edit.kept[-1]
+""")
+	write_versioned_function("maps/editor/keep_loaded_add", "$execute in $(dimension) run forceload add $(x) $(z)")
+	write_versioned_function("maps/editor/keep_loaded_remove", "$execute in $(dimension) run forceload remove $(x) $(z)")
+	write_versioned_function("maps/editor/release_kept", f"""
+execute unless data storage {ns}:temp map_edit.kept[0] run return 0
+function {ns}:v{version}/maps/editor/keep_loaded_remove with storage {ns}:temp map_edit.kept[0]
+data remove storage {ns}:temp map_edit.kept[0]
+function {ns}:v{version}/maps/editor/release_kept
+""")
+	write_versioned_function("maps/editor/note_unloaded", f"""
+scoreboard players add #ed_unloaded {ns}.data 1
+$data modify storage {ns}:temp map_edit.missed append value {{x:$(x),y:$(y),z:$(z)}}
+""")
+
 	summon_dispatch = "\n".join(
 		f'execute if score @s {ns}.mp.map_mode matches {i} run function {ns}:v{version}/maps/editor/summon_existing/{mk}'
 		for i, mk in enumerate(MODE_LIST)
@@ -51,8 +76,8 @@ execute store result storage {ns}:temp _pos.y double 1 run scoreboard players ge
 execute store result storage {ns}:temp _pos.z double 1 run scoreboard players get #bz {ns}.data
 function {ns}:v{version}/maps/editor/summon_base_marker with storage {ns}:temp _pos
 
-execute if data storage {ns}:temp map_edit.map.start_command run data modify entity @n[tag={ns}.element.base_coordinates] data.start_command set from storage {ns}:temp map_edit.map.start_command
-execute if data storage {ns}:temp map_edit.map.tick_command run data modify entity @n[tag={ns}.element.base_coordinates] data.tick_command set from storage {ns}:temp map_edit.map.tick_command
+execute unless score #ed_retry {ns}.data matches 1 if data storage {ns}:temp map_edit.map.start_command run data modify entity @n[tag={ns}.element.base_coordinates] data.start_command set from storage {ns}:temp map_edit.map.start_command
+execute unless score #ed_retry {ns}.data matches 1 if data storage {ns}:temp map_edit.map.tick_command run data modify entity @n[tag={ns}.element.base_coordinates] data.tick_command set from storage {ns}:temp map_edit.map.tick_command
 
 {summon_dispatch}
 """)
@@ -64,7 +89,7 @@ execute if data storage {ns}:temp map_edit.map.tick_command run data modify enti
 		write_versioned_function(f"maps/editor/summon_existing/{mode_key}", summon_existing or "# No mode-specific elements to summon")
 
 	write_versioned_function("maps/editor/summon_base_marker", f"""
-$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
+{retry_guard}
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.base_coordinates"]}}
 """)
 
@@ -96,7 +121,7 @@ execute if data storage {ns}:temp _spawn_iter[0] run function {ns}:v{version}/ma
 """)
 
 	write_versioned_function("maps/editor/summon_spawn_marker", f"""
-$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
+{retry_guard}
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_spawn_marker"]}}
 """)
 
@@ -123,7 +148,7 @@ execute if data storage {ns}:temp _point_iter[0] run function {ns}:v{version}/ma
 """)
 
 	write_versioned_function("maps/editor/summon_point_marker", f"""
-$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
+{retry_guard}
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)"]}}
 """)
 
@@ -151,7 +176,7 @@ execute if data storage {ns}:temp _enemy_edit_iter[0] run function {ns}:v{versio
 """)
 
 	write_versioned_function("maps/editor/summon_enemy_marker", f"""
-$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
+{retry_guard}
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.enemy","{ns}.new_enemy_marker"]}}
 """)
 
@@ -179,7 +204,7 @@ execute if data storage {ns}:temp _start_cmd_iter[0] run function {ns}:v{version
 """)
 
 	write_versioned_function("maps/editor/summon_start_command_marker", f"""
-$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
+{retry_guard}
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.start_command","{ns}.new_start_cmd_marker"]}}
 """)
 
@@ -207,7 +232,7 @@ execute if data storage {ns}:temp _respawn_cmd_iter[0] run function {ns}:v{versi
 """)
 
 	write_versioned_function("maps/editor/summon_respawn_command_marker", f"""
-$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
+{retry_guard}
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","{ns}.element.respawn_command","{ns}.new_respawn_cmd_marker"]}}
 """)
 
@@ -251,7 +276,7 @@ execute if data storage {ns}:temp _zb_iter[0] run function {ns}:v{version}/maps/
 """)
 
 	write_versioned_function("maps/editor/summon_zb_marker", f"""
-$execute unless loaded $(x) $(y) $(z) run return run scoreboard players add #ed_unloaded {ns}.data 1
+{retry_guard}
 $summon minecraft:marker $(x) $(y) $(z) {{Tags:["{ns}.map_element","$(tag)","{ns}.new_zb_marker"]}}
 """)
 
