@@ -28,6 +28,7 @@ MC Guns System is an FPS framework for Minecraft 26.3: data-driven weapons, Mult
 - Give one item: `/loot give @s loot mgs:i/<item>`
 - Admin menu (game setup, map editor, server options): `/function mgs:config`
 - Player options, stats, leaderboards and the Zombies knife camo: `/trigger mgs.player.config set 1`, or the Quick Actions key
+- A leaderboard anywhere: a repeat command block, always active, running `function mgs:leaderboard/level_zb` (or `level_mp`, `zb_map {map:"<id>",players:"all"}`, `mi_map {map:"<id>"}`); the board floats above it while a player is within 24 blocks (untick the block's Track Output, or `/gamerule command_block_output false`, or it fills the operators' chat)
 - After retuning `src/functional/progression/awards.py` or a challenge threshold, rebuild every online player's levels and challenges from their banked XP: `/function mgs:v5.1.0/progression/recompute_all` (the path carries the pack version).
 
 ## 🛠️ Build

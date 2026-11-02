@@ -1,20 +1,20 @@
-""" Dialog forms configuring a spawn or a mystery box spot, and drawing a spawn's activation box with the Coord Stick. """
+""" Dialog forms configuring a spawn or a mystery box spot (the machines have theirs in machine_forms.py), and drawing a spawn's activation box with the Coord Stick. """
 # Imports
 import json
-from collections.abc import Sequence
 
 from stewbeet import JsonDict, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..helpers.snbt import snbt
 from ..helpers.text import Text
-from ..map_editor_defs import FIELD_DOCS
 from ..zombies.game.lifecycle.spawns import ARRIVALS, SPECIAL_SPAWNS, ZOMBIE_SPAWNS, SpawnKind
 from ..zombies.machines.mystery_box.shared import ROLLS
+from .machine_forms import write_machine_forms
+from .shared import doc_hover, help_legend
 
 # Constants
 SPAWN_FORMS: dict[str, SpawnKind] = {"zombie_spawn": ZOMBIE_SPAWNS, "special_spawn": SPECIAL_SPAWNS}
-FORM_ELEMENTS: tuple[str, ...] = (*SPAWN_FORMS, "mystery_box_pos")
+FORM_ELEMENTS: tuple[str, ...] = (*SPAWN_FORMS, "mystery_box_pos", "wallbuy", "perk_machine", "trap")
 """ Elements whose Configure panel in chat has a Form button. """
 
 
@@ -68,6 +68,7 @@ execute if data storage {ns}:temp _form.mob[0] run data modify entity @s data.mo
 """)
 
 	write_mystery_box_form(ns, form, show_dialog, target, gone)
+	write_machine_forms(form, show_dialog, target, gone)
 	write_box_drawing(ns, form, target)
 
 
@@ -269,20 +270,4 @@ tag @a remove {ns}.ed_form_user
 	write_versioned_function("maps/editor/form/reopen", "\n".join(
 		f"execute if entity @s[tag={ns}.element.{etype}] run function {form}/open/{etype}" for etype in FORM_ELEMENTS
 	))
-
-
-def help_legend(fields: Sequence[tuple[str, tuple[str, str] | str]]) -> JsonDict:
-	""" A dialog body of "ⓘ" chips, one per field label, five a line, each showing its FIELD_DOCS entry on hover.
-
-	Only text inputs show a tooltip on their own label: sliders, option buttons and check boxes do not.
-	"""
-	contents: list[str | JsonDict] = ["", {"text": "Hover a name for its help:", "color": "gray"}]
-	for i, (label, doc) in enumerate(fields):
-		contents += ["\n" if i % 5 == 0 else "   ", {"text": f"ⓘ {label}", "color": "aqua", "hover_event": doc_hover(doc)}]
-	return {"type": "minecraft:plain_message", "width": 400, "contents": contents}
-
-
-def doc_hover(doc: tuple[str, str] | str) -> JsonDict:
-	""" A hover event showing a FIELD_DOCS entry. """
-	return {"action": "show_text", "value": Text.help(FIELD_DOCS[doc])}
 

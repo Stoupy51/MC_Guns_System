@@ -26,6 +26,7 @@ execute if data storage {ns}:temp {{_plr_mode:"multiplayer"}} if score @s {ns}.m
 execute if data storage {ns}:temp {{_plr_mode:"multiplayer"}} if score @s {ns}.mp.team matches 2 run data modify storage {ns}:temp _plr_entry.color set value "blue"
 execute if data storage {ns}:temp {{_plr_mode:"zombies"}} if score @s {ns}.zb.in_game matches 1 run data modify storage {ns}:temp _plr_entry.color set value "green"
 execute if data storage {ns}:temp {{_plr_mode:"missions"}} if score @s {ns}.mi.in_game matches 1 run data modify storage {ns}:temp _plr_entry.color set value "green"
+execute if data storage {ns}:temp {{_plr_mode:"editor"}} if score @s {ns}.mp.map_edit matches 1 run data modify storage {ns}:temp _plr_entry.color set value "green"
 
 function {ns}:v{version}/players/read_name
 data modify storage {ns}:temp _plr_entry.name set from storage {ns}:temp _name
@@ -83,6 +84,10 @@ $function {ns}:v{version}/players/row_$(mode) {{id:$(id),name:"$(name)",color:"$
 		"missions": [
 			action_btn("Join", "green", "Add to the mission", "mi_join"),
 			action_btn("Remove", "gray", "Remove from the game (spectator)", "mi_remove"),
+		],
+		# The map editor's invitation list, written in map_editor/enter.py.
+		"editor": [
+			action_btn("Invite", "aqua", "Bring into this editor session", "editor_invite"),
 		],
 	}
 	for mode, buttons in rows.items():

@@ -86,7 +86,6 @@ ALL_ELEMENTS: dict[str, ElementDef] = {
 	"mystery_box_pos":    ElementDef(name="Mystery Box Pos",  color="light_purple", particle=[1.0, 0.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:evoker_spawn_egg",      save_type="zb_object",       save_path="mystery_box.positions",   emoji="📦", defaults={"can_start_on": True, "display_item": "", "item_model": "", "location_name": "", "pitch": 0.0, "roll": 0}),
 	"power_switch":       ElementDef(name="Power Switch",     color="green",        particle=[0.0, 1.0, 0.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:slime_spawn_egg",       save_type="zb_object",       save_path="power_switch",            emoji="⚡", defaults={}),
 	"barricade":          ElementDef(name="Barricade",        color="aqua",       particle=[0.0, 1.0, 1.0], particle_scale=1.0, has_rotation=True,  egg_model="minecraft:guardian_spawn_egg",      save_type="zb_object",       save_path="barricades",              emoji="🧱", defaults={"block_enabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "false"}}, "block_disabled": {"id": "minecraft:oak_fence_gate", "properties": {"open": "true"}}, "radius": 2}, shared_fields=("block_enabled", "block_disabled")),
-	"leaderboard":        ElementDef(name="Leaderboard",      color="gold",       particle=[1.0, 0.8, 0.0], particle_scale=1.0, has_rotation=False, egg_model="minecraft:parrot_spawn_egg",        save_type="zb_object",       save_path="leaderboards",            emoji="🏆", defaults={"board": "level_zb", "map_id": "", "players": "all"}),
 }
 # TODO: EMPECHER DE SAVE UNE MAP ALORS QU'ON A DEJA SAVE (On était 2 à éditer la map, l'un a save, l'autre a save aussi et ça écrase la map de l'autre mais avec plus aucune entité)
 
@@ -119,9 +118,6 @@ FIELD_DOCS: dict[tuple[str, str] | str, str] = {
 	("wunderfizz", "price"): "Points per use. Cycles perk bottles and grants one random perk the\nbuyer doesn't already own, collectable by the buyer for 10s. Suggested: 1500.",
 	("wallbuy", "weapon_id"): "Item id given on purchase. Guns (e.g. m1911, ak47, mp5),\nknives (bowie_knife, ~3000 pts), lethal grenades (frag_grenade,\nsemtex), or tacticals (monkey_bomb, smoke_grenade, flash_grenade).\nNon-guns route to their own slot: knife hotbar.0, lethals hotbar.7 (x4), tacticals hotbar.6 (x3).",
 	("wallbuy", "magazine_id"): "Magazine item paired with the gun (e.g. m1911_mag).\nLeave empty for knife/grenade/tactical wallbuys.",
-	("leaderboard", "board"): "Board shown, as a floating text while a player is within 24 blocks:\nlevel_zb = Zombies level, level_mp = Multiplayer level,\nzb_map = best rounds on a Zombies map, mi_map = best times on a Missions map.",
-	("leaderboard", "map_id"): "Map of a zb_map or mi_map board. Leave EMPTY for the map this board is placed in.",
-	("leaderboard", "players"): "Player count of a zb_map board: all, or a number of players such as 2.",
 	("barricade", "radius"): "Block radius the barricade toggles open/closed around its marker.",
 	("mystery_box_pos", "location_name"): "Announced in chat when the box\nlands here: `\"the Power Room\"`.\nEmpty: a generic message.",
 	"activation_box": "Optional `[x,y,z,dx,dy,dz]` box,\nin blocks from the spawn, which\nonly works with a player inside.\n`x,y,z`: corner, `dx,dy,dz`: size.\nEmpty `[]`: always active.",
@@ -195,7 +191,6 @@ EDITOR_MODES: dict[str, EditorMode] = {
 			"special_spawn": "inventory.7",
 			"barricade": "inventory.8",
 			"wunderfizz": "inventory.9",
-			"leaderboard": "inventory.10",
 		},
 	),
 	"missions": EditorMode(

@@ -1,10 +1,10 @@
-""" Leaderboards in `mgs:stats leaderboards`: kept sorted by insertion, shown in dialogs and in holograms placed with the map editor.
+""" Leaderboards in `mgs:stats leaderboards`: kept sorted by insertion, shown in dialogs and in holograms a repeat command block summons.
 
 Every list holds `{uuid, value}` entries, with `players` on the map boards; names and levels are resolved when a board is shown.
 The level boards sort by banked XP, which orders players as their levels do.
 """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import Mem, write_function, write_versioned_function
 
 from ...config.catalogs import TRIG_LB_MI_MAP_BASE, TRIG_LB_ZB_MAP_BASE, TRIG_LEADERBOARDS
 from ..helpers import MGS_TAG
@@ -289,77 +289,43 @@ return run function {base}/find_me
 
 
 def write_holograms(ns: str, version: str) -> None:
-	""" Write the Zombies map holograms: a marker per placed leaderboard, showing its board while a player is near. """
+	""" Write the public functions a repeat command block runs to show a board above itself, the way Switch places its lobby boards. """
 	base: str = f"{ns}:v{version}/stats/board"
-
-	## Run at the end of zombies/preload_complete; a `map_id` left empty means the map being played.
-	write_versioned_function("zombies/preload_complete", f"""
-data modify storage {ns}:temp _lb_iter set from storage {ns}:zombies game.map.leaderboards
-execute if data storage {ns}:temp _lb_iter[0] run function {base}/holo_setup
-execute if data storage {ns}:zombies game.map.leaderboards[0] run schedule function {base}/holo_tick 1s replace
-""")
-	write_versioned_function("stats/board/holo_setup", f"""
-data modify storage {ns}:temp _lb_h set from storage {ns}:temp _lb_iter[0]
-execute unless data storage {ns}:temp _lb_h.map_id run data modify storage {ns}:temp _lb_h.map_id set value ""
-execute if data storage {ns}:temp _lb_h{{map_id:""}} run data modify storage {ns}:temp _lb_h.map_id set from storage {ns}:zombies game.map_id
-execute store result storage {ns}:temp _lb_h.x int 1 run data get storage {ns}:temp _lb_h.pos[0]
-execute store result storage {ns}:temp _lb_h.y int 1 run data get storage {ns}:temp _lb_h.pos[1]
-execute store result storage {ns}:temp _lb_h.z int 1 run data get storage {ns}:temp _lb_h.pos[2]
-function {base}/holo_place with storage {ns}:temp _lb_h
-
-data remove storage {ns}:temp _lb_iter[0]
-execute if data storage {ns}:temp _lb_iter[0] run function {base}/holo_setup
-""")
-	## Positions are relative to the map's base, like every saved element.
-	write_versioned_function("stats/board/holo_place", f"""
-$scoreboard players set #lbx {ns}.data $(x)
-$scoreboard players set #lby {ns}.data $(y)
-$scoreboard players set #lbz {ns}.data $(z)
-execute store result storage {ns}:temp _lb_h.x int 1 run scoreboard players operation #lbx {ns}.data += #gm_base_x {ns}.data
-execute store result storage {ns}:temp _lb_h.y int 1 run scoreboard players operation #lby {ns}.data += #gm_base_y {ns}.data
-execute store result storage {ns}:temp _lb_h.z int 1 run scoreboard players operation #lbz {ns}.data += #gm_base_z {ns}.data
-data modify storage {ns}:temp _lb_h.kind set from storage {ns}:temp _lb_h.board
-function {base}/holo_path with storage {ns}:temp _lb_h
-""")
-	write_versioned_function("stats/board/holo_path", f"""
-$data modify storage {ns}:temp _lb_h.path set value "$(board)"
-$execute if data storage {ns}:temp _lb_h{{board:"zb_map"}} run data modify storage {ns}:temp _lb_h.path set value 'zb_map."$(map_id)"."$(players)"'
-$execute if data storage {ns}:temp _lb_h{{board:"mi_map"}} run data modify storage {ns}:temp _lb_h.path set value 'mi_map."$(map_id)"'
-$summon minecraft:marker $(x).5 $(y) $(z).5 {{Tags:["{ns}.leaderboard","{ns}.zombies_entity","{ns}.lb_new"]}}
-data modify entity @n[type=minecraft:marker,tag={ns}.lb_new] data.lb set from storage {ns}:temp _lb_h
-tag @e[type=minecraft:marker,tag={ns}.lb_new] remove {ns}.lb_new
+	# Path under `{ns}:stats leaderboards` and title of each board, the map ones taking `map` and `players` as macro arguments.
+	boards: dict[str, tuple[str, str]] = {
+		"level_mp": ("level_mp", "Multiplayer Level"),
+		"level_zb": ("level_zb", "Zombies Level"),
+		"zb_map": ('zb_map."$(map)"."$(players)"', "Best Rounds: $(map)"),
+		"mi_map": ('mi_map."$(map)"', "Best Times: $(map)"),
+	}
+	for kind, (path, title) in boards.items():
+		macro: str = "$" if "$(" in path else ""
+		write_function(f"{ns}:leaderboard/{kind}", f"""
+# A repeat command block runs this every tick; once a second is enough.
+scoreboard players operation #lb_tick {ns}.data = #total_tick {ns}.data
+scoreboard players operation #lb_tick {ns}.data %= #20 {ns}.data
+execute unless score #lb_tick {ns}.data matches 0 run return 0
+{macro}data modify storage {ns}:temp _lb_cb set value {{kind:"{kind}",path:'{path}',title:"{title}"}}
+execute positioned ~ ~0.5 ~ run function {base}/hologram
 """)
 
-	write_versioned_function("stats/board/holo_tick", f"""
-execute as @e[type=minecraft:marker,tag={ns}.leaderboard] at @s run function {base}/holo_one
-execute if entity @e[type=minecraft:marker,tag={ns}.leaderboard] run schedule function {base}/holo_tick 1s replace
-""")
-	write_versioned_function("stats/board/holo_one", f"""
-execute if entity @s[tag={ns}.lb_shown] unless entity @a[distance=..{HOLOGRAM_RANGE}] run function {base}/holo_hide
-execute if entity @s[tag=!{ns}.lb_shown] if entity @a[distance=..{HOLOGRAM_RANGE}] run function {base}/holo_show
-""")
-	write_versioned_function("stats/board/holo_hide", f"""
-tag @s remove {ns}.lb_shown
-kill @e[type=minecraft:text_display,tag={ns}.lb_text,distance=..0.1]
-""")
-	titles: str = "\n".join(
-		f'execute if data entity @s data.lb{{kind:"{kind}"}} run data modify storage {ns}:temp _lb_text set value ["",{{text:"{title}",color:"gold",bold:true}},"\\n"]'
-		for kind, title in (("level_mp", "Multiplayer Level"), ("level_zb", "Zombies Level"), ("zb_map", "Best Rounds"), ("mi_map", "Best Times"))
-	)
-	write_versioned_function("stats/board/holo_show", f"""
-tag @s add {ns}.lb_shown
-function {base}/render with entity @s data.lb
-{titles}
+	## Run on top of the command block: the board shows while a player is within HOLOGRAM_RANGE blocks.
+	write_versioned_function("stats/board/hologram", f"""
+execute unless entity @a[distance=..{HOLOGRAM_RANGE}] run return run kill @e[type=minecraft:text_display,tag={ns}.lb_text,distance=..0.1]
+execute if entity @e[type=minecraft:text_display,tag={ns}.lb_text,distance=..0.1] run return 0
+
+function {base}/render with storage {ns}:temp _lb_cb
+data modify storage {ns}:temp _lb_text set value ["",{{text:"",color:"gold",bold:true}},"\\n"]
+data modify storage {ns}:temp _lb_text[1].text set from storage {ns}:temp _lb_cb.title
 data modify storage {ns}:temp _lb_text append from storage {ns}:temp _lb_lines[]
 execute unless data storage {ns}:temp _lb_lines[0] run data modify storage {ns}:temp _lb_text append value {{text:"No entries yet",color:"gray"}}
-summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.lb_text","{ns}.zombies_entity","{ns}.lb_new"],billboard:"vertical",alignment:"center",default_background:true}}
+summon minecraft:text_display ~ ~ ~ {{Tags:["{ns}.lb_text","{ns}.lb_new"],billboard:"vertical",alignment:"center",default_background:true}}
 data modify entity @n[type=minecraft:text_display,tag={ns}.lb_new] text set from storage {ns}:temp _lb_text
 tag @e[type=minecraft:text_display,tag={ns}.lb_new] remove {ns}.lb_new
 """)
-	## After an update, so the next tick rebuilds every shown board.
+	## After an update, so the command blocks rebuild every board within a second; a board whose command block is gone goes with it.
 	write_versioned_function("stats/board/refresh_holograms", f"""
 kill @e[type=minecraft:text_display,tag={ns}.lb_text]
-tag @e[type=minecraft:marker,tag={ns}.leaderboard] remove {ns}.lb_shown
 """)
 
 

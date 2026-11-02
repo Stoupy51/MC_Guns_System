@@ -238,7 +238,8 @@ def write_save_lists(ns: str, version: str) -> None:
 		saved: list[str] = [etype for etype in mode_info.slots if ALL_ELEMENTS[etype].save_type in SAVED_TYPES]
 		resets: str = "\n".join([
 			*(f"data modify storage {ns}:temp map_edit.map.{ALL_ELEMENTS[etype].save_path} set value []" for etype in saved),
-			*([f"data remove storage {ns}:temp map_edit.map.{key}" for key in ("shared", "barriers")] if "barricade" in saved else []),
+			# shared is rebuilt; barriers and leaderboards are keys of older zombies maps nothing reads.
+			*([f"data remove storage {ns}:temp map_edit.map.{key}" for key in ("shared", "barriers", "leaderboards")] if "barricade" in saved else []),
 		])
 		rebuilds: str = "\n".join(
 			f"execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/{save_call(etype)}" for etype in saved
