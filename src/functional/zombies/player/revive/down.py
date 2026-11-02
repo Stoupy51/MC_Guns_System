@@ -39,6 +39,7 @@ scoreboard players add #downed_id_next {ns}.data 1
 scoreboard players operation @s {ns}.zb.downed_id = #downed_id_next {ns}.data
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 function {ns}:v{version}/zombies/revive/spawn_downed_body
+function {ns}:v{version}/zombies/revive/tp_to_body with storage {ns}:temp
 
 # Electric Cherry: a full-strength discharge (used == cap == 1) before the perk is stripped (BO behaviour).
 scoreboard players set #ec_used {ns}.data 1
@@ -80,6 +81,8 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side=
 	## Spawn the revivable body of @s (mannequin with armor and skin, name HUD), for a normal down and Who's Who; needs a fresh downed_id, leaves the position in temp rv_x, rv_y, rv_z.
 	## {ns}:temp _body_at ([x, y, z]) overrides LastDeathLocation, for the out-of-bounds revive.
 	write_versioned_function("zombies/revive/spawn_downed_body", f"""
+data modify storage {ns}:temp rv_dim set from entity @s Dimension
+execute unless data storage {ns}:temp _body_at run data modify storage {ns}:temp rv_dim set from entity @s LastDeathLocation.dimension
 execute unless data storage {ns}:temp _body_at run data modify storage {ns}:temp _body_at set from entity @s LastDeathLocation.pos
 
 # Full float precision: x1000, stored back as double 0.001.
@@ -126,8 +129,13 @@ $data modify entity @n[tag={ns}.downed_hud_new] text set value [{{"text":"$(rv_n
 """)
 
 	write_versioned_function("zombies/revive/tp_to_death", f"""
-$tp @n[tag={ns}.downed_new] $(rv_x) $(rv_y) $(rv_z)
-$tp @n[tag={ns}.downed_hud_new] $(rv_x) $(rv_y_hud) $(rv_z)
+$execute in $(rv_dim) run tp @n[tag={ns}.downed_new] $(rv_x) $(rv_y) $(rv_z)
+$execute in $(rv_dim) run tp @n[tag={ns}.downed_hud_new] $(rv_x) $(rv_y_hud) $(rv_z)
+""")
+
+	## Run as the player who went down: the body is in the dimension of the death, and the camera, the ride and the Tombstone marker are all picked from there.
+	write_versioned_function("zombies/revive/tp_to_body", """
+$execute in $(rv_dim) run tp @s $(rv_x) $(rv_y) $(rv_z)
 """)
 
 	write_versioned_function("zombies/revive/tp_revive_pos", """
