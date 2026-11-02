@@ -102,8 +102,9 @@ execute store result score #export_ok {ns}.data run function {editor}/export_tex
 execute if score #export_ok {ns}.data matches 1 run data remove storage {ns}:temp _export
 execute if score #export_ok {ns}.data matches 1 run return run {show_dialog}
 
-# A text holding a double quote is printed in single quotes, which ends the one wrapping the macro value: chat and logs/latest.log get the map instead.
-tellraw @s [{MGS_TAG},{{"text":"This map has a text with a double quote, so it is printed below and in logs/latest.log instead.","color":"yellow"}}]
+# Macro values are pasted raw: an apostrophe in a text, or a double quote (which makes the game print that text in single quotes), ends the single quotes wrapping the value.
+# No command turns a compound into an escaped string, so chat and logs/latest.log get the map instead.
+tellraw @s [{MGS_TAG},{{"text":"This map has a text with an apostrophe or a double quote, so it is printed below and in logs/latest.log instead.","color":"yellow"}}]
 tellraw @s {{"storage":"{ns}:temp","nbt":"_export.map","color":"white"}}
 data remove storage {ns}:temp _export
 """)
