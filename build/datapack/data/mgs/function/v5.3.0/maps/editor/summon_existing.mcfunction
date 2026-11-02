@@ -15,8 +15,8 @@ execute store result storage mgs:temp _pos.y double 1 run scoreboard players get
 execute store result storage mgs:temp _pos.z double 1 run scoreboard players get #bz mgs.data
 function mgs:v5.3.0/maps/editor/summon_base_marker with storage mgs:temp _pos
 
-execute if data storage mgs:temp map_edit.map.start_command run data modify entity @n[tag=mgs.element.base_coordinates] data.start_command set from storage mgs:temp map_edit.map.start_command
-execute if data storage mgs:temp map_edit.map.tick_command run data modify entity @n[tag=mgs.element.base_coordinates] data.tick_command set from storage mgs:temp map_edit.map.tick_command
+execute unless score #ed_retry mgs.data matches 1 if data storage mgs:temp map_edit.map.start_command run data modify entity @n[tag=mgs.element.base_coordinates] data.start_command set from storage mgs:temp map_edit.map.start_command
+execute unless score #ed_retry mgs.data matches 1 if data storage mgs:temp map_edit.map.tick_command run data modify entity @n[tag=mgs.element.base_coordinates] data.tick_command set from storage mgs:temp map_edit.map.tick_command
 
 execute if score @s mgs.mp.map_mode matches 0 run function mgs:v5.3.0/maps/editor/summon_existing/multiplayer
 execute if score @s mgs.mp.map_mode matches 1 run function mgs:v5.3.0/maps/editor/summon_existing/zombies

@@ -62,7 +62,7 @@ function mgs:v5.3.0/maps/editor/force_load with storage mgs:temp map_edit.force
 
 # The markers once those chunks have loaded; no save until then.
 data modify storage mgs:temp map_edit.loading set value 1b
-schedule function mgs:v5.3.0/maps/editor/summon_all 20t replace
+schedule function mgs:v5.3.0/maps/editor/summon_all 40t replace
 
 function mgs:v5.3.0/maps/editor/give_tools
 

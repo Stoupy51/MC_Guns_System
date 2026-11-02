@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "keep_loaded_remove.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/summon.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;AAmD4D"
+}

@@ -15,6 +15,7 @@ tag @s remove mgs.map_editor
 # The other editors keep the session, its markers and its loaded chunks.
 execute unless entity @a[tag=mgs.map_editor] run kill @e[tag=mgs.map_element]
 execute unless entity @a[tag=mgs.map_editor] run kill @e[tag=mgs.editor_display]
+execute unless entity @a[tag=mgs.map_editor] run function mgs:v5.3.0/maps/editor/release_kept
 execute unless entity @a[tag=mgs.map_editor] run function mgs:v5.3.0/maps/editor/force_unload with storage mgs:temp map_edit.force
 function mgs:v5.3.0/maps/editor/next_session
 execute unless entity @a[scores={mgs.mp.map_edit=1}] run data remove storage mgs:temp map_edit

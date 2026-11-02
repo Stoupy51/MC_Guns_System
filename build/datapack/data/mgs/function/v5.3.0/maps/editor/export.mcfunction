@@ -15,8 +15,9 @@ execute store result score #export_ok mgs.data run function mgs:v5.3.0/maps/edit
 execute if score #export_ok mgs.data matches 1 run data remove storage mgs:temp _export
 execute if score #export_ok mgs.data matches 1 run return run function mgs:v5.3.0/multiplayer/show_dialog with storage mgs:temp
 
-# A text holding a double quote is printed in single quotes, which ends the one wrapping the macro value: chat and logs/latest.log get the map instead.
-tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.this_map_has_a_text_with_a_double_quote_so_it_is_printed_below_a","fallback":"This map has a text with a double quote, so it is printed below and in logs/latest.log instead.","color":"yellow"}]
+# Macro values are pasted raw: an apostrophe in a text, or a double quote (which makes the game print that text in single quotes), ends the single quotes wrapping the value.
+# No command turns a compound into an escaped string, so chat and logs/latest.log get the map instead.
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.this_map_has_a_text_with_an_apostrophe_or_a_double_quote_so_it_i","fallback":"This map has a text with an apostrophe or a double quote, so it is printed below and in logs/latest.log instead.","color":"yellow"}]
 tellraw @s {"storage":"mgs:temp","nbt":"_export.map","color":"white"}
 data remove storage mgs:temp _export
 

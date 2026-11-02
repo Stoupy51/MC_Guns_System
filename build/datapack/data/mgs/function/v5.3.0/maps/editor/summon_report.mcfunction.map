@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_report.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/enter.py"
+	],
+	"names": [],
+	"mappings": "AA2HuD;;;;;;;AACvD;AACA;AACA;AACA"
+}
