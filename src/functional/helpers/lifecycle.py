@@ -150,6 +150,7 @@ function {ns}:v{Mem.ctx.project_version}/{mode}/load_map_from_storage with stora
 execute unless score #map_load_found {ns}.data matches 1 run return run tellraw @s [{MGS_TAG},{{"text":"Map not found! Select a valid map.","color":"red"}}]
 
 data modify storage {ns}:{mode} game.map set from storage {ns}:temp map_load.result
+data remove storage {ns}:temp map_load
 """.strip())
 		if normalize_legacy:
 			parts.append(GameLifecycle.normalize_map_command_lines(ns, mode))

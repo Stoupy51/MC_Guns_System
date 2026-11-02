@@ -10,4 +10,7 @@ ZB_ELEMENTS: dict[str, ElementDef] = {etype: einfo for etype, einfo in ALL_ELEME
 GROUP_ID_ELEMENTS: tuple[str, ...] = ("zombie_spawn", "player_spawn_zb", "special_spawn")
 """ The only elements carrying a group_id, the spawn group a door opens.
 A door's link_id is its front-room group and back_group_id its back room; nothing else reads one. """
+AXIOM_KEYS: tuple[str, ...] = ("name", "min", "max")
+""" Marker data Axiom reads, to label a marker and to draw the box between two corners: written by the editor, never saved.
+An element's own `name` field is kept under `title` while it is a marker. """
 

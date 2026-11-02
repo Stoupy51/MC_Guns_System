@@ -16,6 +16,7 @@ data modify storage {ns}:temp _map_entry set from storage {ns}:temp _map_iter[0]
 data modify storage {ns}:temp _map_entry.mode set from storage {ns}:temp _map_select_mode
 
 function {ns}:v{version}/shared/maps/select_entry with storage {ns}:temp _map_entry
+data remove storage {ns}:temp _map_entry
 
 data remove storage {ns}:temp _map_iter[0]
 scoreboard players add #map_idx {ns}.data 1

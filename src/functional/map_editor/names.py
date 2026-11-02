@@ -4,6 +4,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ..map_editor_defs import ALL_ELEMENTS
 from ..zombies.game.lifecycle.spawns import ARRIVALS, SPECIAL_SPAWNS, ZOMBIE_SPAWNS
+from .shared import AXIOM_KEYS
 
 # Constants
 SPAWN_NAME: str = "$(group)$(rounds) $(entity)$(arrival_flag)$(power_flag)"
@@ -33,6 +34,7 @@ data modify storage {ns}:temp _ed_sig set value {{}}
 data modify storage {ns}:temp _ed_sig set from entity @s data
 data remove storage {ns}:temp _ed_sig._ed
 data remove storage {ns}:temp _ed_sig._disp_sig
+{"\n".join(f"data remove storage {ns}:temp _ed_sig.{key}" for key in AXIOM_KEYS)}
 execute store success score #ed_changed {ns}.data run data modify entity @s data._ed.sig set from storage {ns}:temp _ed_sig
 execute if score #ed_changed {ns}.data matches 1 run function {ns}:v{version}/maps/editor/refresh_marker
 """)
@@ -86,16 +88,26 @@ data modify storage {ns}:temp _ed_name.prefix set string storage {ns}:temp _ed_n
 execute if data storage {ns}:temp _ed_name{{prefix:"minecraft:"}} run data modify storage {ns}:temp _ed_name.entity set string storage {ns}:temp _ed_name.entity 10
 """)
 
+	## Run as a marker just given its element's data, whose `name` then makes room for the label (see AXIOM_KEYS).
+	write_versioned_function("maps/editor/name_to_title", """
+execute if data entity @s data.name run data modify entity @s data.title set from entity @s data.name
+data remove entity @s data.name
+""")
+
 	write_marker_names(ns, version)
 	write_spawn_shapes(ns, version)
 
 
 def write_marker_names(ns: str, version: str) -> None:
-	""" Write maps/editor/name/<etype>, giving a marker of that element its name from the data in {ns}:temp _ed_name. """
+	""" Write maps/editor/name/<etype>, giving a marker of that element its name from the data in {ns}:temp _ed_name.
+
+	The name goes in data.name, the label Axiom shows on a marker, and in CustomName for the selectors and the actionbar.
+	"""
+	copy_name: str = "data modify entity @s CustomName set from entity @s data.name"
 	for etype, einfo in ALL_ELEMENTS.items():
 		template: str | None = EDITOR_NAMES.get(etype)
 		if template is None:
-			write_versioned_function(f"maps/editor/name/{etype}", f'data modify entity @s CustomName set value "{einfo.name}"')
+			write_versioned_function(f"maps/editor/name/{etype}", f'data modify entity @s data.name set value "{einfo.name}"\n{copy_name}')
 			continue
 		# A spawn shows its arrival only when it is not its kind's default.
 		arrival_flags: str = "\n".join(
@@ -106,7 +118,7 @@ def write_marker_names(ns: str, version: str) -> None:
 {arrival_flags}
 function {ns}:v{version}/maps/editor/name/{etype}_apply with storage {ns}:temp _ed_name
 """)
-		write_versioned_function(f"maps/editor/name/{etype}_apply", f'$data modify entity @s CustomName set value "{template}"')
+		write_versioned_function(f"maps/editor/name/{etype}_apply", f'$data modify entity @s data.name set value "{template}"\n{copy_name}')
 
 
 def write_spawn_shapes(ns: str, version: str) -> None:
@@ -115,6 +127,8 @@ def write_spawn_shapes(ns: str, version: str) -> None:
 	write_versioned_function("maps/editor/spawn_shapes", f"""
 tag @s remove {ns}.ed_box
 tag @s remove {ns}.ed_walk
+data remove entity @s data.min
+data remove entity @s data.max
 execute store result score #ed_x {ns}.data run data get entity @s Pos[0]
 execute store result score #ed_y {ns}.data run data get entity @s Pos[1]
 execute store result score #ed_z {ns}.data run data get entity @s Pos[2]
@@ -123,9 +137,12 @@ execute if data entity @s data.walk_to[2] run function {ns}:v{version}/maps/edit
 """)
 
 	# The players a selector [x,y,z,dx,dy,dz] catches are those touching the blocks x to x+dx, so the box ends one block past them.
+	# data.min and data.max are the corners Axiom draws a marker's box between.
 	axes: tuple[str, ...] = ("x", "y", "z")
 	write_versioned_function("maps/editor/spawn_box", "\n".join([
 		f"tag @s add {ns}.ed_box",
+		"data modify entity @s data.min set value [0.0d,0.0d,0.0d]",
+		"data modify entity @s data.max set value [0.0d,0.0d,0.0d]",
 		*(
 			f"execute store result score #ed_{axis}1 {ns}.data run data get entity @s data.activation_box[{index}]\n"
 			f"scoreboard players operation #ed_{axis}1 {ns}.data += #ed_{axis} {ns}.data\n"
@@ -133,7 +150,9 @@ execute if data entity @s data.walk_to[2] run function {ns}:v{version}/maps/edit
 			f"scoreboard players operation #ed_{axis}2 {ns}.data += #ed_{axis}1 {ns}.data\n"
 			f"scoreboard players add #ed_{axis}2 {ns}.data 1\n"
 			f"execute store result entity @s data._ed.box.{axis}1 int 1 run scoreboard players get #ed_{axis}1 {ns}.data\n"
-			f"execute store result entity @s data._ed.box.{axis}2 int 1 run scoreboard players get #ed_{axis}2 {ns}.data"
+			f"execute store result entity @s data._ed.box.{axis}2 int 1 run scoreboard players get #ed_{axis}2 {ns}.data\n"
+			f"execute store result entity @s data.min[{index}] double 1 run scoreboard players get #ed_{axis}1 {ns}.data\n"
+			f"execute store result entity @s data.max[{index}] double 1 run scoreboard players get #ed_{axis}2 {ns}.data"
 			for index, axis in enumerate(axes)
 		),
 	]))

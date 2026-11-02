@@ -226,6 +226,7 @@ $data modify storage {ns}:temp _lb_view.bucket set value "$(f)"
 execute if data storage {ns}:temp _lb_view{{f:0}} run data modify storage {ns}:temp _lb_view.bucket set value "all"
 data modify storage {ns}:temp _lb_view.id set from storage {ns}:temp _lb_view.map.id
 data modify storage {ns}:temp _lb_view.name set from storage {ns}:temp _lb_view.map.name
+data remove storage {ns}:temp _lb_view.map
 function {base}/zb_map_path with storage {ns}:temp _lb_view
 """)
 	write_versioned_function("stats/board/zb_map_path", f"""
@@ -237,6 +238,7 @@ function {base}/show with storage {ns}:temp _lb_view
 $data modify storage {ns}:temp _lb_view.map set from storage {ns}:maps missions[$(i)]
 data modify storage {ns}:temp _lb_view.id set from storage {ns}:temp _lb_view.map.id
 data modify storage {ns}:temp _lb_view.name set from storage {ns}:temp _lb_view.map.name
+data remove storage {ns}:temp _lb_view.map
 function {base}/mi_map_path with storage {ns}:temp _lb_view
 """)
 	write_versioned_function("stats/board/mi_map_path", f"""

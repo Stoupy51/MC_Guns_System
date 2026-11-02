@@ -81,6 +81,7 @@ data modify storage {ns}:temp _dup.id set from storage {ns}:temp _dup.map.id
 function {editor}/duplicate_id with storage {ns}:temp _dup
 $data modify storage {ns}:maps $(mode) append from storage {ns}:temp _dup.map
 tellraw @s [{MGS_TAG},{{"text":"Map duplicated as ","color":"green"}},{{"storage":"{ns}:temp","nbt":"_dup.map.id","color":"white"}}]
+data remove storage {ns}:temp _dup
 $function {editor}/list/$(mode)
 """)
 
@@ -98,11 +99,13 @@ $data modify storage {ns}:temp dialog.action.action.command set value "/function
 $data modify storage {ns}:temp _export.map set from storage {ns}:maps $(mode)[$(idx)]
 scoreboard players set #export_ok {ns}.data 0
 execute store result score #export_ok {ns}.data run function {editor}/export_text with storage {ns}:temp _export
+execute if score #export_ok {ns}.data matches 1 run data remove storage {ns}:temp _export
 execute if score #export_ok {ns}.data matches 1 run return run {show_dialog}
 
 # A text holding a double quote is printed in single quotes, which ends the one wrapping the macro value: chat and logs/latest.log get the map instead.
 tellraw @s [{MGS_TAG},{{"text":"This map has a text with a double quote, so it is printed below and in logs/latest.log instead.","color":"yellow"}}]
 tellraw @s {{"storage":"{ns}:temp","nbt":"_export.map","color":"white"}}
+data remove storage {ns}:temp _export
 """)
 
 	write_versioned_function("maps/editor/export_text", f"""

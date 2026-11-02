@@ -3,11 +3,11 @@
 An element leaves out every field holding its `ElementDef.defaults` value, and keeps its yaw as whole degrees, left out at 0:
 `{pos:[-46,-21,5],yaw:90,perk_id:"stamin_up"}`. Only spawns keep a group_id, left out at 0.
 A map writes the `shared_fields` of a kind once, under `shared.<etype>`, from the first element saved; the others leave out the same values.
-Doors are grouped by link, each block keeping its own block id only when it differs from its link's:
-`{link_id:2,name:"Parking",price:750,block:"minecraft:waxed_copper_bars",blocks:[{pos:[-8,-7,2],yaw:180},{pos:[3,-6,12],block:"minecraft:oak_planks"}]}`.
+Doors are grouped by link, each block keeping its own block id and yaw only when they differ from its link's:
+`{link_id:2,name:"Parking",price:750,block:"minecraft:waxed_copper_bars",yaw:180,blocks:[{pos:[-8,-7,2]},{pos:[3,-6,12],block:"minecraft:oak_planks",yaw:0}]}`.
 
 `maps/inflate` turns the map in `{ns}:temp _inf_map` back into what the game and the editor read: one compound per element, every field set,
-and `rotation:[yaw,pitch]` in place of yaw. An element still holding a rotation, and a door without blocks, are read as they are, the defaults they lack aside.
+and `rotation:[yaw,pitch]` in place of yaw. An element still holding a rotation, a door without blocks and a `barriers` list (the older name of `barricades`) are read as they are, the defaults they lack aside.
 """
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
@@ -32,6 +32,9 @@ def write_storage_format() -> None:
 	write_load_file(f"""
 execute store result score #max_commands {ns}.data run gamerule max_command_sequence_length
 execute if score #max_commands {ns}.data matches ..{MAX_COMMANDS - 1} run gamerule max_command_sequence_length {MAX_COMMANDS}
+
+# Whole maps an older version of the pack left behind in temp storage, each now removed right after use.
+{"\n".join(f"data remove storage {ns}:temp {key}" for key in ("map_load", "_map_entry", "_lb_view", "map_menu", "_export", "_dup", "_inf_map"))}
 """)
 
 	for etype, einfo in ZB_ELEMENTS.items():
@@ -42,7 +45,9 @@ execute if score #max_commands {ns}.data matches ..{MAX_COMMANDS - 1} run gameru
 		f"""# Run with a zombies map in {ns}:temp _inf_map.
 data modify storage {ns}:temp _inf_shared set value {{}}
 data modify storage {ns}:temp _inf_shared set from storage {ns}:temp _inf_map.shared
-data remove storage {ns}:temp _inf_map.shared""",
+data remove storage {ns}:temp _inf_map.shared
+execute unless data storage {ns}:temp _inf_map.barricades run data modify storage {ns}:temp _inf_map.barricades set from storage {ns}:temp _inf_map.barriers
+data remove storage {ns}:temp _inf_map.barriers""",
 		*(f"""data modify storage {ns}:temp _inf_src set value []
 data modify storage {ns}:temp _inf_src set from storage {ns}:temp _inf_map.{einfo.save_path}
 execute if data storage {ns}:temp _inf_src[0] run data modify storage {ns}:temp _inf_map.{einfo.save_path} set value []
@@ -123,9 +128,7 @@ def write_door_links(ns: str, version: str) -> None:
 	write_versioned_function("maps/compact/door_block", f"""
 data modify storage {ns}:temp _door_block set value {{}}
 data modify storage {ns}:temp _door_block.pos set from storage {ns}:temp _save_zb.pos
-execute if data storage {ns}:temp _save_zb.yaw run data modify storage {ns}:temp _door_block.yaw set from storage {ns}:temp _save_zb.yaw
 data remove storage {ns}:temp _save_zb.pos
-data remove storage {ns}:temp _save_zb.yaw
 function {compact}/door_link with storage {ns}:temp _save_zb
 """)
 
@@ -143,11 +146,15 @@ data remove storage {ns}:temp _cmp
 data modify storage {ns}:temp _cmp set from storage {ns}:temp _save_zb.block
 execute store success score #differs {ns}.data run data modify storage {ns}:temp _cmp set from storage {ns}:temp _door_link.block
 execute if score #differs {ns}.data matches 1 run data modify storage {ns}:temp _door_block.block set from storage {ns}:temp _save_zb.block
+execute store result score #link_yaw {ns}.data run data get storage {ns}:temp _door_link.yaw
+execute unless score #yaw {ns}.data = #link_yaw {ns}.data store result storage {ns}:temp _door_block.yaw int 1 run scoreboard players get #yaw {ns}.data
 $data modify storage {link}.blocks append from storage {ns}:temp _door_block
 
 data remove storage {ns}:temp _door_link.blocks
 data remove storage {ns}:temp _door_link.block
+data remove storage {ns}:temp _door_link.yaw
 data remove storage {ns}:temp _save_zb.block
+data remove storage {ns}:temp _save_zb.yaw
 execute store success score #differs {ns}.data run data modify storage {ns}:temp _door_link set from storage {ns}:temp _save_zb
 execute if score #differs {ns}.data matches 1 run tellraw @a[tag={ns}.map_editor] {differs_warning}
 """)

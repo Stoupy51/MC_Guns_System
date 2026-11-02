@@ -4,6 +4,7 @@ from stewbeet import McFunction, Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from ..map_editor_defs import ALL_ELEMENTS, EDITOR_MODES, MODE_LIST
+from .shared import AXIOM_KEYS
 
 # Constants
 SAVED_TYPES: tuple[str, ...] = ("spawn", "point", "enemy", "start_command", "respawn_command", "zb_object")
@@ -207,16 +208,21 @@ execute store result storage {ns}:temp _save_zb.pos[0] int 1 run scoreboard play
 execute store result storage {ns}:temp _save_zb.pos[1] int 1 run scoreboard players get #ay {ns}.data
 execute store result storage {ns}:temp _save_zb.pos[2] int 1 run scoreboard players get #az {ns}.data
 
-# Yaw in whole degrees from 0 to 359, left out at 0. The rotation a marker of an older map carries is rebuilt on load.
-execute store result score #yaw {ns}.data run data get entity @s data.yaw
+# Yaw rounded to whole degrees from 0 to 359, left out at 0 (3600 keeps a negative yaw positive). The rotation a marker of an older map carries is rebuilt on load.
+execute store result score #yaw {ns}.data run data get entity @s data.yaw 10
+scoreboard players add #yaw {ns}.data 3605
+scoreboard players operation #yaw {ns}.data /= #10 {ns}.data
 scoreboard players operation #yaw {ns}.data %= #360 {ns}.data
-execute if score #yaw {ns}.data matches ..-1 run scoreboard players add #yaw {ns}.data 360
 data remove storage {ns}:temp _save_zb.yaw
 data remove storage {ns}:temp _save_zb.rotation
 execute unless score #yaw {ns}.data matches 0 store result storage {ns}:temp _save_zb.yaw int 1 run scoreboard players get #yaw {ns}.data
 
+# The editor's own data, and the element's name back from title (see AXIOM_KEYS).
 data remove storage {ns}:temp _save_zb._disp_sig
 data remove storage {ns}:temp _save_zb._ed
+{"\n".join(f"data remove storage {ns}:temp _save_zb.{key}" for key in AXIOM_KEYS)}
+execute if data storage {ns}:temp _save_zb.title run data modify storage {ns}:temp _save_zb.name set from storage {ns}:temp _save_zb.title
+data remove storage {ns}:temp _save_zb.title
 $function {ns}:v{version}/maps/compact/$(etype)
 """)
 
@@ -232,7 +238,7 @@ def write_save_lists(ns: str, version: str) -> None:
 		saved: list[str] = [etype for etype in mode_info.slots if ALL_ELEMENTS[etype].save_type in SAVED_TYPES]
 		resets: str = "\n".join([
 			*(f"data modify storage {ns}:temp map_edit.map.{ALL_ELEMENTS[etype].save_path} set value []" for etype in saved),
-			*([f"data remove storage {ns}:temp map_edit.map.shared"] if any(ALL_ELEMENTS[etype].shared_fields for etype in saved) else []),
+			*([f"data remove storage {ns}:temp map_edit.map.{key}" for key in ("shared", "barriers")] if "barricade" in saved else []),
 		])
 		rebuilds: str = "\n".join(
 			f"execute as @e[tag={ns}.element.{etype}] at @s run function {ns}:v{version}/maps/editor/{save_call(etype)}" for etype in saved

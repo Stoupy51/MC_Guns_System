@@ -87,6 +87,7 @@ data modify storage {ns}:temp map_menu.mode set value "{mode_key}"
 scoreboard players set #map_menu_idx {ns}.data 0
 
 execute if data storage {ns}:temp map_menu.list[0] run function {ns}:v{version}/maps/editor/menu_entry
+data remove storage {ns}:temp map_menu
 
 execute unless data storage {ns}:maps {sk}[0] run tellraw @s ["  ",{{"text":"No maps created yet.","color":"gray","italic":true}}]
 

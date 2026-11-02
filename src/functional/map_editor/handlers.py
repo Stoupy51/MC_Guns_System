@@ -172,6 +172,7 @@ execute store result storage {ns}:temp _zbpos.z double 1 run data get entity @s 
 function {ns}:v{version}/maps/editor/summon_zb_marker with storage {ns}:temp _zbpos
 
 execute as @n[tag={ns}.new_zb_marker] run data modify entity @s data set from storage {ns}:temp _zb_new
+execute as @n[tag={ns}.new_zb_marker] run function {ns}:v{version}/maps/editor/name_to_title
 
 {group_id_lines}
 

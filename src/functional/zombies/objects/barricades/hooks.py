@@ -21,10 +21,6 @@ execute if score #barricade_bright_timer {ns}.data matches 0 as @e[type=minecraf
 """)
 
 	write_versioned_function("zombies/preload_complete", f"""
-# Maps saved before the barriers to barricades rename keep the old key, and maps are only appended when missing.
-# game.map is a per-game copy, so renaming the key here never touches the stored map.
-execute unless data storage {ns}:zombies game.map.barricades if data storage {ns}:zombies game.map.barriers run data modify storage {ns}:zombies game.map.barricades set from storage {ns}:zombies game.map.barriers
-
 execute if data storage {ns}:zombies game.map.barricades[0] run function {ns}:v{version}/zombies/barricades/setup
 """)
 

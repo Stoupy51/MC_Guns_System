@@ -114,15 +114,17 @@ def zb_object_config_lines(ns: str, version: str) -> list[str]:
 def field_config_row(ns: str, version: str, etype: str, field: str, default_val: object) -> str:
 	""" Tellraw component of one field row: its value, an edit button, a clear button for optional lists and an info tooltip when documented. """
 	snbt_val: str = snbt(default_val)
+	# A marker keeps its element's name under title (see AXIOM_KEYS).
+	key: str = "title" if field == "name" else field
 
 	# Door fields except link_id apply to every door with the same link_id; two entry points, since a macro cannot re-quote its argument.
 	if etype == "door" and field != "link_id":
 		kind: str = "text" if isinstance(default_val, str) else "number"
-		edit_cmd: str = f'/function {ns}:v{version}/maps/editor/set_door_link_{kind} {{field:"{field}",value:{snbt_val}}}'
+		edit_cmd: str = f'/function {ns}:v{version}/maps/editor/set_door_link_{kind} {{field:"{key}",value:{snbt_val}}}'
 		hover_text: str = f"Sets {field} on ALL doors with same link_id"
 	else:
 		# Optional list fields suggest a usable template instead of empty brackets.
-		edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{field} set value {OPTIONAL_LIST_FIELDS.get(field, snbt_val)}"
+		edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{key} set value {OPTIONAL_LIST_FIELDS.get(field, snbt_val)}"
 		hover_text = f"Click to edit {field}"
 	edit_btn = Dialogs.btn("✎", edit_cmd, "yellow", hover_text, action="suggest_command")
 
@@ -144,7 +146,7 @@ def field_config_row(ns: str, version: str, etype: str, field: str, default_val:
 
 	return (
 		f'["    ",{{"text":"{field}: ","color":"gray"}},'
-		f'{{"entity":"@s","nbt":"data.{field}","color":"white"}}," ",{edit_btn}{clear_component}{info_component}]'
+		f'{{"entity":"@s","nbt":"data.{key}","color":"white"}}," ",{edit_btn}{clear_component}{info_component}]'
 	)
 
 

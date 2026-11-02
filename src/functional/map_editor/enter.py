@@ -41,6 +41,7 @@ data remove storage {ns}:temp map_edit.removed
 execute if score @s {ns}.mp.map_mode matches {zombies_mode} run data modify storage {ns}:temp _inf_map set from storage {ns}:temp map_edit.map
 execute if score @s {ns}.mp.map_mode matches {zombies_mode} run function {ns}:v{version}/maps/inflate
 execute if score @s {ns}.mp.map_mode matches {zombies_mode} run data modify storage {ns}:temp map_edit.map set from storage {ns}:temp _inf_map
+data remove storage {ns}:temp _inf_map
 
 gamemode creative @s
 clear @s

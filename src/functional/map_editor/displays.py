@@ -5,6 +5,7 @@ from stewbeet import Mem, write_versioned_function
 from ..helpers.snbt import snbt
 from ..map_editor_defs import ALL_ELEMENTS, MODEL_DISPLAY_ELEMENTS
 from ..zombies.machines.mystery_box.shared import CENTER, PIVOT, ROLLS, box_offset, per_roll
+from .shared import AXIOM_KEYS
 
 
 # Functions
@@ -45,6 +46,7 @@ data modify storage {ns}:temp _ed_sig set value {{}}
 data modify storage {ns}:temp _ed_sig.data set from entity @s data
 data remove storage {ns}:temp _ed_sig.data._disp_sig
 data remove storage {ns}:temp _ed_sig.data._ed
+{"\n".join(f"data remove storage {ns}:temp _ed_sig.data.{key}" for key in AXIOM_KEYS)}
 data modify storage {ns}:temp _ed_sig.pos set from entity @s Pos
 execute store success score #ed_sig_changed {ns}.data run data modify entity @s data._disp_sig set from storage {ns}:temp _ed_sig
 execute if score #ed_sig_changed {ns}.data matches 1 run scoreboard players set #ed_disp_dirty {ns}.data 1

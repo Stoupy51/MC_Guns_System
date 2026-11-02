@@ -24,6 +24,7 @@ kill @e[tag={ns}.editor_display]
 scoreboard players set @s {ns}.mp.map_edit 0
 tag @s remove {ns}.map_editor
 function {ns}:v{version}/maps/editor/next_session
+execute unless entity @a[scores={{{ns}.mp.map_edit=1}}] run data remove storage {ns}:temp map_edit
 
 clear @s
 """)
