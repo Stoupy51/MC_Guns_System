@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "force_load.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/enter.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;AA8FoD"
+}

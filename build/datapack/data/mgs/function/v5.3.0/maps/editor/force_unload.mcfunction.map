@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "force_unload.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/enter.py"
+	],
+	"names": [],
+	"mappings": ";;;;;;;;;;;;;;AA+FsD"
+}

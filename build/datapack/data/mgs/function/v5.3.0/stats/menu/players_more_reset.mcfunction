@@ -8,5 +8,5 @@
 # @args		page (unknown)
 #
 
-$data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.next_page",fallback:"Next page",color:"aqua"},action:{type:"run_command",command:"/function mgs:v5.3.0/stats/admin/players {page:$(page)}"}}
+$data modify storage mgs:temp dialog.body[0].contents append value ["  ",[{"text": "[", "color": "aqua", "click_event": {"action": "run_command", "command": "/function mgs:v5.3.0/stats/admin/players {page:$(page)}"}}, "Next page", "]"]]
 

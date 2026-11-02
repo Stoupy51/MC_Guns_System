@@ -1,8 +1,6 @@
 
 #> mgs:v5.3.0/maps/editor/remove_duplicates
 #
-# @executed	as @p[tag=mgs.map_editor,distance=..6,sort=nearest]
-#
 # @within	mgs:v5.3.0/maps/editor/do_save
 #
 

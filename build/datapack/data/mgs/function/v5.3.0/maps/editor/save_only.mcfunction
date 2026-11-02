@@ -8,7 +8,7 @@
 
 execute unless score @s mgs.mp.map_edit matches 1 run return fail
 
-function mgs:v5.3.0/maps/editor/do_save
+execute unless function mgs:v5.3.0/maps/editor/do_save run return fail
 
 # The save clears the tools.
 function mgs:v5.3.0/maps/editor/give_tools

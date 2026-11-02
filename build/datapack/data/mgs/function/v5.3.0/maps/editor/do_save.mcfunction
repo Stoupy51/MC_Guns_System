@@ -1,11 +1,16 @@
 
 #> mgs:v5.3.0/maps/editor/do_save
 #
-# @executed	as @p[tag=mgs.map_editor,distance=..6,sort=nearest]
+# @within	string in mgs:v5.3.0/maps/editor/save_exit
+#			string in mgs:v5.3.0/maps/editor/save_only
 #
-# @within	mgs:v5.3.0/maps/editor/save_exit
-#			mgs:v5.3.0/maps/editor/save_only
-#
+
+execute if data storage mgs:temp map_edit{unsafe:1b} run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.not_saved_some_elements_of_this_map_could_not_be_loaded_and_a_sa","fallback":"Not saved: some elements of this map could not be loaded, and a save would erase them.","color":"red"}]
+execute if data storage mgs:temp map_edit{unsafe:1b} run return fail
+execute if data storage mgs:temp map_edit{loading:1b} run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.not_saved_the_elements_of_this_map_are_still_loading","fallback":"Not saved: the elements of this map are still loading.","color":"red"}]
+execute if data storage mgs:temp map_edit{loading:1b} run return fail
+execute unless entity @e[type=minecraft:marker,tag=mgs.map_element] run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.not_saved_no_element_of_this_map_is_loaded_and_a_save_would_eras","fallback":"Not saved: no element of this map is loaded, and a save would erase them all.","color":"red"}]
+execute unless entity @e[type=minecraft:marker,tag=mgs.map_element] run return fail
 
 # Markers left by an older session, and the extra ones of a kind sharing a block, are not saved.
 execute as @e[type=minecraft:marker,tag=mgs.map_element] run function mgs:v5.3.0/maps/editor/session_check
@@ -37,4 +42,5 @@ execute if score @s mgs.mp.map_mode matches 1 run function mgs:v5.3.0/maps/edito
 execute if score @s mgs.mp.map_mode matches 2 run function mgs:v5.3.0/maps/editor/save_lists/missions
 
 function mgs:v5.3.0/maps/editor/write_back with storage mgs:temp map_edit
+return 1
 

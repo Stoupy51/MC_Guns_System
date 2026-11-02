@@ -12,9 +12,9 @@
 #			f4 (unknown)
 #
 
-$data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.all",fallback:"All",color:"aqua"},action:{type:"run_command",command:"/trigger mgs.player.config set $(f0)"}}
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"1 ",color:"aqua"}, {translate:"mgs.player",fallback:"player"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f1)"}}
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"2 ",color:"aqua"}, {translate:"mgs.players_2",fallback:"players"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f2)"}}
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"3 ",color:"aqua"}, {translate:"mgs.players_2",fallback:"players"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f3)"}}
-$data modify storage mgs:temp dialog.actions append value {label:[{text:"4 ",color:"aqua"}, {translate:"mgs.players_2",fallback:"players"}],action:{type:"run_command",command:"/trigger mgs.player.config set $(f4)"}}
+$data modify storage mgs:temp dialog.body[0].contents append value [[{"text": "[", "color": "aqua", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set $(f0)"}}, "All", "]"],"  "]
+$data modify storage mgs:temp dialog.body[0].contents append value [[{"text": "[", "color": "aqua", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set $(f1)"}}, "1 player", "]"],"  "]
+$data modify storage mgs:temp dialog.body[0].contents append value [[{"text": "[", "color": "aqua", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set $(f2)"}}, "2 players", "]"],"  "]
+$data modify storage mgs:temp dialog.body[0].contents append value [[{"text": "[", "color": "aqua", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set $(f3)"}}, "3 players", "]"],"  "]
+$data modify storage mgs:temp dialog.body[0].contents append value [[{"text": "[", "color": "aqua", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set $(f4)"}}, "4 players", "]"],"  "]
 

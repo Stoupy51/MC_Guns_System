@@ -8,5 +8,5 @@
 # @args		page_trigger (unknown)
 #
 
-$data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.next_page",fallback:"Next page",color:"aqua"},action:{type:"run_command",command:"/trigger mgs.player.config set $(page_trigger)"}}
+$data modify storage mgs:temp dialog.body[0].contents append value ["  ",[{"text": "[", "color": "aqua", "click_event": {"action": "run_command", "command": "/trigger mgs.player.config set $(page_trigger)"}}, "Next page", "]"]]
 

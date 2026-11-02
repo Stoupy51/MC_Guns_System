@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/players/editor_invite
 #
-# @executed	as @a
-#
-# @within	string in mgs:v5.3.0/players/row_editor
+# @within	mgs:v5.3.0/maps/editor/enter
+#			mgs:v5.3.0/maps/editor/invite_next [ as @a ]
 #			mgs:v5.3.0/maps/editor/invite_all [ as @a ]
 #
 

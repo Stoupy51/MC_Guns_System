@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "summon_in.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/enter.py"
+	],
+	"names": [],
+	"mappings": "AA0GmD;;;;;;;;;;AACnD;AACA;AACA"
+}

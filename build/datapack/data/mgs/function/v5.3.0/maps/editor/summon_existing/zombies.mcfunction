@@ -1,7 +1,7 @@
 
 #> mgs:v5.3.0/maps/editor/summon_existing/zombies
 #
-# @executed	at @s
+# @executed	as @a[tag=mgs.map_editor,limit=1]
 #
 # @within	mgs:v5.3.0/maps/editor/summon_existing
 #

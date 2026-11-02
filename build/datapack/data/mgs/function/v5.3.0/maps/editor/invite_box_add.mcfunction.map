@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "invite_box_add.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/map_editor/enter.py"
+	],
+	"names": [],
+	"mappings": "AAiJwD;;;;;;;;;;;AACxD;AACA;AACA"
+}
