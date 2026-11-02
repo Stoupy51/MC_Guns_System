@@ -43,11 +43,34 @@ execute if score #zb_near_found {ns}.data matches 0 as @a[scores={{{ns}.zb.in_ga
 execute if score #zb_near_found {ns}.data matches 0 store success score #zb_near_found {ns}.data run tag @e[{marker}] add {ns}.zb_near
 """)
 
-		## Run as an alive in-game player, at their position.
+		## Run as an alive in-game player, at their position. A spawn counts when its horizontal distance squared plus 9 times its vertical one is within the radius squared, so height costs 3 times as much. Tenths of a block.
 		for radius in (32, 64):
 			write_versioned_function(f"zombies/tag_{kind.key}_near_{radius}", f"""
-execute store result score #zb_near_hit {ns}.data run tag @e[{marker},distance=..{radius}] add {ns}.zb_near
-scoreboard players operation #zb_near_found {ns}.data += #zb_near_hit {ns}.data
+execute store result score #zb_px {ns}.data run data get entity @s Pos[0] 10
+execute store result score #zb_py {ns}.data run data get entity @s Pos[1] 10
+execute store result score #zb_pz {ns}.data run data get entity @s Pos[2] 10
+tag @e[{marker},distance=..{radius}] add {ns}.zb_cand
+execute as @e[type=minecraft:marker,tag={ns}.zb_cand] run function {ns}:v{version}/zombies/near_within_{radius}
+tag @e[type=minecraft:marker,tag={ns}.zb_cand] remove {ns}.zb_cand
+execute store result score #zb_near_found {ns}.data if entity @e[type=minecraft:marker,tag={ns}.zb_near]
+""")
+
+			## Run as a candidate spawn; #zb_px, #zb_py and #zb_pz hold the player's position.
+			write_versioned_function(f"zombies/near_within_{radius}", f"""
+execute store result score #zb_dx {ns}.data run data get entity @s Pos[0] 10
+execute store result score #zb_dy {ns}.data run data get entity @s Pos[1] 10
+execute store result score #zb_dz {ns}.data run data get entity @s Pos[2] 10
+scoreboard players operation #zb_dx {ns}.data -= #zb_px {ns}.data
+scoreboard players operation #zb_dy {ns}.data -= #zb_py {ns}.data
+scoreboard players operation #zb_dz {ns}.data -= #zb_pz {ns}.data
+scoreboard players operation #zb_dx {ns}.data *= #zb_dx {ns}.data
+scoreboard players operation #zb_dy {ns}.data *= #zb_dy {ns}.data
+scoreboard players operation #zb_dz {ns}.data *= #zb_dz {ns}.data
+scoreboard players set #zb_nine {ns}.data 9
+scoreboard players operation #zb_dy {ns}.data *= #zb_nine {ns}.data
+scoreboard players operation #zb_dx {ns}.data += #zb_dz {ns}.data
+scoreboard players operation #zb_dx {ns}.data += #zb_dy {ns}.data
+execute if score #zb_dx {ns}.data matches ..{(radius * 10) ** 2} run tag @s add {ns}.zb_near
 """)
 
 		## One enemy at an open spawn of this kind near a player; #zb_spawned is 0 when none is open.

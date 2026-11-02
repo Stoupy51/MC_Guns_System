@@ -17,12 +17,12 @@ def write_stuck_and_bounds() -> None:
 # A rider goes where its mount goes, and a teleport would pull it off.
 execute on vehicle run return 0
 
-# Distance bucket to the nearest alive player, 4 (very far) to 0 (adjacent).
+# Distance bucket to the nearest alive player, 4 (very far) to 0 (adjacent). Height counts 3 times.
 scoreboard players set #cur_dist_bucket {ns}.data 4
-execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..96] run scoreboard players set #cur_dist_bucket {ns}.data 3
-execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..64] run scoreboard players set #cur_dist_bucket {ns}.data 2
-execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..32] run scoreboard players set #cur_dist_bucket {ns}.data 1
-execute if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..16] run scoreboard players set #cur_dist_bucket {ns}.data 0
+execute store result score #zb_px {ns}.data run data get entity @s Pos[0] 10
+execute store result score #zb_py {ns}.data run data get entity @s Pos[1] 10
+execute store result score #zb_pz {ns}.data run data get entity @s Pos[2] 10
+execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,distance=..96] run function {ns}:v{version}/zombies/stuck_player_bucket
 
 execute store result score #cur_x {ns}.data run data get entity @s Pos[0]
 execute store result score #cur_z {ns}.data run data get entity @s Pos[2]
@@ -95,6 +95,30 @@ scoreboard players set @s {ns}.zb.stuck_dist 4
 execute store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
 execute store result score @s {ns}.zb.stuck_z run data get entity @s Pos[2]
 scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
+""")
+
+	## Run as an alive player within 96 blocks of the zombie; #zb_px, #zb_py and #zb_pz hold the zombie's position in tenths of a block. Lowers #cur_dist_bucket to this player's.
+	write_versioned_function("zombies/stuck_player_bucket", f"""
+execute store result score #zb_dx {ns}.data run data get entity @s Pos[0] 10
+execute store result score #zb_dy {ns}.data run data get entity @s Pos[1] 10
+execute store result score #zb_dz {ns}.data run data get entity @s Pos[2] 10
+scoreboard players operation #zb_dx {ns}.data -= #zb_px {ns}.data
+scoreboard players operation #zb_dy {ns}.data -= #zb_py {ns}.data
+scoreboard players operation #zb_dz {ns}.data -= #zb_pz {ns}.data
+scoreboard players operation #zb_dx {ns}.data *= #zb_dx {ns}.data
+scoreboard players operation #zb_dy {ns}.data *= #zb_dy {ns}.data
+scoreboard players operation #zb_dz {ns}.data *= #zb_dz {ns}.data
+scoreboard players set #zb_nine {ns}.data 9
+scoreboard players operation #zb_dy {ns}.data *= #zb_nine {ns}.data
+scoreboard players operation #zb_dx {ns}.data += #zb_dz {ns}.data
+scoreboard players operation #zb_dx {ns}.data += #zb_dy {ns}.data
+
+scoreboard players set #zb_pb {ns}.data 4
+execute if score #zb_dx {ns}.data matches ..921600 run scoreboard players set #zb_pb {ns}.data 3
+execute if score #zb_dx {ns}.data matches ..409600 run scoreboard players set #zb_pb {ns}.data 2
+execute if score #zb_dx {ns}.data matches ..102400 run scoreboard players set #zb_pb {ns}.data 1
+execute if score #zb_dx {ns}.data matches ..25600 run scoreboard players set #zb_pb {ns}.data 0
+execute if score #zb_pb {ns}.data < #cur_dist_bucket {ns}.data run scoreboard players operation #cur_dist_bucket {ns}.data = #zb_pb {ns}.data
 """)
 
 	## Run as the stuck enemy, at the player it should end up near, so both selectors pick the same marker.
