@@ -30,6 +30,7 @@ scoreboard players add #downed_id_next mgs.data 1
 scoreboard players operation @s mgs.zb.downed_id = #downed_id_next mgs.data
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
 function mgs:v5.3.0/zombies/revive/spawn_downed_body
+function mgs:v5.3.0/zombies/revive/tp_to_body with storage mgs:temp
 
 # Electric Cherry: a full-strength discharge (used == cap == 1) before the perk is stripped (BO behaviour).
 scoreboard players set #ec_used mgs.data 1

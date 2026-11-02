@@ -7,6 +7,8 @@
 #			mgs:v5.3.0/zombies/revive/on_down
 #
 
+data modify storage mgs:temp rv_dim set from entity @s Dimension
+execute unless data storage mgs:temp _body_at run data modify storage mgs:temp rv_dim set from entity @s LastDeathLocation.dimension
 execute unless data storage mgs:temp _body_at run data modify storage mgs:temp _body_at set from entity @s LastDeathLocation.pos
 
 # Full float precision: x1000, stored back as double 0.001.

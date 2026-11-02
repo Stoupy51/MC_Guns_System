@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "stuck_player_bucket.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/lifecycle/stuck.py"
+	],
+	"names": [],
+	"mappings": "AAoGyD;;;;;;;;AACzD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

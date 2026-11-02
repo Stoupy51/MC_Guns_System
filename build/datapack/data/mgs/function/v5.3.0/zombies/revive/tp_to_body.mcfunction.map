@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "tp_to_body.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/player/revive/down.py"
+	],
+	"names": [],
+	"mappings": "AAwIuD;;;;;;;;;;;;;AACvD;AACA"
+}

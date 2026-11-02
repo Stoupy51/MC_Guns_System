@@ -12,12 +12,12 @@
 # A rider goes where its mount goes, and a teleport would pull it off.
 execute on vehicle run return 0
 
-# Distance bucket to the nearest alive player, 4 (very far) to 0 (adjacent).
+# Distance bucket to the nearest alive player, 4 (very far) to 0 (adjacent). Height counts 3 times.
 scoreboard players set #cur_dist_bucket mgs.data 4
-execute if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..96] run scoreboard players set #cur_dist_bucket mgs.data 3
-execute if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..64] run scoreboard players set #cur_dist_bucket mgs.data 2
-execute if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..32] run scoreboard players set #cur_dist_bucket mgs.data 1
-execute if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..16] run scoreboard players set #cur_dist_bucket mgs.data 0
+execute store result score #zb_px mgs.data run data get entity @s Pos[0] 10
+execute store result score #zb_py mgs.data run data get entity @s Pos[1] 10
+execute store result score #zb_pz mgs.data run data get entity @s Pos[2] 10
+execute as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..96] run function mgs:v5.3.0/zombies/stuck_player_bucket
 
 execute store result score #cur_x mgs.data run data get entity @s Pos[0]
 execute store result score #cur_z mgs.data run data get entity @s Pos[2]
