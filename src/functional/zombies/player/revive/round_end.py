@@ -5,6 +5,10 @@ from stewbeet import Mem, write_versioned_function
 from ....helpers import MGS_TAG
 from ....helpers.text import Text
 
+# Constants
+SPAWN_NEAR_BODY: int = 20
+""" A player respawning lands on an unlocked player spawn within this many blocks of where they went down; otherwise on the nearest alive teammate. """
+
 
 # Functions
 def write_round_end_revives() -> None:
@@ -62,8 +66,40 @@ scoreboard players set @s {ns}.zb.revive_p 0
 tag @s remove {ns}.downed_spectator
 """)
 
-	## At the unlocked player spawn nearest a random alive teammate.
+	## Run as the player: where they went down. On the unlocked player spawn within SPAWN_NEAR_BODY blocks of that spot, else on the alive teammate nearest to it.
 	write_versioned_function("zombies/revive/respawn_near_player", f"""
+execute unless data entity @s LastDeathLocation run return run function {ns}:v{version}/zombies/revive/respawn_at_random_spawn
+
+# The player is excluded from the teammates they join.
+tag @s add {ns}.spawn_pending
+data modify storage {ns}:temp _body set value {{}}
+data modify storage {ns}:temp _body.dimension set from entity @s LastDeathLocation.dimension
+execute store result storage {ns}:temp _body.x int 1 run data get entity @s LastDeathLocation.pos[0]
+execute store result storage {ns}:temp _body.y int 1 run data get entity @s LastDeathLocation.pos[1]
+execute store result storage {ns}:temp _body.z int 1 run data get entity @s LastDeathLocation.pos[2]
+scoreboard players set #respawn_done {ns}.data 0
+function {ns}:v{version}/zombies/revive/respawn_at_body with storage {ns}:temp _body
+tag @s remove {ns}.spawn_pending
+execute if score #respawn_done {ns}.data matches 0 run function {ns}:v{version}/zombies/revive/respawn_at_random_spawn
+""")
+
+	write_versioned_function("zombies/revive/respawn_at_body", f"""
+$execute in $(dimension) positioned $(x) $(y) $(z) run function {ns}:v{version}/zombies/revive/respawn_from_body
+""")
+
+	## Run as the player, at the spot where they went down.
+	write_versioned_function("zombies/revive/respawn_from_body", f"""
+execute store success score #respawn_done {ns}.data run tag @n[tag={ns}.spawn_point,tag={ns}.spawn_zb_player,tag={ns}.spawn_unlocked,distance=..{SPAWN_NEAR_BODY}] add {ns}.spawn_candidate
+execute if score #respawn_done {ns}.data matches 1 as @n[tag={ns}.spawn_candidate] run function {ns}:v{version}/shared/tp_to_spawn {{mode:"zombies"}}
+tag @e[tag={ns}.spawn_candidate] remove {ns}.spawn_candidate
+execute if score #respawn_done {ns}.data matches 1 run return 1
+
+execute store success score #respawn_done {ns}.data if entity @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,tag=!{ns}.spawn_pending]
+execute if score #respawn_done {ns}.data matches 1 run tp @s @p[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,tag=!{ns}.spawn_pending]
+""")
+
+	## At the unlocked player spawn nearest a random alive teammate.
+	write_versioned_function("zombies/revive/respawn_at_random_spawn", f"""
 tag @s add {ns}.spawn_pending
 # #has_candidate stays 0 without an alive teammate: the `as @r` body never runs, so `store success` never writes.
 scoreboard players set #has_candidate {ns}.data 0
