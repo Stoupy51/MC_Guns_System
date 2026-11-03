@@ -5,7 +5,8 @@
 #
 # @within	mgs:v5.3.0/zombies/pick_spawn {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate,sort=random] ]
 #			mgs:v5.3.0/zombies/whos_who/on_down {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate] ]
-#			mgs:v5.3.0/zombies/revive/respawn_near_player {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate] ]
+#			mgs:v5.3.0/zombies/revive/respawn_from_body {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate] ]
+#			mgs:v5.3.0/zombies/revive/respawn_at_random_spawn {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate] ]
 #			mgs:v5.3.0/multiplayer/pick_spawn {mode:"multiplayer"} [ as @e[tag=mgs.spawn_candidate,sort=random] ]
 #			mgs:v5.3.0/multiplayer/pick_spawn_random {mode:"multiplayer"} [ as @n[tag=mgs.spawn_candidate,sort=random] ]
 #			mgs:v5.3.0/missions/pick_spawn {mode:"missions"} [ as @n[tag=mgs.spawn_candidate,sort=random] ]

@@ -9,13 +9,17 @@
 #			mgs:v5.3.0/zombies/revive/void_revive_solo_qr
 #
 
+execute unless data entity @s LastDeathLocation run return run function mgs:v5.3.0/zombies/revive/respawn_at_random_spawn
+
+# The player is excluded from the teammates they join.
 tag @s add mgs.spawn_pending
-# #has_candidate stays 0 without an alive teammate: the `as @r` body never runs, so `store success` never writes.
-scoreboard players set #has_candidate mgs.data 0
-execute as @r[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,limit=1] at @s store success score #has_candidate mgs.data run tag @n[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked] add mgs.spawn_candidate
-# No alive teammate: the spawn nearest @s.
-execute if score #has_candidate mgs.data matches 0 run tag @n[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked] add mgs.spawn_candidate
-execute as @n[tag=mgs.spawn_candidate] run function mgs:v5.3.0/shared/tp_to_spawn {mode:"zombies"}
-tag @e[tag=mgs.spawn_candidate] remove mgs.spawn_candidate
-tag @a[tag=mgs.spawn_pending] remove mgs.spawn_pending
+data modify storage mgs:temp _body set value {}
+data modify storage mgs:temp _body.dimension set from entity @s LastDeathLocation.dimension
+execute store result storage mgs:temp _body.x int 1 run data get entity @s LastDeathLocation.pos[0]
+execute store result storage mgs:temp _body.y int 1 run data get entity @s LastDeathLocation.pos[1]
+execute store result storage mgs:temp _body.z int 1 run data get entity @s LastDeathLocation.pos[2]
+scoreboard players set #respawn_done mgs.data 0
+function mgs:v5.3.0/zombies/revive/respawn_at_body with storage mgs:temp _body
+tag @s remove mgs.spawn_pending
+execute if score #respawn_done mgs.data matches 0 run function mgs:v5.3.0/zombies/revive/respawn_at_random_spawn
 
