@@ -20,10 +20,6 @@ scoreboard players set #kick {ns}.data 0
 execute store result score #kick {ns}.data run data get storage {ns}:gun all.stats.{KICK}
 execute store result score #random {ns}.data run random value 1..5
 
-# In a vehicle, /rotate instead of /tp, which would dismount.
-scoreboard players set #has_vehicle {ns}.data 0
-execute on vehicle run scoreboard players set #has_vehicle {ns}.data 1
-
 # Deadshot Daiquiri (zombies): the 65% kick tables.
 execute if score @s {ns}.special.deadshot matches 1 run return run function {ns}:v{version}/kicks/apply_ds
 
@@ -52,11 +48,9 @@ function {ns}:v{version}/kicks/apply
 	# Deadshot Daiquiri: -35% recoil, the same tables at 65%.
 	for suffix, factor in [("", 1.0), ("_ds", 0.65)]:
 		for i, kicks in enumerate(all_kicks):
-			content: str = ""
-			for score, command in [(0, "tp @s ~ ~ ~"), (1, "rotate @s")]:
-				for j, (yaw, pitch) in enumerate(kicks):
-					sy: float = round(yaw * factor, 4)
-					sp: float = round(pitch * factor, 4)
-					content += f"\nexecute if score #has_vehicle {ns}.data matches {score} if score #random {ns}.data matches {j+1} run {command} ~{sy} ~{sp}"
-			write_versioned_function(f"kicks/type_{i}{suffix}", content)
+			# /rotate, never /tp: the server drops a player's movement until a teleport is acknowledged, so a gun firing every tick pins them.
+			write_versioned_function(f"kicks/type_{i}{suffix}", "\n".join(
+				f"execute if score #random {ns}.data matches {j+1} run rotate @s ~{round(yaw * factor, 4)} ~{round(pitch * factor, 4)}"
+				for j, (yaw, pitch) in enumerate(kicks)
+			))
 

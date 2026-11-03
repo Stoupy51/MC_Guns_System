@@ -99,9 +99,10 @@ scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 
 	## Run as an alive player within 96 blocks of the zombie; #zb_px, #zb_py and #zb_pz hold the zombie's position in tenths of a block. Lowers #cur_dist_bucket to this player's.
 	write_versioned_function("zombies/stuck_player_bucket", f"""
-execute store result score #zb_dx {ns}.data run data get entity @s Pos[0] 10
-execute store result score #zb_dy {ns}.data run data get entity @s Pos[1] 10
-execute store result score #zb_dz {ns}.data run data get entity @s Pos[2] 10
+{Probe.pos()}
+execute store result score #zb_dx {ns}.data run data get storage {ns}:temp _probe_pos[0] 10
+execute store result score #zb_dy {ns}.data run data get storage {ns}:temp _probe_pos[1] 10
+execute store result score #zb_dz {ns}.data run data get storage {ns}:temp _probe_pos[2] 10
 scoreboard players operation #zb_dx {ns}.data -= #zb_px {ns}.data
 scoreboard players operation #zb_dy {ns}.data -= #zb_py {ns}.data
 scoreboard players operation #zb_dz {ns}.data -= #zb_pz {ns}.data

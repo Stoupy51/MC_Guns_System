@@ -2,6 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ....helpers.probes import Probe
+
 
 # Functions
 def write_escort_targeting() -> None:
@@ -21,9 +23,10 @@ execute if entity @s[tag={ns}.zb_escort_monkey] run return run function {ns}:v{v
 execute if entity @s[tag={ns}.zb_escort_walk] run return run function {ns}:v{version}/zombies/escort/set_wander_target with entity @s data.walk_to
 
 execute if score #zb_lure {ns}.data matches 1 if entity @e[tag={ns}.lure_center] run return run function {ns}:v{version}/zombies/escort/retarget_lure
-execute store result storage {ns}:temp _escort.x int 1 run data get entity {nearest_alive} Pos[0]
-execute store result storage {ns}:temp _escort.y int 1 run data get entity {nearest_alive} Pos[1]
-execute store result storage {ns}:temp _escort.z int 1 run data get entity {nearest_alive} Pos[2]
+{Probe.pos(nearest_alive)}
+execute store result storage {ns}:temp _escort.x int 1 run data get storage {ns}:temp _probe_pos[0]
+execute store result storage {ns}:temp _escort.y int 1 run data get storage {ns}:temp _probe_pos[1]
+execute store result storage {ns}:temp _escort.z int 1 run data get storage {ns}:temp _probe_pos[2]
 function {ns}:v{version}/zombies/escort/set_wander_target with storage {ns}:temp _escort
 """)
 
