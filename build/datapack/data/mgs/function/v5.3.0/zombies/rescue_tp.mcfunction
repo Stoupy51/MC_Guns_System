@@ -9,4 +9,7 @@
 
 tp @s @n[tag=mgs.zb_near]
 scoreboard players operation @s mgs.zb.spawn.sid = @n[tag=mgs.zb_near] mgs.zb.spawn.sid
+tag @s add mgs.zb_rescue_new
+execute as @n[tag=mgs.zb_near] at @s run function mgs:v5.3.0/zombies/arrival/rescued
+tag @s remove mgs.zb_rescue_new
 

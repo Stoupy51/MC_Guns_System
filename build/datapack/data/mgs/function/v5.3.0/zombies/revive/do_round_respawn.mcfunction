@@ -23,6 +23,8 @@ execute if score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minecraft
 execute unless score @s mgs.zb.perk.juggernog matches 1.. run attribute @s minecraft:max_health base set 20
 
 function mgs:v5.3.0/zombies/inventory/give_respawn_loadout
+# Or Max Ammo hands the lost tactical back. Not in the loadout itself: a Who's Who revive restores the tactical too.
+scoreboard players set @s mgs.zb.tactical_type 0
 
 # Tombstone: activate the marker and its 60 s recovery timer.
 function mgs:v5.3.0/zombies/perks/tombstone_on_respawn

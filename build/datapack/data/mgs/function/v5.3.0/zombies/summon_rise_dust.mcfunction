@@ -5,6 +5,8 @@
 #
 # @within	mgs:v5.3.0/zombies/arrival/floor {block_y:"-1"}
 #			mgs:v5.3.0/zombies/arrival/ceiling {block_y:"0"} [ positioned ~ ~2 ~ ]
+#			mgs:v5.3.0/zombies/arrival/rescued {block_y:"0"} [ positioned ~ ~2 ~ ]
+#			mgs:v5.3.0/zombies/arrival/rescued {block_y:"-1"}
 #
 # @args		block_y (string)
 #

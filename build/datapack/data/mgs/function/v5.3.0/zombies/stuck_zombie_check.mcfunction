@@ -14,6 +14,7 @@ execute on vehicle run return 0
 
 # Distance bucket to the nearest alive player, 4 (very far) to 0 (adjacent). Height counts 3 times.
 scoreboard players set #cur_dist_bucket mgs.data 4
+scoreboard players set #zb_near50 mgs.data 0
 execute store result score #zb_px mgs.data run data get entity @s Pos[0] 10
 execute store result score #zb_py mgs.data run data get entity @s Pos[1] 10
 execute store result score #zb_pz mgs.data run data get entity @s Pos[2] 10
@@ -54,6 +55,9 @@ execute if score #zb_alive mgs.data matches ..2 if score #stuck_threshold mgs.da
 # The farther from every player, the shorter the wait: 7.5 s beyond 96 blocks, 10 s beyond 64.
 execute if score #cur_dist_bucket mgs.data matches 4 if score #stuck_threshold mgs.data matches 151.. run scoreboard players set #stuck_threshold mgs.data 150
 execute if score #cur_dist_bucket mgs.data matches 3 if score #stuck_threshold mgs.data matches 201.. run scoreboard players set #stuck_threshold mgs.data 200
+
+# No player within 50 blocks (height counts 3 times) and standing still since its last progress: 3 s.
+execute if score #zb_near50 mgs.data matches 0 if score #stuck_moved mgs.data matches 0 if score #stuck_threshold mgs.data matches 61.. run scoreboard players set #stuck_threshold mgs.data 60
 
 scoreboard players operation #stuck_delta mgs.data = #total_tick mgs.data
 scoreboard players operation #stuck_delta mgs.data -= @s mgs.zb.stuck_ticks

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "rescued.mcfunction",
+	"sourceRoot": "../../../../../../../..",
+	"sources": [
+		"src/functional/zombies/game/round/arrival.py"
+	],
+	"names": [],
+	"mappings": "AAoIqD;;;;;;;;AACrD;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
+}

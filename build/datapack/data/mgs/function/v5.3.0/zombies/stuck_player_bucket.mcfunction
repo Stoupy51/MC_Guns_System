@@ -26,5 +26,6 @@ execute if score #zb_dx mgs.data matches ..921600 run scoreboard players set #zb
 execute if score #zb_dx mgs.data matches ..409600 run scoreboard players set #zb_pb mgs.data 2
 execute if score #zb_dx mgs.data matches ..102400 run scoreboard players set #zb_pb mgs.data 1
 execute if score #zb_dx mgs.data matches ..25600 run scoreboard players set #zb_pb mgs.data 0
+execute if score #zb_dx mgs.data matches ..250000 run scoreboard players set #zb_near50 mgs.data 1
 execute if score #zb_pb mgs.data < #cur_dist_bucket mgs.data run scoreboard players operation #cur_dist_bucket mgs.data = #zb_pb mgs.data
 
