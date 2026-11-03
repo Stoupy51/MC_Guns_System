@@ -4,8 +4,10 @@
 # @executed	at @s
 #
 # @within	mgs:v5.3.0/shared/check_bounds [ at @s ]
+#			mgs:v5.3.0/zombies/stuck_player_bucket [ at @s ]
 #			mgs:v5.3.0/zombies/check_bounds_player [ at @s ]
 #			mgs:v5.3.0/zombies/max_ammo_at_self [ at @s ]
+#			mgs:v5.3.0/zombies/escort/retarget [ at @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] ]
 #			mgs:v5.3.0/zombies/powerups/spawn_random_at_self [ at @s ]
 #			mgs:v5.3.0/zombies/revive/void_revive_whos_who [ at @s ]
 #			mgs:v5.3.0/multiplayer/check_bounds [ at @s ]

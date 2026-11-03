@@ -6,9 +6,10 @@
 # @within	mgs:v5.3.0/zombies/stuck_zombie_check [ as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..96] ]
 #
 
-execute store result score #zb_dx mgs.data run data get entity @s Pos[0] 10
-execute store result score #zb_dy mgs.data run data get entity @s Pos[1] 10
-execute store result score #zb_dz mgs.data run data get entity @s Pos[2] 10
+execute at @s summon minecraft:marker run function mgs:v5.3.0/shared/probe_pos
+execute store result score #zb_dx mgs.data run data get storage mgs:temp _probe_pos[0] 10
+execute store result score #zb_dy mgs.data run data get storage mgs:temp _probe_pos[1] 10
+execute store result score #zb_dz mgs.data run data get storage mgs:temp _probe_pos[2] 10
 scoreboard players operation #zb_dx mgs.data -= #zb_px mgs.data
 scoreboard players operation #zb_dy mgs.data -= #zb_py mgs.data
 scoreboard players operation #zb_dz mgs.data -= #zb_pz mgs.data

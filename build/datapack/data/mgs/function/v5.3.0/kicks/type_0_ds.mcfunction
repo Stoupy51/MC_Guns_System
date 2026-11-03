@@ -6,14 +6,9 @@
 # @within	mgs:v5.3.0/kicks/apply_ds
 #
 
-execute if score #has_vehicle mgs.data matches 0 if score #random mgs.data matches 1 run tp @s ~ ~ ~ ~-0.0325 ~-0.1625
-execute if score #has_vehicle mgs.data matches 0 if score #random mgs.data matches 2 run tp @s ~ ~ ~ ~-0.0163 ~-0.1625
-execute if score #has_vehicle mgs.data matches 0 if score #random mgs.data matches 3 run tp @s ~ ~ ~ ~-0.0 ~-0.1625
-execute if score #has_vehicle mgs.data matches 0 if score #random mgs.data matches 4 run tp @s ~ ~ ~ ~0.0163 ~-0.1625
-execute if score #has_vehicle mgs.data matches 0 if score #random mgs.data matches 5 run tp @s ~ ~ ~ ~0.0325 ~-0.1625
-execute if score #has_vehicle mgs.data matches 1 if score #random mgs.data matches 1 run rotate @s ~-0.0325 ~-0.1625
-execute if score #has_vehicle mgs.data matches 1 if score #random mgs.data matches 2 run rotate @s ~-0.0163 ~-0.1625
-execute if score #has_vehicle mgs.data matches 1 if score #random mgs.data matches 3 run rotate @s ~-0.0 ~-0.1625
-execute if score #has_vehicle mgs.data matches 1 if score #random mgs.data matches 4 run rotate @s ~0.0163 ~-0.1625
-execute if score #has_vehicle mgs.data matches 1 if score #random mgs.data matches 5 run rotate @s ~0.0325 ~-0.1625
+execute if score #random mgs.data matches 1 run rotate @s ~-0.0325 ~-0.1625
+execute if score #random mgs.data matches 2 run rotate @s ~-0.0163 ~-0.1625
+execute if score #random mgs.data matches 3 run rotate @s ~-0.0 ~-0.1625
+execute if score #random mgs.data matches 4 run rotate @s ~0.0163 ~-0.1625
+execute if score #random mgs.data matches 5 run rotate @s ~0.0325 ~-0.1625
 
