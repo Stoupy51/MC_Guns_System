@@ -56,6 +56,8 @@ data modify storage {ns}:temp _pap_extract.weapon set from storage {ns}:temp _pa
 data remove storage {ns}:temp _pap_extract.stats.scope_level
 execute if data storage {ns}:temp _pap_pre_cosm_scope_level run data modify storage {ns}:temp _pap_extract.stats.scope_level set from storage {ns}:temp _pap_pre_cosm_scope_level
 
+# The held item's ammo is -1 (live in the score): left so, it would take the score of whatever weapon is held when it comes back.
+execute store result storage {ns}:temp _pap_extract.stats.{REMAINING_BULLETS} int 1 run scoreboard players get @s {ns}.{REMAINING_BULLETS}
 $item modify entity @s $(slot) {ns}:v{version}/zb_pap_apply_stats
 
 tellraw @s [{MGS_TAG},{{"text":"Scope re-rolled! (-{REPAP_SCOPE_PRICE} points)","color":"aqua"}}]

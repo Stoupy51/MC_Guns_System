@@ -60,7 +60,8 @@ scoreboard players operation #bullets {ns}.data -= #to_take {ns}.data
 $execute if score #bullets {ns}.data matches ..0 if items entity @s $(slot) *[custom_data~{{{ns}:{{consumable:true}}}}] run return run function {ns}:v{version}/ammo/inventory/consume_slot {{slot:"$(slot)"}}
 $execute if score #bullets {ns}.data matches 1.. if items entity @s $(slot) *[custom_data~{{{ns}:{{consumable:true}}}}] run return run function {ns}:v{version}/ammo/inventory/consume_partial {{slot:"$(slot)"}}
 
-$execute if score #bullets {ns}.data matches ..0 run function {ns}:v{version}/ammo/inventory/set_item_model {{slot:"$(slot)",{BASE_WEAPON}:"$({BASE_WEAPON})"}}
+# Zombies-converted rounds (consumable 2b) have no _mag_empty model.
+$execute if score #bullets {ns}.data matches ..0 unless items entity @s $(slot) *[custom_data~{{{ns}:{{consumable:2b}}}}] run function {ns}:v{version}/ammo/inventory/set_item_model {{slot:"$(slot)",{BASE_WEAPON}:"$({BASE_WEAPON})"}}
 execute store result storage {ns}:temp {REMAINING_BULLETS} int 1 run scoreboard players get #bullets {ns}.data
 $item modify entity @s $(slot) {ns}:v{version}/update_ammo
 
