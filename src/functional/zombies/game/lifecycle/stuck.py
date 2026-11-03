@@ -19,6 +19,7 @@ execute on vehicle run return 0
 
 # Distance bucket to the nearest alive player, 4 (very far) to 0 (adjacent). Height counts 3 times.
 scoreboard players set #cur_dist_bucket {ns}.data 4
+scoreboard players set #zb_near50 {ns}.data 0
 execute store result score #zb_px {ns}.data run data get entity @s Pos[0] 10
 execute store result score #zb_py {ns}.data run data get entity @s Pos[1] 10
 execute store result score #zb_pz {ns}.data run data get entity @s Pos[2] 10
@@ -59,6 +60,9 @@ execute if score #zb_alive {ns}.data matches ..2 if score #stuck_threshold {ns}.
 # The farther from every player, the shorter the wait: 7.5 s beyond 96 blocks, 10 s beyond 64.
 execute if score #cur_dist_bucket {ns}.data matches 4 if score #stuck_threshold {ns}.data matches 151.. run scoreboard players set #stuck_threshold {ns}.data 150
 execute if score #cur_dist_bucket {ns}.data matches 3 if score #stuck_threshold {ns}.data matches 201.. run scoreboard players set #stuck_threshold {ns}.data 200
+
+# No player within 50 blocks (height counts 3 times) and standing still since its last progress: 3 s.
+execute if score #zb_near50 {ns}.data matches 0 if score #stuck_moved {ns}.data matches 0 if score #stuck_threshold {ns}.data matches 61.. run scoreboard players set #stuck_threshold {ns}.data 60
 
 scoreboard players operation #stuck_delta {ns}.data = #total_tick {ns}.data
 scoreboard players operation #stuck_delta {ns}.data -= @s {ns}.zb.stuck_ticks
@@ -119,6 +123,7 @@ execute if score #zb_dx {ns}.data matches ..921600 run scoreboard players set #z
 execute if score #zb_dx {ns}.data matches ..409600 run scoreboard players set #zb_pb {ns}.data 2
 execute if score #zb_dx {ns}.data matches ..102400 run scoreboard players set #zb_pb {ns}.data 1
 execute if score #zb_dx {ns}.data matches ..25600 run scoreboard players set #zb_pb {ns}.data 0
+execute if score #zb_dx {ns}.data matches ..250000 run scoreboard players set #zb_near50 {ns}.data 1
 execute if score #zb_pb {ns}.data < #cur_dist_bucket {ns}.data run scoreboard players operation #cur_dist_bucket {ns}.data = #zb_pb {ns}.data
 """)
 
@@ -126,6 +131,9 @@ execute if score #zb_pb {ns}.data < #cur_dist_bucket {ns}.data run scoreboard pl
 	write_versioned_function("zombies/rescue_tp", f"""
 tp @s @n[tag={ns}.zb_near]
 scoreboard players operation @s {ns}.zb.spawn.sid = @n[tag={ns}.zb_near] {ns}.zb.spawn.sid
+tag @s add {ns}.zb_rescue_new
+execute as @n[tag={ns}.zb_near] at @s run function {ns}:v{version}/zombies/arrival/rescued
+tag @s remove {ns}.zb_rescue_new
 """)
 
 	## A player leaving the play area is eliminated with no mannequin and respawns at the next round end.

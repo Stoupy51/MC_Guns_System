@@ -100,17 +100,7 @@ execute if score @s {ns}.zb.rise_tick matches ..0 run function {ns}:v{version}/z
 
 	## The strike. Not a lightning_bolt entity, which would ignite the map, shock players and carry its thunder dimension-wide.
 	write_versioned_function("zombies/portal_strike", f"""
-# A wide Y spread with near-zero XZ spread and speed 0 draws a vertical shaft.
-particle minecraft:electric_spark ~ ~4 ~ 0.06 4.0 0.06 0.0 160 force @a[distance=..64]
-particle minecraft:end_rod ~ ~4 ~ 0.04 4.0 0.04 0.0 40 force @a[distance=..64]
-
-# flash takes a mandatory ARGB color.
-particle minecraft:flash{{color:[1.0f,0.82f,0.90f,1.0f]}} ~ ~1 ~ 0 0 0 0 1 force @a[distance=..64]
-
-particle minecraft:electric_spark ~ ~0.15 ~ 1.6 0.02 1.6 0.5 90 force @a[distance=..48]
-particle minecraft:crit ~ ~0.15 ~ 1.2 0.02 1.2 0.3 30 force @a[distance=..48]
-playsound minecraft:entity.lightning_bolt.impact ambient @a[distance=..48] ~ ~ ~ 3.0 1.2 0.5
-playsound minecraft:entity.lightning_bolt.thunder ambient @a[distance=..64] ~ ~ ~ 4.0 1.5 0.4
+function {ns}:v{version}/zombies/portal_strike_fx
 
 # Delivered at ground level and awake, so no rise.
 data modify storage {ns}:temp _mob set from entity @s data.mob
@@ -123,5 +113,39 @@ function {ns}:v{version}/zombies/arrival/land
 
 scoreboard players remove #zb_portal_pending {ns}.data 1
 kill @s
+""")
+
+	write_versioned_function("zombies/portal_strike_fx", """
+# A wide Y spread with near-zero XZ spread and speed 0 draws a vertical shaft.
+particle minecraft:electric_spark ~ ~4 ~ 0.06 4.0 0.06 0.0 160 force @a[distance=..64]
+particle minecraft:end_rod ~ ~4 ~ 0.04 4.0 0.04 0.0 40 force @a[distance=..64]
+
+# flash takes a mandatory ARGB color.
+particle minecraft:flash{{color:[1.0f,0.82f,0.90f,1.0f]}} ~ ~1 ~ 0 0 0 0 1 force @a[distance=..64]
+
+particle minecraft:electric_spark ~ ~0.15 ~ 1.6 0.02 1.6 0.5 90 force @a[distance=..48]
+particle minecraft:crit ~ ~0.15 ~ 1.2 0.02 1.2 0.3 30 force @a[distance=..48]
+playsound minecraft:entity.lightning_bolt.impact ambient @a[distance=..48] ~ ~ ~ 3.0 1.2 0.5
+playsound minecraft:entity.lightning_bolt.thunder ambient @a[distance=..64] ~ ~ ~ 4.0 1.5 0.4
+""")
+
+	## Run as the spawn marker a stuck enemy was teleported to, at it, with that enemy tagged zb_rescue_new: it comes in again the way the spawn's enemies do.
+	write_versioned_function("zombies/arrival/rescued", f"""
+execute if entity @s[tag={ns}.arrive_portal] run return run function {ns}:v{version}/zombies/portal_strike_fx
+execute if entity @s[tag={ns}.arrive_instant] run return 0
+
+scoreboard players set #zb_rise_step {ns}.data 2000
+execute if entity @s[tag={ns}.arrive_ceiling] run scoreboard players set #zb_rise_step {ns}.data -2000
+scoreboard players operation #zb_rise_step {ns}.data /= @s {ns}.zb.rise_tick
+
+execute if entity @s[tag={ns}.arrive_ceiling] positioned ~ ~2.2 ~ run tp @n[tag={ns}.zb_rescue_new] ~ ~ ~
+execute unless entity @s[tag={ns}.arrive_ceiling] positioned ~ ~-1.8 ~ run tp @n[tag={ns}.zb_rescue_new] ~ ~ ~
+data modify entity @n[tag={ns}.zb_rescue_new] NoAI set value 1b
+scoreboard players operation @n[tag={ns}.zb_rescue_new] {ns}.zb.rise_tick = @s {ns}.zb.rise_tick
+scoreboard players operation @n[tag={ns}.zb_rescue_new] {ns}.zb.rise_step = #zb_rise_step {ns}.data
+tag @n[tag={ns}.zb_rescue_new] add {ns}.zb_rising
+
+execute if entity @s[tag={ns}.arrive_ceiling] positioned ~ ~2 ~ run function {ns}:v{version}/zombies/summon_rise_dust {{block_y:"0"}}
+execute unless entity @s[tag={ns}.arrive_ceiling] run function {ns}:v{version}/zombies/summon_rise_dust {{block_y:"-1"}}
 """)
 
