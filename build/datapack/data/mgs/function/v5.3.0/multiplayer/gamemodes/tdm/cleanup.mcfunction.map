@@ -3,8 +3,8 @@
 	"file": "cleanup.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/team_deathmatch.py"
 	],
 	"names": [],
-	"mappings": ";;;;;;AAmCE"
+	"mappings": ";;;;;;AAqCsB"
 }

@@ -3,8 +3,8 @@
 	"file": "try_defuse.mcfunction",
 	"sourceRoot": "../../../../../../../../..",
 	"sources": [
-		"src/functional/multiplayer/gamemodes/base.py"
+		"src/functional/multiplayer/gamemodes/bomb/snd/bomb.py"
 	],
 	"names": [],
-	"mappings": "AAmCE;;;;;;;;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA;AAAA"
+	"mappings": "AAoF4B;;;;;;;;AAC5B;AACA;AACA;AACA;AACA;AACA;AACA;AACA"
 }
