@@ -38,13 +38,18 @@ execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_pla
 execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_alive_players mgs.data matches 0 run scoreboard players add #zb_nobody_ticks mgs.data 1
 execute unless score #zb_round_grace mgs.data matches 1.. if score #zb_nobody_ticks mgs.data matches 2.. run function mgs:v5.3.0/zombies/game_over
 
-# Every 20 ticks, 24 random non-rising zombies; escorted ones are NoAI and already being rescued (see escort).
+# Once-a-second tasks each own an offset of #zb_tick_mod: aura 0, neutral anger 5, spawn boxes 10, player glow 15.
 execute store result score #zb_tick_mod mgs.data run scoreboard players get #total_tick mgs.data
 scoreboard players operation #zb_tick_mod mgs.data %= #20 mgs.data
-execute if score #zb_tick_mod mgs.data matches 0 as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,tag=!mgs.zb_escorted,limit=24,sort=random] at @s run function mgs:v5.3.0/zombies/stuck_zombie_check
+
+# 24 random non-rising zombies a second, one per tick and two on ticks 2, 7, 12 and 17; escorted ones are NoAI and already being rescued (see escort).
+scoreboard players operation #zb_tick_mod5 mgs.data = #zb_tick_mod mgs.data
+scoreboard players operation #zb_tick_mod5 mgs.data %= #5 mgs.data
+execute unless score #zb_tick_mod5 mgs.data matches 2 as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,tag=!mgs.zb_escorted,limit=1,sort=random] at @s run function mgs:v5.3.0/zombies/stuck_zombie_check
+execute if score #zb_tick_mod5 mgs.data matches 2 as @e[tag=mgs.zombie_round,tag=!mgs.zb_rising,tag=!mgs.zb_escorted,limit=2,sort=random] at @s run function mgs:v5.3.0/zombies/stuck_zombie_check
 
 # Every player in the run glows yellow.
-execute if score #zb_tick_mod mgs.data matches 0 run effect give @a[scores={mgs.zb.in_game=1},gamemode=!spectator] minecraft:glowing 3 0 true
+execute if score #zb_tick_mod mgs.data matches 15 run effect give @a[scores={mgs.zb.in_game=1},gamemode=!spectator] minecraft:glowing 3 0 true
 
 # Stragglers glow 60 s (1200 ticks) after the last spawn.
 execute if score #zb_to_spawn mgs.data matches 0 run scoreboard players add #zb_stuck_timer mgs.data 1
@@ -68,7 +73,7 @@ kill @e[type=experience_orb]
 
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] run function mgs:v5.3.0/zombies/check_kill_points
 
-execute if score #zb_tick_mod mgs.data matches 0 run function mgs:v5.3.0/zombies/spawns/check_boxes
+execute if score #zb_tick_mod mgs.data matches 10 run function mgs:v5.3.0/zombies/spawns/check_boxes
 
 # Before vanilla death particles.
 function mgs:v5.3.0/zombies/death_watch_tick
@@ -87,7 +92,7 @@ execute as @e[type=minecraft:marker,tag=mgs.zb_portal] at @s run function mgs:v5
 
 # Wolves, bees, golems and other neutral mobs hunt nothing without an anger target. `angry_at` alone is enough (setTarget
 # runs from it on reload); AngerTime does nothing, the saved anger_end_time outranks it. #zb_tick_mod is total_tick % 20.
-execute if score #zb_tick_mod mgs.data matches 0 as @e[type=#mgs:v5.3.0/zombies/neutral,tag=mgs.zombie_round,tag=!mgs.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={mgs.zb.in_game=1},gamemode=!spectator,gamemode=!creative] UUID
+execute if score #zb_tick_mod mgs.data matches 5 as @e[type=#mgs:v5.3.0/zombies/neutral,tag=mgs.zombie_round,tag=!mgs.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={mgs.zb.in_game=1},gamemode=!spectator,gamemode=!creative] UUID
 
 # Each player's cooldown is refreshed by horde_ambient from the zombie count near them; it also owns the sprint channel.
 scoreboard players remove @a[scores={mgs.zb.in_game=1,mgs.zb.horde_cd=1..}] mgs.zb.horde_cd 1

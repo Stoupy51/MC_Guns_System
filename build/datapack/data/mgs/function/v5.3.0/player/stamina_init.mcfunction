@@ -14,6 +14,6 @@ scoreboard players set @s mgs.stam_rest 0
 scoreboard players set @s mgs.stam_swim 0
 scoreboard players set @s mgs.stam_seen 1
 
-# Assume leftover saturation from before the game (the stop refill), so the first at-target ticks burn it off.
-scoreboard players set @s mgs.stam_dirty 1
+# Assume the most leftover saturation from before the game (the stop refill), so the first at-target ticks burn it off.
+scoreboard players set @s mgs.stam_sat 500
 

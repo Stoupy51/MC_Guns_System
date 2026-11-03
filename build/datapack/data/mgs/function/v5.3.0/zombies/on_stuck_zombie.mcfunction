@@ -1,7 +1,7 @@
 
 #> mgs:v5.3.0/zombies/on_stuck_zombie
 #
-# @executed	as @e[tag=...,limit=24,sort=random] & at @s
+# @executed	as @e[tag=...,limit=1,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/zombies/stuck_zombie_check
 #			mgs:v5.3.0/zombies/escort/give_up

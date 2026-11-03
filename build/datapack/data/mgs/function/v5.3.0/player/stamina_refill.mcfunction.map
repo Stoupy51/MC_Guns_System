@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "stamina_refill.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/stamina.py"
+	],
+	"names": [],
+	"mappings": "AAqJmD;;;;;;;;AACnD;AACA;AACA;AACA;AACA;AACA;AACA"
+}

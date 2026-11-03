@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "stamina_burn.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/stamina.py"
+	],
+	"names": [],
+	"mappings": "AA+JiD;;;;;;;;AACjD;AACA;AACA;AACA"
+}

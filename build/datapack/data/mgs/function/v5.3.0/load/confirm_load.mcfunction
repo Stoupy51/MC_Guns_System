@@ -173,8 +173,8 @@ scoreboard objectives add mgs.stam_seen dummy
 # Counts swim ticks, so the drain applies once per SWIM_DRAIN_FACTOR ticks (see stamina_swim_drain).
 scoreboard objectives add mgs.stam_swim dummy
 
-# Set while refill pulses may have left invisible saturation; only then does the at-target branch read foodSaturationLevel to burn it off.
-scoreboard objectives add mgs.stam_dirty dummy
+# Estimated invisible saturation, in 1/25 points, so stamina_bar never reads the player's NBT.
+scoreboard objectives add mgs.stam_sat dummy
 
 # The tick loop is skipped at 0.
 scoreboard players add #armed_mob_count mgs.data 0
@@ -316,6 +316,12 @@ scoreboard objectives add mgs.zb.spawn.rmax dummy
 
 # Ticks left before the teleport-rescue fallback.
 scoreboard objectives add mgs.zb.escort_ttl dummy
+
+# On the trader: its follow_range tier and the last wander_target written (see set_wander_target).
+scoreboard objectives add mgs.zb.escort_range dummy
+scoreboard objectives add mgs.zb.escort_tx dummy
+scoreboard objectives add mgs.zb.escort_ty dummy
+scoreboard objectives add mgs.zb.escort_tz dummy
 
 # Gates the per-tick escorted-zombie scan.
 scoreboard players add #zb_escort_count mgs.data 0
@@ -709,6 +715,7 @@ scoreboard players set #10 mgs.data 10
 scoreboard players set #14 mgs.data 14
 scoreboard players set #15 mgs.data 15
 scoreboard players set #20 mgs.data 20
+scoreboard players set #25 mgs.data 25
 scoreboard players set #40 mgs.data 40
 scoreboard players set #44 mgs.data 44
 scoreboard players set #45 mgs.data 45

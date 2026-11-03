@@ -1,12 +1,13 @@
 
 #> mgs:v5.3.0/zombies/stuck_zombie_check
 #
-# @executed	as @e[tag=...,limit=24,sort=random] & at @s
+# @executed	as @e[tag=...,limit=1,sort=random] & at @s
 #
-# @within	mgs:v5.3.0/zombies/game_tick [ as @e[tag=...,limit=24,sort=random] & at @s ]
+# @within	mgs:v5.3.0/zombies/game_tick [ as @e[tag=...,limit=1,sort=random] & at @s ]
+#			mgs:v5.3.0/zombies/game_tick [ as @e[tag=...,limit=2,sort=random] & at @s ]
 #
 
-# Run as a non-rising zombie_round, every 20 ticks on up to 24 random ones. Progress resets the timer.
+# Run as a non-rising zombie_round, on 24 random ones a second, spread over the ticks. Progress resets the timer.
 # Timeout: 400 ticks without moving (100 once already rescued), 300 if it moves without getting closer, less when far.
 
 # A rider goes where its mount goes, and a teleport would pull it off.

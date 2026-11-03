@@ -7,6 +7,7 @@
 #			mgs:v5.3.0/zombies/escort/give_up
 #
 
-scoreboard players set @s mgs.zb.escort_ttl 900
+scoreboard players operation @s mgs.zb.escort_ttl %= #20 mgs.data
+scoreboard players add @s mgs.zb.escort_ttl 900
 scoreboard players set @s mgs.zb.stuck_ticks 0
 

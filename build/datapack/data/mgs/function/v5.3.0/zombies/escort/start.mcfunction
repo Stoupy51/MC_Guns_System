@@ -1,7 +1,7 @@
 
 #> mgs:v5.3.0/zombies/escort/start
 #
-# @executed	as @e[tag=...,limit=24,sort=random] & at @s
+# @executed	as @e[tag=...,limit=1,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/zombies/on_stuck_zombie
 #			mgs:v5.3.0/zombies/escort/start_to_target
@@ -16,7 +16,10 @@ execute on vehicle run return fail
 tag @s add mgs.zb_escorted
 team join mgs.horde @s
 data modify entity @s NoAI set value 1b
-scoreboard players set @s mgs.zb.escort_ttl 900
+scoreboard players add #zb_escort_serial mgs.data 1
+scoreboard players operation @s mgs.zb.escort_ttl = #zb_escort_serial mgs.data
+scoreboard players operation @s mgs.zb.escort_ttl %= #20 mgs.data
+scoreboard players add @s mgs.zb.escort_ttl 900
 
 # While escorted, stuck_x, stuck_z and stuck_ticks hold a block snapshot and a still counter; detach re-initializes them.
 execute store result score @s mgs.zb.stuck_x run data get entity @s Pos[0]
@@ -32,9 +35,6 @@ team join mgs.horde @n[tag=mgs.zb_escort_new]
 # a barricade freeze (-1024) would clamp the taxi to 0, and a just-detached zombie's Speed I would read 20% high.
 execute store result storage mgs:temp _escort.speed double 0.0028571 run attribute @s minecraft:movement_speed base get 1000
 execute as @n[tag=mgs.zb_escort_new] run function mgs:v5.3.0/zombies/escort/set_trader_speed with storage mgs:temp _escort
-
-# A big pathfinding budget affords stair detours (PATHFINDING_RANGE); the command triggers the live budget recompute.
-execute as @n[tag=mgs.zb_escort_new] run attribute @s minecraft:follow_range base set 96
 
 # Monkey-bomb escorts target the thrown monkey: the flag routes retarget to retarget_monkey.
 execute if score #zb_escort_mode mgs.data matches 1 run tag @n[tag=mgs.zb_escort_new] add mgs.zb_escort_monkey
