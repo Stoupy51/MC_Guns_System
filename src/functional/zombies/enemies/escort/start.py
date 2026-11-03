@@ -2,7 +2,7 @@
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from .shared import ESCORT_TTL, MAX_ESCORTS, PATHFINDING_RANGE
+from .shared import ESCORT_TTL, MAX_ESCORTS
 
 
 # Functions
@@ -13,6 +13,12 @@ def write_escort_start() -> None:
 	write_load_file(f"""
 # Ticks left before the teleport-rescue fallback.
 scoreboard objectives add {ns}.zb.escort_ttl dummy
+
+# On the trader: its follow_range tier and the last wander_target written (see set_wander_target).
+scoreboard objectives add {ns}.zb.escort_range dummy
+scoreboard objectives add {ns}.zb.escort_tx dummy
+scoreboard objectives add {ns}.zb.escort_ty dummy
+scoreboard objectives add {ns}.zb.escort_tz dummy
 
 # Gates the per-tick escorted-zombie scan.
 scoreboard players add #zb_escort_count {ns}.data 0
@@ -42,7 +48,10 @@ execute on vehicle run return fail
 tag @s add {ns}.zb_escorted
 team join {ns}.horde @s
 data modify entity @s NoAI set value 1b
-scoreboard players set @s {ns}.zb.escort_ttl {ESCORT_TTL}
+scoreboard players add #zb_escort_serial {ns}.data 1
+scoreboard players operation @s {ns}.zb.escort_ttl = #zb_escort_serial {ns}.data
+scoreboard players operation @s {ns}.zb.escort_ttl %= #20 {ns}.data
+scoreboard players add @s {ns}.zb.escort_ttl {ESCORT_TTL}
 
 # While escorted, stuck_x, stuck_z and stuck_ticks hold a block snapshot and a still counter; detach re-initializes them.
 execute store result score @s {ns}.zb.stuck_x run data get entity @s Pos[0]
@@ -58,9 +67,6 @@ team join {ns}.horde @n[tag={ns}.zb_escort_new]
 # a barricade freeze (-1024) would clamp the taxi to 0, and a just-detached zombie's Speed I would read 20% high.
 execute store result storage {ns}:temp _escort.speed double 0.0028571 run attribute @s minecraft:movement_speed base get 1000
 execute as @n[tag={ns}.zb_escort_new] run function {ns}:v{version}/zombies/escort/set_trader_speed with storage {ns}:temp _escort
-
-# A big pathfinding budget affords stair detours (PATHFINDING_RANGE); the command triggers the live budget recompute.
-execute as @n[tag={ns}.zb_escort_new] run attribute @s minecraft:follow_range base set {PATHFINDING_RANGE}
 
 # Monkey-bomb escorts target the thrown monkey: the flag routes retarget to retarget_monkey.
 execute if score #zb_escort_mode {ns}.data matches 1 run tag @n[tag={ns}.zb_escort_new] add {ns}.zb_escort_monkey

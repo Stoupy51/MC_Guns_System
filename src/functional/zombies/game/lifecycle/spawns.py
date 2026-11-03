@@ -191,7 +191,7 @@ function {ns}:v{version}/zombies/spawns/test_box with entity @s data.abox
 $execute if entity @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,x=$(x),y=$(y),z=$(z),dx=$(dx),dy=$(dy),dz=$(dz)] run tag @s add {ns}.spawn_abox_ok
 """)
 	write_versioned_function("zombies/game_tick", f"""
-execute if score #zb_tick_mod {ns}.data matches 0 run function {ns}:v{version}/zombies/spawns/check_boxes
+execute if score #zb_tick_mod {ns}.data matches 10 run function {ns}:v{version}/zombies/spawns/check_boxes
 """)
 
 	CoreSpawning.write_summon_spawn_at("zombies", extra_spawn_tags=("new_spawn",))

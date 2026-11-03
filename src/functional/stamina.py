@@ -35,6 +35,8 @@ FOOD_MIN: int = 6
 FOOD_MAX: int = 20
 FOOD_SPAN: int = FOOD_MAX - FOOD_MIN
 """ Hunger-bar mapping: target foodLevel = FOOD_MIN + FOOD_SPAN * stam / stam_max. """
+SAT_UNIT: int = 25
+""" Score units per saturation point, so a hunger pulse burns a whole number of them. """
 
 # Functions
 def main() -> None:
@@ -53,8 +55,8 @@ scoreboard objectives add {ns}.stam_seen dummy
 # Counts swim ticks, so the drain applies once per SWIM_DRAIN_FACTOR ticks (see stamina_swim_drain).
 scoreboard objectives add {ns}.stam_swim dummy
 
-# Set while refill pulses may have left invisible saturation; only then does the at-target branch read foodSaturationLevel to burn it off.
-scoreboard objectives add {ns}.stam_dirty dummy
+# Estimated invisible saturation, in 1/{SAT_UNIT} points, so stamina_bar never reads the player's NBT.
+scoreboard objectives add {ns}.stam_sat dummy
 """)
 
 	# player/tick runs as each player, at them. One in_game flag at a time, so at most one branch fires; spectators are downed or dead.
@@ -127,8 +129,8 @@ scoreboard players set @s {ns}.stam_rest 0
 scoreboard players set @s {ns}.stam_swim 0
 scoreboard players set @s {ns}.stam_seen 1
 
-# Assume leftover saturation from before the game (the stop refill), so the first at-target ticks burn it off.
-scoreboard players set @s {ns}.stam_dirty 1
+# Assume the most leftover saturation from before the game (the stop refill), so the first at-target ticks burn it off.
+scoreboard players set @s {ns}.stam_sat {FOOD_MAX * SAT_UNIT}
 """)
 
 	# Drives the bar toward #stam_t with 1-tick pulses; clearing both effects first removes last tick's pulses, so this owns the bar.
@@ -136,18 +138,28 @@ scoreboard players set @s {ns}.stam_dirty 1
 effect clear @s minecraft:saturation
 effect clear @s minecraft:hunger
 
-# Read from the auto-updated `food` criterion, no NBT read. Below target: +1 food this tick, never at or above, so the invisible
-# saturation (+2 per tick) cannot stack past what is shown; the pulse may leave some, hence the flag.
-execute if score @s {ns}.food < #stam_t {ns}.data run scoreboard players set @s {ns}.stam_dirty 1
-execute if score @s {ns}.food < #stam_t {ns}.data run return run effect give @s minecraft:saturation 1 0 true
+# Refill only below target, never at or above, so the invisible saturation cannot stack past what is shown.
+execute if score @s {ns}.food < #stam_t {ns}.data run return run function {ns}:v{version}/player/stamina_refill
+execute if score @s {ns}.food > #stam_t {ns}.data run return run function {ns}:v{version}/player/stamina_burn
 
-# Above target: a hunger pulse drains the bar slowly.
-execute if score @s {ns}.food > #stam_t {ns}.data run return run effect give @s minecraft:hunger 1 255 true
+# At target, burning the estimated leftover makes the next drain show at once.
+execute if score @s {ns}.stam_sat matches 1.. run function {ns}:v{version}/player/stamina_burn
+""")
 
-# At target and flagged: read saturation and burn leftovers off with hunger pulses, so the next drain shows at once; once 0 the flag clears and the steady state reads no NBT.
-execute unless score @s {ns}.stam_dirty matches 1 run return 0
-execute store result score #stam_sat {ns}.data run data get entity @s foodSaturationLevel
-execute if score #stam_sat {ns}.data matches 1.. run return run effect give @s minecraft:hunger 1 255 true
-scoreboard players set @s {ns}.stam_dirty 0
+	# Saturation effect: +1 food and +2 saturation, capped at the new food level (FoodData.eat).
+	write_versioned_function("player/stamina_refill", f"""
+scoreboard players add @s {ns}.stam_sat {2 * SAT_UNIT}
+scoreboard players operation #stam_sat_cap {ns}.data = @s {ns}.food
+scoreboard players add #stam_sat_cap {ns}.data 1
+scoreboard players operation #stam_sat_cap {ns}.data *= #{SAT_UNIT} {ns}.data
+scoreboard players operation @s {ns}.stam_sat < #stam_sat_cap {ns}.data
+effect give @s minecraft:saturation 1 0 true
+""")
+
+	# Hunger 255 adds 1.28 exhaustion a tick and 4 exhaustion take 1 saturation (FoodData.tick), so 8/25 saturation a tick.
+	write_versioned_function("player/stamina_burn", f"""
+scoreboard players remove @s {ns}.stam_sat {SAT_UNIT * 8 // 25}
+execute if score @s {ns}.stam_sat matches ..-1 run scoreboard players set @s {ns}.stam_sat 0
+effect give @s minecraft:hunger 1 255 true
 """)
 

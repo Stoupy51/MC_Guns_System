@@ -5,15 +5,23 @@ MAX_ESCORTS: int = 16
 
 ESCORT_TTL: int = 900
 """ Escort lifetime in ticks before the teleport-rescue fallback. Hard cap only: a trader that is
-itself stuck is caught much earlier by the watchdog. """
+itself stuck is caught much earlier by the watchdog.
+Each escort adds its serial mod 20, so the once-a-second work of concurrent escorts falls on different ticks. """
 
 WATCHDOG_GIVE_UP: int = 5
 """ Seconds without leaving the current block before the escort gives up early. """
 
 PATHFINDING_RANGE: int = 96
-""" Escort trader follow_range. The budget scales live with this attribute (Mob.java
+""" Escort trader follow_range for a far target. The budget scales live with this attribute (Mob.java
 onAttributeUpdated): max A* nodes = value*16, region radius = value+8. The default 16 cannot afford
 stair detours, so a trader whose target is on another floor hugs the closest point below it. """
+
+PATHFINDING_TIERS: dict[int, int] = {24: 48, 48: 72}
+""" Target distance cap to the follow_range used under it, nearest first; beyond the last cap, PATHFINDING_RANGE.
+48 (768 nodes) still affords the detour to a close target on another floor. """
+
+RETARGET_MOVE: int = 4
+""" wander_target is rewritten only once its target moved this many blocks along some axis, or after the goal cleared it. """
 
 RELEASE_RADIUS: int = 10
 """ Hand back to vanilla zombie AI once an alive player is within this radius AND visible. """

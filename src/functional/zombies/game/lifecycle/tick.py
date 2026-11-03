@@ -53,13 +53,18 @@ execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_pl
 execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_alive_players {ns}.data matches 0 run scoreboard players add #zb_nobody_ticks {ns}.data 1
 execute unless score #zb_round_grace {ns}.data matches 1.. if score #zb_nobody_ticks {ns}.data matches 2.. run function {ns}:v{version}/zombies/game_over
 
-# Every 20 ticks, 24 random non-rising zombies; escorted ones are NoAI and already being rescued (see escort).
+# Once-a-second tasks each own an offset of #zb_tick_mod: aura 0, neutral anger 5, spawn boxes 10, player glow 15.
 execute store result score #zb_tick_mod {ns}.data run scoreboard players get #total_tick {ns}.data
 scoreboard players operation #zb_tick_mod {ns}.data %= #20 {ns}.data
-execute if score #zb_tick_mod {ns}.data matches 0 as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,limit=24,sort=random] at @s run function {ns}:v{version}/zombies/stuck_zombie_check
+
+# 24 random non-rising zombies a second, one per tick and two on ticks 2, 7, 12 and 17; escorted ones are NoAI and already being rescued (see escort).
+scoreboard players operation #zb_tick_mod5 {ns}.data = #zb_tick_mod {ns}.data
+scoreboard players operation #zb_tick_mod5 {ns}.data %= #5 {ns}.data
+execute unless score #zb_tick_mod5 {ns}.data matches 2 as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,limit=1,sort=random] at @s run function {ns}:v{version}/zombies/stuck_zombie_check
+execute if score #zb_tick_mod5 {ns}.data matches 2 as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,limit=2,sort=random] at @s run function {ns}:v{version}/zombies/stuck_zombie_check
 
 # Every player in the run glows yellow.
-execute if score #zb_tick_mod {ns}.data matches 0 run effect give @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] minecraft:glowing 3 0 true
+execute if score #zb_tick_mod {ns}.data matches 15 run effect give @a[scores={{{ns}.zb.in_game=1}},gamemode=!spectator] minecraft:glowing 3 0 true
 
 # Stragglers glow 60 s (1200 ticks) after the last spawn.
 execute if score #zb_to_spawn {ns}.data matches 0 run scoreboard players add #zb_stuck_timer {ns}.data 1

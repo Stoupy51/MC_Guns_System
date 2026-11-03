@@ -93,7 +93,8 @@ function {ns}:v{version}/zombies/escort/escort_tail
 
 	# No escort_tail: standing still here is the goal.
 	write_versioned_function("zombies/escort/monkey_hold", f"""
-scoreboard players set @s {ns}.zb.escort_ttl {ESCORT_TTL}
+scoreboard players operation @s {ns}.zb.escort_ttl %= #20 {ns}.data
+scoreboard players add @s {ns}.zb.escort_ttl {ESCORT_TTL}
 scoreboard players set @s {ns}.zb.stuck_ticks 0
 """)
 

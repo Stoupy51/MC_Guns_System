@@ -26,7 +26,7 @@ execute as @e[type=minecraft:marker,tag={ns}.zb_portal] at @s run function {ns}:
 
 # Wolves, bees, golems and other neutral mobs hunt nothing without an anger target. `angry_at` alone is enough (setTarget
 # runs from it on reload); AngerTime does nothing, the saved anger_end_time outranks it. #zb_tick_mod is total_tick % 20.
-execute if score #zb_tick_mod {ns}.data matches 0 as @e[type=#{ns}:v{version}/zombies/neutral,tag={ns}.zombie_round,tag=!{ns}.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,gamemode=!creative] UUID
+execute if score #zb_tick_mod {ns}.data matches 5 as @e[type=#{ns}:v{version}/zombies/neutral,tag={ns}.zombie_round,tag=!{ns}.zb_rising] at @s unless data entity @s angry_at run data modify entity @s angry_at set from entity @p[scores={{{ns}.zb.in_game=1}},gamemode=!spectator,gamemode=!creative] UUID
 
 # Each player's cooldown is refreshed by horde_ambient from the zombie count near them; it also owns the sprint channel.
 scoreboard players remove @a[scores={{{ns}.zb.in_game=1,{ns}.zb.horde_cd=1..}}] {ns}.zb.horde_cd 1

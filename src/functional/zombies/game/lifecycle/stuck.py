@@ -11,7 +11,7 @@ def write_stuck_and_bounds() -> None:
 	version: str = Mem.ctx.project_version
 
 	write_versioned_function("zombies/stuck_zombie_check", f"""
-# Run as a non-rising zombie_round, every 20 ticks on up to 24 random ones. Progress resets the timer.
+# Run as a non-rising zombie_round, on 24 random ones a second, spread over the ticks. Progress resets the timer.
 # Timeout: 400 ticks without moving (100 once already rescued), 300 if it moves without getting closer, less when far.
 
 # A rider goes where its mount goes, and a teleport would pull it off.
