@@ -126,8 +126,11 @@ data modify storage {ns}:temp refill.mag_model set from entity @s item.component
 kill @s
 """)
 
-	write_versioned_function("zombies/bonus/set_full_mag_model", r"""
-$item modify entity @s $(slot) {"type":"minecraft:set_components", "components":{"minecraft:item_model":"$(mag_model)"}}
+	write_versioned_function("zombies/bonus/set_full_mag_model", f"""
+$item modify entity @s $(slot) {{"type":"minecraft:set_components", "components":{{"minecraft:item_model":"$(mag_model)"}}}}
+
+# A magazine that ran empty reads the empty model, so the full one is named from the weapon.
+$execute if data storage {ns}:temp refill{{mag_model:"{ns}:$({BASE_WEAPON})_mag_empty"}} run item modify entity @s $(slot) {{"type":"minecraft:set_components", "components":{{"minecraft:item_model":"{ns}:$({BASE_WEAPON})_mag"}}}}
 """)
 
 	## Nuke: kill every nukable entity, one per tick.
