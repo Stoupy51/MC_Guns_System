@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/projectile/damage_area
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/projectile/explode with storage mgs:temp expl
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/projectile/explode with storage mgs:temp expl
 #			mgs:v5.3.0/grenade/detonate_frag with storage mgs:temp expl
 #
 # @args		radius_float (unknown)

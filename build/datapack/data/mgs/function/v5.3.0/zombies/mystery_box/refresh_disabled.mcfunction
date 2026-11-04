@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/refresh_disabled
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/sync_presence_display
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/sync_presence_display
 #			mgs:v5.3.0/zombies/mystery_box/fire_sale_cleanup
 #			mgs:v5.3.0/zombies/mystery_box/move_anim_land
 #

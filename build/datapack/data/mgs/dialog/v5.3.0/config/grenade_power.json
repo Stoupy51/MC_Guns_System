@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.grenade_explosion_power","fallback": "Grenade Explosion Power",
@@ -17,8 +19,6 @@
 		{"label": {"text": "5","color": "yellow"},"tooltip": [{"translate": "mgs.set_grenade_explosion_power_to","fallback": "Set Grenade Explosion Power to"}, " 5"],"action": {"type": "run_command","command": "/scoreboard players set #grenade_explosion_power mgs.config 5"}}
 	],
 	"columns": 1,
-	"pause": false,
-	"after_action": "none",
 	"exit_action": {
 		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
 		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},

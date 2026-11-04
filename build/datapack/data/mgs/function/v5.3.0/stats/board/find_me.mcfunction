@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/find_me
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/stats/board/show
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/show
 #			mgs:v5.3.0/stats/board/find_me
 #
 

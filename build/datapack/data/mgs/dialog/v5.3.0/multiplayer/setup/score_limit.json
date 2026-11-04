@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.score_limit","fallback": "Score Limit",
@@ -19,8 +21,6 @@
 		{"label": {"translate": "mgs.500","fallback": "500","color": "yellow"},"tooltip": [{"translate": "mgs.set_score_limit_to","fallback": "Set score limit to"}, " 500"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.score_limit set value 500"}}
 	],
 	"columns": 1,
-	"pause": false,
-	"after_action": "none",
 	"exit_action": {
 		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
 		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},

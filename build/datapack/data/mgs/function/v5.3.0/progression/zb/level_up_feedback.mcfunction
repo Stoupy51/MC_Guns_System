@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/level_up_feedback
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/progression/zb/settle
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/zb/settle
 #
 
 data modify storage smithed.actionbar:input message set value {json:[{"text":"⬆ ","color":"white"},{"translate":"mgs.zombies_level","fallback":"Zombies level ","color":"gold"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"yellow"}],priority:"override",freeze:60}

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/tombstone_collect
 #
-# @executed	as @a[distance=..2,gamemode=!spectator,scores={mgs.zb.in_game=1,mgs.zb.downed=0}]
-#
-# @within	mgs:v5.3.0/zombies/perks/tombstone_marker_tick [ as @a[distance=..2,gamemode=!spectator,scores={mgs.zb.in_game=1,mgs.zb.downed=0}] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/tombstone_marker_tick [ as @a[distance=..2,gamemode=!spectator,scores={mgs.zb.in_game=1,mgs.zb.downed=0}] ]
 #
 
 execute if score @s mgs.zb.tsp.juggernog matches 1 run scoreboard players set @s mgs.zb.perk.juggernog 1

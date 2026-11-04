@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/bomb_defused
 #
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/tick
 #
 
 tellraw @a[tag=!mgs.xp_earner] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"💣 ","color":"white"},{"translate":"mgs.bomb_defused","fallback":"BOMB DEFUSED!","color":"aqua","bold":true}]

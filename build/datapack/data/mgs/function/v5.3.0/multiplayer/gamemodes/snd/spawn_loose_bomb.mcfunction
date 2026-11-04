@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/spawn_loose_bomb
 #
-# @executed	at @e[tag=mgs.spawn_red,limit=1]
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/start_round [ at @e[tag=mgs.spawn_red,limit=1] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/start_round [ at @e[tag=mgs.spawn_red,limit=1] ]
 #			mgs:v5.3.0/multiplayer/gamemodes/snd/start_round [ at @e[tag=mgs.spawn_blue,limit=1] ]
 #			mgs:v5.3.0/multiplayer/gamemodes/snd/start_round [ at @e[tag=mgs.spawn_point,limit=1] ]
 #			mgs:v5.3.0/multiplayer/gamemodes/snd/recover_bomb [ at @e[tag=mgs.snd_carrier_label,limit=1] ]

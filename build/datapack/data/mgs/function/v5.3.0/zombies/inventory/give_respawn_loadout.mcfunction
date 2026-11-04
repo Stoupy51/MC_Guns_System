@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/give_respawn_loadout
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zombies/whos_who/on_down
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/whos_who/on_down
 #			mgs:v5.3.0/zombies/revive/do_round_respawn
 #
 

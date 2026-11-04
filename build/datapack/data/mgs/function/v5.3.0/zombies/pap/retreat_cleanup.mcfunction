@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/retreat_cleanup
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/retreat_finish with storage mgs:temp _pap_retreat
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/retreat_finish with storage mgs:temp _pap_retreat
 #
 # @args		id (unknown)
 #

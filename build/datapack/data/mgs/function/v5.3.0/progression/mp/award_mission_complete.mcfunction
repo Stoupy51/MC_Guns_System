@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/award_mission_complete
 #
-# @executed	as @a[scores={mgs.mi.in_game=1}]
-#
-# @within	mgs:v5.3.0/missions/victory [ as @a[scores={mgs.mi.in_game=1}] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/victory [ as @a[scores={mgs.mi.in_game=1}] ]
 #
 
 # Clearing a mission, to everyone still on the roster

@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": [
 		"",

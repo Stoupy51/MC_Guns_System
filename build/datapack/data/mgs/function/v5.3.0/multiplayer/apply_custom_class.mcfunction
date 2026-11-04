@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/apply_custom_class
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/apply_class
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/apply_class
 #
 
 # mp.class is minus the loadout id.

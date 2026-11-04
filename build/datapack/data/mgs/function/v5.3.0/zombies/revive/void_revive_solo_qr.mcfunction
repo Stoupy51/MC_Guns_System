@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/void_revive_solo_qr
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/full_death
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/full_death
 #
 
 # Same bookkeeping as solo_qr_complete.

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/my_loadouts/prep_btn
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/my_loadouts/build_list_favs
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/my_loadouts/build_list_favs
 #			mgs:v5.3.0/multiplayer/my_loadouts/check_private_not_fav
 #			mgs:v5.3.0/multiplayer/my_loadouts/check_public_not_fav
 #

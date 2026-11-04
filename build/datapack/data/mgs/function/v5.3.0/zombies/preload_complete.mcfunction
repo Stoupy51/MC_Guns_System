@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/preload_complete
 #
-# @within	mgs:v5.3.0/zombies/start 20t [ scheduled ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/start 20t [ scheduled ]
 #
 
 execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.3.0/zombies/preload_complete"}

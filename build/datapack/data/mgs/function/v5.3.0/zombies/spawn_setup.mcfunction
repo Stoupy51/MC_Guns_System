@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/spawn_setup
 #
-# @executed	as @n[type=minecraft:marker,tag=mgs.new_spawn]
-#
-# @within	mgs:v5.3.0/zombies/summon_spawn_iter [ as @n[type=minecraft:marker,tag=mgs.new_spawn] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/summon_spawn_iter [ as @n[type=minecraft:marker,tag=mgs.new_spawn] ]
 #
 
 tag @s remove mgs.new_spawn

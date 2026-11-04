@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/inflate/barricade_fields
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/maps/inflate/barricade
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/inflate/barricade
 #
 
 function mgs:v5.3.0/maps/inflate/rotation

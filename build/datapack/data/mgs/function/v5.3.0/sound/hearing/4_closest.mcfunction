@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/sound/hearing/4_closest
 #
-# @executed	as @a[distance=0.001..224] & facing entity @s eyes
-#
-# @within	mgs:v5.3.0/sound/turret_propagation with storage mgs:temp _turret_snd
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/sound/turret_propagation with storage mgs:temp _turret_snd
 #			mgs:v5.3.0/sound/propagation with storage mgs:gun all.sounds
 #
 # @args		crack (unknown)

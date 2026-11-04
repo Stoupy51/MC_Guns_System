@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/near_within_32
 #
-# @executed	as @e[type=minecraft:marker,tag=mgs.zb_cand]
-#
-# @within	mgs:v5.3.0/zombies/tag_zombies_near_32 [ as @e[type=minecraft:marker,tag=mgs.zb_cand] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/tag_zombies_near_32 [ as @e[type=minecraft:marker,tag=mgs.zb_cand] ]
 #			mgs:v5.3.0/zombies/tag_special_near_32 [ as @e[type=minecraft:marker,tag=mgs.zb_cand] ]
 #
 

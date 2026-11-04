@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/absorb_above_cap
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/apply_zombie_hp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/apply_zombie_hp
 #
 
 scoreboard players operation #zb_absorb mgs.data = @s mgs.zb.max_hp

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/hologram
 #
-# @executed	positioned ~ ~0.5 ~
-#
-# @within	mgs:leaderboard/level_mp [ positioned ~ ~0.5 ~ ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:leaderboard/level_mp [ positioned ~ ~0.5 ~ ]
 #			mgs:leaderboard/level_zb [ positioned ~ ~0.5 ~ ]
 #			mgs:leaderboard/zb_map [ positioned ~ ~0.5 ~ ]
 #			mgs:leaderboard/mi_map [ positioned ~ ~0.5 ~ ]

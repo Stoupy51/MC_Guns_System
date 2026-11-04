@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/simulate_death_fire_kill
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/simulate_death with storage mgs:temp _mp_death
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/simulate_death with storage mgs:temp _mp_death
 #
 # @args		attacker (unknown)
 #

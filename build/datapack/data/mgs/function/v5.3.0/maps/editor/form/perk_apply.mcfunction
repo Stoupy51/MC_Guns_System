@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/form/perk_apply
 #
-# @within	string in mgs:v5.3.0/maps/editor/form/open/perk_machine {name:\"$(name)\",price:$(price),partial_price:$(partial_price),power:$(power),perk:\"\"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/form/open/perk_machine {name:\"$(name)\",price:$(price),partial_price:$(partial_price),power:$(power),perk:\"\"}
 #			string in mgs:v5.3.0/maps/editor/form/open/perk_machine {name:\"$(name)\",price:$(price),partial_price:$(partial_price),power:$(power),perk:\"juggernog\"}
 #			string in mgs:v5.3.0/maps/editor/form/open/perk_machine {name:\"$(name)\",price:$(price),partial_price:$(partial_price),power:$(power),perk:\"speed_cola\"}
 #			string in mgs:v5.3.0/maps/editor/form/open/perk_machine {name:\"$(name)\",price:$(price),partial_price:$(partial_price),power:$(power),perk:\"double_tap\"}

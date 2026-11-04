@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/freeze_world
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/freeze_on
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/freeze_on
 #			mgs:v5.3.0/zombies/suspend
 #
 

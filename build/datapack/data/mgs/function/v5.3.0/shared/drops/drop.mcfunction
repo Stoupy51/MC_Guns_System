@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/drops/drop
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/drop_held_weapon
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/drop_held_weapon
 #			mgs:v5.3.0/missions/drop_enemy_weapon
 #
 

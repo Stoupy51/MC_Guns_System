@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/tp_player_at
 #
-# @executed	as @p[tag=mgs.spawn_pending]
-#
-# @within	mgs:v5.3.0/shared/tp_to_spawn with storage mgs:temp _tp [ as @p[tag=mgs.spawn_pending] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/tp_to_spawn with storage mgs:temp _tp [ as @p[tag=mgs.spawn_pending] ]
 #
 # @args		x (unknown)
 #			y (unknown)

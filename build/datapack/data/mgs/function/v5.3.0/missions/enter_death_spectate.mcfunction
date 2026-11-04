@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/missions/enter_death_spectate
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/missions/simulate_death
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/simulate_death
 #			mgs:v5.3.0/missions/on_respawn
 #
 

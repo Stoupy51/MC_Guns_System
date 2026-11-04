@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/displays/summon_barricade
 #
-# @executed	align xyz & positioned ~.5 ~.5 ~.5
-#
-# @within	mgs:v5.3.0/maps/editor/displays/barricade with storage mgs:temp _ed_bar [ align xyz & positioned ~.5 ~.5 ~.5 ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/displays/barricade with storage mgs:temp _ed_bar [ align xyz & positioned ~.5 ~.5 ~.5 ]
 #
 # @args		yaw (unknown)
 #			block (unknown)

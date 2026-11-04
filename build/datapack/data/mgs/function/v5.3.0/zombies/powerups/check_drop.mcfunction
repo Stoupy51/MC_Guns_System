@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/check_drop
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/on_zombie_dying
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/on_zombie_dying
 #
 
 # Only when a player's weapon hit it within 100 ticks: never from nukes, traps or the environment.

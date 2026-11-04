@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/run_respawn_commands
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/actual_respawn {mode:"multiplayer"} [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/actual_respawn {mode:"multiplayer"} [ at @s ]
 #			mgs:v5.3.0/missions/actual_respawn {mode:"missions"} [ at @s ]
 #
 # @args		mode (string)

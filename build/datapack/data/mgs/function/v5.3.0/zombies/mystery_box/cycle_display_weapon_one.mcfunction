@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/cycle_display_weapon_one
 #
-# @executed	as @e[tag=...] & at @s
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/cycle_display_one with storage mgs:temp _mb_cycle_item
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/cycle_display_one with storage mgs:temp _mb_cycle_item
 #
 # @args		weapon_id (unknown)
 #

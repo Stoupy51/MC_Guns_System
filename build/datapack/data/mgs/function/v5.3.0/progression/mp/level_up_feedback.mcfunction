@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/level_up_feedback
 #
-# @within	mgs:v5.3.0/progression/mp/settle
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/mp/settle
 #
 
 data modify storage smithed.actionbar:input message set value {json:[{"text":"⬆ ","color":"white"},{"translate":"mgs.multiplayer_level","fallback":"Multiplayer level ","color":"gold"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"yellow"}],priority:"override",freeze:60}

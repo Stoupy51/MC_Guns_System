@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/displays/summon_wallbuy
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/maps/editor/displays/wallbuy with storage mgs:temp _ed_disp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/displays/wallbuy with storage mgs:temp _ed_disp
 #
 # @args		yaw (unknown)
 #			weapon_id (unknown)

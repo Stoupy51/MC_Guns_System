@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/traps/turret_check_los
 #
-# @executed	as @e[tag=mgs._turret_cand]
-#
-# @within	mgs:v5.3.0/zombies/traps/turret_fire [ as @e[tag=mgs._turret_cand] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/traps/turret_fire [ as @e[tag=mgs._turret_cand] ]
 #
 
 # Run as a candidate zombie.

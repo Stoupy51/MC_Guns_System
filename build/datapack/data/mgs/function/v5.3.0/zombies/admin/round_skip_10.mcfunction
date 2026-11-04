@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/admin/round_skip_10
 #
-# @executed	as the player & at current position
-#
-# @within	dialog mgs:v5.3.0/zombies/admin
+# @within	mgs:v5.3.0/dialog/close_then
+#			dialog mgs:v5.3.0/zombies/admin
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_zombies_game_is_active","fallback":"No zombies game is active.","color":"red"}]

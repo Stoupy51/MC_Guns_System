@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mob/arm
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/mob/setup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mob/setup
 #
 
 data modify storage mgs:temp _arm set value {active_time:60,sleep_time:40,prefix:""}

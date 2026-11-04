@@ -4,6 +4,7 @@
 # @executed	as @e[tag=mgs.armed] & at @s
 #
 # @within	mgs:v5.3.0/tick [ as @e[tag=mgs.armed] & at @s ]
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute unless entity @s[tag=mgs.mob_init] run function mgs:v5.3.0/mob/init

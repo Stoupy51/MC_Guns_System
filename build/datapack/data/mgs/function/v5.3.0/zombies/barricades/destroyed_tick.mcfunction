@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/destroyed_tick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/barricades/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/tick
 #			mgs:v5.3.0/zombies/barricades/destroyed_tick [ positioned ~ ~-1 ~ ]
 #
 

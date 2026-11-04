@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/trigger_coming_out
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/step
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/step
 #
 
 execute as @n[tag=mgs.pap_weapon_display,distance=..2] at @s run tp @s ^ ^ ^0.6

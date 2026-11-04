@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/load/resolve
 #
 # @within	#mgs:resolve
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # If correct version, load the datapack

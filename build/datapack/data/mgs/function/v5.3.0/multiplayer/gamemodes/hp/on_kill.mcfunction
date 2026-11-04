@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/hp/on_kill
 #
-# @within	mgs:v5.3.0/multiplayer/on_kill_signal
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/on_kill_signal
 #
 
 scoreboard players add @s mgs.mp.kills 1

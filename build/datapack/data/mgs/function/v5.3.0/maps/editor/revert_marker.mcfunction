@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/revert_marker
 #
-# @within	mgs:v5.3.0/maps/editor/revert
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/revert
 #
 
 data modify entity @s {} merge from storage mgs:temp _ed_revert

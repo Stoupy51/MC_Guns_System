@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/apply_bar
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/progression/mp/refresh_bar with storage mgs:temp _xp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/mp/refresh_bar with storage mgs:temp _xp
 #			mgs:v5.3.0/progression/zb/refresh_bar with storage mgs:temp _xp
 #
 # @args		points (unknown)

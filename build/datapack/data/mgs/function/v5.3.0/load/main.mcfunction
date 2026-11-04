@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/load/main
 #
 # @within	mgs:v5.3.0/load/resolve
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # Avoiding multiple executions of the same load function

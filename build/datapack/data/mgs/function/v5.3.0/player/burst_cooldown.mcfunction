@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/player/burst_cooldown
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/right_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/right_click
 #
 
 execute if data storage mgs:gun all.stats.fire_modes[0].burst_spacing store result score #cooldown mgs.data run data get storage mgs:gun all.stats.fire_modes[0].burst_spacing

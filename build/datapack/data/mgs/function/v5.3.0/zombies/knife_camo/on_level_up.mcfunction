@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/zombies/knife_camo/on_level_up
 #
 # @within	#mgs:progression/on_level_up
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute unless data storage mgs:signals on_level_up{side:"zb"} run return fail

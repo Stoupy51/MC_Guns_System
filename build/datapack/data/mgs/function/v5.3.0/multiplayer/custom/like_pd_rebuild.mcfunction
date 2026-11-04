@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/custom/like_pd_rebuild
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/custom/like
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/custom/like
 #			mgs:v5.3.0/multiplayer/custom/like_pd_rebuild
 #
 

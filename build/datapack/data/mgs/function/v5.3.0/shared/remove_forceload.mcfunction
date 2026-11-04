@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/remove_forceload
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/stop
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/stop
 #			mgs:v5.3.0/missions/stop
 #
 

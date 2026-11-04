@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/form/wallbuy_apply
 #
-# @within	string in mgs:v5.3.0/maps/editor/form/open/wallbuy {name:\"$(name)\",price:$(price),refill_price:$(refill_price),refill_price_pap:$(refill_price_pap),magazine:\"$(magazine)\",weapon:\"\",own_magazine:\"\"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/form/open/wallbuy {name:\"$(name)\",price:$(price),refill_price:$(refill_price),refill_price_pap:$(refill_price_pap),magazine:\"$(magazine)\",weapon:\"\",own_magazine:\"\"}
 #			string in mgs:v5.3.0/maps/editor/form/open/wallbuy {name:\"$(name)\",price:$(price),refill_price:$(refill_price),refill_price_pap:$(refill_price_pap),magazine:\"$(magazine)\",weapon:\"ak47\",own_magazine:\"ak47_mag\"}
 #			string in mgs:v5.3.0/maps/editor/form/open/wallbuy {name:\"$(name)\",price:$(price),refill_price:$(refill_price),refill_price_pap:$(refill_price_pap),magazine:\"$(magazine)\",weapon:\"m16a4\",own_magazine:\"m16a4_mag\"}
 #			string in mgs:v5.3.0/maps/editor/form/open/wallbuy {name:\"$(name)\",price:$(price),refill_price:$(refill_price),refill_price_pap:$(refill_price_pap),magazine:\"$(magazine)\",weapon:\"famas\",own_magazine:\"famas_mag\"}

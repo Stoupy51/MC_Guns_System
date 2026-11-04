@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/player/stamina_swim_drain
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/stamina_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/stamina_tick
 #
 
 scoreboard players add @s mgs.stam_swim 1

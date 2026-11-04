@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/enforce_slot
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/inventory/check_slots {slot:"hotbar.8",match:"*[custom_data~{mgs:{zb_info:true,zombies:{hotbar:8}}}]",expected_nbt:{mgs:{zb_info:true,zombies:{hotbar:8}}}}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/inventory/check_slots {slot:"hotbar.8",match:"*[custom_data~{mgs:{zb_info:true,zombies:{hotbar:8}}}]",expected_nbt:{mgs:{zb_info:true,zombies:{hotbar:8}}}}
 #			mgs:v5.3.0/zombies/inventory/check_slots {slot:"hotbar.7",match:"*[custom_data~{mgs:{gun:true,zombies:{hotbar:7}}}]",expected_nbt:{mgs:{gun:true,zombies:{hotbar:7}}}}
 #			mgs:v5.3.0/zombies/inventory/check_slots {slot:"hotbar.6",match:"*[custom_data~{mgs:{gun:true,zombies:{hotbar:6}}}]",expected_nbt:{mgs:{gun:true,zombies:{hotbar:6}}}}
 #			mgs:v5.3.0/zombies/inventory/check_slots {slot:"hotbar.2",match:"*[custom_data~{mgs:{gun:true,zombies:{hotbar:2}}}]",expected_nbt:{mgs:{gun:true,zombies:{hotbar:2}}}}

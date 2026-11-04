@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/apply_cosmetics_to_display
 #
-# @executed	as @n[tag=mgs.pap_weapon_display,distance=..2]
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/apply_cosmetics [ as @n[tag=mgs.pap_weapon_display,distance=..2] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/apply_cosmetics [ as @n[tag=mgs.pap_weapon_display,distance=..2] ]
 #
 
 data modify entity @s item.components."minecraft:custom_data".mgs.stats.models set from storage mgs:temp _pap_pending_cosmetics.models

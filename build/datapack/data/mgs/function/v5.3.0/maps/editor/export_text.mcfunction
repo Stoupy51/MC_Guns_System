@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/export_text
 #
-# @within	mgs:v5.3.0/maps/editor/export with storage mgs:temp _export
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/export with storage mgs:temp _export
 #
 # @args		map (unknown)
 #

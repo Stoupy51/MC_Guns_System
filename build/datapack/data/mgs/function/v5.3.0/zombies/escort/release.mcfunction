@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/escort/release
 #
-# @executed	as @e[tag=mgs.zb_escorted] & at @s
-#
-# @within	mgs:v5.3.0/zombies/escort/zombie_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/escort/zombie_tick
 #			mgs:v5.3.0/zombies/escort/walk_ride
 #
 

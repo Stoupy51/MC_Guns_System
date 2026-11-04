@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/rise_fast
 #
-# @executed	as @e[tag=...] & at @s
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/move_anim_ascend_step [ as @e[tag=...] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/move_anim_ascend_step [ as @e[tag=...] & at @s ]
 #			mgs:v5.3.0/zombies/mystery_box/move_anim_ascend_step [ as @e[tag=mgs.mb_bear] & at @s ]
 #
 

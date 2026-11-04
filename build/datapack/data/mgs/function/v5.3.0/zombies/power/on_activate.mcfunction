@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/power/on_activate
 #
-# @executed	as @e[tag=_pw_new]
-#
-# @within	mgs:v5.3.0/zombies/power/place_at {run:"function mgs:v5.3.0/zombies/power/on_activate",executor:"source"} [ as @e[tag=_pw_new] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/power/place_at {run:"function mgs:v5.3.0/zombies/power/on_activate",executor:"source"} [ as @e[tag=_pw_new] ]
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return fail

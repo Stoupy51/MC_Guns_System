@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/orphan_check
 #
-# @executed	as @e[type=minecraft:mannequin,tag=mgs.downed_mannequin]
-#
-# @within	mgs:v5.3.0/zombies/revive/tick [ as @e[type=minecraft:mannequin,tag=mgs.downed_mannequin] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/tick [ as @e[type=minecraft:mannequin,tag=mgs.downed_mannequin] ]
 #
 
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id

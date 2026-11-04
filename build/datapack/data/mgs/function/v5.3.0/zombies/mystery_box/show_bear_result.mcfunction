@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/show_bear_result
 #
-# @executed	as @e[tag=...] & at @s
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/show_result_one
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/show_result_one
 #
 
 function mgs:v5.3.0/zombies/mystery_box/close_lid

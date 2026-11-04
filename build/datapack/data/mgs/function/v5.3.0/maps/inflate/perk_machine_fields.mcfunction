@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/inflate/perk_machine_fields
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/maps/inflate/perk_machine
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/inflate/perk_machine
 #
 
 function mgs:v5.3.0/maps/inflate/rotation

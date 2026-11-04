@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/delete_confirm
 #
-# @within	string in mgs:v5.3.0/maps/editor/menu_entry_display {idx:$(idx),mode:$(mode)}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/menu_entry_display {idx:$(idx),mode:$(mode)}
 #
 # @args		mode (unknown)
 #			idx (unknown)

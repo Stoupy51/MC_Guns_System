@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/xp/spend_delta
 #
-# @executed	as @a[scores={mgs.zb.in_game=1}]
-#
-# @within	mgs:v5.3.0/zombies/xp/track_points
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/xp/track_points
 #
 
 scoreboard players operation #xp_spent mgs.data = @s mgs.zb.xp_pts_prev

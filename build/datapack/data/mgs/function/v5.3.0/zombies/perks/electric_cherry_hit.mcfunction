@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/electric_cherry_hit
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/perks/electric_cherry_damage {scale:"$(scale)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/electric_cherry_damage {scale:"$(scale)"}
 #
 # @args		scale (string)
 #

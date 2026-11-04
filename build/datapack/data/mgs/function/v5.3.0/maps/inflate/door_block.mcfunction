@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/inflate/door_block
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/maps/inflate/door
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/inflate/door
 #			mgs:v5.3.0/maps/inflate/door_block
 #
 

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/summon_disabled_display
 #
-# @executed	as @e[tag=...] & at @s
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/refresh_disabled [ as @e[tag=...] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/refresh_disabled [ as @e[tag=...] & at @s ]
 #
 
 execute if entity @n[tag=mgs.mb_display,distance=..3] run return 0

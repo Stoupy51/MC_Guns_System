@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/lobby/teleport
 #
-# @executed	as @a[scores={mgs.mp.in_game=1}]
-#
-# @within	mgs:v5.3.0/lobby/return with storage mgs:config lobby
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/lobby/return with storage mgs:config lobby
 #
 # @args		dimension (unknown)
 #			x (unknown)

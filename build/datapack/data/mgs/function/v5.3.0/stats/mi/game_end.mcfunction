@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/stats/mi/game_end
 #
-# @within	mgs:v5.3.0/stats/mi/on_mission_end
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/mi/on_mission_end
 #
 
 data modify storage mgs:temp _st_roster set from storage mgs:stats rosters.mi

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/spawn_type
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/powerups/spawn_display {x:$(x),y:$(y),z:$(z),uid:$(uid),item:"minecraft:amethyst_shard",type_num:1,label:'{"translate":"mgs.max_ammo","fallback":"Max Ammo","color":"aqua","bold":true}'}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/spawn_display {x:$(x),y:$(y),z:$(z),uid:$(uid),item:"minecraft:amethyst_shard",type_num:1,label:'{"translate":"mgs.max_ammo","fallback":"Max Ammo","color":"aqua","bold":true}'}
 #			mgs:v5.3.0/zombies/powerups/spawn_display {x:$(x),y:$(y),z:$(z),uid:$(uid),item:"minecraft:fermented_spider_eye",type_num:2,label:'{"translate":"mgs.insta_kill","fallback":"Insta Kill","color":"red","bold":true}'}
 #			mgs:v5.3.0/zombies/powerups/spawn_display {x:$(x),y:$(y),z:$(z),uid:$(uid),item:"minecraft:gold_ingot",type_num:3,label:'{"translate":"mgs.double_points","fallback":"Double Points","color":"yellow","bold":true}'}
 #			mgs:v5.3.0/zombies/powerups/spawn_display {x:$(x),y:$(y),z:$(z),uid:$(uid),item:"minecraft:oak_log",type_num:4,label:'{"translate":"mgs.carpenter","fallback":"Carpenter","color":"gold","bold":true}'}

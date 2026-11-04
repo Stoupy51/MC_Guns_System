@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/stick_to_entity
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/on_stick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/on_stick
 #
 
 scoreboard players add #semtex_id mgs.data 1

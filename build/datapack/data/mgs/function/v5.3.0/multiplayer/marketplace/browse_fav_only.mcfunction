@@ -1,12 +1,11 @@
 
 #> mgs:v5.3.0/multiplayer/marketplace/browse_fav_only
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/process
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/process
 #
 
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.marketplace",fallback:"Marketplace",color:"light_purple",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:emerald"},description:{contents:{translate:"mgs.browse_public_loadouts_from_all_players",fallback:"Browse public loadouts from all players",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.marketplace",fallback:"Marketplace",color:"light_purple",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:emerald"},description:{contents:{translate:"mgs.browse_public_loadouts_from_all_players",fallback:"Browse public loadouts from all players",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,pause:false,after_action:"none",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
 data modify storage mgs:temp dialog.title set value [{text:"",color:"light_purple",bold:true},{translate:"mgs.marketplace",fallback:"Marketplace"}," — ",{translate:"mgs.favorites",fallback:"Favorites"}]
 
 data modify storage mgs:temp dialog.actions append value {label:["","📋 ",{translate:"mgs.all",fallback:"All",color:"white",bold:true}],tooltip:{translate:"mgs.show_all_public_loadouts_your_favorites_first",fallback:"Show all public loadouts (your favorites first)"},action:{type:"run_command",command:"/trigger mgs.player.config set 1600"}}

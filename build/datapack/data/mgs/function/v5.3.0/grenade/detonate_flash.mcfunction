@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/detonate_flash
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/detonate
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/detonate
 #
 
 playsound minecraft:entity.firework_rocket.blast player @a[distance=..32] ~ ~ ~ 2 2

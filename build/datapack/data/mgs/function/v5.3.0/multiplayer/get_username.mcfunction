@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/get_username
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/save [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/save [ at @s ]
 #
 
 # Run as the item_display, at the player.

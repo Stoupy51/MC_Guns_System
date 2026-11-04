@@ -1,14 +1,13 @@
 
 #> mgs:v5.3.0/zombies/knife_camo/menu
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/process
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/process
 #			mgs:v5.3.0/zombies/knife_camo/pick
 #
 
 execute unless score @s mgs.zb.knife_camo matches 0.. run scoreboard players set @s mgs.zb.knife_camo 0
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:["","🔪 ",{translate:"mgs.zombies_knife_camo",fallback:"Zombies Knife Camo",color:"gold",bold:true}],body:[{type:"minecraft:plain_message",contents:{translate:"mgs.camos_unlock_with_your_zombies_level",fallback:"Camos unlock with your Zombies level","color":"gray"}}],actions:[],columns:1,after_action:"close",exit_action:{label:{translate:"gui.done"}}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:["","🔪 ",{translate:"mgs.zombies_knife_camo",fallback:"Zombies Knife Camo",color:"gold",bold:true}],body:[{type:"minecraft:plain_message",contents:{translate:"mgs.camos_unlock_with_your_zombies_level",fallback:"Camos unlock with your Zombies level","color":"gray"}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{"label": {"translate": "gui.done"}, "action": {"type": "run_command", "command": "/trigger mgs.player.config set 1640"}}}
 execute if score @s mgs.zb.knife_camo matches 0 run data modify storage mgs:temp dialog.actions append value {label:["","✔ ",{translate:"mgs.default",fallback:"Default",color:"green",bold:true}],action:{type:"run_command",command:"/trigger mgs.player.config set 1621"}}
 execute unless score @s mgs.zb.knife_camo matches 0 if score @s mgs.zb.xp_level matches 1.. run data modify storage mgs:temp dialog.actions append value {label:{translate:"mgs.default",fallback:"Default",color:"yellow"},tooltip:[{translate:"mgs.unlocked_at_zombies_level",fallback:"Unlocked at Zombies level"}, " 1"],action:{type:"run_command",command:"/trigger mgs.player.config set 1621"}}
 execute unless score @s mgs.zb.xp_level matches 1.. run data modify storage mgs:temp dialog.actions append value {label:["",{translate:"mgs.default",fallback:"Default",color:"dark_gray"},[{text:" ",color:"dark_gray"}, {translate:"mgs.level_1",fallback:"(level 1)"}]],tooltip:{translate:"mgs.reach_zombies_level_1_to_unlock_it",fallback:"Reach Zombies level 1 to unlock it"},action:{type:"run_command",command:"/trigger mgs.player.config set 1620"}}

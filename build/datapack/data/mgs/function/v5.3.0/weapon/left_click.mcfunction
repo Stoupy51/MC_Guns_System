@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/weapon/left_click
 #
-# @within	enchantment mgs:left_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			enchantment mgs:left_click
 #
 
 # A left click can land on the frame the weapon changes, so the main hand is checked again.

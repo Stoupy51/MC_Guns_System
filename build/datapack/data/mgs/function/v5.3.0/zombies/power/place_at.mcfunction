@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/power/place_at
 #
-# @within	mgs:v5.3.0/zombies/power/setup_iter with storage mgs:temp _pw
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/power/setup_iter with storage mgs:temp _pw
 #
 # @args		x (unknown)
 #			y (unknown)

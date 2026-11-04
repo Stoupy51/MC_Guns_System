@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/marketplace/sort_build_list
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/marketplace/browse_likes
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/marketplace/browse_likes
 #			mgs:v5.3.0/multiplayer/marketplace/sort_build_list
 #
 

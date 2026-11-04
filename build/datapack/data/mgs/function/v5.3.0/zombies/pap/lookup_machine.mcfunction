@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/lookup_machine
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/on_hover with storage mgs:temp _pap_hover
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/on_hover with storage mgs:temp _pap_hover
 #			mgs:v5.3.0/zombies/pap/on_right_click with storage mgs:temp _pap_hover
 #
 # @args		id (unknown)

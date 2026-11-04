@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/share_at_box
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/on_left_click [ at @n[tag=bs.interaction.target] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/on_left_click [ at @n[tag=bs.interaction.target] ]
 #
 
 # A spinning pull has no weapon yet.

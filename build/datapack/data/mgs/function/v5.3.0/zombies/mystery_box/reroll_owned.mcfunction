@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/reroll_owned
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/reroll_owned
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/reroll_owned
 #			mgs:v5.3.0/zombies/mystery_box/pick_for_buyer
 #
 

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/monkey/on_throw
 #
-# @executed	anchored eyes & positioned ^ ^ ^0.5
-#
-# @within	mgs:v5.3.0/grenade/init
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/init
 #
 
 # Read by the attraction hook (grenade/tick) and by cleanup.

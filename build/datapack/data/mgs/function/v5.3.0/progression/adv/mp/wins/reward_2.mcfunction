@@ -4,6 +4,7 @@
 # @executed	as the player & at current position
 #
 # @within	advancement mgs:challenges/mp/wins_2
+#			mgs:v5.3.0/dialog/close_then
 #
 
 function mgs:v5.3.0/progression/adv/reward_mp {title:'{"translate":"mgs.winning_habit","fallback":"Winning Habit","color":"yellow"}',description:'{"translate":"mgs.win_3_matches","fallback":"Win 3 matches","color":"gray"}',xp:20,branch:"mp",chain:"wins",tier:2}

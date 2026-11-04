@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/special_death
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/on_zombie_dying
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/on_zombie_dying
 #
 
 tag @s remove mgs.zombie_round

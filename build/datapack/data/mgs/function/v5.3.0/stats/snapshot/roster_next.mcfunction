@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/stats/snapshot/roster_next
 #
-# @within	mgs:v5.3.0/stats/zb/game_end {mode:"zb"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/zb/game_end {mode:"zb"}
 #			mgs:v5.3.0/stats/mp/game_end {mode:"mp"}
 #			mgs:v5.3.0/stats/mi/game_end {mode:"mi"}
 #			mgs:v5.3.0/stats/snapshot/roster_next {mode:"$(mode)"}

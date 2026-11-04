@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/ffa/setup
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/start
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/start
 #
 
 # Only red and blue leave: players stay on mgs.ffa, which hides nametags and enables friendly fire.

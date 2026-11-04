@@ -4,6 +4,7 @@
 # @executed	as @a
 #
 # @within	mgs:v5.3.0/tick [ as @a ]
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute if score @s mgs.mi.in_game matches 1 if data storage mgs:missions game{state:"active"} run function mgs:v5.3.0/stats/mi/second

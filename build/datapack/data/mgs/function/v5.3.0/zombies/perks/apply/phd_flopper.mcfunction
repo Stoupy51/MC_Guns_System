@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/apply/phd_flopper
 #
-# @executed	as @p[tag=mgs.pu_collecting]
-#
-# @within	mgs:v5.3.0/zombies/perks/apply
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/apply
 #
 
 attribute @s minecraft:fall_damage_multiplier base set 0

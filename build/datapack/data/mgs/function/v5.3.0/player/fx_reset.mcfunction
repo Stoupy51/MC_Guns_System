@@ -4,6 +4,7 @@
 # @executed	as @a
 #
 # @within	mgs:v5.3.0/load/confirm_load [ as @a ]
+#			mgs:v5.3.0/dialog/close_then
 #			mgs:v5.3.0/player/fx_after_death
 #			mgs:v5.3.0/player/fx_after_rejoin
 #			mgs:v5.3.0/zombies/start [ as @a[scores={mgs.zb.in_game=1}] ]

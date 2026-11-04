@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/refresh_marker
 #
-# @within	mgs:v5.3.0/maps/editor/sync_marker
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/sync_marker
 #
 
 execute if data entity @s data.yaw run data modify entity @s Rotation[0] set from entity @s data.yaw

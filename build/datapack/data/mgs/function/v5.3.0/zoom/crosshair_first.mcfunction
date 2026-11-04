@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zoom/crosshair_first
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zoom/crosshair_apply
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zoom/crosshair_apply
 #
 
 # @s = a player who has no crosshair id yet, so the ramp starts and ends on the same level

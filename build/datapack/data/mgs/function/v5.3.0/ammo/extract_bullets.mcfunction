@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/ammo/extract_bullets
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/ammo/inventory/process_slot {slot:"$(slot)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/ammo/inventory/process_slot {slot:"$(slot)"}
 #
 # @args		slot (string)
 #

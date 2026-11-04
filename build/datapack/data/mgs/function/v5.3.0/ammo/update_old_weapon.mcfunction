@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/ammo/update_old_weapon
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/switch/on_weapon_switch
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/switch/on_weapon_switch
 #
 
 execute store result storage mgs:temp remaining_bullets int 1 run scoreboard players get @s mgs.remaining_bullets

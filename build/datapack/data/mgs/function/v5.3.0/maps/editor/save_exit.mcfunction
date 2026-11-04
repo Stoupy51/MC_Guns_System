@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/save_exit
 #
-# @executed	as @p[tag=mgs.map_editor,distance=..6,sort=nearest]
-#
-# @within	string in mgs:v5.3.0/maps/editor/enter
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/enter
 #			mgs:v5.3.0/maps/editor/process_element [ as @p[tag=mgs.map_editor,distance=..6,sort=nearest] ]
 #
 

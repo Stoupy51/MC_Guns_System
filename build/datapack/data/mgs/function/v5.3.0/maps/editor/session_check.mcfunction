@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/session_check
 #
-# @executed	as @e[type=minecraft:marker,tag=mgs.map_element]
-#
-# @within	mgs:v5.3.0/maps/editor/do_save [ as @e[type=minecraft:marker,tag=mgs.map_element] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/do_save [ as @e[type=minecraft:marker,tag=mgs.map_element] ]
 #			mgs:v5.3.0/maps/editor/sweep [ as @e[type=minecraft:marker,tag=mgs.map_element] ]
 #			mgs:v5.3.0/maps/editor/sweep [ as @e[type=minecraft:item_display,tag=mgs.editor_display] ]
 #			mgs:v5.3.0/maps/editor/sweep [ as @e[type=minecraft:block_display,tag=mgs.editor_display] ]

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/award_game_over
 #
-# @executed	as @a[scores={mgs.zb.in_game=1}]
-#
-# @within	mgs:v5.3.0/zombies/xp/on_game_over [ as @a[scores={mgs.zb.in_game=1}] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/xp/on_game_over [ as @a[scores={mgs.zb.in_game=1}] ]
 #
 
 # GAME_OVER_XP x the final round

@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/zombies/suspend
 #
 # @within	mgs:v5.3.0/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 scoreboard players set #zb_freeze mgs.data 2

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/drops/mag_lookup
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/shared/drops/drop
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/drops/drop
 #
 
 execute if data storage mgs:temp _dropmag_args{bw:"ak47"} run data modify storage mgs:temp _dropmag_args merge value {mag:"ak47_mag",halfc:1}

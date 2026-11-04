@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/rescue_tp
 #
-# @executed	at @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/zombies/on_stuck_zombie [ at @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/on_stuck_zombie [ at @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] ]
 #			mgs:v5.3.0/zombies/on_stuck_zombie
 #
 

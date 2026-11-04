@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/build_sidebar_ffa
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/refresh_sidebar_ffa with storage mgs:temp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/refresh_sidebar_ffa with storage mgs:temp
 #
 # @args		ffa_sb (unknown)
 #

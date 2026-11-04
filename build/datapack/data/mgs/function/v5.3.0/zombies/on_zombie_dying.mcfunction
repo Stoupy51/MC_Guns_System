@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/on_zombie_dying
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/death_watch_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/death_watch_tick [ at @s ]
 #
 
 execute if entity @s[tag=mgs.zb_escorted] at @s run function mgs:v5.3.0/zombies/escort/on_escorted_killed

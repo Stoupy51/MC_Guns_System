@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/refresh_sidebar_ffa
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/start
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/start
 #			mgs:v5.3.0/multiplayer/timer_display
 #			mgs:v5.3.0/multiplayer/gamemodes/ffa/on_kill
 #

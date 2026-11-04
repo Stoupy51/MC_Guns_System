@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/setup_positions
 #
-# @within	mgs:v5.3.0/zombies/preload_complete
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/preload_complete
 #
 
 scoreboard players set #mb_box_counter mgs.data 0

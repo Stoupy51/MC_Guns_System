@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zoom/crosshair_to_back
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/apply_flash
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/apply_flash
 #			mgs:v5.3.0/player/apply_pap_flash
 #
 

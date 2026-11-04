@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/level_up
 #
-# @within	mgs:v5.3.0/progression/mp/level_check
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/mp/level_check
 #
 
 scoreboard players operation @s mgs.mp.xp_prog -= #xp_req mgs.data

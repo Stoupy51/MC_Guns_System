@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/move_anim_descend_step
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/move_anim_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/move_anim_tick
 #
 
 execute if score #mb_move_timer mgs.data matches 35..69 as @e[tag=mgs.mb_presence,tag=!mgs.mb_temp] at @s run function mgs:v5.3.0/zombies/mystery_box/sink_fast

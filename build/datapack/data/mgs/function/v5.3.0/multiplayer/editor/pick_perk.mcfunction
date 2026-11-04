@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/pick_perk
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/process
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/process
 #
 
 execute if score @s mgs.player.config matches 410 run data modify storage mgs:temp _toggle_perk set value "quick_reload"

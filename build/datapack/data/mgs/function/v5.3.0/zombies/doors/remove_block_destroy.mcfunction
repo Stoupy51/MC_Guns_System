@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/doors/remove_block_destroy
 #
-# @executed	as @e[tag=mgs.door] & at @s
-#
-# @within	mgs:v5.3.0/zombies/doors/open_one with storage mgs:temp _door_open
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/doors/open_one with storage mgs:temp _door_open
 #
 # @args		rot (unknown)
 #			offset (unknown)

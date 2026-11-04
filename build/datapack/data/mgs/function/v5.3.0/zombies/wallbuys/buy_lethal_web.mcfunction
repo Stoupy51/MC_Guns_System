@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/buy_lethal_web
 #
-# @executed	as @n[tag=mgs.wb_new]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/buy_lethal with storage mgs:temp _wb_weapon
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/buy_lethal with storage mgs:temp _wb_weapon
 #
 
 execute if items entity @s hotbar.7 *[custom_data~{mgs:{stats:{grenade_type:"web"}}}] run return run function mgs:v5.3.0/zombies/wallbuys/refill_lethal with storage mgs:temp _wb_weapon

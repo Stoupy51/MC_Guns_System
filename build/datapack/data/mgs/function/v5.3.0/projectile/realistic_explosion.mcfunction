@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/projectile/realistic_explosion
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/projectile/explode
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/projectile/explode
 #
 
 scoreboard players operation #explosion_power realistic_explosion.data = #projectile_explosion_power mgs.config

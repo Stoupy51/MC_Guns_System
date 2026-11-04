@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/custom/like_modify_entry
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/custom/like_pd_rebuild
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/custom/like_pd_rebuild
 #
 
 data modify storage mgs:temp _liked_iter set from storage mgs:temp _pd_src[0].liked

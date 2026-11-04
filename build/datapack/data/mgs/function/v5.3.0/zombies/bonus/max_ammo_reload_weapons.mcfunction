@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/bonus/max_ammo_reload_weapons
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:zombies/bonus/max_ammo
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:zombies/bonus/max_ammo
 #
 
 execute if items entity @s hotbar.0 *[custom_data~{mgs:{gun:true}}] run function mgs:v5.3.0/zombies/bonus/reload_weapon_slot {slot:"hotbar.0"}

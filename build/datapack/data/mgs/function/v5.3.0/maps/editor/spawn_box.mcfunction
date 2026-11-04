@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/spawn_box
 #
-# @within	mgs:v5.3.0/maps/editor/spawn_shapes
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/spawn_shapes
 #
 
 tag @s add mgs.ed_box

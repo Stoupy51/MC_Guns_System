@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/sync_marker
 #
-# @within	mgs:v5.3.0/maps/editor/revert_marker
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/revert_marker
 #			mgs:v5.3.0/maps/editor/global_tick [ as @e[type=minecraft:marker,tag=mgs.map_element] ]
 #
 

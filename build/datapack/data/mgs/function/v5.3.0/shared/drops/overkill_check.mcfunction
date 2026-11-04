@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/drops/overkill_check
 #
-# @executed	at @e[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/shared/drops/collect
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/drops/collect
 #
 
 # Only primary drops are restricted.

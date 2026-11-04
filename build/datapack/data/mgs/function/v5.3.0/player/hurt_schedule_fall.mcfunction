@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/player/hurt_schedule_fall
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/hurt_swap
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/hurt_swap
 #
 
 scoreboard players set @s mgs.hurt_fall_until 40

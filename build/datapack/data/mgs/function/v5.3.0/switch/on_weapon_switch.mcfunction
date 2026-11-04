@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/switch/on_weapon_switch
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/switch/main
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/switch/main
 #
 
 # Deferred reload: no ammo was consumed yet.

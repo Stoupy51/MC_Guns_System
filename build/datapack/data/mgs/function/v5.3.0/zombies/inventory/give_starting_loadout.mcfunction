@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/give_starting_loadout
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/preload_complete [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/preload_complete [ at @s ]
 #			mgs:v5.3.0/zombies/join_game
 #			mgs:v5.3.0/zombies/inventory/give_respawn_loadout
 #

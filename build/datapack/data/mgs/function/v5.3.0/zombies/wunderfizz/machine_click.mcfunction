@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wunderfizz/machine_click
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/wunderfizz/on_right_click [ at @n[tag=bs.interaction.target] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wunderfizz/on_right_click [ at @n[tag=bs.interaction.target] ]
 #
 
 execute if entity @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3,scores={mgs.zb.wf.anim=1..}] run return run function mgs:v5.3.0/zombies/deny/message {msg:'{"translate":"mgs.der_wunderfizz_is_already_spinning","fallback":"Der Wunderfizz is already spinning.","color":"red"}'}

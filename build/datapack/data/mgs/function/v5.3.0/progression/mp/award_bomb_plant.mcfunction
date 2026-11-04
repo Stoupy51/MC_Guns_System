@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/award_bomb_plant
 #
-# @executed	as @a[tag=mgs.snd_carrier,limit=1] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/bomb_planted
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/bomb_planted
 #			mgs:v5.3.0/multiplayer/gamemodes/demo/site_planted [ as @a[tag=mgs.xp_earner] ]
 #
 

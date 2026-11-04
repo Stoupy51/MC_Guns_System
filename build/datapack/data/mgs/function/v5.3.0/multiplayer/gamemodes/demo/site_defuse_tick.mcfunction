@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/site_defuse_tick
 #
-# @executed	as @e[tag=mgs.demo_obj,scores={mgs.demo_state=1}] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/demo/tick [ as @e[tag=mgs.demo_obj,scores={mgs.demo_state=1}] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/demo/tick [ as @e[tag=mgs.demo_obj,scores={mgs.demo_state=1}] & at @s ]
 #
 
 scoreboard players set #demo_ch mgs.data 0

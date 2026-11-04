@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/admin/players
 #
-# @executed	as the player & at current position
-#
-# @within	string in mgs:v5.3.0/stats/menu/players_prev_reset {page:$(page)}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/stats/menu/players_prev_reset {page:$(page)}
 #			string in mgs:v5.3.0/stats/menu/players_more_reset {page:$(page)}
 #			dialog mgs:v5.3.0/config
 #

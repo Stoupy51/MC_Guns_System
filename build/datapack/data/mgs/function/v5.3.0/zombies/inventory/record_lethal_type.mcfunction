@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/record_lethal_type
 #
-# @executed	as @n[tag=mgs.wb_new]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/buy_lethal
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/buy_lethal
 #
 
 scoreboard players set @s mgs.zb.lethal_type 0

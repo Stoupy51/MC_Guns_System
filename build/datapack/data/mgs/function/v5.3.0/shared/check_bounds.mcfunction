@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/check_bounds
 #
-# @executed	as @e[tag=mgs.zombie_round] & at @s
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ as @e[tag=mgs.zombie_round] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ as @e[tag=mgs.zombie_round] & at @s ]
 #			mgs:v5.3.0/missions/game_tick [ as @e[tag=mgs.mission_enemy] & at @s ]
 #			mgs:v5.3.0/missions/game_tick [ at @s ]
 #

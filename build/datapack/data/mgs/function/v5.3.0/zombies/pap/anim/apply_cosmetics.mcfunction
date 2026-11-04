@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/apply_cosmetics
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/step
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/step
 #
 
 execute store result storage mgs:temp _pap_cosm_fetch.id int 1 run scoreboard players get @s mgs.zb.pap.id

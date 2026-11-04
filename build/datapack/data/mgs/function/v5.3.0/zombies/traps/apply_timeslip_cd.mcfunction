@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/traps/apply_timeslip_cd
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/traps/active_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/traps/active_tick
 #
 
 scoreboard players set #ts_num mgs.data 3

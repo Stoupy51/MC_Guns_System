@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/escort/end_at_trader
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ at @s ]
 #			mgs:v5.3.0/zombies/barricades/freeze_zombies
 #
 

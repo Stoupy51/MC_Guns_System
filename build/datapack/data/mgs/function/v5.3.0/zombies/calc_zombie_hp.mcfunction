@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/calc_zombie_hp
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/mob/setup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mob/setup
 #
 
 execute if score #zb_round mgs.data matches ..9 run scoreboard players operation #zb_hp mgs.data = #zb_round mgs.data

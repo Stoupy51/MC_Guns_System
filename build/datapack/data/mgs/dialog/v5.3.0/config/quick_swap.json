@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.quick_swap","fallback": "Quick Swap",
@@ -15,8 +17,6 @@
 		{"label": {"text": "80%","color": "green"},"tooltip": [{"translate": "mgs.set_quick_swap_to","fallback": "Set quick swap to"}, " 80%"],"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.quick_swap 80"}}
 	],
 	"columns": 1,
-	"pause": false,
-	"after_action": "none",
 	"exit_action": {
 		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
 		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},

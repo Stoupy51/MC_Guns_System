@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/stats/mi/player_end
 #
-# @within	mgs:v5.3.0/stats/snapshot/roster_next with storage mgs:temp _st_one
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/snapshot/roster_next with storage mgs:temp _st_one
 #
 
 function mgs:v5.3.0/stats/board/levels with storage mgs:temp _st_one

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/ammo/found_mag_lore_line
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/ammo/search_mag_lore_loop with storage mgs:input with
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/ammo/search_mag_lore_loop with storage mgs:input with
 #
 # @args		slot (unknown)
 #			index (unknown)

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/casing/main
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/right_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/right_click
 #			mgs:v5.3.0/sound/check/pump
 #
 

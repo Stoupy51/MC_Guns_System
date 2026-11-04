@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/append_mag_consumable_macro
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/append_mag_consumable with storage mgs:temp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/append_mag_consumable with storage mgs:temp
 #
 # @args		_inv_n (unknown)
 #			_mag_id (unknown)

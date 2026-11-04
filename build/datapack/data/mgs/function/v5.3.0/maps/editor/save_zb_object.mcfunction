@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/save_zb_object
 #
-# @executed	as @e[tag=mgs.element.player_spawn_zb] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"player_spawn_zb"} [ as @e[tag=mgs.element.player_spawn_zb] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"player_spawn_zb"} [ as @e[tag=mgs.element.player_spawn_zb] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"zombie_spawn"} [ as @e[tag=mgs.element.zombie_spawn] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"wallbuy"} [ as @e[tag=mgs.element.wallbuy] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {etype:"door"} [ as @e[tag=mgs.element.door] & at @s ]

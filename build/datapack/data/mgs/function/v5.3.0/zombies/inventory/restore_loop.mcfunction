@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/restore_loop
 #
-# @executed	as @a[distance=..2,gamemode=!spectator,scores={mgs.zb.in_game=1,mgs.zb.downed=0}]
-#
-# @within	mgs:v5.3.0/zombies/inventory/restore_inventory
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/inventory/restore_inventory
 #			mgs:v5.3.0/zombies/inventory/restore_loop
 #
 

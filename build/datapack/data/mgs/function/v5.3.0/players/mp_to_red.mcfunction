@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/players/mp_to_red
 #
-# @within	string in mgs:v5.3.0/players/row_multiplayer
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/players/row_multiplayer
 #
 
 execute if score @s mgs.mi.in_game matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.leave_your_current_game_first","fallback":"Leave your current game first!","color":"red"}]

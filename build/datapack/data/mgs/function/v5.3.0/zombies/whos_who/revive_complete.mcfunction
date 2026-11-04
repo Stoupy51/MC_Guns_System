@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/whos_who/revive_complete
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/whos_who/owner_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/whos_who/owner_tick
 #
 
 execute if score @s mgs.zb.wwp.juggernog matches 1 run scoreboard players set @s mgs.zb.perk.juggernog 1

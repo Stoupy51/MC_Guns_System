@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/update_insta_kill_bb
 #
-# @within	mgs:v5.3.0/zombies/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick
 #
 
 # Longest remaining duration across the players who have it.

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/pick_list_value_advance
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/pick_list_value_step
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/pick_list_value_step
 #
 
 data remove storage mgs:temp _pap_pick.list[0]

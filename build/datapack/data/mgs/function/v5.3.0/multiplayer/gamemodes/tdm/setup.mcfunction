@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/tdm/setup
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/start
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/start
 #
 
 # Players with no team are assigned one, so team scores can rise.

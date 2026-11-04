@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.time_limit","fallback": "Time Limit",
@@ -16,8 +18,6 @@
 		{"label": {"text": "∞","color": "yellow"},"tooltip": [{"translate": "mgs.set_time_limit_to","fallback": "Set time limit to"}, " ∞"],"action": {"type": "run_command","command": "/data modify storage mgs:multiplayer game.time_limit set value 72000"}}
 	],
 	"columns": 1,
-	"pause": false,
-	"after_action": "none",
 	"exit_action": {
 		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
 		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},

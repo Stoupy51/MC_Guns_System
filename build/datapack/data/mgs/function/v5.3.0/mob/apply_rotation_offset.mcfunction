@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/mob/apply_rotation_offset
 #
-# @executed	anchored eyes & facing entity @e[tag=mgs.target,limit=1] feet
-#
-# @within	mgs:v5.3.0/mob/apply_inaccuracy with storage mgs:temp _rot
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/mob/apply_inaccuracy with storage mgs:temp _rot
 #
 # @args		yaw (unknown)
 #			pitch (unknown)

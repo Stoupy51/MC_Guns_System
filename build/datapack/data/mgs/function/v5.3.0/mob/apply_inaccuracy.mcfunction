@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/mob/apply_inaccuracy
 #
-# @executed	anchored eyes & facing entity @e[tag=mgs.target,limit=1] feet
-#
-# @within	mgs:v5.3.0/mob/fire_weapon
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/mob/fire_weapon
 #
 
 # -20 to +20 degrees (-200..200 at 0.1).

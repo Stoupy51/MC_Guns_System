@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/player/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute if score @s mgs.mp.in_game matches 1 if data storage mgs:multiplayer game{state:"preparing"} run return run scoreboard players set @s mgs.pending_clicks 0

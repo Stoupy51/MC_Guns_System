@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/team_wins
 #
-# @within	mgs:v5.3.0/multiplayer/check_team_win {team:"Red"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/check_team_win {team:"Red"}
 #			mgs:v5.3.0/multiplayer/check_team_win {team:"Blue"}
 #			mgs:v5.3.0/multiplayer/time_up {team:"Red"}
 #			mgs:v5.3.0/multiplayer/time_up {team:"Blue"}

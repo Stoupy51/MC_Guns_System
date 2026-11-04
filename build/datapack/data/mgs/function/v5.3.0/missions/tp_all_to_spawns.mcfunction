@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/missions/tp_all_to_spawns
 #
-# @within	mgs:v5.3.0/missions/preload_complete
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/preload_complete
 #
 
 # Every player in this game onto a spawn marker, then the markers are freed.

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/set_secondary_full
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/pick_secondary_camo with storage mgs:temp editor
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/pick_secondary_camo with storage mgs:temp editor
 #
 # @args		secondary (unknown)
 #			secondary_scope (unknown)

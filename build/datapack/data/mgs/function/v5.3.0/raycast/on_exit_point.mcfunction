@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/raycast/on_exit_point
 #
-# @within	string in mgs:v5.3.0/raycast/main
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/raycast/main
 #
 
 execute if score #is_entity_hit mgs.data matches 1 as @e[tag=mgs.raycast_target] run function mgs:v5.3.0/raycast/headshot_and_damage

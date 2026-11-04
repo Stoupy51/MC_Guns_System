@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/deny/message
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_theater_click {msg:'{"translate":"mgs.the_teleporter_is_recharging","fallback":"The teleporter is recharging...","color":"yellow"}'} [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_theater_click {msg:'{"translate":"mgs.the_teleporter_is_recharging","fallback":"The teleporter is recharging...","color":"yellow"}'} [ at @s ]
 #			mgs:v5.3.0/zombies/mystery_box/on_right_click {msg:'{"translate":"mgs.the_mystery_box_is_moving","fallback":"The Mystery Box is moving...","color":"yellow"}'}
 #			mgs:v5.3.0/zombies/mystery_box/share_at_box {msg:'{"translate":"mgs.wait_for_the_current_player_to_collect_their_result","fallback":"Wait for the current player to collect their result.","color":"red"}'}
 #			mgs:v5.3.0/zombies/mystery_box/box_click {msg:'{"translate":"mgs.mystery_box_is_already_in_use","fallback":"Mystery Box is already in use.","color":"red"}'}

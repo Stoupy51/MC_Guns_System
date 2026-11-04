@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/site_plant_tick
 #
-# @executed	as @e[tag=mgs.demo_obj,scores={mgs.demo_state=0}] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/demo/tick [ as @e[tag=mgs.demo_obj,scores={mgs.demo_state=0}] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/demo/tick [ as @e[tag=mgs.demo_obj,scores={mgs.demo_state=0}] & at @s ]
 #
 
 execute store result score #demo_ch mgs.data if entity @a[tag=mgs.demo_atk,predicate=mgs:v5.3.0/is_sneaking,gamemode=!spectator,distance=..3.0]

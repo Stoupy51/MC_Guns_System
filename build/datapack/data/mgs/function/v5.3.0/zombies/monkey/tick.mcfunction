@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/monkey/tick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/tick [ at @s ]
 #
 
 # Outside a zombies game the monkey is a long-fuse frag.

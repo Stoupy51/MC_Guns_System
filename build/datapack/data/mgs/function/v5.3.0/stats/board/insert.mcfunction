@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/insert
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/stats/board/levels with storage mgs:temp _lb
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/levels with storage mgs:temp _lb
 #			mgs:v5.3.0/stats/board/zb_round with storage mgs:temp _lb
 #			mgs:v5.3.0/stats/board/zb_round_bucket with storage mgs:temp _lb
 #			mgs:v5.3.0/stats/board/mi_time with storage mgs:temp _lb

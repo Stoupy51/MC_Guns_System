@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/custom/fav_append_new
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/custom/fav_modify_entry
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/custom/fav_modify_entry
 #
 
 data modify storage mgs:temp _new_fav set value {id:0}

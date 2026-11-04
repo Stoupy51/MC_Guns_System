@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/catch_up
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/progression/tick_player
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/tick_player
 #
 
 scoreboard players set @s mgs.adv.caught 1

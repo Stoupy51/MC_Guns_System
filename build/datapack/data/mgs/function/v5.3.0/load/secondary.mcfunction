@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/load/secondary
 #
 # @within	mgs:v5.3.0/load/main
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # MC Guns System

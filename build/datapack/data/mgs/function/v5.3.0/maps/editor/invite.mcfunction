@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/invite
 #
-# @within	string in mgs:v5.3.0/maps/editor/enter
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/enter
 #
 
 execute unless score @s mgs.mp.map_edit matches 1 run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.you_must_be_in_map_editor_to_invite_players","fallback":"You must be in map editor to invite players.","color":"red"}]

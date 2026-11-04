@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zoom/crosshair_add
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zoom/crosshair_first with storage mgs:input crosshair
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zoom/crosshair_first with storage mgs:input crosshair
 #			mgs:v5.3.0/zoom/crosshair_to_back with storage mgs:input crosshair
 #
 # @args		from (int)

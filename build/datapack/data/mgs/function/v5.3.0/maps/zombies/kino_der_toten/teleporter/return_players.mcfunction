@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/return_players
 #
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/tick
 #
 
 execute as @a[tag=mgs.kino.in_tp] run function mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/return_one

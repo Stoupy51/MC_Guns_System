@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/build_sidebar
 #
-# @within	mgs:v5.3.0/zombies/refresh_sidebar with storage mgs:temp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/refresh_sidebar with storage mgs:temp
 #
 # @args		zb_sb (unknown)
 #

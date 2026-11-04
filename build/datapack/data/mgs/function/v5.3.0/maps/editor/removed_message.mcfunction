@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/removed_message
 #
-# @executed	at @s & as @n[tag=mgs.map_element,distance=..3]
-#
-# @within	mgs:v5.3.0/maps/editor/destroy_element with storage mgs:temp _ed_removed
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/destroy_element with storage mgs:temp _ed_removed
 #
 # @args		id (unknown)
 #

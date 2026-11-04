@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/build_pool
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/start
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/start
 #
 
 data modify storage mgs:zombies mystery_box_pool set value []

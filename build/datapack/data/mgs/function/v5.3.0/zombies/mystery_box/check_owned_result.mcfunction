@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/check_owned_result
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/reroll_owned with storage mgs:zombies mystery_box.result
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/reroll_owned with storage mgs:zombies mystery_box.result
 #
 # @args		weapon_id (unknown)
 #

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/missions/spawn_all_enemies
 #
-# @within	mgs:v5.3.0/missions/end_prep
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/end_prep
 #
 
 data modify storage mgs:temp _enemy_iter set from storage mgs:missions game.map.enemies

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/show_element_config
 #
-# @executed	at @s & as @n[tag=mgs.map_element,distance=..10]
-#
-# @within	mgs:v5.3.0/maps/editor/handle_zb_configure [ at @s & as @n[tag=mgs.map_element,distance=..10] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/handle_zb_configure [ at @s & as @n[tag=mgs.map_element,distance=..10] ]
 #
 
 execute if entity @s[tag=mgs.element.zombie_spawn] run function mgs:v5.3.0/maps/editor/form/target

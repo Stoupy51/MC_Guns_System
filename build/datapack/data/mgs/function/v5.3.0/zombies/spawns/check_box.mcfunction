@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/spawns/check_box
 #
-# @executed	as @e[type=minecraft:marker,tag=...]
-#
-# @within	mgs:v5.3.0/zombies/spawns/check_boxes [ as @e[type=minecraft:marker,tag=...] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/spawns/check_boxes [ as @e[type=minecraft:marker,tag=...] ]
 #
 
 tag @s remove mgs.spawn_abox_ok

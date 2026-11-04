@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/zombie_finish_rise
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/zombie_rise_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/zombie_rise_tick
 #
 
 data modify entity @s NoAI set value 0b

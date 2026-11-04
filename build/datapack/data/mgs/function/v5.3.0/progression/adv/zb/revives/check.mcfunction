@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/zb/revives/check
 #
-# @executed	as @a[tag=mgs.xp_earner]
-#
-# @within	mgs:v5.3.0/progression/zb/award_revive
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/zb/award_revive
 #			mgs:v5.3.0/progression/adv/catch_up
 #
 

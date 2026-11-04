@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/setup_pos_iter
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/setup_positions
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/setup_positions
 #			mgs:v5.3.0/zombies/mystery_box/setup_pos_iter
 #
 

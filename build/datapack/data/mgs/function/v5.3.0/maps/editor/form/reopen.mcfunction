@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/form/reopen
 #
-# @executed	as @n[type=minecraft:marker,tag=mgs.ed_form_target]
-#
-# @within	mgs:v5.3.0/maps/editor/form/open_target [ as @n[type=minecraft:marker,tag=mgs.ed_form_target] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/form/open_target [ as @n[type=minecraft:marker,tag=mgs.ed_form_target] ]
 #			mgs:v5.3.0/maps/editor/form/box_second [ as @n[type=minecraft:marker,tag=mgs.ed_form_target] ]
 #
 

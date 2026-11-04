@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/apply_custom_match
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/apply_custom_found
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/apply_custom_found
 #
 
 # Same layout as a standard class, so both go through apply_class_dynamic, which then applies current_class.perks.

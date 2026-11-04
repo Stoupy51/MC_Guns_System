@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/stats/admin/reset_name
 #
-# @within	mgs:v5.3.0/stats/admin/reset_uuid with storage mgs:temp _st_one
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/admin/reset_uuid with storage mgs:temp _st_one
 #
 # @args		name (unknown)
 #			uuid (unknown)

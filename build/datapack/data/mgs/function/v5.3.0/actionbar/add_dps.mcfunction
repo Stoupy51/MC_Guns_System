@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/actionbar/add_dps
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/actionbar/show
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/actionbar/show
 #
 
 execute store result score #dps_raw mgs.data run scoreboard players get @s mgs.previous_dps

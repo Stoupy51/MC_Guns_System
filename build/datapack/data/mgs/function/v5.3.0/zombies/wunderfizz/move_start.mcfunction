@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wunderfizz/move_start
 #
-# @executed	as @n[tag=mgs.wf_active] & at @s
-#
-# @within	mgs:v5.3.0/zombies/wunderfizz/land_bear [ as @n[tag=mgs.wf_active] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wunderfizz/land_bear [ as @n[tag=mgs.wf_active] & at @s ]
 #
 
 execute positioned ~ ~-1.5 ~ run summon minecraft:item_display ~ ~ ~ {Tags:["mgs.wf_bear","mgs.zombies_entity","mgs.wf_bear_new"],item_display:"fixed",billboard:"fixed",transformation:{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[0.75f,0.75f,0.75f]}}

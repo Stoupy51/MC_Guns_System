@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/map_select
 #
-# @executed	as the player & at current position
-#
-# @within	dialog mgs:v5.3.0/multiplayer/setup
+# @within	mgs:v5.3.0/dialog/close_then
+#			dialog mgs:v5.3.0/multiplayer/setup
 #
 
 data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:["","🗺 ",{translate:"mgs.select_map",fallback:"Select Map",color:"aqua",bold:true}],body:[{type:"minecraft:plain_message",contents:{translate:"mgs.click_a_map_to_select_it",fallback:"Click a map to select it",color:"gray"}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{label:["","◀ ",{translate:"mgs.back",fallback:"Back",color:"gray"}],tooltip:{translate:"mgs.return_to_setup",fallback:"Return to setup"},action:{type:"show_dialog",dialog:"mgs:v5.3.0/multiplayer/setup"}}}

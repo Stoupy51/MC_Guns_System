@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/scale_magazine_slot
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/inventory/give_starting_loadout {slot:"inventory.1",index:1,remaining_multiplier:0.5}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/inventory/give_starting_loadout {slot:"inventory.1",index:1,remaining_multiplier:0.5}
 #			mgs:v5.3.0/zombies/wallbuys/give_to_slot {slot:"inventory.$(inventory)",index:$(inventory),remaining_multiplier:1}
 #			mgs:v5.3.0/zombies/wallbuys/reload_pair {slot:"inventory.$(inventory)",index:$(inventory),remaining_multiplier:1}
 #			mgs:v5.3.0/zombies/wallbuys/replace_pair {slot:"inventory.$(inventory)",index:$(inventory),remaining_multiplier:1}

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/keep_loaded
 #
-# @executed	as @a[tag=mgs.map_editor,limit=1]
-#
-# @within	mgs:v5.3.0/maps/editor/summon_base_marker {x:$(x),z:$(z)}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/summon_base_marker {x:$(x),z:$(z)}
 #			mgs:v5.3.0/maps/editor/summon_spawn_marker {x:$(x),z:$(z)}
 #			mgs:v5.3.0/maps/editor/summon_point_marker {x:$(x),z:$(z)}
 #			mgs:v5.3.0/maps/editor/summon_enemy_marker {x:$(x),z:$(z)}

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/enforce_bounds
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/game_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/game_tick [ at @s ]
 #
 
 # Only when the map defines a boundary box; may turn @s into a spectator.

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/cleanup
 #
-# @within	mgs:v5.3.0/multiplayer/stop
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/stop
 #
 
 schedule clear mgs:v5.3.0/multiplayer/gamemodes/demo/start_round

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/raycast/air_particles
 #
-# @within	mgs:v5.3.0/raycast/on_entry_point with storage mgs:input with
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/raycast/on_entry_point with storage mgs:input with
 #
 # @args		block (string)
 #

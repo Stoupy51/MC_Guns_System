@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/settings_write
 #
-# @within	mgs:v5.3.0/maps/editor/settings_apply with storage mgs:temp map_settings.target
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/settings_apply with storage mgs:temp map_settings.target
 #
 # @args		mode (unknown)
 #			idx (unknown)

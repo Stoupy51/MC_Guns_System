@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/award_headshot
 #
-# @within	mgs:v5.3.0/zombies/xp/on_kill
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/xp/on_kill
 #
 
 # Added ON TOP of kill; raycast kills only, which is the only path that knows

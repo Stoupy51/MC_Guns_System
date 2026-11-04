@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/show_secondary_mags_dialog
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/process
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/process
 #
 
 execute if data storage mgs:temp editor{secondary:""} run return run function mgs:v5.3.0/multiplayer/editor/hub

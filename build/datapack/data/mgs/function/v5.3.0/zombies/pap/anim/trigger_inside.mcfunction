@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/trigger_inside
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/step
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/step
 #
 
 playsound mgs:zombies/pap/pap_loop ambient @a[scores={mgs.zb.in_game=1}] ~ ~ ~ 0.25 1.0

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/escort/give_up
 #
-# @executed	as @e[tag=mgs.zb_escorted] & at @s
-#
-# @within	mgs:v5.3.0/zombies/escort/escort_tail
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/escort/escort_tail
 #			mgs:v5.3.0/zombies/escort/watchdog
 #
 

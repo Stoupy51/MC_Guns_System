@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/apply_slot_tag
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/inventory/give_starting_loadout {slot:"hotbar.0",group:"hotbar",index:0}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/inventory/give_starting_loadout {slot:"hotbar.0",group:"hotbar",index:0}
 #			mgs:v5.3.0/zombies/inventory/give_starting_loadout {slot:"hotbar.1",group:"hotbar",index:1}
 #			mgs:v5.3.0/zombies/inventory/give_starting_loadout {slot:"inventory.1",group:"inventory",index:1}
 #			mgs:v5.3.0/zombies/inventory/give_starting_loadout {slot:"hotbar.7",group:"hotbar",index:7}

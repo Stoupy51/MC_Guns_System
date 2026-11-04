@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/move_active_position
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/move_anim_transition
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/move_anim_transition
 #
 
 tag @e[tag=mgs.mystery_box_active] add mgs.mb_prev_active

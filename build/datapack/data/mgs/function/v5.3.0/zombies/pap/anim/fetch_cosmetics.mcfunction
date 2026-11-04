@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/fetch_cosmetics
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/apply_cosmetics with storage mgs:temp _pap_cosm_fetch
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/apply_cosmetics with storage mgs:temp _pap_cosm_fetch
 #
 # @args		id (unknown)
 #

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/draw_walk
 #
-# @executed	as @a[scores={mgs.mp.map_edit=1}] & at @s & as @e[type=minecraft:marker,tag=mgs.ed_walk,distance=..32]
-#
-# @within	mgs:v5.3.0/maps/editor/particles with entity @s data._ed.walk [ as @a[scores={mgs.mp.map_edit=1}] & at @s & as @e[type=minecraft:marker,tag=mgs.ed_walk,distance=..32] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/particles with entity @s data._ed.walk [ as @a[scores={mgs.mp.map_edit=1}] & at @s & as @e[type=minecraft:marker,tag=mgs.ed_walk,distance=..32] ]
 #
 # @args		x (unknown)
 #			y (unknown)

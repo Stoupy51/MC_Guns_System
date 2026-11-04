@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/flash_apply
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/detonate_flash
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/detonate_flash
 #
 
 execute store result storage mgs:temp flash.radius_float float 1 run data get entity @s data.config.grenade_effect_radius

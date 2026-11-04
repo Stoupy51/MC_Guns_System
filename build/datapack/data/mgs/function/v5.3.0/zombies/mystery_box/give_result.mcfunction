@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/give_result
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/collect
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/collect
 #
 
 scoreboard players set #wb_price mgs.data 0

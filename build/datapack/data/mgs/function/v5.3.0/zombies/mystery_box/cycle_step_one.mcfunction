@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/cycle_step_one
 #
-# @executed	as @e[tag=...] & at @s
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/spin_tick_one
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/spin_tick_one
 #
 
 scoreboard players set #mb_elapsed mgs.data 80

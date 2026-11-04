@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/players/row_zombies
 #
-# @within	mgs:v5.3.0/players/list_entry {id:$(id),name:"$(name)",color:"$(color)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/players/list_entry {id:$(id),name:"$(name)",color:"$(color)"}
 #
 # @args		name (string)
 #			color (string)

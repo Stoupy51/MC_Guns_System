@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/save_state
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/process with storage mgs:temp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/process with storage mgs:temp
 #
 # @args		_pid (unknown)
 #

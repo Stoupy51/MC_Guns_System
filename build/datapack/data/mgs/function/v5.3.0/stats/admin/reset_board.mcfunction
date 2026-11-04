@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/stats/admin/reset_board
 #
-# @within	string in mgs:v5.3.0/stats/board/admin_button {board:$(board),id:$(id)}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/stats/board/admin_button {board:$(board),id:$(id)}
 #
 # @args		board (unknown)
 #			id (unknown)

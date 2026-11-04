@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/player/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # Full stamina on the first tick of a game, a late join, a respawn or a revive: stam_seen is reset to 0 on each.

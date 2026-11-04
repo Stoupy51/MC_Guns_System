@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/pap_upgrade_magazines
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/on_right_click with storage mgs:temp _pap_extract.stats
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/on_right_click with storage mgs:temp _pap_extract.stats
 #			mgs:v5.3.0/zombies/pap/upgrade_core with storage mgs:temp _pap_extract.stats
 #
 # @args		base_weapon (unknown)

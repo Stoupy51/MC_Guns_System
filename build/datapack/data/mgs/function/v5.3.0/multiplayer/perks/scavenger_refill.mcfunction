@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/perks/scavenger_refill
 #
-# @within	mgs:v5.3.0/multiplayer/perks/on_kill
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/perks/on_kill
 #
 
 execute if items entity @s hotbar.0 *[custom_data~{mgs:{magazine:true}}] run function mgs:v5.3.0/zombies/bonus/refill_magazine {slot:"hotbar.0"}

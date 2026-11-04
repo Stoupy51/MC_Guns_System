@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/check_mag_not_full
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/try_refill_owned {slot:"inventory.1"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/try_refill_owned {slot:"inventory.1"}
 #			mgs:v5.3.0/zombies/wallbuys/try_refill_owned {slot:"inventory.2"}
 #			mgs:v5.3.0/zombies/wallbuys/try_refill_owned {slot:"inventory.3"}
 #			mgs:v5.3.0/zombies/wallbuys/select_refill_price {slot:"inventory.$(inventory)"}

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/drops/swap
 #
-# @executed	at @e[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/shared/drops/collect
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/drops/collect
 #
 
 item replace entity B5-0-0-0-3 contents from entity @s hotbar.1

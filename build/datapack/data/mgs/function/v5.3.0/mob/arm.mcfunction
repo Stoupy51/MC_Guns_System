@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/mob/arm
 #
-# @within	mgs:v5.3.0/mob/default/on_new {entity:"$(entity)",level:$(level),active_time:$(active_time),sleep_time:$(sleep_time)}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/mob/default/on_new {entity:"$(entity)",level:$(level),active_time:$(active_time),sleep_time:$(sleep_time)}
 #			mgs:v5.3.0/zombies/mob/arm with storage mgs:temp _arm
 #
 # @args		entity (string)

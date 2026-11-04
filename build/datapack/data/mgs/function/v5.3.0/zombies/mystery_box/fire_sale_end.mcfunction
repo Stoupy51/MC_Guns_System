@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/fire_sale_end
 #
-# @within	mgs:v5.3.0/zombies/powerups/fire_sale_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/fire_sale_tick
 #
 
 tag @e[tag=mgs.mb_fs_active] remove mgs.mb_fs_active

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/next_round
 #
-# @executed	as @e[tag=mgs.demo_obj,scores={mgs.demo_state=1}] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/demo/attackers_win
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/demo/attackers_win
 #			mgs:v5.3.0/multiplayer/gamemodes/demo/defenders_win
 #
 

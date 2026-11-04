@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/check_team_win
 #
-# @within	mgs:v5.3.0/multiplayer/gamemodes/tdm/on_kill
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/tdm/on_kill
 #			mgs:v5.3.0/multiplayer/gamemodes/dom/score_tick
 #			mgs:v5.3.0/multiplayer/gamemodes/hp/score_tick
 #

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/box_click
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/on_right_click [ at @n[tag=bs.interaction.target] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/on_right_click [ at @n[tag=bs.interaction.target] ]
 #
 
 execute if entity @n[tag=mgs.mb_display,distance=..3,scores={mgs.mb.anim=1..}] run return run function mgs:v5.3.0/zombies/deny/message {msg:'{"translate":"mgs.mystery_box_is_already_in_use","fallback":"Mystery Box is already in use.","color":"red"}'}

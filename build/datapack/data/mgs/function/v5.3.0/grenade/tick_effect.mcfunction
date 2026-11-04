@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/tick_effect
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/tick
 #
 
 scoreboard players operation @s mgs.data -= #tick_delta mgs.data

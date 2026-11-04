@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/summon_all
 #
-# @within	mgs:v5.3.0/maps/editor/enter 40t replace [ scheduled ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/enter 40t replace [ scheduled ]
 #
 
 execute unless entity @a[tag=mgs.map_editor] run return 0

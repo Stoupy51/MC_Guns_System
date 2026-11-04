@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/bonus/nuke_loop
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:zombies/bonus/nuke
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:zombies/bonus/nuke
 #			mgs:v5.3.0/zombies/bonus/nuke_loop 1t [ scheduled ]
 #
 

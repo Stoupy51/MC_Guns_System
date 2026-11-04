@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/pool/choose
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/powerups/activate/random_perk
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/activate/random_perk
 #			mgs:v5.3.0/zombies/wunderfizz/try_use
 #
 

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/handle_config_nearest_respawn_command_btn
 #
-# @executed	as @n[tag=mgs.new_element] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/handle_config with storage mgs:temp _cfg
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/handle_config with storage mgs:temp _cfg
 #
 # @args		nearest_cmd (unknown)
 #

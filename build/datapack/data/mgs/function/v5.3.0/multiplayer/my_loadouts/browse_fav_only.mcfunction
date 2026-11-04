@@ -1,12 +1,11 @@
 
 #> mgs:v5.3.0/multiplayer/my_loadouts/browse_fav_only
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/process
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/process
 #
 
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.my_loadouts",fallback:"My Loadouts",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:written_book"},description:{contents:{translate:"mgs.click_a_loadout_to_manage_it",fallback:"Click a loadout to manage it",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.my_loadouts",fallback:"My Loadouts",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:written_book"},description:{contents:{translate:"mgs.click_a_loadout_to_manage_it",fallback:"Click a loadout to manage it",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:3,pause:false,after_action:"none",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 4"}}}
 data modify storage mgs:temp dialog.title set value [{text:"",color:"gold",bold:true},{translate:"mgs.my_loadouts",fallback:"My Loadouts"}," — ",{translate:"mgs.favorites",fallback:"Favorites"}]
 
 data modify storage mgs:temp dialog.actions append value {label:["","⭐ ",{translate:"mgs.favorites",fallback:"Favorites",color:"gold",bold:true}],tooltip:{translate:"mgs.show_only_your_favorited_loadouts",fallback:"Show only your favorited loadouts"},action:{type:"run_command",command:"/trigger mgs.player.config set 1603"}}

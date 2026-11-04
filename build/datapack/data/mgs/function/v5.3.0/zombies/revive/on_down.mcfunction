@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/on_down
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zombies/on_respawn
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/on_respawn
 #
 
 # Dying Wish first: off cooldown, it replaces going down with a berserk. Must stay above Who's Who.

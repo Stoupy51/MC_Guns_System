@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/players/read_name
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/players/append_self
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/players/append_self
 #			mgs:v5.3.0/stats/login
 #
 

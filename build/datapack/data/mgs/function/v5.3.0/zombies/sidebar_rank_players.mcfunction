@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/sidebar_rank_players
 #
-# @within	mgs:v5.3.0/zombies/refresh_sidebar
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/refresh_sidebar
 #
 
 execute unless entity @a[tag=mgs.zb_sb_cand] run return 0

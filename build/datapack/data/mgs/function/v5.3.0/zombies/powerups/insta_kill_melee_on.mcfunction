@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/insta_kill_melee_on
 #
-# @executed	as @a[tag=!mgs.ik_melee,scores={mgs.special.instant_kill=1..}]
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ as @a[tag=!mgs.ik_melee,scores={mgs.special.instant_kill=1..}] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ as @a[tag=!mgs.ik_melee,scores={mgs.special.instant_kill=1..}] ]
 #
 
 # Remove then add, so a stale modifier left by a crash cannot stack.

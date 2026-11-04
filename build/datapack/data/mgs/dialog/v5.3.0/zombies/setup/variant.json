@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.variant","fallback": "Variant",
@@ -13,8 +15,6 @@
 		{"label": {"translate": "mgs.zonweeb","fallback": "Zonweeb","color": "green"},"tooltip": {"translate": "mgs.full_experience_passives_abilities_and_special_zombies","fallback": "Full experience: passives, abilities, and special zombies"},"action": {"type": "run_command","command": "/data modify storage mgs:zombies game.variant set value \"zonweeb\""}}
 	],
 	"columns": 1,
-	"pause": false,
-	"after_action": "none",
 	"exit_action": {
 		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
 		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},

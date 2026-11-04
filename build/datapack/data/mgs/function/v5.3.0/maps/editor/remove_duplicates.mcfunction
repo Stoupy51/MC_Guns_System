@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/remove_duplicates
 #
-# @within	mgs:v5.3.0/maps/editor/do_save
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/do_save
 #
 
 execute as @e[type=minecraft:marker,tag=mgs.element.red_spawn] at @s run function mgs:v5.3.0/maps/editor/dedupe/red_spawn

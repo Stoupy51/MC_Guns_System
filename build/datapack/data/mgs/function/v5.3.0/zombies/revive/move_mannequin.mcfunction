@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/move_mannequin
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/downed_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/downed_tick [ at @s ]
 #
 
 execute store result entity @s Rotation[0] float 0.01 run scoreboard players get #rv_yaw mgs.data

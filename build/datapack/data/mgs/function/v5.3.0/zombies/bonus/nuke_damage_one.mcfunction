@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/bonus/nuke_damage_one
 #
-# @executed	as @n[tag=mgs.nuked,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zombies/bonus/nuke_loop [ as @n[tag=mgs.nuked,sort=random] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/bonus/nuke_loop [ as @n[tag=mgs.nuked,sort=random] & at @s ]
 #
 
 tag @s remove mgs.nuked

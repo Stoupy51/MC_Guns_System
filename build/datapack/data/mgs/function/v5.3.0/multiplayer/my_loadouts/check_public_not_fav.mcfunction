@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/my_loadouts/check_public_not_fav
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/my_loadouts/build_list_publics
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/my_loadouts/build_list_publics
 #
 
 execute store result score #pub mgs.data run data get storage mgs:temp _iter[0].public

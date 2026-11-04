@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/types/roll
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/mob/setup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mob/setup
 #
 
 execute store result score #zb_type_roll mgs.data run random value 1..100

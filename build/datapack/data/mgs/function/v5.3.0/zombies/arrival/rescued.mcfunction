@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/arrival/rescued
 #
-# @executed	as @n[tag=mgs.zb_near] & at @s
-#
-# @within	mgs:v5.3.0/zombies/rescue_tp [ as @n[tag=mgs.zb_near] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/rescue_tp [ as @n[tag=mgs.zb_near] & at @s ]
 #
 
 execute if entity @s[tag=mgs.arrive_portal] run return run function mgs:v5.3.0/zombies/portal_strike_fx

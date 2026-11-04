@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/arrival/floor
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/do_spawn
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/do_spawn
 #
 
 scoreboard players set #zb_rise_step mgs.data 2000

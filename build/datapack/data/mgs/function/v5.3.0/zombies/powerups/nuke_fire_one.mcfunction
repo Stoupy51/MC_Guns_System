@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/nuke_fire_one
 #
-# @executed	as @e[tag=mgs.nukable] & at @s
-#
-# @within	mgs:v5.3.0/zombies/powerups/activate/nuke [ as @e[tag=mgs.nukable] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/activate/nuke [ as @e[tag=mgs.nukable] & at @s ]
 #
 
 data merge entity @s {Fire:1200s}

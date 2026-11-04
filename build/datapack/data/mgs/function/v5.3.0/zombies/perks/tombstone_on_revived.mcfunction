@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/tombstone_on_revived
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/revive_complete
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/revive_complete
 #
 
 kill @e[tag=mgs.tombstone,predicate=mgs:v5.3.0/zombies/revive/downed_id_match]

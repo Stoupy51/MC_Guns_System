@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/refill_tactical
 #
-# @executed	as @n[tag=mgs.wb_new]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/buy_tactical with storage mgs:temp _wb_weapon
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/buy_tactical with storage mgs:temp _wb_weapon
 #
 
 # Full: denied, and nothing was charged on this path.

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/do_round_respawn
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zombies/rejoin
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/rejoin
 #			mgs:v5.3.0/zombies/revive/round_respawn [ as @a[scores={mgs.zb.in_game=1},gamemode=spectator] ]
 #
 

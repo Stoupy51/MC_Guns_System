@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/menu/players_list
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/stats/menu/players_page {kind:"view",title:"Players"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/menu/players_page {kind:"view",title:"Players"}
 #			mgs:v5.3.0/stats/admin/players {kind:"reset",title:"Reset Player Stats"}
 #
 # @args		kind (string)
@@ -19,7 +18,7 @@ execute store result score #st_total mgs.data run data get storage mgs:stats kno
 data modify storage mgs:temp _sp set value {}
 $data modify storage mgs:temp _sp.kind set value "$(kind)"
 execute store result storage mgs:temp _sp.total int 1 run scoreboard players get #st_total mgs.data
-$data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:["","👥 ",{text:"$(title)",color:"gold",bold:true}],body:[],actions:[],columns:2,after_action:"close",exit_action:{label:{translate:"gui.done"}}}
+$data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:["","👥 ",{text:"$(title)",color:"gold",bold:true}],body:[],actions:[],columns:2,pause:false,after_action:"none",exit_action:{"label": {"translate": "gui.done"}, "action": {"type": "run_command", "command": "/trigger mgs.player.config set 1640"}}}
 function mgs:v5.3.0/stats/menu/players_body with storage mgs:temp _sp
 function mgs:v5.3.0/stats/menu/players_next
 

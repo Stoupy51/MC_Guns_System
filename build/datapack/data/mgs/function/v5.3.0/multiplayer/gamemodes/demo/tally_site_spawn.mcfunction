@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/tally_site_spawn
 #
-# @executed	as @e[tag=...,limit=1,sort=nearest]
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/demo/tally_site [ as @e[tag=...,limit=1,sort=nearest] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/demo/tally_site [ as @e[tag=...,limit=1,sort=nearest] ]
 #
 
 execute if entity @s[tag=mgs.spawn_red] run scoreboard players add #demo_near_red mgs.data 1

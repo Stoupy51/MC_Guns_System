@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/restart_no_map
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/restart
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/restart
 #
 
 tag @a[tag=mgs.zb_restart] remove mgs.zb_restart

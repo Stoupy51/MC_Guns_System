@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/dom/point_tick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/dom/tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/dom/tick [ at @s ]
 #
 
 # Blue, yellow and red gradient by progress.

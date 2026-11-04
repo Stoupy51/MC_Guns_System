@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/check_same_weapon_slot
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/try_refill_owned {slot:1,weapon_id:"$(weapon_id)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/try_refill_owned {slot:1,weapon_id:"$(weapon_id)"}
 #			mgs:v5.3.0/zombies/wallbuys/try_refill_owned {slot:2,weapon_id:"$(weapon_id)"}
 #			mgs:v5.3.0/zombies/wallbuys/try_refill_owned {slot:3,weapon_id:"$(weapon_id)"}
 #			mgs:v5.3.0/zombies/wallbuys/compute_effective_price {slot:1,weapon_id:"$(weapon_id)"}

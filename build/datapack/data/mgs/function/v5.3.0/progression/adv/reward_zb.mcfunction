@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/reward_zb
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/progression/adv/zb/kills/reward_1 {title:'{"translate":"mgs.undead_cleanup","fallback":"Undead Cleanup","color":"yellow"}',description:'{"translate":"mgs.kill_100_zombies","fallback":"Kill 100 zombies","color":"gray"}',xp:10,branch:"zb",chain:"kills",tier:1}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/adv/zb/kills/reward_1 {title:'{"translate":"mgs.undead_cleanup","fallback":"Undead Cleanup","color":"yellow"}',description:'{"translate":"mgs.kill_100_zombies","fallback":"Kill 100 zombies","color":"gray"}',xp:10,branch:"zb",chain:"kills",tier:1}
 #			mgs:v5.3.0/progression/adv/zb/kills/reward_2 {title:'{"translate":"mgs.holding_the_line","fallback":"Holding The Line","color":"yellow"}',description:'{"translate":"mgs.kill_250_zombies","fallback":"Kill 250 zombies","color":"gray"}',xp:20,branch:"zb",chain:"kills",tier:2}
 #			mgs:v5.3.0/progression/adv/zb/kills/reward_3 {title:'{"translate":"mgs.culling","fallback":"Culling","color":"yellow"}',description:'{"translate":"mgs.kill_500_zombies","fallback":"Kill 500 zombies","color":"gray"}',xp:30,branch:"zb",chain:"kills",tier:3}
 #			mgs:v5.3.0/progression/adv/zb/kills/reward_4 {title:'{"translate":"mgs.exterminator","fallback":"Exterminator","color":"yellow"}',description:'{"translate":"mgs.kill_1000_zombies","fallback":"Kill 1,000 zombies","color":"gray"}',xp:50,branch:"zb",chain:"kills",tier:4}

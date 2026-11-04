@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/zombies/perks/electric_cherry_on_reload
 #
 # @within	#mgs:signals/on_reload
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute unless score @s mgs.zb.in_game matches 1.. run return fail

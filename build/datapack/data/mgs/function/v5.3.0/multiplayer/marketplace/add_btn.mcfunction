@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/marketplace/add_btn
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/marketplace/prep_btn with storage mgs:temp _btn_data
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/marketplace/prep_btn with storage mgs:temp _btn_data
 #
 # @args		name (unknown)
 #			main_gun_display (unknown)

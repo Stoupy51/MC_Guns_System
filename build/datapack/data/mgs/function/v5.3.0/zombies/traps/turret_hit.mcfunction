@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/traps/turret_hit
 #
-# @within	string in mgs:v5.3.0/zombies/traps/turret_shoot
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/zombies/traps/turret_shoot
 #
 
 particle minecraft:crit ~ ~1 ~ 0.2 0.3 0.2 0.1 8 force @a[distance=..48]

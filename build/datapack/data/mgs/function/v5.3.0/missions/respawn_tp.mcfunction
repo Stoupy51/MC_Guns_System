@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/missions/respawn_tp
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/missions/join_game
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/join_game
 #			mgs:v5.3.0/missions/actual_respawn
 #
 

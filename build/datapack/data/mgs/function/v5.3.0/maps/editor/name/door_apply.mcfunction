@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/name/door_apply
 #
-# @within	mgs:v5.3.0/maps/editor/name/door with storage mgs:temp _ed_name
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/name/door with storage mgs:temp _ed_name
 #
 # @args		link_id (unknown)
 #			price (unknown)

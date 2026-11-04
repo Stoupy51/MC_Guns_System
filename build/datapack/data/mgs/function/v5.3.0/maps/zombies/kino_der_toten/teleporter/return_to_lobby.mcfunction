@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/return_to_lobby
 #
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/tick
 #
 
 execute as @a[tag=mgs.kino.in_tp] at @e[tag=mgs.kino.teleporter_lobby] run tp @s ~ ~ ~

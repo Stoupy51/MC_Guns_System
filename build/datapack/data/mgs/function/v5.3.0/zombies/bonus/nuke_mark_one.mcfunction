@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/bonus/nuke_mark_one
 #
-# @executed	as @e[tag=mgs.nukable]
-#
-# @within	mgs:zombies/bonus/nuke [ as @e[tag=mgs.nukable] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:zombies/bonus/nuke [ as @e[tag=mgs.nukable] ]
 #
 
 tag @s add mgs.nuked

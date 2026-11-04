@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/calc_round_count_zombies
 #
-# @within	mgs:v5.3.0/zombies/start_round
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/start_round
 #
 
 scoreboard players operation #zb_to_spawn mgs.data = #zb_round mgs.data

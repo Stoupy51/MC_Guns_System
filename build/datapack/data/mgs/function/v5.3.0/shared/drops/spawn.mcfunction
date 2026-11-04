@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/drops/spawn
 #
-# @executed	at @s
-#
-# @within	string in mgs:v5.3.0/shared/drops/drop
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/shared/drops/drop
 #			mgs:v5.3.0/shared/drops/drop
 #
 

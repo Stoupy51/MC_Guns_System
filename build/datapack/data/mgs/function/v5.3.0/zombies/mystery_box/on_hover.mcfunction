@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/on_hover
 #
-# @executed	as @n[tag=mgs.mb_new]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/setup_pos_iter {run:"function mgs:v5.3.0/zombies/mystery_box/on_hover",executor:"source"} [ as @n[tag=mgs.mb_new] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/setup_pos_iter {run:"function mgs:v5.3.0/zombies/mystery_box/on_hover",executor:"source"} [ as @n[tag=mgs.mb_new] ]
 #
 
 # Only over a usable box (active, any box during a Fire Sale, a box with a pull in progress).

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/switch/fire_mode_on_dropped_weapon
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/switch/check_fire_mode_on_drop
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/switch/check_fire_mode_on_drop
 #
 
 # The nearest dropped gun, only if the main hand is empty.

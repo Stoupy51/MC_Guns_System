@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/form/spawn_apply
 #
-# @within	string in mgs:v5.3.0/maps/editor/form/open/zombie_spawn {group_id:$(group_id),min_round:$(min_round),max_round:$(max_round),arrival:\"$(arrival)\",rise_ticks:$(rise_ticks),power:$(power),mob:\"$(mob)\",activation_box:\"$(activation_box)\",walk_to:\"$(walk_to)\",then:\"\"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/form/open/zombie_spawn {group_id:$(group_id),min_round:$(min_round),max_round:$(max_round),arrival:\"$(arrival)\",rise_ticks:$(rise_ticks),power:$(power),mob:\"$(mob)\",activation_box:\"$(activation_box)\",walk_to:\"$(walk_to)\",then:\"\"}
 #			string in mgs:v5.3.0/maps/editor/form/open/zombie_spawn {group_id:$(group_id),min_round:$(min_round),max_round:$(max_round),arrival:\"$(arrival)\",rise_ticks:$(rise_ticks),power:$(power),mob:\"$(mob)\",activation_box:\"$(activation_box)\",walk_to:\"$(walk_to)\",then:\"box\"}
 #			string in mgs:v5.3.0/maps/editor/form/open/special_spawn {group_id:$(group_id),min_round:$(min_round),max_round:$(max_round),arrival:\"$(arrival)\",rise_ticks:$(rise_ticks),power:0,mob:\"$(mob)\",activation_box:\"$(activation_box)\",walk_to:\"$(walk_to)\",then:\"\"}
 #			string in mgs:v5.3.0/maps/editor/form/open/special_spawn {group_id:$(group_id),min_round:$(min_round),max_round:$(max_round),arrival:\"$(arrival)\",rise_ticks:$(rise_ticks),power:0,mob:\"$(mob)\",activation_box:\"$(activation_box)\",walk_to:\"$(walk_to)\",then:\"box\"}

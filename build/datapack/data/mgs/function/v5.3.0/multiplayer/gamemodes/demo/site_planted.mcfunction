@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/site_planted
 #
-# @executed	as @e[tag=mgs.demo_obj,scores={mgs.demo_state=0}] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/demo/site_plant_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/demo/site_plant_tick
 #
 
 scoreboard players set @s mgs.demo_state 1

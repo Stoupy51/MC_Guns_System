@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/try_use
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/box_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/box_click
 #
 
 execute unless score @s mgs.zb.points >= #zb_mystery_box_price mgs.config run return run function mgs:v5.3.0/zombies/deny/not_enough_points {score:"#zb_mystery_box_price",obj:"mgs.config"}

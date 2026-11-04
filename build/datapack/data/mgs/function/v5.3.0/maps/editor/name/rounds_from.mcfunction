@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/name/rounds_from
 #
-# @within	mgs:v5.3.0/maps/editor/name/rounds with storage mgs:temp _ed_rounds
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/name/rounds with storage mgs:temp _ed_rounds
 #
 # @args		min (unknown)
 #

@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/player/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # The reload is complete: consume magazines now (single-shell weapons load one bullet per cycle, even with no_magazine).

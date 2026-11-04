@@ -13,7 +13,10 @@
 		{"label": {"translate": "mgs.open_menu","fallback": "Open Menu","color": "green"},"action": {"type": "run_command","command": "/trigger mgs.player.config set 1"}}
 	],
 	"columns": 1,
+	"pause": false,
+	"after_action": "none",
 	"exit_action": {
-		"label": {"translate": "gui.cancel"}
+		"label": {"translate": "gui.cancel"},
+		"action": {"type": "run_command","command": "/trigger mgs.player.config set 1640"}
 	}
 }

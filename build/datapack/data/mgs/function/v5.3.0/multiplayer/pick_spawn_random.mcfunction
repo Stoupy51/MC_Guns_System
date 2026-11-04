@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/pick_spawn_random
 #
-# @within	mgs:v5.3.0/multiplayer/pick_spawn
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/pick_spawn
 #
 
 execute as @n[tag=mgs.spawn_candidate,sort=random] run function mgs:v5.3.0/shared/tp_to_spawn {mode:"multiplayer"}

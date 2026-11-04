@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/next_session
 #
-# @within	mgs:v5.3.0/maps/editor/enter
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/enter
 #			mgs:v5.3.0/maps/editor/cleanup
 #
 

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/escort/watchdog
 #
-# @executed	as @e[tag=mgs.zb_escorted] & at @s
-#
-# @within	mgs:v5.3.0/zombies/escort/escort_tail
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/escort/escort_tail
 #
 
 execute store result score #zb_esc_x mgs.data run data get entity @s Pos[0]

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/capture_collected_name
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/collect with storage mgs:zombies mystery_box.result
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/collect with storage mgs:zombies mystery_box.result
 #
 # @args		weapon_id (unknown)
 #

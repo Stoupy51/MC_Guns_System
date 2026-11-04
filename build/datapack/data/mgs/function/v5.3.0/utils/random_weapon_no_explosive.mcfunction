@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/utils/random_weapon_no_explosive
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/mob/arm
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mob/arm
 #
 
 execute store result score #random mgs.data run random value 1..29

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/place_planted_bomb
 #
-# @executed	as @e[tag=mgs.snd_obj,limit=1,sort=nearest] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/bomb_planted [ as @e[tag=mgs.snd_obj,limit=1,sort=nearest] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/bomb_planted [ as @e[tag=mgs.snd_obj,limit=1,sort=nearest] & at @s ]
 #
 
 summon minecraft:marker ~ ~ ~ {Tags:["mgs.snd_bomb","mgs.multiplayer_entity"]}

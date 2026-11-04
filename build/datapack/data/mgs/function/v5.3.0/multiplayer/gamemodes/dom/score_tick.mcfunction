@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/dom/score_tick
 #
-# @within	mgs:v5.3.0/multiplayer/gamemodes/dom/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/dom/tick
 #
 
 execute store result score #dom_r mgs.data if entity @e[tag=mgs.dom_point,scores={mgs.mp.dom_owner=1}]

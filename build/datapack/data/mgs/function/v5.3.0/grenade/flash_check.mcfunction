@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/flash_check
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/flash_area
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/flash_area
 #
 
 # Run as the player, at them; the grenade carries mgs.flash_source.

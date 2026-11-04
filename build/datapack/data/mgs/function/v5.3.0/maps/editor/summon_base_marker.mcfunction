@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/summon_base_marker
 #
-# @executed	as @a[tag=mgs.map_editor,limit=1]
-#
-# @within	mgs:v5.3.0/maps/editor/summon_existing with storage mgs:temp _pos
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/summon_existing with storage mgs:temp _pos
 #			mgs:v5.3.0/maps/editor/handle_base with storage mgs:temp _pos
 #
 # @args		x (unknown)

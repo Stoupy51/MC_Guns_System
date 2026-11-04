@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/utils/coord_stick_print
 #
-# @executed	as @a[tag=mgs.coord_stick_user,limit=1]
-#
-# @within	mgs:v5.3.0/utils/coord_stick_relative with storage mgs:temp coord_stick.result [ as @a[tag=mgs.coord_stick_user,limit=1] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/utils/coord_stick_relative with storage mgs:temp coord_stick.result [ as @a[tag=mgs.coord_stick_user,limit=1] ]
 #
 # @args		x (int)
 #			y (int)

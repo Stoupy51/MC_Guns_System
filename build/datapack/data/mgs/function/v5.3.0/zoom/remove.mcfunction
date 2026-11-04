@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zoom/remove
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zoom/main
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zoom/main
 #
 
 data remove storage mgs:gun all.stats.is_zoom

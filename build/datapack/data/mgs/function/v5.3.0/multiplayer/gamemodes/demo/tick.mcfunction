@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/tick
 #
-# @within	mgs:v5.3.0/multiplayer/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/game_tick
 #
 
 # Rebuilt once a second: the attacking side and each site's state are text. Above the round gate, so the gap shows the new round.

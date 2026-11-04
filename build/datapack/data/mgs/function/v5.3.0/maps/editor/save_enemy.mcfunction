@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/save_enemy
 #
-# @executed	as @e[tag=mgs.element.enemy] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/save_lists/missions [ as @e[tag=mgs.element.enemy] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/save_lists/missions [ as @e[tag=mgs.element.enemy] & at @s ]
 #
 
 # Run as the enemy marker, at it.

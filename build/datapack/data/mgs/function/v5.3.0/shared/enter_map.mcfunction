@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/enter_map
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/start {mode:"zombies",fn:"mgs:v5.3.0/zombies/start"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/start {mode:"zombies",fn:"mgs:v5.3.0/zombies/start"}
 #			mgs:v5.3.0/zombies/preload_complete {mode:"zombies",fn:"mgs:v5.3.0/zombies/preload_complete"}
 #			mgs:v5.3.0/zombies/end_prep {mode:"zombies",fn:"mgs:v5.3.0/zombies/end_prep"}
 #			mgs:v5.3.0/zombies/game_tick {mode:"zombies",fn:"mgs:v5.3.0/zombies/game_tick"}

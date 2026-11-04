@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/on_right_click
 #
-# @executed	as @n[tag=mgs.mb_new]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/setup_pos_iter {run:"function mgs:v5.3.0/zombies/mystery_box/on_right_click",executor:"source"} [ as @n[tag=mgs.mb_new] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/setup_pos_iter {run:"function mgs:v5.3.0/zombies/mystery_box/on_right_click",executor:"source"} [ as @n[tag=mgs.mb_new] ]
 #
 
 # Usable: the active box, any box during a Fire Sale, or a box with a pull in progress (so a buyer can always collect).

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/dom/tick
 #
-# @within	mgs:v5.3.0/multiplayer/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/game_tick
 #
 
 execute as @e[tag=mgs.dom_point] at @s run function mgs:v5.3.0/multiplayer/gamemodes/dom/point_tick

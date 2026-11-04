@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/escort/set_range
 #
-# @executed	as @n[tag=mgs.zb_escort_new] & at @s
-#
-# @within	mgs:v5.3.0/zombies/escort/pick_range {range:48}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/escort/pick_range {range:48}
 #			mgs:v5.3.0/zombies/escort/pick_range {range:72}
 #			mgs:v5.3.0/zombies/escort/pick_range {range:96}
 #

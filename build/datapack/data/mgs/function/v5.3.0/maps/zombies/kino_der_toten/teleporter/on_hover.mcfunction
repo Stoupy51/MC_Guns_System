@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_hover
 #
-# @executed	as @e[tag=mgs.kino.teleporter]
-#
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/start {run:"function mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_hover",executor:"source"} [ as @e[tag=mgs.kino.teleporter] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/start {run:"function mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_hover",executor:"source"} [ as @e[tag=mgs.kino.teleporter] ]
 #
 
 # Run as the player looking at a pad. Whole seconds left of the timer of the current state, rounded up.

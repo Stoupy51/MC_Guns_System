@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/set_item_name_with_level
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/apply_to_slot with storage mgs:temp _pap_name_data
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/apply_to_slot with storage mgs:temp _pap_name_data
 #
 # @args		slot (unknown)
 #			name (unknown)

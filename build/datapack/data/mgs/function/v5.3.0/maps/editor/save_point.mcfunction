@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/save_point
 #
-# @executed	as @e[tag=mgs.element.out_of_bounds] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/save_lists/multiplayer {path:"out_of_bounds"} [ as @e[tag=mgs.element.out_of_bounds] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/save_lists/multiplayer {path:"out_of_bounds"} [ as @e[tag=mgs.element.out_of_bounds] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/multiplayer {path:"boundaries"} [ as @e[tag=mgs.element.boundary] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/multiplayer {path:"search_and_destroy"} [ as @e[tag=mgs.element.search_and_destroy] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/multiplayer {path:"domination"} [ at @s ]

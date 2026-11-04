@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/recover_bomb
 #
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/tick
 #
 
 execute at @e[tag=mgs.snd_carrier_label,limit=1] run function mgs:v5.3.0/multiplayer/gamemodes/snd/spawn_loose_bomb

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/init
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/progression/tick_player
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/tick_player
 #			mgs:v5.3.0/stats/login
 #
 

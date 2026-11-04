@@ -1,10 +1,8 @@
 
 #> mgs:v5.3.0/zombies/restart
 #
-# @executed	as the player & at current position
-#
-# @within	string in mgs:v5.3.0/zombies/game_over
-#			dialog mgs:v5.3.0/zombies/setup
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/zombies/game_over
 #
 
 # Roster: players still in game, else the snapshot game_over took. Tagged so it survives the stop below.

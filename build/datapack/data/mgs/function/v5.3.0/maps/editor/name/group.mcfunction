@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/name/group
 #
-# @within	mgs:v5.3.0/maps/editor/refresh_marker with entity @s data
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/refresh_marker with entity @s data
 #
 # @args		group_id (unknown)
 #

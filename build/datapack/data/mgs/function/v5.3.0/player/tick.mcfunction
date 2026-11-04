@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/tick [ as @e[type=player,sort=random] & at @s ]
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{coord_stick:true}}] run function mgs:v5.3.0/utils/coord_stick

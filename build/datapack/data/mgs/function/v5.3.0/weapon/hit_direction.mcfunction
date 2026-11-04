@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/weapon/hit_direction
 #
 # @within	#mgs:signals/damage
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # Player victims only.

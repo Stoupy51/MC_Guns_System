@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/shared/summon_oob_at
 #
-# @within	mgs:v5.3.0/shared/summon_oob_iter with storage mgs:temp _oob_pos
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/summon_oob_iter with storage mgs:temp _oob_pos
 #
 # @args		x (unknown)
 #			y (unknown)

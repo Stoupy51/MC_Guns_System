@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/hide_body
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/whos_who/revive_complete
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/whos_who/revive_complete
 #			mgs:v5.3.0/zombies/whos_who/forfeit
 #			mgs:v5.3.0/zombies/revive/revive_complete
 #			mgs:v5.3.0/zombies/revive/bleed_out

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/free_scope_reroll
 #
-# @executed	as @p[tag=mgs.pu_collecting]
-#
-# @within	mgs:v5.3.0/zombies/pap/upgrade_core with storage mgs:temp _pap
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/upgrade_core with storage mgs:temp _pap
 #
 
 function mgs:v5.3.0/zombies/pap/randomize_scope_different with storage mgs:temp _pap_extract.stats

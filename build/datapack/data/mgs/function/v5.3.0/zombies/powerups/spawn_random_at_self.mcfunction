@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/spawn_random_at_self
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/powerups/check_drop
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/check_drop
 #
 
 # No repeats until the bag is empty.

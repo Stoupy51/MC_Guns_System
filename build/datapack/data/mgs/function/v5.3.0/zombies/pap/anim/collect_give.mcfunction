@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/collect_give
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/collect_lookup with storage mgs:temp _pap_cg
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/collect_lookup with storage mgs:temp _pap_cg
 #
 # @args		slot (unknown)
 #			id (unknown)

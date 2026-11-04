@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/announce_stats_one
 #
-# @executed	as @a[tag=mgs.stat_cand]
-#
-# @within	mgs:v5.3.0/multiplayer/announce_stats_iter [ as @a[tag=mgs.stat_cand] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/announce_stats_iter [ as @a[tag=mgs.stat_cand] ]
 #
 
 # Run as the highest-scoring player not yet announced.

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/ammo/apply_quick_reload
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/ammo/reload
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/ammo/reload
 #
 
 # cooldown x (100 - quick_reload) / 100

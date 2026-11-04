@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/freeze_mob
 #
-# @executed	as @e[tag=mgs.zombie_round]
-#
-# @within	mgs:v5.3.0/zombies/freeze_world [ as @e[tag=mgs.zombie_round] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/freeze_world [ as @e[tag=mgs.zombie_round] ]
 #
 
 tag @s add mgs.zb_frozen_ai

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/pap_chat_lore_iter
 #
-# @within	mgs:v5.3.0/zombies/pap/pap_chat_lore_loop with storage mgs:temp _pap_lore_idx
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/pap_chat_lore_loop with storage mgs:temp _pap_lore_idx
 #
 # @args		index (unknown)
 #

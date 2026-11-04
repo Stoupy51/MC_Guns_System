@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/hp/rotate
 #
-# @within	mgs:v5.3.0/multiplayer/gamemodes/hp/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/hp/tick
 #
 
 data remove storage mgs:multiplayer game.hp_zones[0]

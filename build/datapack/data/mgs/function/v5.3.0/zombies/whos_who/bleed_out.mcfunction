@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/whos_who/bleed_out
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/whos_who/owner_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/whos_who/owner_tick
 #
 
 function mgs:v5.3.0/zombies/whos_who/forfeit

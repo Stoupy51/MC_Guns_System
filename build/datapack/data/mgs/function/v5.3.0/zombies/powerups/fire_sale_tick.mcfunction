@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/fire_sale_tick
 #
-# @within	mgs:v5.3.0/zombies/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick
 #
 
 scoreboard players operation #zb_fire_sale_timer mgs.data -= #tick_delta mgs.data

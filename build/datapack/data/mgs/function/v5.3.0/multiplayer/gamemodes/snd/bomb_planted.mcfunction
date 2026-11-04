@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/bomb_planted
 #
-# @executed	as @a[tag=mgs.snd_carrier,limit=1] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/tick [ as @a[tag=mgs.snd_carrier,limit=1] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/tick [ as @a[tag=mgs.snd_carrier,limit=1] & at @s ]
 #
 
 scoreboard players set #snd_bomb_state mgs.data 2

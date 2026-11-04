@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/drops/give_item
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/shared/drops/give_mag with storage mgs:temp _give [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/drops/give_mag with storage mgs:temp _give [ at @s ]
 #
 # @args		Item (unknown)
 #			Owner (unknown)

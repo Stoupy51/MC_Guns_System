@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/drops/take
 #
-# @executed	at @e[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/shared/drops/collect
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/drops/collect
 #
 
 execute if score #pick_g0 mgs.data matches 0 run item replace entity @s hotbar.1 from entity @n[type=minecraft:item_display,tag=mgs.dropped_gun,distance=..3] contents

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/form/trap_apply
 #
-# @within	string in mgs:v5.3.0/maps/editor/form/open/trap {type:$(type),price:$(price),duration:$(duration),cooldown:$(cooldown),power:$(power),effect_radius:\"$(effect_radius)\",offset_pos:\"$(offset_pos)\"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/form/open/trap {type:$(type),price:$(price),duration:$(duration),cooldown:$(cooldown),power:$(power),effect_radius:\"$(effect_radius)\",offset_pos:\"$(offset_pos)\"}
 #
 # @args		type (unknown)
 #			price (unknown)

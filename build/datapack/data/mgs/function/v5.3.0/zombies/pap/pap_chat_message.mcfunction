@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/pap_chat_message
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/on_right_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/on_right_click
 #
 
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.machine","fallback":"Machine: ","color":"gray"},{"storage":"mgs:temp","nbt":"_pap_machine.name","color":"gold","italic":false,"interpret":true},[{"text":"\n","color":"gray"}, {"translate":"mgs.level_2","fallback":"Level: "}],{"score":{"name":"#pap_next","objective":"mgs.data"},"color":"aqua"},{"text":"/","color":"dark_gray"},{"score":{"name":"#pap_max","objective":"mgs.data"},"color":"aqua"},[{"text":"  ","color":"gray"}, {"translate":"mgs.cost","fallback":"Cost"}, ": -"],{"score":{"name":"#pap_price","objective":"mgs.data"},"color":"yellow"},[{"text":" ","color":"gray"}, {"translate":"mgs.points_2","fallback":"points"}]]

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/raycast/main
 #
-# @executed	anchored eyes & positioned ^ ^ ^
-#
-# @within	mgs:v5.3.0/player/shoot [ anchored eyes & positioned ^ ^ ^ ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/shoot [ anchored eyes & positioned ^ ^ ^ ]
 #			mgs:v5.3.0/mob/shoot [ anchored eyes & positioned ^ ^ ^ ]
 #
 

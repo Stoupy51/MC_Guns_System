@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/raycast/on_targeted_block
 #
-# @within	string in mgs:v5.3.0/raycast/main
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/raycast/main
 #
 
 # https://docs.mcbookshelf.dev/en/latest/modules/block.html#get

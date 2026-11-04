@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/check_pap_taker
 #
-# @executed	as @p[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5]
-#
-# @within	mgs:v5.3.0/zombies/powerups/do_pickup [ as @p[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/do_pickup [ as @p[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..1.5] ]
 #
 
 execute store result score #pu_pap_sel mgs.data run data get entity @s SelectedItemSlot

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/resume
 #
-# @within	mgs:v5.3.0/zombies/suspended_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/suspended_tick
 #
 
 function mgs:v5.3.0/zombies/unfreeze_world

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/mp/level/check
 #
-# @executed	as @a
-#
 # @within	#mgs:progression/on_level_up
+#			mgs:v5.3.0/dialog/close_then
 #			mgs:v5.3.0/progression/adv/catch_up
 #
 

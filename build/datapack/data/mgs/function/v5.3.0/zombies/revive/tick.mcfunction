@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/tick
 #
-# @within	mgs:v5.3.0/zombies/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick
 #
 
 execute as @a[tag=mgs.downed_spectator,scores={mgs.zb.in_game=1}] at @s run function mgs:v5.3.0/zombies/revive/downed_tick

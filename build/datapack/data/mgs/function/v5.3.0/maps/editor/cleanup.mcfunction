@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/cleanup
 #
-# @executed	as @p[tag=mgs.map_editor,distance=..6,sort=nearest]
-#
-# @within	mgs:v5.3.0/maps/editor/save_exit
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/save_exit
 #			mgs:v5.3.0/maps/editor/exit
 #
 

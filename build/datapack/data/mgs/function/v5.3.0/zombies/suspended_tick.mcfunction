@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/suspended_tick
 #
-# @within	mgs:v5.3.0/zombies/freeze_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/freeze_tick
 #
 
 execute unless entity @a[scores={mgs.zb.in_game=1}] run return run scoreboard players set #zb_resume_timer mgs.data 0

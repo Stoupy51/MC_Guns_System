@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wunderfizz/do_relocate
 #
-# @within	mgs:v5.3.0/zombies/wunderfizz/move_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wunderfizz/move_tick
 #
 
 tag @e[tag=mgs.wf_active] add mgs.wf_prev_active

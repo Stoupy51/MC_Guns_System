@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/award_dom_neutralize
 #
-# @executed	as @a[tag=mgs.dom_capturer]
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/dom/capture_red [ as @a[tag=mgs.dom_capturer] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/dom/capture_red [ as @a[tag=mgs.dom_capturer] ]
 #			mgs:v5.3.0/multiplayer/gamemodes/dom/capture_blue [ as @a[tag=mgs.dom_capturer] ]
 #
 

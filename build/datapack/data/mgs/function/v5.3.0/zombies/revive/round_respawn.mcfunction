@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/round_respawn
 #
-# @within	mgs:v5.3.0/zombies/round_complete
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/round_complete
 #
 
 # A player still downed when the round ends is revived for free, keeping the loadout: the bleed timer never ran out.

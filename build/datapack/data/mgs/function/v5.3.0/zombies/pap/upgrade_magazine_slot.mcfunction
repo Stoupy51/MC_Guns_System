@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/upgrade_magazine_slot
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/pap_upgrade_magazines {slot:"hotbar.0"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/pap_upgrade_magazines {slot:"hotbar.0"}
 #			mgs:v5.3.0/zombies/pap/pap_upgrade_magazines {slot:"hotbar.1"}
 #			mgs:v5.3.0/zombies/pap/pap_upgrade_magazines {slot:"hotbar.2"}
 #			mgs:v5.3.0/zombies/pap/pap_upgrade_magazines {slot:"hotbar.3"}

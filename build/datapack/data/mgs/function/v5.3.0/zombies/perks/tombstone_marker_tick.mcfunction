@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/tombstone_marker_tick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ at @s ]
 #
 
 particle minecraft:soul ~ ~0.5 ~ 0.25 0.4 0.25 0.01 3 force @a[distance=..48]

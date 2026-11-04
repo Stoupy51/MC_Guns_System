@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/settings_apply
 #
-# @within	string in mgs:v5.3.0/maps/editor/settings {name:\"$(name)\",description:\"$(description)\",dimension:\"$(dimension)\"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/settings {name:\"$(name)\",description:\"$(description)\",dimension:\"$(dimension)\"}
 #
 # @args		name (string)
 #			description (string)

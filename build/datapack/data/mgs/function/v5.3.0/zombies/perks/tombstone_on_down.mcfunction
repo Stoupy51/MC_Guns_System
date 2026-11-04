@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/tombstone_on_down
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/on_down
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/on_down
 #
 
 # A solo bleed-out is game over, so there is nothing to recover to.

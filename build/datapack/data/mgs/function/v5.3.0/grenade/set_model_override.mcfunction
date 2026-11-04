@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/set_model_override
 #
-# @executed	anchored eyes & positioned ^ ^ ^0.5
-#
-# @within	mgs:v5.3.0/grenade/init with entity @s data.config
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/init with entity @s data.config
 #
 # @args		model_override (unknown)
 #

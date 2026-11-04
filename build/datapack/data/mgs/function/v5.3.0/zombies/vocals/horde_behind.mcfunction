@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/vocals/horde_behind
 #
-# @executed	at @n[type=minecraft:zombie,tag=mgs.zombie_round,distance=..3.0]
-#
-# @within	mgs:v5.3.0/zombies/horde_ambient [ at @n[type=minecraft:zombie,tag=mgs.zombie_round,distance=..3.0] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/horde_ambient [ at @n[type=minecraft:zombie,tag=mgs.zombie_round,distance=..3.0] ]
 #
 
 playsound mgs:zombies/entity/behind hostile @s ~ ~ ~ 0.6 1.0

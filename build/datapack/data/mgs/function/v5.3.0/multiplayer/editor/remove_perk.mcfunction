@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/remove_perk
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/toggle_perk
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/toggle_perk
 #
 
 data modify storage mgs:temp _remove_iter set from storage mgs:temp editor.perks

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/mob/go_sleep
 #
-# @executed	as @e[tag=mgs.armed] & at @s
-#
-# @within	mgs:v5.3.0/mob/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/mob/tick
 #
 
 tag @s add mgs.mob_sleeping

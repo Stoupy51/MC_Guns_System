@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/missions/actual_respawn
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/missions/game_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/game_tick [ at @s ]
 #
 
 execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"missions",fn:"mgs:v5.3.0/missions/actual_respawn"}

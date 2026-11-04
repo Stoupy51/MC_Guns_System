@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/announce_stats_iter
 #
-# @within	mgs:v5.3.0/multiplayer/stop
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/stop
 #			mgs:v5.3.0/multiplayer/announce_stats_iter
 #
 

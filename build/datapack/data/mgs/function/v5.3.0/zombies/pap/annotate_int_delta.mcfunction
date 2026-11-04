@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/annotate_int_delta
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/annotate_lore
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/annotate_lore
 #			mgs:v5.3.0/zombies/pap/annotate_pellets_line
 #
 

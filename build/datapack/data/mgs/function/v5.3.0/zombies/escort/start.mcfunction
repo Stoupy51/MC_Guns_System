@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/escort/start
 #
-# @executed	as @e[tag=...,limit=1,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zombies/on_stuck_zombie
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/on_stuck_zombie
 #			mgs:v5.3.0/zombies/escort/start_to_target
 #			mgs:v5.3.0/zombies/escort/update_lure [ as @e[tag=...,limit=2,sort=random] & at @s ]
 #			mgs:v5.3.0/zombies/monkey/pull_one

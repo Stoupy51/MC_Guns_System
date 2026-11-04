@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.zonweeb_passive","fallback": "Zonweeb Passive",
@@ -9,9 +11,9 @@
 		"contents": {"translate": "mgs.choose_a_passive_effect_for_this_game","fallback": "Choose a passive effect for this game.","color": "gray"}
 	},
 	"columns": 1,
-	"after_action": "close",
 	"exit_action": {
-		"label": "Skip"
+		"label": "Skip",
+		"action": {"type": "run_command","command": "/trigger mgs.player.config set 1640"}
 	},
 	"actions": [
 		{"label": ["","💰 ",{"translate": "mgs.x1_2_points","fallback": "x1.2 Points","color": "gold"}],"tooltip": {"translate": "mgs.earn_20_more_points_from_kills_permanent","fallback": "Earn 20% more points from kills (permanent)"},"action": {"type": "run_command","command": "/trigger mgs.player.config set 6"}},

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/deny_pool_empty
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/pick_random_result
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/pick_random_result
 #
 
 # A stale result would make the pull look successful.

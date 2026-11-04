@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_lobby_click
 #
-# @executed	as @e[tag=mgs.kino]
-#
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/on_right_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/on_right_click
 #
 
 execute unless score #kino_tp_state mgs.data matches 1 run return fail

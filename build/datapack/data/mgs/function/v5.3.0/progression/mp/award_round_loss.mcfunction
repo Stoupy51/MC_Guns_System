@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/award_round_loss
 #
-# @executed	as @a[scores={mgs.mp.team=2,mgs.mp.in_game=1}]
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/attackers_win [ as @a[scores={mgs.mp.team=2,mgs.mp.in_game=1}] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/attackers_win [ as @a[scores={mgs.mp.team=2,mgs.mp.in_game=1}] ]
 #			mgs:v5.3.0/multiplayer/gamemodes/snd/attackers_win [ as @a[scores={mgs.mp.team=1,mgs.mp.in_game=1}] ]
 #			mgs:v5.3.0/multiplayer/gamemodes/snd/defenders_win [ as @a[scores={mgs.mp.team=1,mgs.mp.in_game=1}] ]
 #			mgs:v5.3.0/multiplayer/gamemodes/snd/defenders_win [ as @a[scores={mgs.mp.team=2,mgs.mp.in_game=1}] ]

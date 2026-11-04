@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wunderfizz/land_bear
 #
-# @executed	as @e[type=item_display,tag=mgs.wunderfizz_orb] & at @s
-#
-# @within	mgs:v5.3.0/zombies/wunderfizz/land
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wunderfizz/land
 #
 
 # The machine roams instead of granting a perk (Black Ops teddy bear rule).

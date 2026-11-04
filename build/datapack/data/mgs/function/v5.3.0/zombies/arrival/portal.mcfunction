@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/arrival/portal
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/do_spawn
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/do_spawn
 #
 
 summon minecraft:marker ~ ~ ~ {Tags:["mgs.zb_portal","mgs.zombies_entity","mgs.zb_portal_new"]}

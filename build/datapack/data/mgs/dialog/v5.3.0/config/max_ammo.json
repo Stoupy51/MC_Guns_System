@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.max_ammo_mode","fallback": "Max Ammo Mode",
@@ -13,8 +15,6 @@
 		{"label": {"translate": "mgs.recent","fallback": "Recent","color": "green"},"tooltip": {"translate": "mgs.also_reload_current_weapon_recent_zombies","fallback": "Also reload current weapon (recent zombies)"},"action": {"type": "run_command","command": "/scoreboard players set #max_ammo_reload_weapons mgs.config 1"}}
 	],
 	"columns": 1,
-	"pause": false,
-	"after_action": "none",
 	"exit_action": {
 		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
 		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},

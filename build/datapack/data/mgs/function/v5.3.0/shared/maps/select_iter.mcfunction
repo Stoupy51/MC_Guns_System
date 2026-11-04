@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/shared/maps/select_iter
 #
-# @within	mgs:v5.3.0/shared/maps/select_iter
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/maps/select_iter
 #			mgs:v5.3.0/zombies/map_select
 #			mgs:v5.3.0/multiplayer/map_select
 #			mgs:v5.3.0/missions/map_select

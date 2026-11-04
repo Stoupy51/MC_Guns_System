@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/summon_zb_marker
 #
-# @executed	as @a[tag=mgs.map_editor,limit=1]
-#
-# @within	mgs:v5.3.0/maps/editor/summon_zb_object_iter with storage mgs:temp _zbpos
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/summon_zb_object_iter with storage mgs:temp _zbpos
 #			mgs:v5.3.0/maps/editor/handle_zb_object with storage mgs:temp _zbpos
 #
 # @args		x (unknown)

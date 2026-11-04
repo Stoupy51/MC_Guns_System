@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/mp/headshots/check
 #
-# @within	mgs:v5.3.0/progression/mp/award_headshot
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/mp/award_headshot
 #			mgs:v5.3.0/progression/adv/catch_up
 #
 

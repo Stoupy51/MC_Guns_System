@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/snapshot/player
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/stats/login_as {uuid:$(uuid),name:"$(name)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/login_as {uuid:$(uuid),name:"$(name)"}
 #			mgs:v5.3.0/stats/snapshot/by_uuid with storage mgs:temp _st_one
 #			mgs:v5.3.0/stats/admin/reset_name {uuid:$(uuid),name:"$(name)"}
 #

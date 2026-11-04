@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/summon_loop
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/grenade/throw
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/throw
 #			mgs:v5.3.0/grenade/summon_loop
 #
 

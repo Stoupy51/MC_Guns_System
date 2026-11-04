@@ -4,6 +4,7 @@
 # @executed	as the player & at current position
 #
 # @within	advancement mgs:challenges/zb/perks_10
+#			mgs:v5.3.0/dialog/close_then
 #
 
 function mgs:v5.3.0/progression/adv/reward_zb {title:'{"translate":"mgs.chemically_bound","fallback":"Chemically Bound","color":"yellow"}',description:'{"translate":"mgs.acquire_500_perks","fallback":"Acquire 500 perks","color":"gray"}',xp:340,branch:"zb",chain:"perks",tier:10}

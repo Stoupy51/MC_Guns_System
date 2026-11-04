@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/full_death
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/check_bounds_player
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/check_bounds_player
 #
 
 # A doppelganger forfeits their unrevived body, as when going down again.

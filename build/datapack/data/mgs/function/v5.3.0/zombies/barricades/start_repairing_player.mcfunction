@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/start_repairing_player
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/barricades/find_repairer
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/find_repairer
 #
 
 # Run as the player assigned as repairer, at the barricade.

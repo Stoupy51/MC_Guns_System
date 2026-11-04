@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/multiplayer/hijacked/tick
 #
-# @within	mgs:v5.3.0/maps/multiplayer/hijacked/calls/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/multiplayer/hijacked/calls/tick
 #
 
 # Hijacked map tick

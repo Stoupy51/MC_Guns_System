@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/refill_already_full
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/try_refill_owned
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/try_refill_owned
 #			mgs:v5.3.0/zombies/wallbuys/replace_selected
 #
 

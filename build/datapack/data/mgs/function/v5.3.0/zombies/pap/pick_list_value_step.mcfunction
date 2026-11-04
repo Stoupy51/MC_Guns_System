@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/pick_list_value_step
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/pick_list_value
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/pick_list_value
 #			mgs:v5.3.0/zombies/pap/pick_list_value_advance
 #
 

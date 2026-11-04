@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/timer_display
 #
-# @within	mgs:v5.3.0/multiplayer/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/game_tick
 #
 
 execute store result score #timer_sec mgs.data run scoreboard players get #mp_timer mgs.data

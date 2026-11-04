@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/missions/load_map_from_storage
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/missions/start with storage mgs:missions game
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/start with storage mgs:missions game
 #
 # @args		map_id (unknown)
 #

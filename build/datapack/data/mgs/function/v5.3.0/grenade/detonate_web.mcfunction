@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/detonate_web
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/detonate
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/detonate
 #
 
 particle minecraft:item{item:"minecraft:cobweb"} ~ ~0.5 ~ 1.2 0.8 1.2 0.1 80 force @a[distance=..64]

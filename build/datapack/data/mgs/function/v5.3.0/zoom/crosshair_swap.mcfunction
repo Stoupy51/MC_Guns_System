@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zoom/crosshair_swap
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zoom/crosshair_apply
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zoom/crosshair_apply
 #
 
 # The applied id is crosshair_<cross_from>_<cross_to>, so the new ramp starts where that one ended

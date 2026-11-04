@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/raycast/apply_block_hardness
 #
-# @within	mgs:v5.3.0/raycast/on_targeted_block
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/raycast/on_targeted_block
 #
 
 # reduction = hardness x 400 / 1000, capped at 950.

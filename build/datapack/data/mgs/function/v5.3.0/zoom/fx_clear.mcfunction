@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zoom/fx_clear
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zoom/fx_enter
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zoom/fx_enter
 #
 
 execute if score @s mgs.zoom_fx matches 2 run posteffect remove @s mgs:zoom_2

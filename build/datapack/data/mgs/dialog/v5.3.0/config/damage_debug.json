@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.damage_debug","fallback": "Damage Debug",
@@ -13,8 +15,6 @@
 		{"label": {"text": "ON","color": "green"},"tooltip": {"translate": "mgs.enable_global_damage_debug_tellraw_a_every_hit","fallback": "Enable global damage debug (tellraw @a every hit)"},"action": {"type": "run_command","command": "/scoreboard players set #damage_debug mgs.config 1"}}
 	],
 	"columns": 1,
-	"pause": false,
-	"after_action": "none",
 	"exit_action": {
 		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
 		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},

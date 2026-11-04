@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/custom/fav_count_update
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/custom/toggle_favorite
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/custom/toggle_favorite
 #
 
 data modify storage mgs:temp _fav_count_src set from storage mgs:multiplayer custom_loadouts

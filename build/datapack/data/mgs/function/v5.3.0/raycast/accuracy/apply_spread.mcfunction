@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/raycast/accuracy/apply_spread
 #
-# @executed	anchored eyes & positioned ^ ^ ^0.69
-#
-# @within	mgs:v5.3.0/shared/calc_velocity
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/calc_velocity
 #			mgs:v5.3.0/raycast/main
 #
 

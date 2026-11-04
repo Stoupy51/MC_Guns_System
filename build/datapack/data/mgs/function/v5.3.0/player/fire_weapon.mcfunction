@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/player/fire_weapon
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/right_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/right_click
 #
 
 # Shader: muzzle flash, skipped for grenades. The post effect lights the scene from its viewer's camera,

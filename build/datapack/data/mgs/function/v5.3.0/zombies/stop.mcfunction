@@ -1,11 +1,9 @@
 
 #> mgs:v5.3.0/zombies/stop
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/game_over 100t [ scheduled ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_over 100t [ scheduled ]
 #			mgs:v5.3.0/zombies/restart
-#			dialog mgs:v5.3.0/zombies/setup
 #
 
 execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.3.0/zombies/stop"}

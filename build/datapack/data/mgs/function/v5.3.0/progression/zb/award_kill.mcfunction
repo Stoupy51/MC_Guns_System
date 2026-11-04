@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/award_kill
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/zombies/check_kill_points
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/check_kill_points
 #
 
 # Per zombie, any kill type, via the totalKillCount delta

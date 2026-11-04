@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/detonate_smoke
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/detonate
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/detonate
 #
 
 playsound minecraft:block.fire.extinguish player @a[distance=..32] ~ ~ ~ 1 0.8

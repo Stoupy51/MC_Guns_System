@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/write_back
 #
-# @within	mgs:v5.3.0/maps/editor/do_save with storage mgs:temp map_edit
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/do_save with storage mgs:temp map_edit
 #
 # @args		mode (unknown)
 #			idx (unknown)

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/do_pickup
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/powerups/entity_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/entity_tick
 #
 
 # Free PaP upgrades the gun in hotbar 1-3, so a player without one cannot use it: the drop stays for a teammate.

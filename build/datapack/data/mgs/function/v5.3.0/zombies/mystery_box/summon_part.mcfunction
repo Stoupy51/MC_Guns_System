@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/summon_part
 #
-# @executed	as @n[tag=mgs.mystery_box_active] & at @s & positioned ~ ~-0.9 ~
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/summon_presence {tags:["mgs.mb_presence","mgs.mb_base","mgs.zombies_entity","mgs.mb_part_new"$(extra_tags)],model:"mgs:mystery_box_base"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/summon_presence {tags:["mgs.mb_presence","mgs.mb_base","mgs.zombies_entity","mgs.mb_part_new"$(extra_tags)],model:"mgs:mystery_box_base"}
 #			mgs:v5.3.0/zombies/mystery_box/summon_presence {tags:["mgs.mb_presence","mgs.mb_lid","mgs.zombies_entity","mgs.mb_part_new"$(extra_tags)],model:"mgs:mystery_box_lid"}
 #			mgs:v5.3.0/zombies/mystery_box/summon_disabled_display {tags:["mgs.mb_disabled","mgs.zombies_entity","mgs.mb_part_new"],model:"mgs:mystery_box_disabled"} [ positioned ~ ~-0.9 ~ ]
 #			mgs:v5.3.0/zombies/mystery_box/summon_disabled_display {tags:["mgs.mb_disabled","mgs.zombies_entity","mgs.mb_part_new"],model:"mgs:mystery_box_disabled"} [ positioned ~ ~511.1 ~ ]

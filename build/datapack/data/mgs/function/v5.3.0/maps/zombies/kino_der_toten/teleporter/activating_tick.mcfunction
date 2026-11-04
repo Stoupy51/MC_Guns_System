@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/activating_tick
 #
-# @executed	at @e[tag=mgs.kino.teleporter_theater]
-#
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/tick [ at @e[tag=mgs.kino.teleporter_theater] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/tick [ at @e[tag=mgs.kino.teleporter_theater] ]
 #
 
 scoreboard players remove #kino_tp_timer mgs.data 1

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/doors/store_name
 #
-# @within	mgs:v5.3.0/zombies/doors/setup_iter with storage mgs:temp _door_name
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/doors/setup_iter with storage mgs:temp _door_name
 #
 # @args		id (unknown)
 #			name (unknown)

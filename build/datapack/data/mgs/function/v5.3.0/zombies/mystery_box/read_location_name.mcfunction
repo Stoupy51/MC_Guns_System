@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/read_location_name
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/move_anim_land
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/move_anim_land
 #
 
 # names[] is 0-based, box ids 1-based.

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/apply_slot_loot
 #
-# @within	mgs:v5.3.0/multiplayer/apply_next_slot with storage mgs:temp current_slot
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/apply_next_slot with storage mgs:temp current_slot
 #
 # @args		slot (unknown)
 #			loot (unknown)

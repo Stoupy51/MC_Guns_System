@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/award_dom_hold
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/dom/score_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/dom/score_tick [ at @s ]
 #
 
 # Standing in a zone your team owns, once per 5s score tick

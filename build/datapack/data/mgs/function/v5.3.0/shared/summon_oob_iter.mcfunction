@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/shared/summon_oob_iter
 #
-# @within	mgs:v5.3.0/shared/summon_oob
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/summon_oob
 #			mgs:v5.3.0/shared/summon_oob_iter
 #
 

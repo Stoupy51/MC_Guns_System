@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/refresh_info_item
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] ]
 #			mgs:v5.3.0/zombies/inventory/give_starting_loadout
 #
 

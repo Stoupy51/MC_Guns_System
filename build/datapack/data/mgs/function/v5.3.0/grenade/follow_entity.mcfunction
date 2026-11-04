@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/follow_entity
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/tick_stuck
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/tick_stuck
 #
 
 tag @s add mgs.tp_me

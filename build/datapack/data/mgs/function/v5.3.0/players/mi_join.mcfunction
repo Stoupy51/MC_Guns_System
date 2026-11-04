@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/players/mi_join
 #
-# @executed	as the player & at current position
-#
-# @within	string in mgs:v5.3.0/players/row_missions
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/players/row_missions
 #			dialog mgs:v5.3.0/missions/setup
 #
 

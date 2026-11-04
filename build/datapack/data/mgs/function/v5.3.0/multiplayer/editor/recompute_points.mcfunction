@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/recompute_points
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/commit_check
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/commit_check
 #			mgs:v5.3.0/multiplayer/editor/hub
 #			mgs:v5.3.0/multiplayer/editor/show_primary_dialog
 #			mgs:v5.3.0/multiplayer/editor/show_secondary_pistol_dialog

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/pick_list_value
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/apply_field
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/apply_field
 #			mgs:v5.3.0/zombies/pap/resolve_runtime_name
 #
 

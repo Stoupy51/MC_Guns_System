@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/zombies/on_hit_signal
 #
 # @within	#mgs:signals/damage
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return fail

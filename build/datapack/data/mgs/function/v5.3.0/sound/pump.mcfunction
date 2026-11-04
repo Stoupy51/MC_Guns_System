@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/sound/pump
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/sound/check/pump with storage mgs:gun all.sounds
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/sound/check/pump with storage mgs:gun all.sounds
 #
 # @args		pump (unknown)
 #

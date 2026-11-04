@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/award_points_spent
 #
-# @executed	as @a[scores={mgs.zb.in_game=1}]
-#
-# @within	mgs:v5.3.0/zombies/xp/pay_spend
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/xp/pay_spend
 #
 
 # One XP per POINTS_PER_XP spent, remainder carried

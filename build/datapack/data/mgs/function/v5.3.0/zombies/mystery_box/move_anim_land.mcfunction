@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/move_anim_land
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/move_anim_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/move_anim_tick
 #
 
 execute as @n[tag=mgs.mystery_box_active] at @s positioned ~ ~-0.9 ~ as @e[tag=mgs.mb_presence,tag=!mgs.mb_temp] run tp @s ~ ~ ~

@@ -4,6 +4,7 @@
 # @executed	as the player & at current position
 #
 # @within	advancement mgs:challenges/mp/kills_8
+#			mgs:v5.3.0/dialog/close_then
 #
 
 function mgs:v5.3.0/progression/adv/reward_mp {title:'{"translate":"mgs.elite","fallback":"Elite","color":"yellow"}',description:'{"translate":"mgs.kill_3500_players","fallback":"Kill 3,500 players","color":"gray"}',xp:230,branch:"mp",chain:"kills",tier:8}

@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/load/enumerate
 #
 # @within	#mgs:enumerate
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # If current major is too low, set it to the current major

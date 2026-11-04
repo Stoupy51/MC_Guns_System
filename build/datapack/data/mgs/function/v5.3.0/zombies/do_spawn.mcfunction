@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/do_spawn
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/spawn_from/zombies [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/spawn_from/zombies [ at @s ]
 #			mgs:v5.3.0/zombies/spawn_from/special [ at @s ]
 #
 

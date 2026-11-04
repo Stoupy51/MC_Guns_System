@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/solo_qr_complete
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/solo_qr_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/solo_qr_tick
 #
 
 scoreboard players add @s mgs.zb.qr_uses 1

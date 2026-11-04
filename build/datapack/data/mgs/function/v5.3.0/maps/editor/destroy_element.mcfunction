@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/destroy_element
 #
-# @executed	at @s & as @n[tag=mgs.map_element,distance=..3]
-#
-# @within	mgs:v5.3.0/maps/editor/handle_destroy [ at @s & as @n[tag=mgs.map_element,distance=..3] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/handle_destroy [ at @s & as @n[tag=mgs.map_element,distance=..3] ]
 #
 
 # Run as the marker to destroy.

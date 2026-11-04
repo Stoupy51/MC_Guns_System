@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/my_loadouts/manage
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/process
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/process
 #
 
 scoreboard players operation #loadout_id mgs.data = @s mgs.player.config

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/summon_retry
 #
-# @within	string in mgs:v5.3.0/maps/editor/summon_report
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/summon_report
 #
 
 execute unless score @s mgs.mp.map_edit matches 1 run return fail

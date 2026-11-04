@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/award_challenge
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/progression/adv/reward_mp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/adv/reward_mp
 #
 
 # Any challenge unlocked; the tier's payout arrives in #xp_gain

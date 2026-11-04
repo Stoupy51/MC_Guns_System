@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/show_dialog
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/menu with storage mgs:temp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/menu with storage mgs:temp
 #			mgs:v5.3.0/players/list_multiplayer with storage mgs:temp
 #			mgs:v5.3.0/players/list_zombies with storage mgs:temp
 #			mgs:v5.3.0/players/list_missions with storage mgs:temp
@@ -61,5 +60,6 @@
 # @args		dialog (unknown)
 #
 
+scoreboard players set #dialog_shown mgs.data 1
 $dialog show @s $(dialog)
 

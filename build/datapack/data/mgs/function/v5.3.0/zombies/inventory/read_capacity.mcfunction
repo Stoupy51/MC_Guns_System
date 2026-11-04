@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/read_capacity
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/inventory/scale_magazine_slot {slot:"hotbar.$(index)",multiplier:6}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/inventory/scale_magazine_slot {slot:"hotbar.$(index)",multiplier:6}
 #
 # @args		slot (string)
 #			multiplier (int)

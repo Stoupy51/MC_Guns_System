@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/invite_selected
 #
-# @within	string in mgs:v5.3.0/maps/editor/invite_template {ids:[$(tpl)0]}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/invite_template {ids:[$(tpl)0]}
 #
 # @args		ids (list)
 #

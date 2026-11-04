@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/apply_field
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/apply_runtime_overrides {field:"capacity"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/apply_runtime_overrides {field:"capacity"}
 #			mgs:v5.3.0/zombies/pap/apply_runtime_overrides {field:"remaining_bullets"}
 #			mgs:v5.3.0/zombies/pap/apply_runtime_overrides {field:"reload_time"}
 #			mgs:v5.3.0/zombies/pap/apply_runtime_overrides {field:"reload_end"}

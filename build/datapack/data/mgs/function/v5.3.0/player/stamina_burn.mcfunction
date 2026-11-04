@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/player/stamina_burn
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/stamina_bar
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/stamina_bar
 #
 
 scoreboard players remove @s mgs.stam_sat 8

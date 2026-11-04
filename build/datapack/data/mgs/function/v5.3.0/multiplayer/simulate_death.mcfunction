@@ -1,10 +1,9 @@
 
 #> mgs:v5.3.0/multiplayer/simulate_death
 #
-# @executed	at @s
-#
 # @within	mgs:v5.3.0/utils/signal_and_damage
 #			mgs:v5.3.0/utils/signal_and_damage_plain
+#			mgs:v5.3.0/dialog/close_then
 #			mgs:v5.3.0/multiplayer/bounds_kill
 #			mgs:v5.3.0/multiplayer/gamemodes/snd/bomb_explodes [ at @e[tag=mgs.snd_bomb] & as @a[distance=..10,gamemode=!creative,scores={mgs.mp.in_game=1..}] ]
 #			mgs:v5.3.0/multiplayer/gamemodes/demo/site_destroyed [ as @a[distance=..8.0,gamemode=!creative,scores={mgs.mp.in_game=1..}] ]

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/set_main_gun_display
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/save with storage mgs:temp editor
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/save with storage mgs:temp editor
 #
 # @args		primary_name (unknown)
 #			primary_scope_name (unknown)

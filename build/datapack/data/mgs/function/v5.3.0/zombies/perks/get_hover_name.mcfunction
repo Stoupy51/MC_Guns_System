@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/get_hover_name
 #
-# @executed	as @n[tag=mgs.pk_new]
-#
-# @within	mgs:v5.3.0/zombies/perks/announce_progress
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/announce_progress
 #			mgs:v5.3.0/zombies/perks/on_hover
 #
 

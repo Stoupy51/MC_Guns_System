@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/dedupe_read
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/maps/editor/dedupe/red_spawn
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/dedupe/red_spawn
 #			mgs:v5.3.0/maps/editor/dedupe/blue_spawn
 #			mgs:v5.3.0/maps/editor/dedupe/general_spawn
 #			mgs:v5.3.0/maps/editor/dedupe/out_of_bounds

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/handle_zb_object
 #
-# @executed	as @n[tag=mgs.new_element] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/process_element
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/process_element
 #
 
 execute store result storage mgs:temp _zbpos.x double 1 run data get entity @s Pos[0]

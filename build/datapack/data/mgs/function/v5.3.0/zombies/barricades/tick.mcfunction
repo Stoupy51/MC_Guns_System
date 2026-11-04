@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/tick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ at @s ]
 #
 
 # Run as the barricade display, at it.

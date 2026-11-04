@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/doors/get_hover_name
 #
-# @executed	as @e[tag=mgs.door_new]
-#
-# @within	mgs:v5.3.0/zombies/doors/on_right_click with storage mgs:temp _door_hover
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/doors/on_right_click with storage mgs:temp _door_hover
 #			mgs:v5.3.0/zombies/doors/on_hover with storage mgs:temp _door_hover
 #
 # @args		id (unknown)

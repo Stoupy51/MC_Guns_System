@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/doors/on_hover
 #
-# @executed	as @e[tag=mgs.door_new]
-#
-# @within	mgs:v5.3.0/zombies/doors/setup_iter {run:"function mgs:v5.3.0/zombies/doors/on_hover",executor:"source"} [ as @e[tag=mgs.door_new] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/doors/setup_iter {run:"function mgs:v5.3.0/zombies/doors/on_hover",executor:"source"} [ as @e[tag=mgs.door_new] ]
 #
 
 function mgs:v5.3.0/zombies/doors/read_price

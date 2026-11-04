@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/pick_sides
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/setup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/setup
 #
 
 # Per site, which team owns the nearest spawn.

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/tick_stuck
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/tick
 #
 
 execute if entity @s[tag=mgs.stuck_to_entity] run function mgs:v5.3.0/grenade/follow_entity

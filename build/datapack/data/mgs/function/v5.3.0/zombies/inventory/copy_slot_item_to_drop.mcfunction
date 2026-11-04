@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/copy_slot_item_to_drop
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/inventory/drop_wrong_slot_item {slot:"$(slot)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/inventory/drop_wrong_slot_item {slot:"$(slot)"}
 #
 # @args		slot (string)
 #

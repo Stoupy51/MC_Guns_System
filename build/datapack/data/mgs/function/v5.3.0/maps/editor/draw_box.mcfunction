@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/draw_box
 #
-# @executed	as @a[scores={mgs.mp.map_edit=1}] & at @s & as @e[type=minecraft:marker,tag=mgs.ed_box,distance=..32]
-#
-# @within	mgs:v5.3.0/maps/editor/particles with entity @s data._ed.box [ as @a[scores={mgs.mp.map_edit=1}] & at @s & as @e[type=minecraft:marker,tag=mgs.ed_box,distance=..32] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/particles with entity @s data._ed.box [ as @a[scores={mgs.mp.map_edit=1}] & at @s & as @e[type=minecraft:marker,tag=mgs.ed_box,distance=..32] ]
 #
 # @args		x2 (unknown)
 #			y1 (unknown)

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/missions/victory
 #
-# @within	mgs:v5.3.0/missions/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/game_tick
 #
 
 scoreboard players set #st_mi_won mgs.data 1

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/traps/turret_fire
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/traps/active_tick with storage mgs:temp _trap_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/traps/active_tick with storage mgs:temp _trap_tick
 #
 # @args		rx (int)
 #			ry (int)

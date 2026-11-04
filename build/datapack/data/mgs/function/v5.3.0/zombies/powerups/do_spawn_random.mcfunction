@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/do_spawn_random
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/powerups/spawn_random_at_self
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/spawn_random_at_self
 #
 
 execute if score #pu_spawn_type mgs.data matches 1 run data modify storage mgs:temp _pu_spawn.type set value "max_ammo"

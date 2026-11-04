@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/refresh_bar
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/progression/zb/init
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/zb/init
 #			mgs:v5.3.0/progression/zb/settle
 #			mgs:v5.3.0/progression/zb/recompute
 #			mgs:v5.3.0/progression/tick_player

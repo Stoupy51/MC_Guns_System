@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/monkey/attract
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/monkey/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/monkey/tick
 #
 
 execute if score #zb_special_round mgs.data matches 1 run return 0

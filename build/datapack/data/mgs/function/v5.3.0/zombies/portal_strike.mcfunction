@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/portal_strike
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/portal_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/portal_tick
 #
 
 function mgs:v5.3.0/zombies/portal_strike_fx

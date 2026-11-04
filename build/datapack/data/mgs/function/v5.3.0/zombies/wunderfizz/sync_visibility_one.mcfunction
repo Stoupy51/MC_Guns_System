@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wunderfizz/sync_visibility_one
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/wunderfizz/sync_visibility [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wunderfizz/sync_visibility [ at @s ]
 #
 
 execute if entity @s[tag=mgs.wf_active] if entity @s[tag=mgs.roam_hidden] run function mgs:v5.3.0/zombies/roaming/interaction_show

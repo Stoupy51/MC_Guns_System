@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/return_one
 #
-# @executed	as @a[tag=mgs.kino.in_tp]
-#
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/return_players [ as @a[tag=mgs.kino.in_tp] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/return_players [ as @a[tag=mgs.kino.in_tp] ]
 #
 
 # Run as a returning player: pick one of 5 lobby spots.

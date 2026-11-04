@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/spawn_special_capped
 #
-# @within	mgs:v5.3.0/zombies/spawn_batch_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/spawn_batch_tick
 #
 
 scoreboard players operation #zb_special_live mgs.data = #zb_alive mgs.data

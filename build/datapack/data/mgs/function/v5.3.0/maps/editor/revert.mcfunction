@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/revert
 #
-# @within	string in mgs:v5.3.0/maps/editor/removed_message {id:$(id)}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/removed_message {id:$(id)}
 #
 # @args		id (unknown)
 #

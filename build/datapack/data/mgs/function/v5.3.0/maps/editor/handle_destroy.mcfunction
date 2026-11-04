@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/handle_destroy
 #
-# @executed	as @n[tag=mgs.new_element] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/process_element
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/process_element
 #
 
 # Within 3 blocks.

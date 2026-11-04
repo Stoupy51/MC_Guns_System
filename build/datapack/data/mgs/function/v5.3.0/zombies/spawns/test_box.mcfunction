@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/spawns/test_box
 #
-# @executed	as @e[type=minecraft:marker,tag=...]
-#
-# @within	mgs:v5.3.0/zombies/spawns/check_box with entity @s data.abox
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/spawns/check_box with entity @s data.abox
 #
 # @args		x (unknown)
 #			y (unknown)

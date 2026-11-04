@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/summon_enemy_marker
 #
-# @executed	as @a[tag=mgs.map_editor,limit=1]
-#
-# @within	mgs:v5.3.0/maps/editor/summon_enemy_edit_iter with storage mgs:temp _epos
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/summon_enemy_edit_iter with storage mgs:temp _epos
 #			mgs:v5.3.0/maps/editor/handle_enemy with storage mgs:temp _pos
 #
 # @args		x (unknown)

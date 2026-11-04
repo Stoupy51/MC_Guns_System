@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/stuck_zombie_check
 #
-# @executed	as @e[tag=...,limit=1,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ as @e[tag=...,limit=1,sort=random] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ as @e[tag=...,limit=1,sort=random] & at @s ]
 #			mgs:v5.3.0/zombies/game_tick [ as @e[tag=...,limit=2,sort=random] & at @s ]
 #
 

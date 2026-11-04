@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/show
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/stats/board/dispatch {path:"level_mp",kind:"level_mp",title:"Multiplayer Level",filters:0b}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/dispatch {path:"level_mp",kind:"level_mp",title:"Multiplayer Level",filters:0b}
 #			mgs:v5.3.0/stats/board/dispatch {path:"level_zb",kind:"level_zb",title:"Zombies Level",filters:0b}
 #			mgs:v5.3.0/stats/board/zb_map_path with storage mgs:temp _lb_view
 #			mgs:v5.3.0/stats/board/mi_map_path with storage mgs:temp _lb_view
@@ -15,7 +14,7 @@
 #
 
 $function mgs:v5.3.0/stats/board/render {path:'$(path)',kind:"$(kind)"}
-$data modify storage mgs:temp dialog set value {type:"minecraft:notice",title:["","🏆 ",{text:"$(title)",color:"gold",bold:true}],body:[{type:"minecraft:plain_message",width:300,contents:[""]},{type:"minecraft:plain_message",width:300,contents:[""]}],action:{label:{translate:"gui.done"}}}
+$data modify storage mgs:temp dialog set value {type:"minecraft:notice",title:["","🏆 ",{text:"$(title)",color:"gold",bold:true}],body:[{type:"minecraft:plain_message",width:300,contents:[""]},{type:"minecraft:plain_message",width:300,contents:[""]}],pause:false,after_action:"none",action:{"label": {"translate": "gui.done"}, "action": {"type": "run_command", "command": "/trigger mgs.player.config set 1640"}}}
 data modify storage mgs:temp dialog.body[1].contents append from storage mgs:temp _lb_lines[]
 execute unless data storage mgs:temp _lb_lines[0] run data modify storage mgs:temp dialog.body[1].contents append value {translate:"mgs.no_entries_yet",fallback:"No entries yet",color:"gray"}
 

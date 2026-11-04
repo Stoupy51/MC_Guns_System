@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/refresh_sidebar_snd
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/create_sidebar_snd
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/create_sidebar_snd
 #			mgs:v5.3.0/multiplayer/gamemodes/snd/tick
 #
 

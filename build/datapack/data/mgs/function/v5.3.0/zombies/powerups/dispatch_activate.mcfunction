@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/dispatch_activate
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/powerups/do_pickup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/do_pickup
 #
 
 execute if score #pu_type_pickup mgs.data matches 1 run function mgs:v5.3.0/zombies/powerups/activate/max_ammo

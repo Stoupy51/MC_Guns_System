@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/bonus/extract_weapon_capacity
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/zombies/bonus/reload_weapon_slot {slot:"$(slot)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/bonus/reload_weapon_slot {slot:"$(slot)"}
 #
 # @args		slot (string)
 #

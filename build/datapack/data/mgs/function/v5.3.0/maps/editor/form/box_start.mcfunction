@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/form/box_start
 #
-# @within	mgs:v5.3.0/maps/editor/form/spawn_apply
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/form/spawn_apply
 #
 
 tag @s add mgs.cs_abox

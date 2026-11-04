@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/render
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/stats/board/show {path:'$(path)',kind:"$(kind)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/show {path:'$(path)',kind:"$(kind)"}
 #			mgs:v5.3.0/stats/board/hologram with storage mgs:temp _lb_cb
 #
 # @args		path (string)

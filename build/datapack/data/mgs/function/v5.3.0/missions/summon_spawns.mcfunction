@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/missions/summon_spawns
 #
-# @within	mgs:v5.3.0/missions/preload_complete
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/preload_complete
 #
 
 data modify storage mgs:temp _spawn_iter set from storage mgs:missions game.map.spawning_points.mission

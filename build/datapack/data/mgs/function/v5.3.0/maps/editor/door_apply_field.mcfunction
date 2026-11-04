@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/door_apply_field
 #
-# @executed	as @e[tag=mgs.element.door]
-#
-# @within	mgs:v5.3.0/maps/editor/door_set_if_match with storage mgs:temp _door_set
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/door_set_if_match with storage mgs:temp _door_set
 #
 # @args		field (unknown)
 #

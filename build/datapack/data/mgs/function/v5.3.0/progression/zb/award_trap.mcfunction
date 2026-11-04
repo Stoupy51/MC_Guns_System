@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/award_trap
 #
-# @executed	as @a[tag=mgs.xp_earner]
-#
-# @within	mgs:v5.3.0/zombies/traps/on_right_click [ as @a[tag=mgs.xp_earner] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/traps/on_right_click [ as @a[tag=mgs.xp_earner] ]
 #
 
 # Activating a trap

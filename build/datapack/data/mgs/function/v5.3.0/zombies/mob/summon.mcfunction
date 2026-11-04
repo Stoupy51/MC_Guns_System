@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mob/summon
 #
-# @executed	positioned ~ ~-1.8 ~
-#
-# @within	mgs:v5.3.0/zombies/mob/spawn with storage mgs:temp _mob
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mob/spawn with storage mgs:temp _mob
 #			mgs:v5.3.0/zombies/mob/rider with storage mgs:temp _mob
 #
 # @args		entity (unknown)

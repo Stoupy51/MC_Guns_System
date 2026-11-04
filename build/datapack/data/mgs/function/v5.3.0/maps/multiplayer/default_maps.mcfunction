@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/maps/multiplayer/default_maps
 #
 # @within	#mgs:maps/register
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # Hijacked, based on https://www.planetminecraft.com/project/cod-bo2-hijacked-recreation-amp-pvp-map-1-21-download/

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/activate
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_theater_click [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_theater_click [ at @s ]
 #
 
 # Run as the theater interaction.

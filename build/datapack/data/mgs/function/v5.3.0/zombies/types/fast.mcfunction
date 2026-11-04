@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/types/fast
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/types/apply
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/types/apply
 #
 
 tag @s add mgs.zb_fast

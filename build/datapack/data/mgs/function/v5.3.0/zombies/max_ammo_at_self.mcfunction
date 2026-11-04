@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/max_ammo_at_self
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/on_zombie_dying
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/on_zombie_dying
 #			mgs:v5.3.0/zombies/special_max_ammo
 #
 

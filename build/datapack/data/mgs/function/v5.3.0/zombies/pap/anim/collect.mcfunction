@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/collect
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/on_right_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/on_right_click
 #
 
 # Machine-context functions target the player through this tag.

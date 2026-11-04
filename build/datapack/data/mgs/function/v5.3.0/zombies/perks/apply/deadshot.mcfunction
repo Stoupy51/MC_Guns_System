@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/apply/deadshot
 #
-# @executed	as @p[tag=mgs.pu_collecting]
-#
-# @within	mgs:v5.3.0/zombies/perks/apply
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/apply
 #
 
 scoreboard players set @s mgs.special.deadshot 1

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/mob/fire_weapon
 #
-# @executed	anchored eyes & facing entity @e[tag=mgs.target,limit=1] feet
-#
-# @within	mgs:v5.3.0/mob/tick [ anchored eyes & facing entity @e[tag=mgs.target,limit=1] feet ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/mob/tick [ anchored eyes & facing entity @e[tag=mgs.target,limit=1] feet ]
 #
 
 rotate @s facing entity @n[tag=mgs.target] eyes

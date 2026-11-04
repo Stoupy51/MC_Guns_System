@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/spawn_display
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/try_use
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/try_use
 #
 
 summon minecraft:item_display ~ ~-0.9 ~ {Tags:["mgs.mb_display","mgs.zombies_entity","mgs.mb_display_new"],item_display:"fixed",item:{id:"minecraft:nether_star",count:1,components:{"minecraft:item_model":"air"}},billboard:"fixed"}

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/extract_mag_model
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/upgrade_magazine_slot {slot:"$(slot)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/upgrade_magazine_slot {slot:"$(slot)"}
 #
 # @args		slot (string)
 #

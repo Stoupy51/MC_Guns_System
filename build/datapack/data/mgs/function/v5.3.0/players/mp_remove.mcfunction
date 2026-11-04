@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/players/mp_remove
 #
-# @within	string in mgs:v5.3.0/players/row_multiplayer
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/players/row_multiplayer
 #
 
 scoreboard players set @s mgs.mp.team 0

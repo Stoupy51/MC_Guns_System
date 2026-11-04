@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/summon_spawns
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/start
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/start
 #
 
 data modify storage mgs:temp _spawn_iter set from storage mgs:multiplayer game.map.spawning_points.red

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/admin/powerup
 #
-# @executed	as the player & at current position
-#
-# @within	dialog mgs:v5.3.0/zombies/admin/powerups
+# @within	mgs:v5.3.0/dialog/close_then
+#			dialog mgs:v5.3.0/zombies/admin/powerups
 #
 # @args		type (unknown)
 #

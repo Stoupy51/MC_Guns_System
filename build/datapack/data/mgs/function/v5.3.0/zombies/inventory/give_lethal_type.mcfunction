@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/give_lethal_type
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/zombies/bonus/max_ammo_grenades {count:4}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/bonus/max_ammo_grenades {count:4}
 #			mgs:v5.3.0/zombies/inventory/replenish_grenades {count:2}
 #
 # @args		count (int)

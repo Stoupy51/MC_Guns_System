@@ -4,6 +4,7 @@
 # @executed	as the player & at current position
 #
 # @within	advancement mgs:v5.3.0/zombies/hurt_player
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # Revoked first, so it can trigger again.

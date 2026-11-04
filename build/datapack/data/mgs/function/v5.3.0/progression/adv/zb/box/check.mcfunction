@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/zb/box/check
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/progression/zb/award_mystery_box
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/zb/award_mystery_box
 #			mgs:v5.3.0/progression/adv/catch_up
 #
 

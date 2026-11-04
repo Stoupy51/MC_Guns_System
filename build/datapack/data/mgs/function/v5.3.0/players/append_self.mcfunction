@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/players/append_self
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/players/list_multiplayer [ as @a ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/players/list_multiplayer [ as @a ]
 #			mgs:v5.3.0/players/list_zombies [ as @a ]
 #			mgs:v5.3.0/players/list_missions [ as @a ]
 #			mgs:v5.3.0/maps/editor/invite [ as @a ]

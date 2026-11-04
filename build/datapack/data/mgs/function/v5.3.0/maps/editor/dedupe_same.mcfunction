@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/dedupe_same
 #
-# @executed	as @e[type=minecraft:marker,tag=...,distance=..0.01]
-#
-# @within	mgs:v5.3.0/maps/editor/dedupe/red_spawn [ as @e[type=minecraft:marker,tag=...,distance=..0.01] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/dedupe/red_spawn [ as @e[type=minecraft:marker,tag=...,distance=..0.01] ]
 #			mgs:v5.3.0/maps/editor/dedupe/blue_spawn [ as @e[type=minecraft:marker,tag=...,distance=..0.01] ]
 #			mgs:v5.3.0/maps/editor/dedupe/general_spawn [ as @e[type=minecraft:marker,tag=...,distance=..0.01] ]
 #			mgs:v5.3.0/maps/editor/dedupe/out_of_bounds [ as @e[type=minecraft:marker,tag=...,distance=..0.01] ]

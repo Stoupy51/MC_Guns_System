@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/player/config/hitmarker_sound
 #
 # @within	#mgs:signals/damage
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute as @a[tag=mgs.ticking] if score @s mgs.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/doors/open_one
 #
-# @executed	as @e[tag=mgs.door] & at @s
-#
-# @within	mgs:v5.3.0/zombies/doors/on_right_click [ as @e[tag=mgs.door] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/doors/on_right_click [ as @e[tag=mgs.door] & at @s ]
 #
 
 # Stored rotation and side-aware offset, so both interactions target the same door block.

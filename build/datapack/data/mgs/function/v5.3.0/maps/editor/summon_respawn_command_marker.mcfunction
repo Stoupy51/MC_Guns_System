@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/summon_respawn_command_marker
 #
-# @executed	as @a[tag=mgs.map_editor,limit=1]
-#
-# @within	mgs:v5.3.0/maps/editor/summon_respawn_command_iter with storage mgs:temp _rcpos
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/summon_respawn_command_iter with storage mgs:temp _rcpos
 #			mgs:v5.3.0/maps/editor/handle_respawn_command with storage mgs:temp _pos
 #
 # @args		x (unknown)

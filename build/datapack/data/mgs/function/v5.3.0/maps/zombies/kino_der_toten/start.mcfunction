@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/start
 #
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/calls/start
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/calls/start
 #
 
 scoreboard players set #kino_tp_state mgs.data 0

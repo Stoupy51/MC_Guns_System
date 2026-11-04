@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/assign_bphase
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/enforce_bounds
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/enforce_bounds
 #
 
 scoreboard players operation @s mgs.mp.bphase = #bphase_next mgs.data

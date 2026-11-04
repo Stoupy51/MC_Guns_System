@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/award_barricade
 #
-# @executed	as @a[tag=mgs.barricade_repairing]
-#
-# @within	mgs:v5.3.0/zombies/barricades/on_repair_complete_player
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/on_repair_complete_player
 #
 
 # Repairing a barricade; already capped at 25 repairs per round

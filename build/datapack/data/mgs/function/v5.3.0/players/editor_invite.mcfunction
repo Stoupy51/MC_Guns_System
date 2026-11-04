@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/players/editor_invite
 #
-# @within	mgs:v5.3.0/maps/editor/enter
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/enter
 #			mgs:v5.3.0/maps/editor/invite_next [ as @a ]
 #			mgs:v5.3.0/maps/editor/invite_all [ as @a ]
 #

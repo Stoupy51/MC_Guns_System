@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/render_next
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/stats/board/render {kind:"$(kind)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/render {kind:"$(kind)"}
 #			mgs:v5.3.0/stats/board/render_next {kind:"$(kind)"}
 #
 # @args		kind (string)

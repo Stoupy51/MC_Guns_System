@@ -1,8 +1,6 @@
 
 #> mgs:zombies/bonus/nuke
 #
-# @executed	as the player & at current position
-#
 # @within	mgs:v5.3.0/zombies/powerups/activate/nuke
 #
 

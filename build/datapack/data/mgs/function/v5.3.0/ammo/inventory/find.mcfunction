@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/ammo/inventory/find
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/ammo/end_reload with storage mgs:gun all.stats
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/ammo/end_reload with storage mgs:gun all.stats
 #
 # @args		base_weapon (unknown)
 #

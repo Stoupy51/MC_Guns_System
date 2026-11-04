@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/player/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # Run as a player during a game; damage is read from the `health` criterion, no NBT.

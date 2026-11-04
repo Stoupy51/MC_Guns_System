@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/instant_repair
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/barricades/repair_all [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/repair_all [ at @s ]
 #
 
 scoreboard players set @s mgs.zb.barricade.state 0

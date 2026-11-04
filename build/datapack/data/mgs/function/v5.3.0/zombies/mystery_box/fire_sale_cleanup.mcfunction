@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/fire_sale_cleanup
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/fire_sale_end
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/fire_sale_end
 #			mgs:v5.3.0/zombies/mystery_box/move_anim_tick
 #			mgs:v5.3.0/zombies/mystery_box/collect
 #			mgs:v5.3.0/zombies/mystery_box/reset_one

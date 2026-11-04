@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/annotate_pellets_line
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/annotate_lore
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/annotate_lore
 #
 
 execute store result score #pap_old mgs.data run data get storage mgs:temp _pap_old_stats.pellet_count

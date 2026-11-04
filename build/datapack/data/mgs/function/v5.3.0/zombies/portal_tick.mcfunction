@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/portal_tick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ at @s ]
 #
 
 # Phase 1 (30 ticks): a ring on the floor marks the footprint.

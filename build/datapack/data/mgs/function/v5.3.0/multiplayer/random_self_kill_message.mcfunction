@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/random_self_kill_message
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/simulate_death_fire_kill
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/simulate_death_fire_kill
 #
 
 execute store result score #random_message mgs.data run random value 1..5

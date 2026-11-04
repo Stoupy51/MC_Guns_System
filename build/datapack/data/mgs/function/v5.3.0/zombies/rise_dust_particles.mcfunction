@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/rise_dust_particles
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/rise_dust_tick with entity @s data
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/rise_dust_tick with entity @s data
 #
 # @args		block (unknown)
 #

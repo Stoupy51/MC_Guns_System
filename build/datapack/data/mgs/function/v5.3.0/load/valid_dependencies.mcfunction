@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/load/valid_dependencies
 #
-# @within	mgs:v5.3.0/load/secondary
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/load/secondary
 #			mgs:v5.3.0/load/valid_dependencies 1t replace [ scheduled ]
 #
 

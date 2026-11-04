@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/build_sidebar_demo
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/refresh_sidebar_demo with storage mgs:temp demo_sb
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/refresh_sidebar_demo with storage mgs:temp demo_sb
 #
 # @args		atk_label (unknown)
 #			atk_team (unknown)

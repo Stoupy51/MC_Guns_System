@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/filters_add
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/stats/board/filters with storage mgs:temp _lb_view
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/filters with storage mgs:temp _lb_view
 #
 # @args		f0 (unknown)
 #			f1 (unknown)

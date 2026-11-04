@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mob/give_gun
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/mob/arm with storage mgs:temp _mob.gun
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mob/arm with storage mgs:temp _mob.gun
 #
 # @args		id (unknown)
 #

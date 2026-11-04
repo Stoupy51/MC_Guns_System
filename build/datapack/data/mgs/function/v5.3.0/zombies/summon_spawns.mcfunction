@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/summon_spawns
 #
-# @within	mgs:v5.3.0/zombies/preload_complete
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/preload_complete
 #
 
 # Each marker gets the next unique id.

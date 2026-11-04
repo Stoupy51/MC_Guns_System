@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/award_perk
 #
-# @executed	as @p[tag=mgs.pu_collecting]
-#
-# @within	mgs:v5.3.0/zombies/perks/apply/juggernog
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/apply/juggernog
 #			mgs:v5.3.0/zombies/perks/apply/speed_cola
 #			mgs:v5.3.0/zombies/perks/apply/double_tap
 #			mgs:v5.3.0/zombies/perks/apply/quick_revive

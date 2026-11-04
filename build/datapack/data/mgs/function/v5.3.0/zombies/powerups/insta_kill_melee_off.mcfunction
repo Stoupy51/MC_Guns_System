@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/insta_kill_melee_off
 #
-# @executed	as @a[tag=mgs.ik_melee,scores={mgs.special.instant_kill=..0}]
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ as @a[tag=mgs.ik_melee,scores={mgs.special.instant_kill=..0}] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ as @a[tag=mgs.ik_melee,scores={mgs.special.instant_kill=..0}] ]
 #
 
 attribute @s minecraft:attack_damage modifier remove mgs:insta_kill

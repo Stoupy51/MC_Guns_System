@@ -1,10 +1,8 @@
 
 #> mgs:v5.3.0/zombies/join_game
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/players/zb_join
-#			dialog mgs:v5.3.0/zombies/setup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/players/zb_join
 #
 
 execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.3.0/zombies/join_game"}

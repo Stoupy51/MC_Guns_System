@@ -1,9 +1,9 @@
 
 #> mgs:v5.3.0/missions/stop
 #
-# @within	mgs:v5.3.0/missions/end_prep
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/end_prep
 #			mgs:v5.3.0/missions/victory
-#			dialog mgs:v5.3.0/missions/setup
 #
 
 execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"missions",fn:"mgs:v5.3.0/missions/stop"}

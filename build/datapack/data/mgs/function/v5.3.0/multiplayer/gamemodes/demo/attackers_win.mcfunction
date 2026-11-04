@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/attackers_win
 #
-# @executed	as @e[tag=mgs.demo_obj,scores={mgs.demo_state=1}] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/demo/site_destroyed
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/demo/site_destroyed
 #
 
 # Closes the round once: the last destruction and a clock expiry can land on the same tick.

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/tick
 #
-# @within	mgs:v5.3.0/multiplayer/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/game_tick
 #
 
 # Rebuilt once a second: the attacking side and the bomb state are text, which no score component can show.

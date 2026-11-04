@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/ammo/inventory/process_slot
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/ammo/inventory/find {slot:"hotbar.0",base_weapon:"$(base_weapon)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/ammo/inventory/find {slot:"hotbar.0",base_weapon:"$(base_weapon)"}
 #			mgs:v5.3.0/ammo/inventory/find {slot:"hotbar.1",base_weapon:"$(base_weapon)"}
 #			mgs:v5.3.0/ammo/inventory/find {slot:"hotbar.2",base_weapon:"$(base_weapon)"}
 #			mgs:v5.3.0/ammo/inventory/find {slot:"hotbar.3",base_weapon:"$(base_weapon)"}

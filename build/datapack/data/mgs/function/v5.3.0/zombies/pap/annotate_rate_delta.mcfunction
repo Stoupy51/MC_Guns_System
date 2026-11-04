@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/annotate_rate_delta
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/annotate_fire_rate_line
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/annotate_fire_rate_line
 #
 
 data modify storage mgs:temp _pap_ann.suffix set value ""

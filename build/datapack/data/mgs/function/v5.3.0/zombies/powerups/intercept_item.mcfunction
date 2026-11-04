@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/zombies/powerups/intercept_item
 #
 # @within	#common_signals:signals/on_new_item
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute unless data entity @s Item.components."minecraft:custom_data".mgs.powerup run return 0

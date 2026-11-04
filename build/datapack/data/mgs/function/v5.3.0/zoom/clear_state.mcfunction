@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zoom/clear_state
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/switch/on_weapon_switch
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/switch/on_weapon_switch
 #
 
 playsound mgs:common/lean_out player @s

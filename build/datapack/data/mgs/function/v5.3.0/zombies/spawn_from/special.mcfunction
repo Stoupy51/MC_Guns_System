@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/spawn_from/special
 #
-# @within	mgs:v5.3.0/zombies/spawn_special_capped
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/spawn_special_capped
 #
 
 scoreboard players set #zb_spawned mgs.data 0

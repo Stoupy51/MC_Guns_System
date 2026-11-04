@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wunderfizz/land
 #
-# @executed	as @e[type=item_display,tag=mgs.wunderfizz_orb] & at @s
-#
-# @within	mgs:v5.3.0/zombies/wunderfizz/orb_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wunderfizz/orb_tick
 #
 
 # Roam: refund the buyer, no perk.

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/msg_purchased
 #
-# @executed	as @n[tag=mgs.wb_new]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/on_right_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/on_right_click
 #			mgs:v5.3.0/zombies/wallbuys/buy_knife
 #			mgs:v5.3.0/zombies/wallbuys/buy_lethal
 #			mgs:v5.3.0/zombies/wallbuys/buy_tactical

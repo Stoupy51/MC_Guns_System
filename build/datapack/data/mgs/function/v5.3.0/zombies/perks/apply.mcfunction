@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/apply
 #
-# @executed	as @p[tag=mgs.pu_collecting]
-#
-# @within	mgs:v5.3.0/zombies/powerups/activate/random_perk with storage mgs:temp _pool [ as @p[tag=mgs.pu_collecting] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/activate/random_perk with storage mgs:temp _pool [ as @p[tag=mgs.pu_collecting] ]
 #			mgs:v5.3.0/zombies/perks/on_right_click with storage mgs:temp _pk_data
 #			mgs:v5.3.0/zombies/wunderfizz/collect with storage mgs:temp _wf_grant
 #

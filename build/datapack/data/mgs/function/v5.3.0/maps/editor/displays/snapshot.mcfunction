@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/displays/snapshot
 #
-# @executed	as @e[type=minecraft:marker,tag=mgs.model_display]
-#
-# @within	mgs:v5.3.0/maps/editor/refresh_displays [ as @e[type=minecraft:marker,tag=mgs.model_display] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/refresh_displays [ as @e[type=minecraft:marker,tag=mgs.model_display] ]
 #			mgs:v5.3.0/maps/editor/displays/sync [ as @e[type=minecraft:marker,tag=mgs.model_display] ]
 #
 

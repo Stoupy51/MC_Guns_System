@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/queue_draw
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/powerups/spawn_random_at_self
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/spawn_random_at_self
 #
 
 execute store result score #pu_q_len mgs.data run data get storage mgs:data _pu_queue

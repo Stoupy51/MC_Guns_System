@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/multiplayer/perks/on_kill
 #
 # @within	#mgs:signals/on_kill
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute unless score @s mgs.mp.in_game matches 1 run return fail

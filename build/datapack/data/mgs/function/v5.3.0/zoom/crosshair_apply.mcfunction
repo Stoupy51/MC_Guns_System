@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zoom/crosshair_apply
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zoom/crosshair_spread
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zoom/crosshair_spread
 #			mgs:v5.3.0/zoom/crosshair_base
 #
 

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/hp/cleanup
 #
-# @within	mgs:v5.3.0/multiplayer/stop
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/stop
 #
 
 kill @e[tag=mgs.hp_marker]

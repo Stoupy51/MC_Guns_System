@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.instant_kill","fallback": "Instant Kill",
@@ -16,8 +18,6 @@
 		{"label": {"text": "∞","color": "light_purple"},"tooltip": [{"translate": "mgs.set_instant_kill_for","fallback": "Set instant kill for"}, " ∞"],"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.instant_kill 72000"}}
 	],
 	"columns": 1,
-	"pause": false,
-	"after_action": "none",
 	"exit_action": {
 		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
 		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},

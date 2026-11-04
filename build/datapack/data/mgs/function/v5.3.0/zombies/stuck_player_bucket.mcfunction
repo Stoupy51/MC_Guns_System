@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/stuck_player_bucket
 #
-# @executed	as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..96]
-#
-# @within	mgs:v5.3.0/zombies/stuck_zombie_check [ as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..96] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/stuck_zombie_check [ as @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator,distance=..96] ]
 #
 
 execute at @s summon minecraft:marker run function mgs:v5.3.0/shared/probe_pos

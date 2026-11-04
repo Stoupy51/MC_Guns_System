@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/set_class
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/process {class_num:1,class_name:"Assault"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/process {class_num:1,class_name:"Assault"}
 #			mgs:v5.3.0/player/config/process {class_num:2,class_name:"Rifleman"}
 #			mgs:v5.3.0/player/config/process {class_num:3,class_name:"Support"}
 #			mgs:v5.3.0/player/config/process {class_num:4,class_name:"Sniper"}

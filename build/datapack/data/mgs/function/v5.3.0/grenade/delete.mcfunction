@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/delete
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/detonate_web
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/detonate_web
 #			mgs:v5.3.0/grenade/detonate_frag
 #			mgs:v5.3.0/grenade/detonate_flash
 #			mgs:v5.3.0/grenade/tick_effect

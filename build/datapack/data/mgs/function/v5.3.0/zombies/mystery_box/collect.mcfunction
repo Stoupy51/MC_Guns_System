@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/collect
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/box_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/box_click
 #
 
 data modify storage mgs:zombies mystery_box.result set from entity @n[tag=mgs.mb_display,distance=..3] item.components."minecraft:custom_data".mgs.mb_result

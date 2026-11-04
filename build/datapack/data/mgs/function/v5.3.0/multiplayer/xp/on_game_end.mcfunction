@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/multiplayer/xp/on_game_end
 #
 # @within	#mgs:multiplayer/on_game_end
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute if score #red mgs.mp.team > #blue mgs.mp.team run tag @a[scores={mgs.mp.team=1}] add mgs.xp_winner

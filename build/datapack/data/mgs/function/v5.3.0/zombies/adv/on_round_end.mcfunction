@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/zombies/adv/on_round_end
 #
 # @within	#mgs:zombies/on_round_end
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute store result score #adv_round mgs.data run data get storage mgs:zombies game.round

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/start_secondary_mags
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/save
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/save
 #
 
 data modify storage mgs:temp _mag_data set from storage mgs:temp _build.secondary_data

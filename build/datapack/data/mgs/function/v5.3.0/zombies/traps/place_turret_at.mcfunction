@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/traps/place_turret_at
 #
-# @within	mgs:v5.3.0/zombies/traps/setup_iter with storage mgs:temp _trap
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/traps/setup_iter with storage mgs:temp _trap
 #
 # @args		cx (unknown)
 #			cy (unknown)

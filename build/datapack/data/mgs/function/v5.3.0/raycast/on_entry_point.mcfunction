@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/raycast/on_entry_point
 #
-# @within	string in mgs:v5.3.0/raycast/main
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/raycast/main
 #
 
 # Entity hit: no block particles.

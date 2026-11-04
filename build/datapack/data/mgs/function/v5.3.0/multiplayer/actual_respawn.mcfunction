@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/actual_respawn
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/game_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/game_tick [ at @s ]
 #
 
 execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.3.0/multiplayer/actual_respawn"}

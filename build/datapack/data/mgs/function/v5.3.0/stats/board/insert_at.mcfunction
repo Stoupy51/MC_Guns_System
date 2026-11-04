@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/insert_at
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/stats/board/insert with storage mgs:temp _lb
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/insert with storage mgs:temp _lb
 #
 # @args		path (unknown)
 #			k (unknown)

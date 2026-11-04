@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/build_class_btn
 #
-# @within	mgs:v5.3.0/multiplayer/build_class_btn with storage mgs:temp class_iter[0]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/build_class_btn with storage mgs:temp class_iter[0]
 #			mgs:v5.3.0/multiplayer/select_class with storage mgs:temp class_iter[0]
 #
 # @args		name (unknown)

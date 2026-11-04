@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/maps_button
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/stats/board/maps_next with storage mgs:temp _lb_maps[0]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/maps_next with storage mgs:temp _lb_maps[0]
 #
 # @args		name (unknown)
 #			trigger (unknown)

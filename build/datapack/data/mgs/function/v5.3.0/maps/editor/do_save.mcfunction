@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/do_save
 #
-# @within	string in mgs:v5.3.0/maps/editor/save_exit
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/save_exit
 #			string in mgs:v5.3.0/maps/editor/save_only
 #
 

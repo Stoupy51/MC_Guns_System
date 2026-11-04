@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/bonus/set_full_mag_model
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/zombies/bonus/refill_magazine with storage mgs:temp refill
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/bonus/refill_magazine with storage mgs:temp refill
 #			mgs:v5.3.0/zombies/pap/upgrade_magazine_slot with storage mgs:temp refill
 #
 # @args		slot (unknown)

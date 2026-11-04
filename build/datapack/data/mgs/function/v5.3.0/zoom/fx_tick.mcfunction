@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/player/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # @s = a player whose fade-out is still applied

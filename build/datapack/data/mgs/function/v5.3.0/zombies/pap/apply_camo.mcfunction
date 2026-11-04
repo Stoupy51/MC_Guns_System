@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/apply_camo
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/randomize_camo with storage mgs:temp _pap_camo_data
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/randomize_camo with storage mgs:temp _pap_camo_data
 #
 # @args		weapon_id (unknown)
 #			camo (unknown)

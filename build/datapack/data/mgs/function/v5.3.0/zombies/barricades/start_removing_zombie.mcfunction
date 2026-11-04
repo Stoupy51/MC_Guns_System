@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/start_removing_zombie
 #
-# @executed	positioned ^ ^ ^-1
-#
-# @within	mgs:v5.3.0/zombies/barricades/find_remover
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/find_remover
 #
 
 # Run as the zombie assigned as remover.

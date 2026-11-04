@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/multiplayer/xp/on_kill
 #
 # @within	#mgs:signals/on_kill
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute unless data storage mgs:multiplayer game{state:"active"} run return fail

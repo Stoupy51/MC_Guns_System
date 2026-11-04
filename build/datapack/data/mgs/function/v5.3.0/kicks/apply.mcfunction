@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/kicks/apply
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/kicks/main
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/kicks/main
 #
 
 execute if score #kick mgs.data matches ..0 run function mgs:v5.3.0/kicks/type_0

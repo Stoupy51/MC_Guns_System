@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/load_bounds
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/start {mode:"zombies"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/start {mode:"zombies"}
 #			mgs:v5.3.0/multiplayer/start {mode:"multiplayer"}
 #			mgs:v5.3.0/missions/start {mode:"missions"}
 #

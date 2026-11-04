@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/summon_rise_dust
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/arrival/floor {block_y:"-1"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/arrival/floor {block_y:"-1"}
 #			mgs:v5.3.0/zombies/arrival/ceiling {block_y:"0"} [ positioned ~ ~2 ~ ]
 #			mgs:v5.3.0/zombies/arrival/rescued {block_y:"0"} [ positioned ~ ~2 ~ ]
 #			mgs:v5.3.0/zombies/arrival/rescued {block_y:"-1"}

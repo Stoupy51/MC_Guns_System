@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/utils/random_weapon
 #
-# @within	mgs:v5.3.0/mob/default/on_new
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/mob/default/on_new
 #
 
 execute store result score #random mgs.data run random value 1..30

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/apply_zombie_absorption
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/absorb_above_cap with storage mgs:temp _zb_absorb
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/absorb_above_cap with storage mgs:temp _zb_absorb
 #
 # @args		val (unknown)
 #

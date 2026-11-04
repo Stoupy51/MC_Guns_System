@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/mp/wins/check
 #
-# @executed	as @a[scores={mgs.mp.in_game=1},tag=mgs.xp_winner]
-#
-# @within	mgs:v5.3.0/progression/mp/award_match_win
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/mp/award_match_win
 #			mgs:v5.3.0/progression/adv/catch_up
 #
 

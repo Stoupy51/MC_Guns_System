@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/watchdog_tick
 #
-# @within	mgs:v5.3.0/zombies/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick
 #
 
 # Any spawn, kill or portal strike moves it.

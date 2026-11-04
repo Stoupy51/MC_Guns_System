@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/load_map_data
 #
-# @within	mgs:v5.3.0/maps/editor/enter with storage mgs:temp map_edit
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/enter with storage mgs:temp map_edit
 #			mgs:v5.3.0/maps/editor/do_save with storage mgs:temp map_edit
 #
 # @args		mode (unknown)

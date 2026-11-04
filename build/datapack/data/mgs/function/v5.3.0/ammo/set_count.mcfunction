@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/ammo/set_count
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/ammo/update_old_weapon {slot:"hotbar.0"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/ammo/update_old_weapon {slot:"hotbar.0"}
 #			mgs:v5.3.0/ammo/update_old_weapon {slot:"hotbar.1"}
 #			mgs:v5.3.0/ammo/update_old_weapon {slot:"hotbar.2"}
 #			mgs:v5.3.0/ammo/update_old_weapon {slot:"hotbar.3"}

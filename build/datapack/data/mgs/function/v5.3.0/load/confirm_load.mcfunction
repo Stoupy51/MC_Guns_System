@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/load/confirm_load
 #
-# @within	mgs:v5.3.0/load/valid_dependencies
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/load/valid_dependencies
 #
 
 scoreboard objectives add mgs.player.config trigger

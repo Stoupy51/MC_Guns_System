@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/missions/summon_spawn_iter
 #
-# @within	mgs:v5.3.0/missions/summon_spawns
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/summon_spawns
 #			mgs:v5.3.0/missions/summon_spawn_iter
 #
 

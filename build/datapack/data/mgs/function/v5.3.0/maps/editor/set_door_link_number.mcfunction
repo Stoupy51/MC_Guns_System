@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/set_door_link_number
 #
-# @within	string in mgs:v5.3.0/maps/editor/show_element_config {field:\"price\",value:1000}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"price\",value:1000}
 #			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"partial_price\",value:0}
 #			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"back_group_id\",value:-1}
 #			string in mgs:v5.3.0/maps/editor/show_element_config {field:\"min_round\",value:0}

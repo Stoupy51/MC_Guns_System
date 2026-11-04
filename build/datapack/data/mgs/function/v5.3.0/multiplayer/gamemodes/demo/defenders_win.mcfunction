@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/defenders_win
 #
-# @within	mgs:v5.3.0/multiplayer/gamemodes/demo/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/demo/tick
 #
 
 execute unless score #demo_round_active mgs.data matches 1 run return fail

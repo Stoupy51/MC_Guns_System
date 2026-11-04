@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/pool/mark
 #
-# @within	mgs:v5.3.0/zombies/perks/setup_iter with storage mgs:temp _pk_store
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/setup_iter with storage mgs:temp _pk_store
 #
 # @args		perk_id (unknown)
 #

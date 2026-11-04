@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/players/list_iter
 #
-# @within	mgs:v5.3.0/players/list_iter
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/players/list_iter
 #			mgs:v5.3.0/players/list_multiplayer
 #			mgs:v5.3.0/players/list_zombies
 #			mgs:v5.3.0/players/list_missions

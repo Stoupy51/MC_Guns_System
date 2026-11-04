@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mob/setup
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/mob/spawn [ as @n[tag=mgs.zb_new] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mob/spawn [ as @n[tag=mgs.zb_new] ]
 #			mgs:v5.3.0/zombies/mob/rider [ as @n[tag=mgs.zb_new] ]
 #
 

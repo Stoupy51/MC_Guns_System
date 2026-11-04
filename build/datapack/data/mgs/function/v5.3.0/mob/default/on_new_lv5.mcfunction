@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/mob/default/on_new_lv5
 #
-# @within	mgs:mob/default/level_5 {entity:"$(entity)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:mob/default/level_5 {entity:"$(entity)"}
 #
 # @args		entity (string)
 #

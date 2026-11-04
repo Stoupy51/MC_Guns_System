@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/freeze_player
 #
-# @executed	as @a[scores={mgs.zb.in_game=1}]
-#
-# @within	mgs:v5.3.0/zombies/freeze_world [ as @a[scores={mgs.zb.in_game=1}] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/freeze_world [ as @a[scores={mgs.zb.in_game=1}] ]
 #			mgs:v5.3.0/zombies/rejoin
 #
 

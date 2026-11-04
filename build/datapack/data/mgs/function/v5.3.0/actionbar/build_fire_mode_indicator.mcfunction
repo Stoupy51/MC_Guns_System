@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/actionbar/build_fire_mode_indicator
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/actionbar/show
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/actionbar/show
 #
 
 data modify storage mgs:temp actionbar set value {list:[]}

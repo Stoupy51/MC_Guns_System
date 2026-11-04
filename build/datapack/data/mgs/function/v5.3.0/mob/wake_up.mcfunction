@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/mob/wake_up
 #
-# @executed	as @e[tag=mgs.armed] & at @s
-#
-# @within	mgs:v5.3.0/mob/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/mob/tick
 #			mgs:v5.3.0/mob/init
 #
 

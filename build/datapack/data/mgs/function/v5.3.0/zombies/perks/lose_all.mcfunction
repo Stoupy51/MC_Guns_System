@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/lose_all
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zombies/whos_who/on_down
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/whos_who/on_down
 #			mgs:v5.3.0/zombies/revive/on_down
 #			mgs:v5.3.0/zombies/revive/full_death
 #			mgs:v5.3.0/zombies/revive/void_revive_solo_qr

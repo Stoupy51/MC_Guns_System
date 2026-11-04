@@ -4,6 +4,7 @@
 # @executed	as the player & at current position
 #
 # @within	advancement mgs:v5.3.0/maps/editor/on_place
+#			mgs:v5.3.0/dialog/close_then
 #
 
 advancement revoke @s only mgs:v5.3.0/maps/editor/on_place

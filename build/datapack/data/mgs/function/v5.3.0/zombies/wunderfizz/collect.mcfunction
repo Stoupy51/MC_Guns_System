@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wunderfizz/collect
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/wunderfizz/machine_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wunderfizz/machine_click
 #
 
 scoreboard players operation #wf_pick mgs.data = @n[type=item_display,tag=mgs.wunderfizz_orb,distance=..3] mgs.zb.wf.perk

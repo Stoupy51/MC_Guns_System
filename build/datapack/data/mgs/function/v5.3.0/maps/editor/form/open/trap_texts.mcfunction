@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/form/open/trap_texts
 #
-# @executed	as @n[type=minecraft:marker,tag=mgs.ed_form_target]
-#
-# @within	mgs:v5.3.0/maps/editor/form/open/trap with entity @s data
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/form/open/trap with entity @s data
 #
 # @args		effect_radius (unknown)
 #			offset_pos (unknown)

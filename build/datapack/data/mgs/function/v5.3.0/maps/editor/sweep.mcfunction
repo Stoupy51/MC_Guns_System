@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/maps/editor/sweep
 #
 # @within	mgs:v5.3.0/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute as @e[type=minecraft:marker,tag=mgs.map_element] run function mgs:v5.3.0/maps/editor/session_check

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/form/mystery_box_apply
 #
-# @within	string in mgs:v5.3.0/maps/editor/form/open/mystery_box_pos {yaw:$(yaw),pitch:$(pitch),roll:$(roll),can_start_on:$(can_start_on),location_name:\"$(location_name)\"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/form/open/mystery_box_pos {yaw:$(yaw),pitch:$(pitch),roll:$(roll),can_start_on:$(can_start_on),location_name:\"$(location_name)\"}
 #
 # @args		yaw (unknown)
 #			pitch (unknown)

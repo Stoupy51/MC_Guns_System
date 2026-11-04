@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/force_load
 #
-# @within	mgs:v5.3.0/maps/editor/enter with storage mgs:temp map_edit.force
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/enter with storage mgs:temp map_edit.force
 #
 # @args		dimension (unknown)
 #			x1 (unknown)

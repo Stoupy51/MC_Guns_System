@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/knife_camo/pick
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/config/process
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/config/process
 #
 
 execute if score @s mgs.player.config matches 1621 if score @s mgs.zb.xp_level matches 1.. run scoreboard players set @s mgs.zb.knife_camo 0

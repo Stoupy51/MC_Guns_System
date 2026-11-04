@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/players/zb_join
 #
-# @executed	as the player & at current position
-#
-# @within	string in mgs:v5.3.0/players/row_zombies
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/players/row_zombies
 #			dialog mgs:v5.3.0/zombies/setup
 #
 

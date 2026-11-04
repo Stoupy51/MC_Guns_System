@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/utils/coord_stick_store_pos
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/form/box_corner
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/form/box_corner
 #			mgs:v5.3.0/utils/coord_stick_relative
 #
 

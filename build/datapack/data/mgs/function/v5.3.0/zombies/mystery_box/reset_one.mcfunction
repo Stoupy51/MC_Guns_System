@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/reset_one
 #
-# @executed	as @e[tag=...] & at @s
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/spin_tick_one
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/spin_tick_one
 #			mgs:v5.3.0/zombies/mystery_box/show_result_one
 #
 

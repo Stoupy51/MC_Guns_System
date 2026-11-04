@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/run_respawn_commands_iter
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/shared/run_respawn_commands [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/run_respawn_commands [ at @s ]
 #			mgs:v5.3.0/shared/run_respawn_commands_iter [ at @s ]
 #
 

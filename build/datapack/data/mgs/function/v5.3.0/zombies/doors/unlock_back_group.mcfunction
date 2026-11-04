@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/doors/unlock_back_group
 #
-# @executed	as @e[tag=mgs.door] & at @s
-#
-# @within	mgs:v5.3.0/zombies/doors/open_one
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/doors/open_one
 #
 
 execute store result storage mgs:temp _door_unlock.gid int 1 run scoreboard players get @s mgs.zb.door.bgid

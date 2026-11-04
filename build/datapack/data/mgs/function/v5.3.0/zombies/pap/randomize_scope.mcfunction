@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/randomize_scope
 #
-# @within	mgs:v5.3.0/zombies/pap/randomize_scope_different with storage mgs:temp _pap_extract.stats
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/randomize_scope_different with storage mgs:temp _pap_extract.stats
 #			mgs:v5.3.0/zombies/pap/on_right_click with storage mgs:temp _pap_extract.stats
 #			mgs:v5.3.0/zombies/pap/upgrade_core with storage mgs:temp _pap_extract.stats
 #

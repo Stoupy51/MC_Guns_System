@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/sync_interaction_visibility
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/setup_positions
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/setup_positions
 #			mgs:v5.3.0/zombies/mystery_box/fire_sale_start
 #			mgs:v5.3.0/zombies/mystery_box/fire_sale_end
 #			mgs:v5.3.0/zombies/mystery_box/fire_sale_cleanup

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/levels
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/stats/login_as with storage mgs:temp _st
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/login_as with storage mgs:temp _st
 #			mgs:v5.3.0/stats/mp/player_end with storage mgs:temp _st_one
 #			mgs:v5.3.0/stats/zb/player_end with storage mgs:temp _st_one
 #			mgs:v5.3.0/stats/mi/player_end with storage mgs:temp _st_one

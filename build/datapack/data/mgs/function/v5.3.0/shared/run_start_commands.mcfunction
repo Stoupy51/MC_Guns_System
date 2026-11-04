@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/shared/run_start_commands
 #
-# @within	mgs:v5.3.0/zombies/preload_complete {mode:"zombies"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/preload_complete {mode:"zombies"}
 #			mgs:v5.3.0/multiplayer/start {mode:"multiplayer"}
 #			mgs:v5.3.0/missions/end_prep {mode:"missions"}
 #

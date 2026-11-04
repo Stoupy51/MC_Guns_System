@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/doors/on_right_click
 #
-# @executed	as @e[tag=mgs.door_new]
-#
-# @within	mgs:v5.3.0/zombies/doors/setup_iter {run:"function mgs:v5.3.0/zombies/doors/on_right_click",executor:"source"} [ as @e[tag=mgs.door_new] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/doors/setup_iter {run:"function mgs:v5.3.0/zombies/doors/on_right_click",executor:"source"} [ as @e[tag=mgs.door_new] ]
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return fail

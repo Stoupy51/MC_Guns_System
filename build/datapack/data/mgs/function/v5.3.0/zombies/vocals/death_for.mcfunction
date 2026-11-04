@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/vocals/death_for
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..32]
-#
-# @within	mgs:v5.3.0/zombies/vocals/death [ as @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..32] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/vocals/death [ as @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..32] ]
 #
 
 scoreboard players operation @s mgs.zb.vox_death = #total_tick mgs.data

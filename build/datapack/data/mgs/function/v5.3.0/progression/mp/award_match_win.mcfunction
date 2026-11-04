@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/award_match_win
 #
-# @executed	as @a[scores={mgs.mp.in_game=1},tag=mgs.xp_winner]
-#
-# @within	mgs:v5.3.0/multiplayer/xp/on_game_end [ as @a[scores={mgs.mp.in_game=1},tag=mgs.xp_winner] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/xp/on_game_end [ as @a[scores={mgs.mp.in_game=1},tag=mgs.xp_winner] ]
 #
 
 # Match win, to every player on the winning side

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/start_link
 #
-# @executed	as @e[tag=mgs.kino]
-#
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_theater_click
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/on_theater_click
 #
 
 scoreboard players set #kino_tp_state mgs.data 1

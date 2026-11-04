@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zoom/fx_enter
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zoom/set
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zoom/set
 #
 
 # @s = a player who just entered aim-down-sights

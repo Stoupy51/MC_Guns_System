@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/show_static_dialog
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/show_primary_dialog with storage mgs:temp _dlg
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/show_primary_dialog with storage mgs:temp _dlg
 #			mgs:v5.3.0/multiplayer/editor/show_secondary_pistol_dialog with storage mgs:temp _dlg
 #			mgs:v5.3.0/multiplayer/editor/show_secondary_overkill_dialog with storage mgs:temp _dlg
 #			mgs:v5.3.0/multiplayer/editor/show_scope_primary_full with storage mgs:temp _dlg
@@ -26,5 +25,5 @@
 #			columns (unknown)
 #
 
-$data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:$(title),body:[{type:"minecraft:plain_message",contents:["",["",{"translate":"mgs.points_remaining","fallback":"Points remaining"},": "],{"text":"$(pts)","color":"gold","bold":true},{"text":" / 10","color":"dark_gray"}]},{type:"minecraft:plain_message",contents:$(hint)}],actions:[],columns:$(columns),after_action:"close",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}}
+$data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:$(title),body:[{type:"minecraft:plain_message",contents:["",["",{"translate":"mgs.points_remaining","fallback":"Points remaining"},": "],{"text":"$(pts)","color":"gold","bold":true},{"text":" / 10","color":"dark_gray"}]},{type:"minecraft:plain_message",contents:$(hint)}],actions:[],columns:$(columns),pause:false,after_action:"none",exit_action:{label:"Back",action:{type:"run_command",command:"/trigger mgs.player.config set 103"}}}
 

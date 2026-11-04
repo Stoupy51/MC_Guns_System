@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/raycast/accuracy/get_value
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/shoot
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/shoot
 #			mgs:v5.3.0/projectile/summon
 #			mgs:v5.3.0/grenade/summon
 #

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/award_site_destroyed
 #
-# @executed	as @a[tag=mgs.xp_earner]
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/demo/site_destroyed [ as @a[tag=mgs.xp_earner] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/demo/site_destroyed [ as @a[tag=mgs.xp_earner] ]
 #
 
 # A Demolition site actually going down, to the attackers in the blast

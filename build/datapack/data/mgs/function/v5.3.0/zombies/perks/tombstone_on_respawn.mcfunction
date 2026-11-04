@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/tombstone_on_respawn
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/do_round_respawn
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/do_round_respawn
 #
 
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id

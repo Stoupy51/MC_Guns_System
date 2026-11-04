@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/keep_loaded_remove
 #
-# @within	mgs:v5.3.0/maps/editor/release_kept with storage mgs:temp map_edit.kept[0]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/release_kept with storage mgs:temp map_edit.kept[0]
 #
 # @args		dimension (unknown)
 #			x (unknown)

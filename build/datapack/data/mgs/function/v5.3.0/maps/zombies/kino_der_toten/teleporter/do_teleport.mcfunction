@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/do_teleport
 #
-# @executed	at @e[tag=mgs.kino.teleporter_theater]
-#
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/activating_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/teleporter/activating_tick
 #
 
 # In-game players within 3 blocks go to the projection room.

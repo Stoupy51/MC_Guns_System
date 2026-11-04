@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/going_in
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/step
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/step
 #
 
 execute store result score #pap_t mgs.data run scoreboard players get @s mgs.pap_anim

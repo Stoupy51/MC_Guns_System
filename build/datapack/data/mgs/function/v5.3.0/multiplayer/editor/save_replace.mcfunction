@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/save_replace
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/save
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/save
 #
 
 scoreboard players operation #edit_id mgs.data = @s mgs.mp.edit_target

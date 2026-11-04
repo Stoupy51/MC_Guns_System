@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/process_element
 #
-# @executed	as @n[tag=mgs.new_element] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/on_place [ as @n[tag=mgs.new_element] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/on_place [ as @n[tag=mgs.new_element] & at @s ]
 #
 
 # DESTROY handler

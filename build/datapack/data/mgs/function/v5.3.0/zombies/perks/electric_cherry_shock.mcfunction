@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/electric_cherry_shock
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/perks/electric_cherry_on_reload [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/electric_cherry_on_reload [ at @s ]
 #			mgs:v5.3.0/zombies/revive/on_down [ at @s ]
 #
 

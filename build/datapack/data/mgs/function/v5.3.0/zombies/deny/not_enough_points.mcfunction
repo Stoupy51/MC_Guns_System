@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/deny/not_enough_points
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/try_use {score:"#zb_mystery_box_price",obj:"mgs.config"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/try_use {score:"#zb_mystery_box_price",obj:"mgs.config"}
 #			mgs:v5.3.0/zombies/pap/on_right_click {score:"#pap_price",obj:"mgs.data"}
 #			mgs:v5.3.0/zombies/doors/on_right_click {score:"#door_price",obj:"mgs.data"}
 #			mgs:v5.3.0/zombies/wallbuys/on_right_click {score:"#wb_price",obj:"mgs.data"}

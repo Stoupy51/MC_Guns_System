@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/sound/turret_fire
 #
-# @executed	as @e[tag=mgs.trap_head,predicate=mgs:v5.3.0/zombies/traps/turret_id_match] & at @s & facing entity @n[tag=mgs._turret_target] eyes & positioned ^ ^ ^1
-#
-# @within	mgs:v5.3.0/zombies/traps/turret_shoot
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/traps/turret_shoot
 #
 
 # The turret's acoustics, as for a firing player.

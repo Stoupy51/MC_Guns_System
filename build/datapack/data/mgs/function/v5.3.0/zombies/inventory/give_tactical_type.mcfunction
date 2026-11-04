@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/give_tactical_type
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/zombies/bonus/max_ammo_grenades
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/bonus/max_ammo_grenades
 #
 
 execute if score @s mgs.zb.tactical_type matches 1 run loot replace entity @s hotbar.6 loot mgs:i/smoke_grenade

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/actionbar/add_cooldown_indicator
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/actionbar/show
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/actionbar/show
 #
 
 execute if score @s mgs.cooldown <= #total_tick mgs.data run data modify storage mgs:temp actionbar.list append value {"text":" ● ","color":"green"}

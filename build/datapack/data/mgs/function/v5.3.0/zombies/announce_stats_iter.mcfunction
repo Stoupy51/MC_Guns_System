@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/announce_stats_iter
 #
-# @within	mgs:v5.3.0/zombies/announce_stats_iter
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/announce_stats_iter
 #			mgs:v5.3.0/zombies/game_over
 #
 

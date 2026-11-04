@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/casing/calculate_motion
 #
-# @executed	anchored eyes & positioned ^ ^ ^
-#
-# @within	mgs:v5.3.0/casing/process_vectors
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/casing/process_vectors
 #
 
 ### Motion = scaled normal + tangent + binormal.

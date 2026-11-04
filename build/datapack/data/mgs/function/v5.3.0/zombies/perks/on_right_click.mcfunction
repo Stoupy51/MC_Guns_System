@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/on_right_click
 #
-# @executed	as @n[tag=mgs.pk_new]
-#
-# @within	mgs:v5.3.0/zombies/perks/setup_iter {run:"function mgs:v5.3.0/zombies/perks/on_right_click",executor:"source"} [ as @n[tag=mgs.pk_new] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/setup_iter {run:"function mgs:v5.3.0/zombies/perks/on_right_click",executor:"source"} [ as @n[tag=mgs.pk_new] ]
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return fail

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/respawn_from_body
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/respawn_at_body
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/respawn_at_body
 #
 
 execute store success score #respawn_done mgs.data run tag @n[tag=mgs.spawn_point,tag=mgs.spawn_zb_player,tag=mgs.spawn_unlocked,distance=..20] add mgs.spawn_candidate

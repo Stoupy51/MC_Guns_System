@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/hover_knife
 #
-# @executed	as @n[tag=mgs.wb_new]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/on_hover with storage mgs:temp _wb_weapon
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/on_hover with storage mgs:temp _wb_weapon
 #
 # @args		weapon_id (unknown)
 #

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/save_start_command
 #
-# @executed	as @e[tag=mgs.element.start_command] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/save_lists/multiplayer {path:"start_commands"} [ as @e[tag=mgs.element.start_command] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/save_lists/multiplayer {path:"start_commands"} [ as @e[tag=mgs.element.start_command] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/zombies {path:"start_commands"} [ as @e[tag=mgs.element.start_command] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/missions {path:"start_commands"} [ as @e[tag=mgs.element.start_command] & at @s ]
 #

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/handle_removing
 #
-# @executed	positioned ^ ^ ^-1
-#
-# @within	mgs:v5.3.0/zombies/barricades/intact_tick with storage mgs:temp _btick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/intact_tick with storage mgs:temp _btick
 #
 # @args		radius (unknown)
 #

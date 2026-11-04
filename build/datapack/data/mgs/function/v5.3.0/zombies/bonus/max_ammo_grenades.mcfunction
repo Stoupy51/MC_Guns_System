@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/bonus/max_ammo_grenades
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:zombies/bonus/max_ammo
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:zombies/bonus/max_ammo
 #
 
 # Tactical slot (hotbar.6: monkey bombs, smoke, flash): back to 3, or 3 of the last bought type once emptied.

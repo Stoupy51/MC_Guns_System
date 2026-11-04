@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/switch/sync_attack_speed_with_cooldown
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/switch/force_switch_animation
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/switch/force_switch_animation
 #
 
 ## attack_speed = 20.0 / cooldown - 4.0 (4.0 is the default), with 3 digits of precision.

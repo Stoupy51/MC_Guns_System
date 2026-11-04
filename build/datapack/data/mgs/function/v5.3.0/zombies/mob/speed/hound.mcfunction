@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mob/speed/hound
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/mob/speed
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mob/speed
 #
 
 execute if score #zb_round mgs.data matches ..9 run attribute @s minecraft:movement_speed base set 0.36

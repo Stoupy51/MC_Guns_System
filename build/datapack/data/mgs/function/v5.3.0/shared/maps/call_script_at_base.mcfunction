@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/shared/maps/call_script_at_base
 #
-# @within	mgs:v5.3.0/zombies/end_prep {mode:"zombies",script:"start"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/end_prep {mode:"zombies",script:"start"}
 #			mgs:v5.3.0/zombies/game_tick {mode:"zombies",script:"tick"}
 #			mgs:v5.3.0/zombies/join_game {mode:"zombies",script:"join"}
 #			mgs:v5.3.0/multiplayer/end_prep {mode:"multiplayer",script:"start"}

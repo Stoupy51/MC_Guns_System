@@ -1,9 +1,7 @@
 
 #> mgs:v5.3.0/maps/editor/menu
 #
-# @executed	as the player & at current position
-#
-# @within	dialog mgs:v5.3.0/config
+# @within	mgs:v5.3.0/dialog/close_then
 #
 
 # Multiplayer maps by default.

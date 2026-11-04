@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/place_at
 #
-# @within	mgs:v5.3.0/zombies/wallbuys/setup_iter with storage mgs:temp _wb
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/setup_iter with storage mgs:temp _wb
 #
 # @args		x (unknown)
 #			y (unknown)

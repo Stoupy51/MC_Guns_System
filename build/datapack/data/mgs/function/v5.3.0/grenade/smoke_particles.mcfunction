@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/smoke_particles
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/tick_effect
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/tick_effect
 #
 
 # Within the effect radius.

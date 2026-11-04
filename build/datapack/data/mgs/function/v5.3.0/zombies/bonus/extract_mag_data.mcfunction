@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/bonus/extract_mag_data
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/zombies/bonus/refill_magazine {slot:"$(slot)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/bonus/refill_magazine {slot:"$(slot)"}
 #
 # @args		slot (string)
 #

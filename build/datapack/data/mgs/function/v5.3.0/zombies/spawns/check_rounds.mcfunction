@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/spawns/check_rounds
 #
-# @within	mgs:v5.3.0/zombies/start_round
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/start_round
 #
 
 tag @e[type=minecraft:marker,tag=mgs.spawn_ranged] remove mgs.spawn_round_ok

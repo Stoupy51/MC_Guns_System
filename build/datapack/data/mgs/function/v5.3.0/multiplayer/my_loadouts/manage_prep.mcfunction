@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/my_loadouts/manage_prep
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/my_loadouts/manage_find
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/my_loadouts/manage_find
 #
 
 data modify storage mgs:temp _btn_data set from storage mgs:temp _find_iter[0]

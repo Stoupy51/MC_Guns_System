@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/apply_spin
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/spin_tick with storage mgs:temp _gr_spin
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/spin_tick with storage mgs:temp _gr_spin
 #
 # @args		angle (unknown)
 #

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/ffa_time_up
 #
-# @within	mgs:v5.3.0/multiplayer/time_up
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/time_up
 #
 
 tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.times_up","fallback":"Time's up!","color":"gold"}]

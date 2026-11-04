@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/custom/fav_count_entry
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/custom/fav_count_rebuild
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/custom/fav_count_rebuild
 #
 
 execute unless data storage mgs:temp _fav_count_src[0].favorites_count run data modify storage mgs:temp _fav_count_src[0].favorites_count set value 0

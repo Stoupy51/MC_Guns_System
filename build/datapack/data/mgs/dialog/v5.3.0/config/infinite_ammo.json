@@ -1,4 +1,6 @@
 {
+	"pause": false,
+	"after_action": "none",
 	"type": "minecraft:multi_action",
 	"title": {
 		"translate": "mgs.infinite_ammo","fallback": "Infinite Ammo",
@@ -16,8 +18,6 @@
 		{"label": {"text": "∞","color": "light_purple"},"tooltip": [{"translate": "mgs.set_infinite_ammo_for","fallback": "Set infinite ammo for"}, " ∞"],"action": {"type": "run_command","command": "/scoreboard players set @s mgs.special.infinite_ammo 72000"}}
 	],
 	"columns": 1,
-	"pause": false,
-	"after_action": "none",
 	"exit_action": {
 		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
 		"tooltip": {"translate": "mgs.return_to_the_previous_menu","fallback": "Return to the previous menu"},

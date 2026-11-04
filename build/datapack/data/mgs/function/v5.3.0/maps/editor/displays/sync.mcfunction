@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/displays/sync
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/global_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/global_tick
 #
 
 scoreboard players set #ed_disp_dirty mgs.data 0

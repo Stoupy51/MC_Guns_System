@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/save_only
 #
-# @executed	as @p[tag=mgs.map_editor,distance=..6,sort=nearest]
-#
-# @within	mgs:v5.3.0/maps/editor/process_element [ as @p[tag=mgs.map_editor,distance=..6,sort=nearest] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/process_element [ as @p[tag=mgs.map_editor,distance=..6,sort=nearest] ]
 #
 
 execute unless score @s mgs.mp.map_edit matches 1 run return fail

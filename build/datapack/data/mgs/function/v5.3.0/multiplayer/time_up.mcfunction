@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/time_up
 #
-# @within	mgs:v5.3.0/multiplayer/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/game_tick
 #
 
 # FFA: most kills wins.

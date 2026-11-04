@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/drop_held_weapon
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/enter_death_spectate [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/enter_death_spectate [ at @s ]
 #			mgs:v5.3.0/missions/enter_death_spectate [ at @s ]
 #
 

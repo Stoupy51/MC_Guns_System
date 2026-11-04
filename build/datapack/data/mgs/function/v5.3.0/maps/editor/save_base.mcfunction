@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/save_base
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/maps/editor/do_save [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/do_save [ at @s ]
 #
 
 # Run as the base marker, at it.

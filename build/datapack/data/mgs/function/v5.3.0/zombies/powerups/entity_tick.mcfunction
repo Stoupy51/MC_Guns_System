@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/entity_tick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/game_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick [ at @s ]
 #
 
 scoreboard players operation @s mgs.zb.pu.timer -= #tick_delta mgs.data

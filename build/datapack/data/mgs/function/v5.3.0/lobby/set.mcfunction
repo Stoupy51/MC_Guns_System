@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/lobby/set
 #
-# @executed	as the player & at current position
-#
-# @within	dialog mgs:v5.3.0/config/global
+# @within	mgs:v5.3.0/dialog/close_then
+#			dialog mgs:v5.3.0/config/global
 #
 
 data modify storage mgs:config lobby set value {}

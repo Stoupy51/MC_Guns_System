@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/dom/capture_red
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/dom/point_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/dom/point_tick
 #
 
 execute store result score #dom_prog mgs.data run scoreboard players get @s mgs.mp.dom_progress

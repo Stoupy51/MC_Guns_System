@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/process_purchase
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/give_result with storage mgs:temp _wb_weapon
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/give_result with storage mgs:temp _wb_weapon
 #			mgs:v5.3.0/zombies/wallbuys/on_right_click with storage mgs:temp _wb_weapon
 #
 # @args		weapon_id (unknown)

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/xp/on_game_over
 #
-# @within	mgs:v5.3.0/zombies/game_over
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_over
 #
 
 scoreboard players operation #xp_gain mgs.data = #final_round mgs.data

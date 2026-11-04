@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/deny_not_enough_points_scope
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/repap_scope_only
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/repap_scope_only
 #
 
 tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.you_dont_have_enough_points_1000_needed","fallback":"You don't have enough points (1000 needed).","color":"red"}]

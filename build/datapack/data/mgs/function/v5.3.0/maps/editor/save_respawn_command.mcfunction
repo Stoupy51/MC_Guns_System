@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/save_respawn_command
 #
-# @executed	as @e[tag=mgs.element.respawn_command] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/save_lists/multiplayer {path:"respawn_commands"} [ as @e[tag=mgs.element.respawn_command] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/save_lists/multiplayer {path:"respawn_commands"} [ as @e[tag=mgs.element.respawn_command] & at @s ]
 #			mgs:v5.3.0/maps/editor/save_lists/missions {path:"respawn_commands"} [ as @e[tag=mgs.element.respawn_command] & at @s ]
 #
 # @args		path (string)

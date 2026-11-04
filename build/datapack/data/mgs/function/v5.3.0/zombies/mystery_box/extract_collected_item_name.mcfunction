@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/extract_collected_item_name
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/capture_collected_name_slot {slot:"$(slot)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/capture_collected_name_slot {slot:"$(slot)"}
 #
 # @args		slot (string)
 #

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/show_rank
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/stats/board/show with storage mgs:temp _lb_rank
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/show with storage mgs:temp _lb_rank
 #
 # @args		k (unknown)
 #

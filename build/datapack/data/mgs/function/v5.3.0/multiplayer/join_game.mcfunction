@@ -1,9 +1,9 @@
 
 #> mgs:v5.3.0/multiplayer/join_game
 #
-# @within	mgs:v5.3.0/players/mp_to_red
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/players/mp_to_red
 #			mgs:v5.3.0/players/mp_to_blue
-#			dialog mgs:v5.3.0/multiplayer/setup
 #
 
 execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.3.0/multiplayer/join_game"}

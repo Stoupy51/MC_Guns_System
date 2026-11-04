@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/tick
 #
-# @within	mgs:v5.3.0/load/tick_verification
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/load/tick_verification
 #
 
 scoreboard players set #in_zombies_map mgs.data 0

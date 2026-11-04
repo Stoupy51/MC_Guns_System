@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/release_kept
 #
-# @within	mgs:v5.3.0/maps/editor/release_kept
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/release_kept
 #			mgs:v5.3.0/maps/editor/cleanup
 #
 

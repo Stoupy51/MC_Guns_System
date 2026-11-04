@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/traps/on_hover
 #
-# @executed	as @e[tag=mgs._trap_new_bs]
-#
-# @within	mgs:v5.3.0/zombies/traps/setup_iter {run:"function mgs:v5.3.0/zombies/traps/on_hover",executor:"source"} [ as @e[tag=mgs._trap_new_bs] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/traps/setup_iter {run:"function mgs:v5.3.0/zombies/traps/on_hover",executor:"source"} [ as @e[tag=mgs._trap_new_bs] ]
 #
 
 execute store result score #trap_price mgs.data run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.trap.price

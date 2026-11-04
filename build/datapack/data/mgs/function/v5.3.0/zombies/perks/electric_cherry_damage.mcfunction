@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/electric_cherry_damage
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/perks/electric_cherry_shock with storage mgs:temp _ec
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/electric_cherry_shock with storage mgs:temp _ec
 #
 # @args		radius (unknown)
 #			scale (unknown)

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/summon_start_command_marker
 #
-# @executed	as @a[tag=mgs.map_editor,limit=1]
-#
-# @within	mgs:v5.3.0/maps/editor/summon_start_command_iter with storage mgs:temp _cpos
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/summon_start_command_iter with storage mgs:temp _cpos
 #			mgs:v5.3.0/maps/editor/handle_start_command with storage mgs:temp _pos
 #
 # @args		x (unknown)

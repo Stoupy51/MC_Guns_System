@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/rebuild_perks
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/remove_perk with storage mgs:temp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/remove_perk with storage mgs:temp
 #			mgs:v5.3.0/multiplayer/editor/rebuild_perks with storage mgs:temp
 #
 # @args		_toggle_perk (unknown)

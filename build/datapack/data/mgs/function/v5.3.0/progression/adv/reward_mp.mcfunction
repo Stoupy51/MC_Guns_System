@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/reward_mp
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/progression/adv/mp/kills/reward_1 {title:'{"translate":"mgs.first_blood","fallback":"First Blood","color":"yellow"}',description:'{"translate":"mgs.kill_25_players","fallback":"Kill 25 players","color":"gray"}',xp:10,branch:"mp",chain:"kills",tier:1}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/adv/mp/kills/reward_1 {title:'{"translate":"mgs.first_blood","fallback":"First Blood","color":"yellow"}',description:'{"translate":"mgs.kill_25_players","fallback":"Kill 25 players","color":"gray"}',xp:10,branch:"mp",chain:"kills",tier:1}
 #			mgs:v5.3.0/progression/adv/mp/kills/reward_2 {title:'{"translate":"mgs.contact","fallback":"Contact","color":"yellow"}',description:'{"translate":"mgs.kill_50_players","fallback":"Kill 50 players","color":"gray"}',xp:20,branch:"mp",chain:"kills",tier:2}
 #			mgs:v5.3.0/progression/adv/mp/kills/reward_3 {title:'{"translate":"mgs.trigger_time","fallback":"Trigger Time","color":"yellow"}',description:'{"translate":"mgs.kill_100_players","fallback":"Kill 100 players","color":"gray"}',xp:30,branch:"mp",chain:"kills",tier:3}
 #			mgs:v5.3.0/progression/adv/mp/kills/reward_4 {title:'{"translate":"mgs.regular","fallback":"Regular","color":"yellow"}',description:'{"translate":"mgs.kill_250_players","fallback":"Kill 250 players","color":"gray"}',xp:50,branch:"mp",chain:"kills",tier:4}

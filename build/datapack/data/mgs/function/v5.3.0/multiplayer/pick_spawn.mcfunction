@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/pick_spawn
 #
-# @within	mgs:v5.3.0/multiplayer/respawn_tp {type:"general"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/respawn_tp {type:"general"}
 #			mgs:v5.3.0/multiplayer/respawn_tp {type:"red"}
 #			mgs:v5.3.0/multiplayer/respawn_tp {type:"blue"}
 #			mgs:v5.3.0/multiplayer/gamemodes/demo/start_round {type:"red"} [ as @a[scores={mgs.mp.team=1}] & at @s ]

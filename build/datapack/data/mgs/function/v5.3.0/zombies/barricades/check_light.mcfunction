@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/check_light
 #
-# @executed	positioned ~ ~ ~
-#
-# @within	mgs:v5.3.0/zombies/barricades/compute_brightness [ positioned ~ ~ ~ ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/compute_brightness [ positioned ~ ~ ~ ]
 #			mgs:v5.3.0/zombies/barricades/compute_brightness [ positioned ~ ~1 ~ ]
 #			mgs:v5.3.0/zombies/barricades/compute_brightness [ positioned ~ ~-1 ~ ]
 #			mgs:v5.3.0/zombies/barricades/compute_brightness [ positioned ~1 ~ ~ ]

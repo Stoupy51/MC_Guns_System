@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/display/summon_machine_display
 #
-# @executed	as @n[tag=mgs.pap_new] & at @s & positioned ^ ^ ^-0.49 & positioned ~ ~-0.4 ~
-#
-# @within	mgs:v5.3.0/zombies/pap/setup_iter with storage mgs:temp _pap_disp [ as @n[tag=mgs.pap_new] & at @s & positioned ^ ^ ^-0.49 & positioned ~ ~-0.4 ~ ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/setup_iter with storage mgs:temp _pap_disp [ as @n[tag=mgs.pap_new] & at @s & positioned ^ ^ ^-0.49 & positioned ~ ~-0.4 ~ ]
 #			mgs:v5.3.0/zombies/perks/setup_iter with storage mgs:temp _pk_disp [ as @n[tag=mgs.pk_new] & at @s & align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.49 ]
 #			mgs:v5.3.0/zombies/wunderfizz/setup_iter with storage mgs:temp _wf_disp [ as @n[tag=mgs.wf_new] & at @s & align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.49 ]
 #			mgs:v5.3.0/maps/editor/displays/perk_machine with storage mgs:temp _pk_disp [ align xyz & positioned ~.5 ~-.37 ~.5 & positioned ^ ^ ^-0.49 ]

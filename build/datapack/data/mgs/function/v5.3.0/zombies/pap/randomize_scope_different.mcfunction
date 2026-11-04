@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/randomize_scope_different
 #
-# @within	mgs:v5.3.0/zombies/pap/randomize_scope_different
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/randomize_scope_different
 #			mgs:v5.3.0/zombies/pap/repap_scope_only with storage mgs:temp _pap_extract.stats
 #			mgs:v5.3.0/zombies/pap/free_scope_reroll with storage mgs:temp _pap_extract.stats
 #

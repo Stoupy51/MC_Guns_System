@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/escort/update_lure
 #
-# @within	mgs:v5.3.0/zombies/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick
 #
 
 execute store result score #zb_lure_alive mgs.data if entity @a[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator]

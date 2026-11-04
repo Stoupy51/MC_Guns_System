@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/missions/call_enemy_function
 #
-# @within	mgs:v5.3.0/missions/spawn_enemy_iter with storage mgs:temp _epos
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/spawn_enemy_iter with storage mgs:temp _epos
 #
 # @args		x (unknown)
 #			y (unknown)

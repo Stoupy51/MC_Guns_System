@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/refresh_sidebar
 #
-# @within	mgs:v5.3.0/zombies/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick
 #			mgs:v5.3.0/zombies/create_sidebar
 #			mgs:v5.3.0/zombies/start_round
 #

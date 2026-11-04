@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/summon_pos_at
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/setup_pos_iter with storage mgs:temp _mb_pos
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/setup_pos_iter with storage mgs:temp _mb_pos
 #
 # @args		x (unknown)
 #			y (unknown)

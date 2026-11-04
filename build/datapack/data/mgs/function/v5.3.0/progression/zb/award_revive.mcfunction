@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/award_revive
 #
-# @executed	as @a[tag=mgs.xp_earner]
-#
-# @within	mgs:v5.3.0/zombies/revive/revive_complete [ as @a[tag=mgs.xp_earner] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/revive_complete [ as @a[tag=mgs.xp_earner] ]
 #
 
 # Getting a teammate back on their feet

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/set_bomb_hud
 #
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/update_bomb_hud with storage mgs:temp _snd_hud
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/update_bomb_hud with storage mgs:temp _snd_hud
 #
 # @args		sec (unknown)
 #

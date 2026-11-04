@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/set_display_item
 #
-# @within	mgs:v5.3.0/zombies/wallbuys/setup_iter with storage mgs:temp _wb
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/setup_iter with storage mgs:temp _wb
 #
 # @args		weapon_id (unknown)
 #

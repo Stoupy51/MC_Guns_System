@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/projectile/match_shooter
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/projectile/explode [ as @a ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/projectile/explode [ as @a ]
 #			mgs:v5.3.0/projectile/explode [ as @e[tag=mgs.armed] ]
 #			mgs:v5.3.0/grenade/detonate_frag [ as @a ]
 #			mgs:v5.3.0/grenade/detonate_frag [ as @e[tag=mgs.armed] ]

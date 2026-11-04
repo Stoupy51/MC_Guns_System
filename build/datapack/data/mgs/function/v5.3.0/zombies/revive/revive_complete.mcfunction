@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/revive_complete
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/downed_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/downed_tick
 #			mgs:v5.3.0/zombies/revive/solo_qr_complete
 #			mgs:v5.3.0/zombies/revive/round_respawn [ as @a[tag=mgs.downed_spectator,scores={mgs.zb.in_game=1}] ]
 #

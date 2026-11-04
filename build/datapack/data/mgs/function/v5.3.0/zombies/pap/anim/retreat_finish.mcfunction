@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/retreat_finish
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/step
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/step
 #
 
 kill @e[tag=mgs.pap_weapon_display,distance=..2]

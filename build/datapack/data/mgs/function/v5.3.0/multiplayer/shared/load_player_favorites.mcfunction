@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/shared/load_player_favorites
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/my_loadouts/browse
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/my_loadouts/browse
 #			mgs:v5.3.0/multiplayer/my_loadouts/browse_fav_only
 #			mgs:v5.3.0/multiplayer/marketplace/browse
 #			mgs:v5.3.0/multiplayer/marketplace/browse_fav_only

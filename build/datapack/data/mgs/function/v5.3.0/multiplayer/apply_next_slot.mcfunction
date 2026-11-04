@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/apply_next_slot
 #
-# @within	mgs:v5.3.0/multiplayer/apply_next_slot
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/apply_next_slot
 #			mgs:v5.3.0/multiplayer/apply_class_dynamic
 #
 

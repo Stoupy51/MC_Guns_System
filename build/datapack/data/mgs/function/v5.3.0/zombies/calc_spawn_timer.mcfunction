@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/calc_spawn_timer
 #
-# @within	mgs:v5.3.0/zombies/start_round
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/start_round
 #			mgs:v5.3.0/zombies/spawn_tick
 #
 

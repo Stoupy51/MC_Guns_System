@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/utils/update_model
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/zoom/remove with storage mgs:input with
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zoom/remove with storage mgs:input with
 #			mgs:v5.3.0/zoom/set with storage mgs:input with
 #
 # @args		item_model (string)

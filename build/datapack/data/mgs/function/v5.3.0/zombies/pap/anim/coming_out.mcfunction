@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/anim/coming_out
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/pap/anim/step
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/anim/step
 #
 
 execute positioned ~ ~-2 ~ run particle end_rod ~ ~0.8 ~ 0.4 0.3 0.3 0.05 3 force @a[distance=..48]

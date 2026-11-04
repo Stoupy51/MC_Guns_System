@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/zombies/freeze_tick
 #
 # @within	mgs:v5.3.0/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.3.0/shared/enter_map {mode:"zombies",fn:"mgs:v5.3.0/zombies/freeze_tick"}

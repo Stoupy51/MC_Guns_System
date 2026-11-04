@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/award_powerup
 #
-# @executed	as @a[tag=mgs.pu_collecting]
-#
-# @within	mgs:v5.3.0/zombies/powerups/do_pickup [ as @a[tag=mgs.pu_collecting] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/do_pickup [ as @a[tag=mgs.pu_collecting] ]
 #
 
 # Picking up any power-up

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/marketplace/build_list_favs
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/marketplace/browse
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/marketplace/browse
 #			mgs:v5.3.0/multiplayer/marketplace/browse_fav_only
 #			mgs:v5.3.0/multiplayer/marketplace/build_list_favs
 #

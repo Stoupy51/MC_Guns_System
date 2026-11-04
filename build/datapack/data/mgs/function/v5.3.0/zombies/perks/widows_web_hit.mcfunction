@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/widows_web_hit
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/perks/widows_web_burst
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/widows_web_burst
 #
 
 effect give @s minecraft:slowness 5 5 true

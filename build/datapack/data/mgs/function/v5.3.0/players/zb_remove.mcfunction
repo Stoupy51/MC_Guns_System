@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/players/zb_remove
 #
-# @within	string in mgs:v5.3.0/players/row_zombies
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/players/row_zombies
 #
 
 scoreboard players set @s mgs.zb.in_game 0

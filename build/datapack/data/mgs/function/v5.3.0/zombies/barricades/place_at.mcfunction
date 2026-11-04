@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/place_at
 #
-# @within	mgs:v5.3.0/zombies/barricades/setup_iter with storage mgs:temp _bplace
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/setup_iter with storage mgs:temp _bplace
 #
 # @args		x (unknown)
 #			y (unknown)

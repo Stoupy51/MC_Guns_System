@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wallbuys/set_hover_price_suffix
 #
-# @executed	as @n[tag=mgs.wb_new]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/on_hover
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/on_hover
 #
 
 data modify storage mgs:temp _wb_price_suffix set value ""

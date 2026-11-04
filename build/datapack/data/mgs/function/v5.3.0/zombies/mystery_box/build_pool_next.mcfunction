@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/build_pool_next
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/build_pool
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/build_pool
 #			mgs:v5.3.0/zombies/mystery_box/build_pool_next
 #
 

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/leave
 #
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/calls/leave
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/calls/leave
 #
 
 kill @e[tag=mgs.kino]

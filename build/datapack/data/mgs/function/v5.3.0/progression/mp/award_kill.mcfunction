@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/progression/mp/award_kill
 #
-# @within	mgs:v5.3.0/multiplayer/xp/on_kill
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/xp/on_kill
 #
 
 # Any kill, every gamemode, via the on_kill signal

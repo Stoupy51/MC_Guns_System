@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/flash_player
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/flash_check
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/flash_check
 #
 
 # Tactical Mask (MP): short blindness, no darkness, a brief screen flash.

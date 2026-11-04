@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/invite_box_add
 #
-# @within	mgs:v5.3.0/maps/editor/invite_box with storage mgs:temp _inv
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/invite_box with storage mgs:temp _inv
 #
 # @args		id (unknown)
 #			name (unknown)

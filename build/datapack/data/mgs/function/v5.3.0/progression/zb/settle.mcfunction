@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/settle
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/progression/zb/award_kill
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/zb/award_kill
 #			mgs:v5.3.0/progression/zb/award_headshot
 #			mgs:v5.3.0/progression/zb/award_points_spent
 #			mgs:v5.3.0/progression/zb/award_round_survived

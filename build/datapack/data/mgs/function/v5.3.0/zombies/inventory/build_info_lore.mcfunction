@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/build_info_lore
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
-# @within	mgs:v5.3.0/zombies/inventory/refresh_info_item with storage mgs:temp info
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/inventory/refresh_info_item with storage mgs:temp info
 #
 # @args		round (unknown)
 #			points (unknown)

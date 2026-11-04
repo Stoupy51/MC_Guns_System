@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/spawn_calc_dist
 #
-# @executed	as @e[tag=mgs.spawn_candidate] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/pick_spawn [ as @e[tag=mgs.spawn_candidate] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/pick_spawn [ as @e[tag=mgs.spawn_candidate] & at @s ]
 #
 
 execute store result score #mx mgs.data run data get entity @s Pos[0]

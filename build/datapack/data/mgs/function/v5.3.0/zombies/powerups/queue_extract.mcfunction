@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/queue_extract
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/powerups/queue_draw with storage mgs:temp _pu_q
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/queue_draw with storage mgs:temp _pu_q
 #
 # @args		idx (unknown)
 #

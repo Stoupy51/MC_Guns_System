@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/sync_interaction_one
 #
-# @executed	as @e[tag=mgs.mystery_box_pos] & at @s
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/sync_interaction_visibility [ as @e[tag=mgs.mystery_box_pos] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/sync_interaction_visibility [ as @e[tag=mgs.mystery_box_pos] & at @s ]
 #
 
 # Run as a box interaction entity, at it.

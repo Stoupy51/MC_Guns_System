@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/roaming/roll_move
 #
-# @executed	at @n[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/try_use
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/try_use
 #			mgs:v5.3.0/zombies/wunderfizz/try_use
 #
 

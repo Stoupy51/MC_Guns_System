@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/raycast/headshot_and_damage
 #
-# @executed	as @e[tag=mgs.raycast_target]
-#
-# @within	mgs:v5.3.0/raycast/on_exit_point [ as @e[tag=mgs.raycast_target] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/raycast/on_exit_point [ as @e[tag=mgs.raycast_target] ]
 #
 
 tag @s remove mgs.raycast_target

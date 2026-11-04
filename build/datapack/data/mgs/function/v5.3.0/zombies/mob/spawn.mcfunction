@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mob/spawn
 #
-# @executed	positioned ~ ~-1.8 ~
-#
-# @within	mgs:v5.3.0/zombies/arrival/floor [ positioned ~ ~-1.8 ~ ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/arrival/floor [ positioned ~ ~-1.8 ~ ]
 #			mgs:v5.3.0/zombies/arrival/ceiling [ positioned ~ ~2.2 ~ ]
 #			mgs:v5.3.0/zombies/arrival/instant
 #			mgs:v5.3.0/zombies/portal_strike [ positioned ~ ~0.2 ~ ]

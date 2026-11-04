@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/detonate
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/tick
 #			mgs:v5.3.0/grenade/move_semtex
 #			mgs:v5.3.0/grenade/on_stick
 #			mgs:v5.3.0/grenade/tick_stuck

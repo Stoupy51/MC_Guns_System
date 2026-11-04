@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/raycast/apply_damage
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/raycast/headshot_and_damage [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/raycast/headshot_and_damage [ at @s ]
 #
 
 execute as @n[tag=mgs.ticking] if score @s mgs.special.instant_kill matches 1.. as @s[tag=!mgs.no_instant_kill] run scoreboard players set #damage mgs.data 99999

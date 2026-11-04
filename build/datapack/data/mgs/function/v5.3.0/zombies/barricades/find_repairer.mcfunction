@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/find_repairer
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/barricades/destroyed_tick with storage mgs:temp _brptick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/destroyed_tick with storage mgs:temp _brptick
 #
 # @args		radius (unknown)
 #

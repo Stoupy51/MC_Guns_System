@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/cycle_display_one
 #
-# @executed	as @e[tag=...] & at @s
-#
-# @within	mgs:v5.3.0/zombies/mystery_box/cycle_step_one
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/cycle_step_one
 #
 
 data modify storage bs:in random.weighted_choice.options set from storage mgs:zombies mystery_box_pool

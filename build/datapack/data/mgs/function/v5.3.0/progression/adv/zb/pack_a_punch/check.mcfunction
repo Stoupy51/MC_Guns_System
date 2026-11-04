@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/zb/pack_a_punch/check
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/progression/zb/award_pack_a_punch
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/zb/award_pack_a_punch
 #			mgs:v5.3.0/progression/adv/catch_up
 #
 

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/refresh_perk_items
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator]
-#
 # @within	#mgs:zombies/on_new_perk
+#			mgs:v5.3.0/dialog/close_then
 #			mgs:v5.3.0/zombies/inventory/refresh_info_item
 #			mgs:v5.3.0/zombies/perks/tombstone_collect
 #			mgs:v5.3.0/zombies/perks/lose_all

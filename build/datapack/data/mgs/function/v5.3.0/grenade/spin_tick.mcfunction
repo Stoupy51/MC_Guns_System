@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/spin_tick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/tick
 #
 
 scoreboard players add @s mgs.grenade_spin 0

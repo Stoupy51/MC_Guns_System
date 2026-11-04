@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/create/zombies
 #
-# @within	string in mgs:v5.3.0/maps/editor/list/zombies
+# @within	mgs:v5.3.0/dialog/close_then
+#			string in mgs:v5.3.0/maps/editor/list/zombies
 #
 
 tellraw @s {"text":"============================================","color":"dark_gray"}

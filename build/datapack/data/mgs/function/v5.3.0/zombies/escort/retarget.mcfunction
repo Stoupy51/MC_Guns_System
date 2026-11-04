@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/escort/retarget
 #
-# @executed	as @n[tag=mgs.zb_escort_new] & at @s
-#
-# @within	mgs:v5.3.0/zombies/escort/start [ as @n[tag=mgs.zb_escort_new] & at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/escort/start [ as @n[tag=mgs.zb_escort_new] & at @s ]
 #			mgs:v5.3.0/zombies/escort/escort_tail [ at @s ]
 #
 

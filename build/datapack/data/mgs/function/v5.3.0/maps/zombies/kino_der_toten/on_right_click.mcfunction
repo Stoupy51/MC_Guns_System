@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/zombies/kino_der_toten/on_right_click
 #
-# @executed	as @e[tag=mgs.kino]
-#
-# @within	mgs:v5.3.0/maps/zombies/kino_der_toten/start {run:"function mgs:v5.3.0/maps/zombies/kino_der_toten/on_right_click",executor:"target"} [ as @e[tag=mgs.kino] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/zombies/kino_der_toten/start {run:"function mgs:v5.3.0/maps/zombies/kino_der_toten/on_right_click",executor:"target"} [ as @e[tag=mgs.kino] ]
 #
 
 # Run as the clicked interaction; `on target` reaches the player.

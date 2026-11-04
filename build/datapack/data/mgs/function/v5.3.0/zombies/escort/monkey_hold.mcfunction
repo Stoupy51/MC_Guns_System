@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/escort/monkey_hold
 #
-# @executed	as @e[tag=mgs.zb_escorted] & at @s
-#
-# @within	mgs:v5.3.0/zombies/escort/monkey_ride
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/escort/monkey_ride
 #			mgs:v5.3.0/zombies/escort/give_up
 #
 

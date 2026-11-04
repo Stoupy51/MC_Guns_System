@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/actionbar/add_icon_ammo
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/actionbar/show
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/actionbar/show
 #
 
 scoreboard players set #i mgs.data 0

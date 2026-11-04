@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/update_bomb_hud
 #
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/tick
 #
 
 scoreboard players operation #snd_bomb_sec_shown mgs.data = #snd_bomb_sec mgs.data

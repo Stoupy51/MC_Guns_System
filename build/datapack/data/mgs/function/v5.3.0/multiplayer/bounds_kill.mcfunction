@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/bounds_kill
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/check_bounds
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/check_bounds
 #			mgs:v5.3.0/multiplayer/enforce_bounds
 #
 

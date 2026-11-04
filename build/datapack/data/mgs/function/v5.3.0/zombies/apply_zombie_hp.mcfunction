@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/apply_zombie_hp
 #
-# @executed	as @n[tag=mgs.zb_new]
-#
-# @within	mgs:v5.3.0/zombies/mob/setup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mob/setup
 #			mgs:v5.3.0/zombies/types/fast
 #			mgs:v5.3.0/zombies/types/tank
 #			mgs:v5.3.0/zombies/types/armed

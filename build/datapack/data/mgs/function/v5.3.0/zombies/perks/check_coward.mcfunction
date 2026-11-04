@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/check_coward
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/ability_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/ability_tick [ at @s ]
 #
 
 # 10 HP is half the default 20.

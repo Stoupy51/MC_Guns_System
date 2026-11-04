@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/summon_existing/zombies
 #
-# @executed	as @a[tag=mgs.map_editor,limit=1]
-#
-# @within	mgs:v5.3.0/maps/editor/summon_existing
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/summon_existing
 #
 
 data modify storage mgs:temp _zb_iter set from storage mgs:temp map_edit.map.spawning_points.players

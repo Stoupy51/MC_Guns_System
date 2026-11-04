@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/forceload_remove
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/shared/remove_forceload with storage mgs:temp _fl
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/remove_forceload with storage mgs:temp _fl
 #
 # @args		x1 (unknown)
 #			z1 (unknown)

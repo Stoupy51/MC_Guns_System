@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/swap_slots
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/inventory/move_found_slot {from:"$(from)",to:"$(to)"}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/inventory/move_found_slot {from:"$(from)",to:"$(to)"}
 #
 # @args		to (string)
 #			from (string)

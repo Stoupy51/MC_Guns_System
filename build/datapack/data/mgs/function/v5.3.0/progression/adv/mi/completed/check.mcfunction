@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/mi/completed/check
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/progression/adv/catch_up
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/adv/catch_up
 #			mgs:v5.3.0/missions/victory [ as @a[scores={mgs.mi.in_game=1}] ]
 #
 

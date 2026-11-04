@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/probe_pos
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/shared/check_bounds [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/check_bounds [ at @s ]
 #			mgs:v5.3.0/zombies/stuck_player_bucket [ at @s ]
 #			mgs:v5.3.0/zombies/check_bounds_player [ at @s ]
 #			mgs:v5.3.0/zombies/max_ammo_at_self [ at @s ]

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/read_location_name_at
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/read_location_name with storage mgs:temp _mb_name_idx
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/read_location_name with storage mgs:temp _mb_name_idx
 #
 # @args		idx (unknown)
 #

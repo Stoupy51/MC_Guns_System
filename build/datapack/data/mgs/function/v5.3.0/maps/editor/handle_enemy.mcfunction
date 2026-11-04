@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/handle_enemy
 #
-# @executed	as @n[tag=mgs.new_element] & at @s
-#
-# @within	mgs:v5.3.0/maps/editor/process_element
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/process_element
 #
 
 execute unless data storage mgs:temp map_edit.map.default_enemy_function run data modify storage mgs:temp map_edit.map.default_enemy_function set value "mgs:mob/default/level_1 {\"entity\":\"pillager\"}"

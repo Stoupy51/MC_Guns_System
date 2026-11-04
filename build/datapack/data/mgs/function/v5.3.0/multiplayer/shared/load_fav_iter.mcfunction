@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/shared/load_fav_iter
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/shared/load_player_favorites
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/shared/load_player_favorites
 #			mgs:v5.3.0/multiplayer/shared/load_fav_iter
 #
 

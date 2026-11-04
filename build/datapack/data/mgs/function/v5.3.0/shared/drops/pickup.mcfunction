@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/drops/pickup
 #
-# @executed	as @n[tag=mgs.drop_new]
-#
-# @within	mgs:v5.3.0/shared/drops/spawn {run:"function mgs:v5.3.0/shared/drops/pickup",executor:"source"} [ as @n[tag=mgs.drop_new] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/drops/spawn {run:"function mgs:v5.3.0/shared/drops/pickup",executor:"source"} [ as @n[tag=mgs.drop_new] ]
 #
 
 execute unless score @s mgs.mp.in_game matches 1 unless score @s mgs.mi.in_game matches 1 run return fail

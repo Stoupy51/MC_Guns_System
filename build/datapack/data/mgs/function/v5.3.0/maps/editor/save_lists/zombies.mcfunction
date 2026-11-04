@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/save_lists/zombies
 #
-# @within	mgs:v5.3.0/maps/editor/do_save
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/do_save
 #
 
 # Reset lists

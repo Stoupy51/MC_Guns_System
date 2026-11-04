@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/upgrade_core
 #
-# @executed	as @p[tag=mgs.pu_collecting]
-#
-# @within	mgs:v5.3.0/zombies/pap/on_free_pap
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/on_free_pap
 #
 
 # Must be hotbar 1, 2 or 3.

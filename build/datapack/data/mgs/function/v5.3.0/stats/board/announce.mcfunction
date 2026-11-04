@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/announce
 #
-# @within	mgs:v5.3.0/stats/board/zb_round_bucket with storage mgs:temp _lb
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/board/zb_round_bucket with storage mgs:temp _lb
 #
 # @args		name (unknown)
 #			value (unknown)

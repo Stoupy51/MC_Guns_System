@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/pickup_downed_collector
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/powerups/do_pickup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/powerups/do_pickup
 #
 
 scoreboard players set #pu_downed_id mgs.data -1

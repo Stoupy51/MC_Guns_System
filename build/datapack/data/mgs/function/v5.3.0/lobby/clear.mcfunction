@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/lobby/clear
 #
-# @executed	as the player & at current position
-#
-# @within	dialog mgs:v5.3.0/config/global
+# @within	mgs:v5.3.0/dialog/close_then
+#			dialog mgs:v5.3.0/config/global
 #
 
 data remove storage mgs:config lobby

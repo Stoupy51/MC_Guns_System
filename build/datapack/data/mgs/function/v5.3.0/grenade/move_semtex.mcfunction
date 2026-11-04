@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/move_semtex
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/tick
 #
 
 execute store result score #proj_gravity mgs.data run data get entity @s data.config.proj_gravity

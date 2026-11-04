@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/respawn_near_player
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/revive_complete
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/revive_complete
 #			mgs:v5.3.0/zombies/revive/do_round_respawn
 #			mgs:v5.3.0/zombies/revive/void_revive_whos_who
 #			mgs:v5.3.0/zombies/revive/void_revive_solo_qr

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/raycast/apply_decay
 #
-# @within	mgs:v5.3.0/raycast/on_targeted_entity
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/raycast/on_targeted_entity
 #
 
 ## damage *= pow(decay, distance / 10)

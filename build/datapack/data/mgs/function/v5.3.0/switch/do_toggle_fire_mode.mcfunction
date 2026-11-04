@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/switch/do_toggle_fire_mode
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/switch/fire_mode_on_dropped_weapon
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/switch/fire_mode_on_dropped_weapon
 #
 
 # The current mode moves to the back, the next one comes first.

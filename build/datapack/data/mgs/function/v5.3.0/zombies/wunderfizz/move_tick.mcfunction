@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/wunderfizz/move_tick
 #
-# @within	mgs:v5.3.0/zombies/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick
 #
 
 scoreboard players remove #wf_move_timer mgs.data 1

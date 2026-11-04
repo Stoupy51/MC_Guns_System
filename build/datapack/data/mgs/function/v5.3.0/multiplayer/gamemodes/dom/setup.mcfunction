@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/dom/setup
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/start
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/start
 #
 
 tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.domination_capture_and_hold_zones_to_earn_points","fallback":"Domination! Capture and hold zones to earn points!","color":"yellow"}]

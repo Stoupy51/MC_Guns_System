@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/shared/maps/select_entry
 #
-# @within	mgs:v5.3.0/shared/maps/select_iter with storage mgs:temp _map_entry
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/maps/select_iter with storage mgs:temp _map_entry
 #
 # @args		name (unknown)
 #			description (unknown)

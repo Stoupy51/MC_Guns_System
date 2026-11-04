@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/inventory/record_tactical_type
 #
-# @executed	as @n[tag=mgs.wb_new]
-#
-# @within	mgs:v5.3.0/zombies/wallbuys/buy_tactical with storage mgs:temp _wb_weapon
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/wallbuys/buy_tactical with storage mgs:temp _wb_weapon
 #			mgs:v5.3.0/zombies/wallbuys/give_tactical {weapon_id:"$(weapon_id)"}
 #
 # @args		weapon_id (string)

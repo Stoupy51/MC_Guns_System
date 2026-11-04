@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/zb/bisect
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/progression/zb/recompute
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/zb/recompute
 #			mgs:v5.3.0/progression/zb/bisect
 #
 

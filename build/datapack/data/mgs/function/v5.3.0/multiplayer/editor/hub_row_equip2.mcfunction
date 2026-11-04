@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/editor/hub_row_equip2
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/editor/hub with storage mgs:temp editor
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/editor/hub with storage mgs:temp editor
 #
 # @args		equip_slot2_name (unknown)
 #

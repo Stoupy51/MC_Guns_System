@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/player/apply_pap_flash
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/player/fire_weapon
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/player/fire_weapon
 #
 
 # At most one burst per 2 ticks

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/build_sidebar_dom
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/multiplayer/refresh_sidebar_dom with storage mgs:temp dom_sb
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/refresh_sidebar_dom with storage mgs:temp dom_sb
 #
 # @args		a (unknown)
 #			b (unknown)

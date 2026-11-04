@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/store_spawn_abox
 #
-# @executed	as @n[type=minecraft:marker,tag=mgs.new_spawn]
-#
-# @within	mgs:v5.3.0/zombies/spawn_setup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/spawn_setup
 #
 
 tag @s add mgs.spawn_has_abox

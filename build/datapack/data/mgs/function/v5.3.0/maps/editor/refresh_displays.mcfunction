@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/refresh_displays
 #
-# @executed	as @a[tag=mgs.map_editor,limit=1]
-#
-# @within	mgs:v5.3.0/maps/editor/summon_in
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/summon_in
 #			mgs:v5.3.0/maps/editor/handle_zb_object
 #			mgs:v5.3.0/maps/editor/handle_destroy
 #			mgs:v5.3.0/maps/editor/revert

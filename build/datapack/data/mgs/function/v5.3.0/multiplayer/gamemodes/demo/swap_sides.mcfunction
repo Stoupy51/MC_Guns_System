@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/demo/swap_sides
 #
-# @executed	as @e[tag=mgs.demo_obj,scores={mgs.demo_state=1}] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/demo/next_round
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/demo/next_round
 #
 
 execute if score #demo_attackers mgs.data matches 1 run scoreboard players set #demo_attackers mgs.data 2

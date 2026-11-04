@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/whos_who/load_snapshot
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/whos_who/revive_complete with storage mgs:temp _ww_id
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/whos_who/revive_complete with storage mgs:temp _ww_id
 #
 # @args		id (unknown)
 #

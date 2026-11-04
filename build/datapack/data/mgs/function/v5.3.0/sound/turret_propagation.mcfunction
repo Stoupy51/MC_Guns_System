@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/sound/turret_propagation
 #
-# @executed	as @a[distance=0.001..224] & facing entity @s eyes
-#
-# @within	mgs:v5.3.0/sound/turret_fire [ as @a[distance=0.001..224] & facing entity @s eyes ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/sound/turret_fire [ as @a[distance=0.001..224] & facing entity @s eyes ]
 #
 
 scoreboard players operation #processed_acoustics mgs.data = #origin_acoustics_level mgs.data

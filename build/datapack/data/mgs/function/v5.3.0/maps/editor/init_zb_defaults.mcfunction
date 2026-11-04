@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/init_zb_defaults
 #
-# @within	mgs:v5.3.0/maps/editor/enter
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/enter
 #
 
 data modify storage mgs:temp map_edit.zb_defaults.group_id set value 0

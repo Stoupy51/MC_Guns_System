@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/place_at
 #
-# @within	mgs:v5.3.0/zombies/pap/setup_iter with storage mgs:temp _pap_place
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/setup_iter with storage mgs:temp _pap_place
 #
 # @args		x (unknown)
 #			y (unknown)

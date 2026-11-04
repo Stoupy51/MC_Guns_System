@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/on_stick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/move_semtex {scale:0.001,with:{blocks:true,entities:false,ignored_blocks:"#mgs:v5.3.0/projectile_pass_through",on_collision:"function mgs:v5.3.0/grenade/on_stick"}}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/move_semtex {scale:0.001,with:{blocks:true,entities:false,ignored_blocks:"#mgs:v5.3.0/projectile_pass_through",on_collision:"function mgs:v5.3.0/grenade/on_stick"}}
 #			mgs:v5.3.0/grenade/move_semtex {scale:0.001,with:{blocks:true,entities:true,ignored_blocks:"#mgs:v5.3.0/projectile_pass_through",on_collision:"function mgs:v5.3.0/grenade/on_stick"}}
 #
 

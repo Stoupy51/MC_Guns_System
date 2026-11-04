@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/barricades/repair_sound_for
 #
-# @executed	as @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..32]
-#
-# @within	mgs:v5.3.0/zombies/barricades/start_repairing_player [ as @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..32] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/barricades/start_repairing_player [ as @a[scores={mgs.zb.in_game=1},gamemode=!spectator,distance=..32] ]
 #
 
 scoreboard players operation @s mgs.zb.barricade.rep_at = #total_tick mgs.data

@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/mystery_box/move_anim_start_ascend
 #
-# @within	mgs:v5.3.0/zombies/mystery_box/move_anim_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/mystery_box/move_anim_tick
 #
 
 # Smooth movement on the active chest (base and lid) and the bear only.

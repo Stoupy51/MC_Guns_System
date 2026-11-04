@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/pap/set_item_model_from_scope
 #
-# @executed	as @n[tag=mgs.pap_new]
-#
-# @within	mgs:v5.3.0/zombies/pap/apply_to_slot with storage mgs:temp _pap_scope_model
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pap/apply_to_slot with storage mgs:temp _pap_scope_model
 #			mgs:v5.3.0/zombies/pap/anim/apply_cosmetics_to_display with storage mgs:temp _pap_scope_model
 #
 # @args		slot (unknown)

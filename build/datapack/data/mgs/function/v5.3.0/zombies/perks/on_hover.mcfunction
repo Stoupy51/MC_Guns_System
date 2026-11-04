@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/on_hover
 #
-# @executed	as @n[tag=mgs.pk_new]
-#
-# @within	mgs:v5.3.0/zombies/perks/setup_iter {run:"function mgs:v5.3.0/zombies/perks/on_hover",executor:"source"} [ as @n[tag=mgs.pk_new] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/setup_iter {run:"function mgs:v5.3.0/zombies/perks/on_hover",executor:"source"} [ as @n[tag=mgs.pk_new] ]
 #
 
 execute store result storage mgs:temp _pk_hover.id int 1 run scoreboard players get @n[tag=bs.interaction.target] mgs.zb.perk.id

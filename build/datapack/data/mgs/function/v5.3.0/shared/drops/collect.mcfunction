@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/drops/collect
 #
-# @executed	at @e[tag=bs.interaction.target]
-#
-# @within	mgs:v5.3.0/shared/drops/pickup [ at @e[tag=bs.interaction.target] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/shared/drops/pickup [ at @e[tag=bs.interaction.target] ]
 #
 
 execute unless entity @n[type=minecraft:item_display,tag=mgs.dropped_gun,distance=..3] run return fail

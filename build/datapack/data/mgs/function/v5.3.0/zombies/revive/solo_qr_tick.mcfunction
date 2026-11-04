@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/revive/solo_qr_tick
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/zombies/revive/check_solo_qr
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/revive/check_solo_qr
 #
 
 execute if score @s mgs.zb.qr_uses matches 3.. run return 0

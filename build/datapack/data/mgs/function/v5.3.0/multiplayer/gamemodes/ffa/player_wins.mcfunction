@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/ffa/player_wins
 #
-# @executed	as @a[scores={mgs.mp.in_game=1}]
-#
-# @within	mgs:v5.3.0/multiplayer/ffa_time_up [ as @a[scores={mgs.mp.in_game=1}] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/ffa_time_up [ as @a[scores={mgs.mp.in_game=1}] ]
 #			mgs:v5.3.0/multiplayer/gamemodes/ffa/tick [ as @a ]
 #			mgs:v5.3.0/multiplayer/gamemodes/ffa/on_kill
 #

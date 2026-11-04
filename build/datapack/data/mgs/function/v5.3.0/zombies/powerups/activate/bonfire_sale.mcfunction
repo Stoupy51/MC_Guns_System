@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/powerups/activate/bonfire_sale
 #
-# @executed	as the player & at current position
-#
-# @within	mgs:v5.3.0/zombies/admin/powerup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/admin/powerup
 #			mgs:v5.3.0/zombies/powerups/dispatch_activate
 #
 

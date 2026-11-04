@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/grenade/detonate_frag
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/grenade/detonate
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/grenade/detonate
 #
 
 particle explosion ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]

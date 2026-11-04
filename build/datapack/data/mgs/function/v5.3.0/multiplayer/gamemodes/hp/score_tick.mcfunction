@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/hp/score_tick
 #
-# @within	mgs:v5.3.0/multiplayer/gamemodes/hp/tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/hp/tick
 #
 
 # Only an uncontested zone scores.

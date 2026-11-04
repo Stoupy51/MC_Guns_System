@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/zombies/traps/on_right_click
 #
-# @executed	as @e[tag=mgs._trap_new_bs]
-#
-# @within	mgs:v5.3.0/zombies/traps/setup_iter {run:"function mgs:v5.3.0/zombies/traps/on_right_click",executor:"source"} [ as @e[tag=mgs._trap_new_bs] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/traps/setup_iter {run:"function mgs:v5.3.0/zombies/traps/on_right_click",executor:"source"} [ as @e[tag=mgs._trap_new_bs] ]
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return fail

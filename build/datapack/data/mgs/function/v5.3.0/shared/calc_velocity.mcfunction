@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/calc_velocity
 #
-# @executed	anchored eyes & positioned ^ ^ ^0.69
-#
-# @within	mgs:v5.3.0/projectile/init
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/projectile/init
 #			mgs:v5.3.0/grenade/init
 #
 

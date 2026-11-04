@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/menu/mp
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/stats/menu/view
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/menu/view
 #
 
 data modify storage mgs:temp _sv.d set from storage mgs:temp _sv.p.mp

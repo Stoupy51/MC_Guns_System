@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/form/spawn_write
 #
-# @executed	as @n[type=minecraft:marker,tag=mgs.ed_form_target]
-#
-# @within	mgs:v5.3.0/maps/editor/form/spawn_apply [ as @n[type=minecraft:marker,tag=mgs.ed_form_target] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/form/spawn_apply [ as @n[type=minecraft:marker,tag=mgs.ed_form_target] ]
 #
 
 data modify entity @s data merge from storage mgs:temp _form.data

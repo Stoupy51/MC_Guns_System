@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/vanilla_kill_credit
 #
-# @executed	as @e[type=player,sort=random] & at @s
-#
-# @within	mgs:v5.3.0/multiplayer/on_respawn
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/on_respawn
 #
 
 execute as @a[tag=mgs.temp_killer] run function #mgs:signals/on_kill

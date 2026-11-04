@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/missions/update_compass
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/missions/game_tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/missions/game_tick [ at @s ]
 #
 
 # Only players carrying the mission compass.

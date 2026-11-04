@@ -4,6 +4,7 @@
 # @executed	as the player & at current position
 #
 # @within	advancement mgs:v5.3.0/right_click
+#			mgs:v5.3.0/dialog/close_then
 #			mgs:v5.3.0/player/set_pending_clicks_entity
 #
 

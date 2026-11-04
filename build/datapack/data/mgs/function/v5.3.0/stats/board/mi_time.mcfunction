@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/stats/board/mi_time
 #
-# @within	mgs:v5.3.0/stats/mi/player_end with storage mgs:temp _st_one
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/mi/player_end with storage mgs:temp _st_one
 #
 # @args		uuid (unknown)
 #			map_id (unknown)

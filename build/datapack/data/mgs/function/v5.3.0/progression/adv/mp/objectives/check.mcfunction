@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/progression/adv/mp/objectives/check
 #
-# @executed	as @a[tag=mgs.dom_capturer]
-#
-# @within	mgs:v5.3.0/progression/mp/award_dom_capture
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/progression/mp/award_dom_capture
 #			mgs:v5.3.0/progression/mp/award_hp_capture
 #			mgs:v5.3.0/progression/mp/award_bomb_plant
 #			mgs:v5.3.0/progression/mp/award_bomb_defuse

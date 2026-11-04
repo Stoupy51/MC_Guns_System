@@ -2,6 +2,7 @@
 #> mgs:v5.3.0/zombies/inventory/on_new_item
 #
 # @within	#common_signals:signals/on_new_item
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # Run as the item entity: kill unmanaged drops thrown by zombies players. The item checks must run before `on origin`,

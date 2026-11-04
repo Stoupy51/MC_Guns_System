@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/login_as
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/stats/login with storage mgs:temp _st
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/login with storage mgs:temp _st
 #
 # @args		uuid (unknown)
 #			name (unknown)

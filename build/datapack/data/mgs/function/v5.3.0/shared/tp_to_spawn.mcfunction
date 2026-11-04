@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/shared/tp_to_spawn
 #
-# @executed	as @n[tag=mgs.spawn_candidate,sort=random]
-#
-# @within	mgs:v5.3.0/zombies/pick_spawn {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate,sort=random] ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/pick_spawn {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate,sort=random] ]
 #			mgs:v5.3.0/zombies/whos_who/on_down {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate] ]
 #			mgs:v5.3.0/zombies/revive/respawn_from_body {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate] ]
 #			mgs:v5.3.0/zombies/revive/respawn_at_random_spawn {mode:"zombies"} [ as @n[tag=mgs.spawn_candidate] ]

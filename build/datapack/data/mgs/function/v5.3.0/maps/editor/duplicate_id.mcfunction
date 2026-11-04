@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/maps/editor/duplicate_id
 #
-# @within	mgs:v5.3.0/maps/editor/duplicate with storage mgs:temp _dup
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/maps/editor/duplicate with storage mgs:temp _dup
 #			mgs:v5.3.0/maps/editor/duplicate_id with storage mgs:temp _dup
 #
 # @args		id (unknown)

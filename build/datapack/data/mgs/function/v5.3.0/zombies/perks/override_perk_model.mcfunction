@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/perks/override_perk_model
 #
-# @within	mgs:v5.3.0/zombies/perks/setup_iter with storage mgs:temp _pk_disp
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/perks/setup_iter with storage mgs:temp _pk_disp
 #			mgs:v5.3.0/maps/editor/displays/perk_machine with storage mgs:temp _pk_disp
 #
 # @args		perk_id (unknown)

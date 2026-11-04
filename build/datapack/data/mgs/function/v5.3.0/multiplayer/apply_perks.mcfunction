@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/apply_perks
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/apply_class_dynamic
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/apply_class_dynamic
 #
 
 # Sleight of Hand, Fast Hands: percentages (50 = 50% faster), 0 when absent.

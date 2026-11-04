@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/multiplayer/gamemodes/snd/try_plant
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/multiplayer/gamemodes/snd/tick [ at @s ]
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/multiplayer/gamemodes/snd/tick [ at @s ]
 #
 
 scoreboard players set #snd_channeling mgs.data 1

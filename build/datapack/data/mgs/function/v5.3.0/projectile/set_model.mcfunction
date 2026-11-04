@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/projectile/set_model
 #
-# @executed	anchored eyes & positioned ^ ^ ^0.69
-#
-# @within	mgs:v5.3.0/projectile/init with entity @s data.config
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/projectile/init with entity @s data.config
 #
 # @args		proj_model (unknown)
 #

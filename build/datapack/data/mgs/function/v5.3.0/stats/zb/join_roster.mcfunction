@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/stats/zb/join_roster
 #
-# @executed	as @a
-#
-# @within	mgs:v5.3.0/stats/zb/second
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/stats/zb/second
 #
 
 scoreboard players operation @s mgs.st.zb.game_id = #st_zb_game mgs.data

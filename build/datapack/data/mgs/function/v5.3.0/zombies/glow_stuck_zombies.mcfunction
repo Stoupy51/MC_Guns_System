@@ -1,7 +1,8 @@
 
 #> mgs:v5.3.0/zombies/glow_stuck_zombies
 #
-# @within	mgs:v5.3.0/zombies/game_tick
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/zombies/game_tick
 #
 
 execute as @a[scores={mgs.zb.in_game=1},gamemode=!spectator] at @s run tag @e[tag=mgs.zombie_round,distance=..32] add mgs.zb_near_player

@@ -1,9 +1,8 @@
 
 #> mgs:v5.3.0/projectile/on_collision
 #
-# @executed	at @s
-#
-# @within	mgs:v5.3.0/projectile/tick {scale:0.001,with:{blocks:true,entities:true,ignored_blocks:"#mgs:v5.3.0/projectile_pass_through",on_collision:"function mgs:v5.3.0/projectile/on_collision"}}
+# @within	mgs:v5.3.0/dialog/close_then
+#			mgs:v5.3.0/projectile/tick {scale:0.001,with:{blocks:true,entities:true,ignored_blocks:"#mgs:v5.3.0/projectile_pass_through",on_collision:"function mgs:v5.3.0/projectile/on_collision"}}
 #
 
 # The nearest non-immune entity takes the direct-hit damage in explode; 2.5 blocks covers feet to head at any height up to 2.5.

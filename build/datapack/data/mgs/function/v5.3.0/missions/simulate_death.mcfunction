@@ -1,10 +1,9 @@
 
 #> mgs:v5.3.0/missions/simulate_death
 #
-# @executed	at @s
-#
 # @within	mgs:v5.3.0/utils/signal_and_damage
 #			mgs:v5.3.0/utils/signal_and_damage_plain
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # A second bullet in the same tick, or an OOB kill on top of one.

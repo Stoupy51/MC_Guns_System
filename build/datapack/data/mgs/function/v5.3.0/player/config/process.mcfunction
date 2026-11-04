@@ -4,11 +4,13 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/player/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 # Isolates simultaneous editors.
 execute store result storage mgs:temp _pid int 1 run scoreboard players get @s bs.id
 function mgs:v5.3.0/multiplayer/editor/load_state with storage mgs:temp
+scoreboard players set #dialog_shown mgs.data 0
 
 # 1 config menu, 2 hitmarker sound, 3 damage debug in chat, 4 class menu, 6-9 zombies passive and ability, 11-20 class 1-10.
 execute if score @s mgs.player.config matches 1 run function mgs:v5.3.0/player/config/menu
@@ -89,6 +91,9 @@ execute if score @s mgs.player.config matches 1602 run function mgs:v5.3.0/multi
 execute if score @s mgs.player.config matches 1603 run function mgs:v5.3.0/multiplayer/my_loadouts/browse_fav_only
 
 function mgs:v5.3.0/multiplayer/editor/save_state with storage mgs:temp
+
+# Menus stay open after a click, so a click that opened no other menu was its flow's last one.
+execute if score #dialog_shown mgs.data matches 0 run dialog clear @s
 
 scoreboard players set @s mgs.player.config 0
 

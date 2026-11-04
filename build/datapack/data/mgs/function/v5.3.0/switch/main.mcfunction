@@ -4,6 +4,7 @@
 # @executed	as @e[type=player,sort=random] & at @s
 #
 # @within	mgs:v5.3.0/player/tick
+#			mgs:v5.3.0/dialog/close_then
 #
 
 execute if data storage mgs:gun all.gun unless data storage mgs:gun all.stats.weapon_id run function mgs:v5.3.0/switch/set_weapon_id
