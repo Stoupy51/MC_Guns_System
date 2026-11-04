@@ -5,6 +5,6 @@
 #			mgs:v5.3.0/zoom/check_slowness
 #
 
-scoreboard players set #spread mgs.data 1
+scoreboard players set #spread mgs.data 5
 function mgs:v5.3.0/zoom/crosshair_apply
 

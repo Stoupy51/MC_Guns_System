@@ -1,0 +1,96 @@
+{
+	"targets": {
+		"clock": {
+			"width": 1,
+			"height": 1,
+			"persistent": true,
+			"clear_color": 0
+		},
+		"clock_next": {
+			"width": 1,
+			"height": 1
+		},
+		"swap": {},
+		"lens_blocks": {
+			"width": 64,
+			"height": 32
+		},
+		"lens": {
+			"width": 2,
+			"height": 1,
+			"persistent": true,
+			"clear_color": 2139062143
+		},
+		"lens_next": {
+			"width": 2,
+			"height": 1
+		}
+	},
+	"passes": [
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/lens_blocks",
+			"inputs": [
+				{"sampler_name": "In","target": "minecraft:main"}
+			],
+			"output": "lens_blocks"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/lens_centre",
+			"inputs": [
+				{"sampler_name": "Blocks","target": "lens_blocks"},
+				{"sampler_name": "Previous","target": "lens"},
+				{"sampler_name": "In","target": "minecraft:main"}
+			],
+			"output": "lens_next"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/copy",
+			"inputs": [
+				{"sampler_name": "In","target": "lens_next"}
+			],
+			"output": "lens"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/clock",
+			"inputs": [
+				{"sampler_name": "Clock","target": "clock"}
+			],
+			"output": "clock_next"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/copy",
+			"inputs": [
+				{"sampler_name": "In","target": "clock_next"}
+			],
+			"output": "clock"
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/sight",
+			"inputs": [
+				{"sampler_name": "Clock","target": "clock_next"},
+				{"sampler_name": "In","target": "minecraft:main"},
+				{"sampler_name": "Lens","target": "lens_next"},
+				{"sampler_name": "Reticle","location": "mgs:reticle/kobra","width": 128,"height": 128,"bilinear": true},
+				{"sampler_name": "Depth","target": "minecraft:main","use_depth_buffer": true}
+			],
+			"output": "swap",
+			"uniforms": {
+				"SightConfig": [{"name": "Magnify","type": "vec2","value": [0.0,0.2]},{"name": "LensAlpha","type": "vec2","value": [0.0,1.0]},{"name": "Lens","type": "vec4","value": [2.0,0.0,0.55,0.0]},{"name": "LensTicks","type": "vec2","value": [5.0,6.0]},{"name": "Duration","type": "float","value": 7.0},{"name": "ReticleScale","type": "float","value": 1.0},{"name": "ReticleAlpha","type": "float","value": 1.0}]
+			}
+		},
+		{
+			"vertex_shader": "minecraft:core/screenquad",
+			"fragment_shader": "mgs:post/copy",
+			"inputs": [
+				{"sampler_name": "In","target": "swap"}
+			],
+			"output": "minecraft:main"
+		}
+	]
+}

@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fx_enter_zoom_acog.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/zoom.py"
+	],
+	"names": [],
+	"mappings": "AAyfyD;;;;;;;AACzD;AACA;AACA;AACA"
+}

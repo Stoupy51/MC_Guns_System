@@ -5,7 +5,7 @@
 #			mgs:v5.3.0/zoom/main
 #
 
-# No gun: the vanilla crosshair sprite is blank, so the static base one shows.
+# No gun: the vanilla crosshair sprite is blank, so the shader draws a copy of it.
 function mgs:v5.3.0/zoom/crosshair_base
 
 # Switched away from a gun while zoomed: remove the slowness.

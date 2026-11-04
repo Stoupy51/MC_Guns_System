@@ -1,0 +1,10 @@
+{
+	"version": 3,
+	"file": "fx_sight.mcfunction",
+	"sourceRoot": "../../../../../../..",
+	"sources": [
+		"src/functional/shaders/zoom.py"
+	],
+	"names": [],
+	"mappings": "AAue2C;;;;;;;;;AAC3C;AACA"
+}

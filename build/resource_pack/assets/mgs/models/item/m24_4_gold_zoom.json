@@ -9,5 +9,9 @@
 		"firstperson_righthand": {"rotation": [0,90,0],"scale": [0.23,1.5,1.5],"translation": [-8.960149253731343,5.552649253731341,6.96]},
 		"fixed": {"rotation": [0,-180,0],"scale": [1.5,1.5,1.5],"translation": [-5,0,-2.5]},
 		"ground": {"translation": [0,1.5,0],"scale": [0.75,0.75,0.75]}
+	},
+	"textures": {
+		"9": "mgs:item/sight_marker",
+		"a": "mgs:item/sight_marker"
 	}
 }
