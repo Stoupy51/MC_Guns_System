@@ -29,7 +29,7 @@ def write_marketplace() -> None:
 			f'body:{{type:"minecraft:item",item:{{id:"minecraft:emerald"}},description:{{contents:{{text:"Browse public loadouts from all players",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
 			f'actions:[],'
 			f'columns:3,'
-			f'after_action:"close",'
+			f'pause:false,after_action:"none",'
 			f'exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set 4"}}}}'
 			f'}}'
 		)

@@ -11,6 +11,7 @@ from stewbeet import (
 )
 from stouputils.typing import JsonDict
 
+from ...config.catalogs import TRIG_CLOSE
 from .text import Text
 
 
@@ -60,12 +61,33 @@ class Dialogs:
 	def register_dialog(dialog_id: str, data: JsonDict) -> None:
 		""" Register a dialog as a real dialog resource under `data/<ns>/dialog/v<version>/<id>.json`.
 
+		It stays open after a click unless `data` sets another `after_action`, so the next dialog replaces it without the cursor jumping to the centre.
+
 		Args:
 			dialog_id: Path within the namespace, e.g. "config" or "multiplayer/setup".
 		"""
 		ns: str = Mem.ctx.project_id
 		version: str = Mem.ctx.project_version
-		Mem.ctx.data[ns].dialogs[f"v{version}/{dialog_id}"] = set_json_encoder(Dialog(data))
+		Mem.ctx.data[ns].dialogs[f"v{version}/{dialog_id}"] = set_json_encoder(Dialog({"pause": False, "after_action": "none", **data}))
+
+	@staticmethod
+	def close_action(label: TextComponent) -> JsonDict:
+		""" A footer button for a dialog that stays open after a click, which a button with no action would leave open: the server clears it. """
+		return {"label": label, "action": {"type": "run_command", "command": f"/trigger {Mem.ctx.project_id}.player.config set {TRIG_CLOSE}"}}
+
+	@staticmethod
+	def close_done_snbt() -> str:
+		""" The `close_action` Done button, for the dialogs built in functions. """
+		return json.dumps(Dialogs.close_action({"translate": "gui.done"}))
+
+	@staticmethod
+	def dialog_final_btn(label: str, function: str, hover: str, color: str) -> JsonDict:
+		""" A button running an operator function that ends the menu flow, like starting a game, and closing the dialog first.
+
+		Args:
+			function: Path after `<ns>:v<version>/`, e.g. "zombies/start".
+		"""
+		return Dialogs.dialog_run_btn(label, f'/function {Mem.ctx.project_id}:v{Mem.ctx.project_version}/dialog/close_then {{run:"{function}"}}', hover, color)
 
 	@staticmethod
 	def dialog_back_action(dialog_id: str, label: str = "◀ Back", tooltip: str = "Return to the previous menu") -> JsonDict:
@@ -92,8 +114,7 @@ class Dialogs:
 	def register_value_picker(dialog_id: str, title: str, desc: str, options: list[PickerOption], back_dialog: str) -> None:
 		""" Register a sub-dialog whose buttons each apply one value, then a Back button returns to back_dialog.
 
-		Each value button is independent (no submit step), so opening the picker never resets untouched
-		settings. after_action "none" keeps the picker open after a pick (requires pause=false).
+		Each value button is independent (no submit step), so opening the picker never resets untouched settings.
 
 		Args:
 			dialog_id: Path within the namespace for this picker.
@@ -111,8 +132,6 @@ class Dialogs:
 			"actions": actions,
 			# One setting per picker, so one column.
 			"columns": 1,
-			"pause": False,
-			"after_action": "none",
 			"exit_action": Dialogs.dialog_back_action(back_dialog),
 		})
 

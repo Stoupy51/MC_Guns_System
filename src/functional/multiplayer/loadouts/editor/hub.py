@@ -54,7 +54,7 @@ contents:{{text:"Click a category to change it",color:"gray"}}\
 }}],\
 actions:[],\
 columns:2,\
-after_action:"close",\
+pause:false,after_action:"none",\
 exit_action:{{label:"Cancel",action:{{type:"run_command",command:"/trigger {ns}.player.config set 4"}}}}\
 }}
 """)

@@ -28,10 +28,9 @@ def generate_zombies_abilities() -> None:
 		"title": {"text": "Zonweeb Passive", "color": "dark_green"},
 		"body": {"type": "minecraft:plain_message", "contents": {"text": "Choose a passive effect for this game.", "color": "gray"}},
 		"columns": 1,
-		"after_action": "close",
-		"exit_action": {"label": "Skip"},
+		"exit_action": Dialogs.close_action("Skip"),
 		"actions": [
-			{"label": ["", "💰 ", {"text": "x1.2 Points", "color": "gold"}], "tooltip": {"text": "Earn 20% more points from kills (permanent)"},
+			{"label": ["", "💰 ",{"text": "x1.2 Points", "color": "gold"}], "tooltip": {"text": "Earn 20% more points from kills (permanent)"},
 				"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_1}"}},
 			{"label": ["", "⏱ ", {"text": "x1.5 Powerups", "color": "aqua"}], "tooltip": {"text": "All powerup durations last 50% longer"},
 				"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set {TRIG_ZB_PASSIVE_2}"}},
@@ -41,6 +40,7 @@ def generate_zombies_abilities() -> None:
 	write_versioned_function("zombies/passive_ability_menu", f"""
 execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
 # The ability dialog follows.
+scoreboard players set #dialog_shown {ns}.data 1
 dialog show @s {Dialogs.dialog_ref('zombies/passive_ability')}
 """)
 
@@ -61,6 +61,7 @@ dialog show @s {Dialogs.dialog_ref('zombies/passive_ability')}
 
 	write_versioned_function("zombies/ability_menu", f"""
 execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run return fail
+scoreboard players set #dialog_shown {ns}.data 1
 dialog show @s {Dialogs.dialog_ref('zombies/ability')}
 """)
 

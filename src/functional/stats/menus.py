@@ -154,7 +154,7 @@ $scoreboard players set #st_t {ns}.data $(i)
 scoreboard players operation #st_t {ns}.data *= #{STAT_PAGES} {ns}.data
 scoreboard players add #st_t {ns}.data {TRIG_PLAYER_STATS_BASE - 1}
 {chr(10).join(f"execute store result storage {ns}:temp _sv.t.trigger_{other.key} int 1 run scoreboard players add #st_t {ns}.data 1" for other in MODES)}
-$data modify storage {ns}:temp dialog set value {{type:"minecraft:notice",title:["",{{text:"$(name)",color:"gold",bold:true}},{{text:" - {mode.label}",color:"yellow"}}],body:[{{type:"minecraft:plain_message",width:300,contents:["",{body}]}}],action:{{label:{{translate:"gui.done"}}}}}}
+$data modify storage {ns}:temp dialog set value {{type:"minecraft:notice",title:["",{{text:"$(name)",color:"gold",bold:true}},{{text:" - {mode.label}",color:"yellow"}}],body:[{{type:"minecraft:plain_message",width:300,contents:["",{body}]}}],pause:false,after_action:"none",action:{Dialogs.close_done_snbt()}}}
 function {base}/{mode.key}_tabs with storage {ns}:temp _sv.t
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
@@ -192,7 +192,7 @@ execute store result score #st_total {ns}.data run data get storage {ns}:stats k
 data modify storage {ns}:temp _sp set value {{}}
 $data modify storage {ns}:temp _sp.kind set value "$(kind)"
 execute store result storage {ns}:temp _sp.total int 1 run scoreboard players get #st_total {ns}.data
-$data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","👥 ",{{text:"$(title)",color:"gold",bold:true}}],body:[],actions:[],columns:2,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
+$data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","👥 ",{{text:"$(title)",color:"gold",bold:true}}],body:[],actions:[],columns:2,pause:false,after_action:"none",exit_action:{Dialogs.close_done_snbt()}}}
 function {base}/players_body with storage {ns}:temp _sp
 function {base}/players_next
 

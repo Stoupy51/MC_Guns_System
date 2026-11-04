@@ -63,6 +63,7 @@ from ..config.catalogs import (
 	TRIG_ZB_KNIFE_MENU,
 )
 from .helpers import MGS_TAG
+from .helpers.dialogs import Dialogs
 from .multiplayer.classes import MultiplayerClasses
 
 
@@ -121,6 +122,7 @@ execute if score @s {ns}.mp.map_edit matches 1 run function {ns}:v{version}/maps
 # Isolates simultaneous editors.
 execute store result storage {ns}:temp _pid int 1 run scoreboard players get @s bs.id
 function {ns}:v{version}/multiplayer/editor/load_state with storage {ns}:temp
+scoreboard players set #dialog_shown {ns}.data 0
 
 # 1 config menu, 2 hitmarker sound, 3 damage debug in chat, 4 class menu, 6-9 zombies passive and ability, 11-20 class 1-10.
 execute if score @s {ns}.player.config matches 1 run function {ns}:v{version}/player/config/menu
@@ -192,6 +194,9 @@ execute if score @s {ns}.player.config matches {TRIG_MY_LOADOUTS_FAV_ONLY} run f
 
 function {ns}:v{version}/multiplayer/editor/save_state with storage {ns}:temp
 
+# Menus stay open after a click, so a click that opened no other menu was its flow's last one.
+execute if score #dialog_shown {ns}.data matches 0 run dialog clear @s
+
 scoreboard players set @s {ns}.player.config 0
 """)
 
@@ -210,7 +215,7 @@ function {ns}:v{version}/player/config/menu
 
 	## Built per player, so toggle states show live; opened by /trigger set 1.
 	write_versioned_function("player/config/menu", f"""
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🎮 ",{{text:"Player Settings",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Toggle your personal settings","color":"gray"}}}}],actions:[],columns:1,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🎮 ",{{text:"Player Settings",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Toggle your personal settings","color":"gray"}}}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{Dialogs.close_done_snbt()}}}
 
 execute if score @s {ns}.player.hitmarker matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"ON ✔",color:"green"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
 execute unless score @s {ns}.player.hitmarker matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"OFF ✘",color:"red"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
@@ -223,6 +228,7 @@ data modify storage {ns}:temp dialog.actions append value {{label:["","📊 ",{{
 data modify storage {ns}:temp dialog.actions append value {{label:["","👥 ",{{text:"Players",color:"yellow",bold:true}}],tooltip:{{text:"Every known player and their stats"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_PLAYERS_PAGE_BASE}"}}}}
 data modify storage {ns}:temp dialog.actions append value {{label:["","🏆 ",{{text:"Leaderboards",color:"gold",bold:true}}],tooltip:{{text:"Levels, best rounds and best mission times"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_LEADERBOARDS}"}}}}
 data modify storage {ns}:temp dialog.actions append value {{label:["","🔪 ",{{text:"Zombies Knife Camo",color:"gold",bold:true}}],tooltip:{{text:"Camos unlocked by your Zombies level"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_ZB_KNIFE_MENU}"}}}}
+execute if entity @s[tag={ns}.config_access] run data modify storage {ns}:temp dialog.actions append value {{label:["","☣ ",{{text:"Configuration",color:"red",bold:true}}],tooltip:{{text:"Game modes and server settings (operators only)"}},action:{{type:"show_dialog",dialog:"{Dialogs.dialog_ref('config')}"}}}}
 
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)

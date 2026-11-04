@@ -170,7 +170,7 @@ def write_board_dialogs(ns: str, version: str) -> None:
 		f'{{label:{{text:"Settings",color:"gray"}},action:{{type:"run_command",command:"{trigger} 1"}}}}',
 	))
 	write_versioned_function("stats/board/menu", f"""
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🏆 ",{{text:"Leaderboards",color:"gold",bold:true}}],actions:[{menu}],columns:2,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🏆 ",{{text:"Leaderboards",color:"gold",bold:true}}],actions:[{menu}],columns:2,pause:false,after_action:"none",exit_action:{Dialogs.close_done_snbt()}}}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 """)
 
@@ -187,7 +187,7 @@ execute if score @s {ns}.player.config matches {TRIG_LB_MI_MAP_BASE}..{TRIG_LB_Z
 
 	## Macro {mode, base, step}: one button per map of the mode, its trigger `base + index * step`.
 	write_versioned_function("stats/board/maps", f"""
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🏆 ",{{text:"Pick a map",color:"gold",bold:true}}],actions:[],columns:2,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🏆 ",{{text:"Pick a map",color:"gold",bold:true}}],actions:[],columns:2,pause:false,after_action:"none",exit_action:{Dialogs.close_done_snbt()}}}
 $data modify storage {ns}:temp _lb_maps set from storage {ns}:maps $(mode)
 $scoreboard players set #lb_t {ns}.data $(base)
 $scoreboard players set #lb_step {ns}.data $(step)
@@ -257,7 +257,7 @@ function {base}/show with storage {ns}:temp _lb_view
 	back: str = Dialogs.btn("Back", f"{trigger} {TRIG_LEADERBOARDS}", "gray", action="run_command")
 	write_versioned_function("stats/board/show", f"""
 $function {base}/render {{path:'$(path)',kind:"$(kind)"}}
-$data modify storage {ns}:temp dialog set value {{type:"minecraft:notice",title:["","🏆 ",{{text:"$(title)",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",width:300,contents:[""]}},{{type:"minecraft:plain_message",width:300,contents:[""]}}],action:{{label:{{translate:"gui.done"}}}}}}
+$data modify storage {ns}:temp dialog set value {{type:"minecraft:notice",title:["","🏆 ",{{text:"$(title)",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",width:300,contents:[""]}},{{type:"minecraft:plain_message",width:300,contents:[""]}}],pause:false,after_action:"none",action:{Dialogs.close_done_snbt()}}}
 data modify storage {ns}:temp dialog.body[1].contents append from storage {ns}:temp _lb_lines[]
 execute unless data storage {ns}:temp _lb_lines[0] run data modify storage {ns}:temp dialog.body[1].contents append value {{text:"No entries yet",color:"gray"}}
 

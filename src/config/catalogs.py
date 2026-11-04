@@ -261,6 +261,8 @@ TRIG_ZB_KNIFE_CAMO_BASE       = 1621
 """ + camo index -> pick the Zombies knife camo, if the Zombies level unlocks it. """
 TRIG_LEADERBOARDS             = 1630
 """ Leaderboards menu; + 1 Multiplayer level, + 2 Zombies level, + 3 Zombies maps, + 4 Missions maps. """
+TRIG_CLOSE                    = 1640
+""" Runs nothing, so the dialog it was clicked from closes, as after any trigger that shows no dialog. """
 TRIG_LB_MI_MAP_BASE           = 2000
 """ + map index -> that Missions map's leaderboard. """
 TRIG_LB_ZB_MAP_BASE           = 3000

@@ -63,7 +63,7 @@ contents:{{text:"Toggle perks below (max {MAX_PERKS}, {COST_PERK} pt each). Sele
 }}],\
 actions:[],\
 columns:2,\
-after_action:"close",\
+pause:false,after_action:"none",\
 exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}\
 }}
 """)

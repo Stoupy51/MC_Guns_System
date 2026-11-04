@@ -37,13 +37,13 @@ def generate_zombies_menus() -> None:
 	setup_actions = [
 		Dialogs.dialog_run_btn("🗺 Select Map", f"/function {ns}:v{version}/zombies/map_select", "Browse and select a zombies map", "dark_green"),
 		Dialogs.dialog_show_btn(f"{ns}:zombies/setup/variant", "🧬 Variant", "Choose the zombies experience"),
-		Dialogs.dialog_run_btn("▶ START", f"/function {ns}:v{version}/zombies/start", "Start the zombies game", "green"),
-		Dialogs.dialog_run_btn("■ STOP", f"/function {ns}:v{version}/zombies/stop", "Stop the zombies game", "red"),
-		Dialogs.dialog_run_btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "Stop and immediately restart with the same map, variant and players", "gold"),
+		Dialogs.dialog_final_btn("▶ START", "zombies/start", "Start the zombies game", "green"),
+		Dialogs.dialog_final_btn("■ STOP", "zombies/stop", "Stop the zombies game", "red"),
+		Dialogs.dialog_final_btn("⟲ Fast Restart", "zombies/restart", "Stop and immediately restart with the same map, variant and players", "gold"),
 		Dialogs.dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_zombies", "Add or remove players from the zombies game", "dark_aqua"),
 		# The zombies equivalent of multiplayer's "Auto Team".
 		Dialogs.dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/zb_join", "Add every online player to the zombies game", "green"),
-		Dialogs.dialog_run_btn("+ Join", f"/function {ns}:v{version}/zombies/join_game", "Join the ongoing zombies game as a late joiner", "yellow"),
+		Dialogs.dialog_final_btn("+ Join", "zombies/join_game", "Join the ongoing zombies game as a late joiner", "yellow"),
 		Dialogs.dialog_show_btn(f"{ns}:zombies/admin", "🛠 Admin / Debug", "Skip rounds, grant points and force power-ups (operators only)"),
 		Dialogs.dialog_run_btn("🎁 Box Pool", f"/function {ns}:v{version}/zombies/mystery_box/pool/edit_global", "Weapons of the mystery box and their weights, for every map without its own pool", "light_purple"),
 		Dialogs.dialog_run_btn("🎁 Map Box Pool", f"/function {ns}:v{version}/zombies/mystery_box/pool/edit_map", "Give the selected map a mystery box pool of its own", "light_purple"),

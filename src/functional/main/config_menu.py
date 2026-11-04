@@ -2,7 +2,7 @@
 # Imports
 from collections.abc import Callable
 
-from stewbeet import Mem, write_function
+from stewbeet import Mem, write_function, write_versioned_function
 
 from ..helpers.dialogs import Dialogs, PickerOption
 from ..helpers.text import Text
@@ -88,7 +88,7 @@ def write_config_menu() -> None:
 		# Row 2: settings and tools.
 		Dialogs.dialog_show_btn(f"{ns}:config/global", "⚙ Global Settings", "Server-wide gameplay settings", "gold"),
 		Dialogs.dialog_show_btn(f"{ns}:config/personal", "⚡ Personal Cheats", "Self-only powerups", "light_purple"),
-		Dialogs.dialog_run_btn("🗺 Map Editor", f"/function {ns}:v{version}/maps/editor/menu", "Open the map editor", "yellow"),
+		Dialogs.dialog_final_btn("🗺 Map Editor", "maps/editor/menu", "Open the map editor", "yellow"),
 		Dialogs.dialog_run_btn("📊 Reset Player Stats", f"/function {ns}:v{version}/stats/admin/players {{page:0}}", "Pick a player whose stats go back to zero (levels are kept)", "red"),
 		Dialogs.dialog_run_btn("🏆 Reset Leaderboard", f"/function {ns}:v{version}/stats/admin/boards", "Empty one Zombies or Missions map's leaderboard", "red"),
 	]
@@ -98,8 +98,17 @@ def write_config_menu() -> None:
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Pick a game mode, or a settings category", "color": "gray"}}],
 		"actions": config_actions,
 		"columns": 3,
-		"exit_action": {"label": {"translate": "gui.done"}},
+		"exit_action": Dialogs.close_action({"translate": "gui.done"}),
 	})
 
-	write_function(f"{ns}:config", f"dialog show @s {Dialogs.dialog_ref('config')}")
+	# Only operators can run it, so the tag tells the Player Settings menu who gets a Configuration button.
+	write_function(f"{ns}:config", f"""
+tag @s add {ns}.config_access
+dialog show @s {Dialogs.dialog_ref('config')}
+""")
+
+	write_versioned_function("dialog/close_then", f"""
+dialog clear @s
+$function {ns}:v{version}/$(run)
+""")
 

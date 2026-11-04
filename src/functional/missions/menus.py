@@ -13,13 +13,13 @@ def generate_missions_menus() -> None:
 
 	setup_actions = [
 		Dialogs.dialog_run_btn("🗺 Select Map", f"/function {ns}:v{version}/missions/map_select", "Browse and select a mission map", "aqua"),
-		Dialogs.dialog_run_btn("▶ START", f"/function {ns}:v{version}/missions/start", "Start the mission", "green"),
-		Dialogs.dialog_run_btn("■ STOP", f"/function {ns}:v{version}/missions/stop", "Stop the mission", "red"),
+		Dialogs.dialog_final_btn("▶ START", "missions/start", "Start the mission", "green"),
+		Dialogs.dialog_final_btn("■ STOP", "missions/stop", "Stop the mission", "red"),
 		Dialogs.dialog_run_btn("⚔ Classes", f"/function {ns}:v{version}/multiplayer/select_class", "Select your class", "aqua"),
 		Dialogs.dialog_run_btn("👥 Manage Players", f"/function {ns}:v{version}/players/list_missions", "Add or remove players from the mission", "dark_aqua"),
 		# The missions equivalent of multiplayer's "Auto Team".
 		Dialogs.dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/mi_join", "Add every online player to the mission", "green"),
-		Dialogs.dialog_run_btn("+ Join", f"/function {ns}:v{version}/missions/join_game", "Join the ongoing mission as a late joiner", "yellow"),
+		Dialogs.dialog_final_btn("+ Join", "missions/join_game", "Join the ongoing mission as a late joiner", "yellow"),
 	]
 	Dialogs.register_dialog("missions/setup", {
 		"type": "minecraft:multi_action",

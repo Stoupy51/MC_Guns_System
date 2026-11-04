@@ -33,7 +33,7 @@ def write_my_loadouts() -> None:
 			f'body:{{type:"minecraft:item",item:{{id:"minecraft:written_book"}},description:{{contents:{{text:"Click a loadout to manage it",color:"gray"}}}},show_decoration:false,show_tooltip:true}},'
 			f'actions:[],'
 			f'columns:3,'
-			f'after_action:"close",'
+			f'pause:false,after_action:"none",'
 			f'exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set 4"}}}}'
 			f'}}'
 		)
@@ -233,7 +233,7 @@ execute if score #pub {ns}.data matches 0 run function {ns}:v{version}/multiplay
 			f'{{label:{Text.styled_text("\U0001f5d1 Delete", color="red")},tooltip:{{text:"Permanently delete this loadout",color:"dark_red"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set $(delete_trig)"}}}}'
 			'],'
 			'columns:1,'
-			'after_action:"close",'
+			'pause:false,after_action:"none",'
 			f'exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_MY_LOADOUTS}"}}}}'
 			'}'
 		)

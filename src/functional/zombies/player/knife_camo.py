@@ -4,6 +4,7 @@ from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ....config.catalogs import CAMO_VARIANTS, TRIG_ZB_KNIFE_CAMO_BASE, TRIG_ZB_KNIFE_MENU
 from ...helpers import MGS_TAG
+from ...helpers.dialogs import Dialogs
 
 
 # Functions
@@ -28,7 +29,7 @@ def write_knife_camo() -> None:
 		]
 	write_versioned_function("zombies/knife_camo/menu", f"""
 execute unless score @s {ns}.zb.knife_camo matches 0.. run scoreboard players set @s {ns}.zb.knife_camo 0
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🔪 ",{{text:"Zombies Knife Camo",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Camos unlock with your Zombies level","color":"gray"}}}}],actions:[],columns:1,after_action:"close",exit_action:{{label:{{translate:"gui.done"}}}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🔪 ",{{text:"Zombies Knife Camo",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Camos unlock with your Zombies level","color":"gray"}}}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{Dialogs.close_done_snbt()}}}
 {chr(10).join(rows)}
 data modify storage {ns}:temp dialog.actions append value {{label:{{text:"Settings",color:"aqua"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 1"}}}}
 function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp

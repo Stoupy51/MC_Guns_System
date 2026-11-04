@@ -1,6 +1,8 @@
 """ Class selection menu and the perk effects applied when a loadout is equipped. """
 
 # Imports
+import json
+
 from stewbeet import (
 	Dialog,
 	DialogTag,
@@ -13,6 +15,7 @@ from stewbeet import (
 from ....config.catalogs import TRIG_EDITOR_START, TRIG_MARKETPLACE, TRIG_MY_LOADOUTS
 from ....config.stats.items import ItemBuilder
 from ...helpers import MGS_TAG
+from ...helpers.dialogs import Dialogs
 from ..classes import MultiplayerClasses
 
 
@@ -35,7 +38,10 @@ execute if score @s {ns}.class_menu matches 1.. if items entity @s weapon.mainha
 scoreboard players set @s {ns}.class_menu 0
 """)
 
-	write_versioned_function("multiplayer/show_dialog", "$dialog show @s $(dialog)")
+	write_versioned_function("multiplayer/show_dialog", f"""
+scoreboard players set #dialog_shown {ns}.data 1
+$dialog show @s $(dialog)
+""")
 
 	## Appends one action per class, then recurses.
 	write_versioned_function("multiplayer/build_class_btn", f"""
@@ -49,7 +55,7 @@ execute if data storage {ns}:temp class_iter[0] run function {ns}:v{version}/mul
 
 	## Built per player, so it is a dynamic dialog.
 	write_versioned_function("multiplayer/select_class", f"""
-data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"Select Your Class",color:"gold",bold:true}},body:{{type:"minecraft:item",item:{{id:"minecraft:crossbow"}},description:{{contents:{{text:"Choose a class for multiplayer",color:"gray"}}}},show_decoration:false,show_tooltip:true}},actions:[],columns:2,after_action:"close",exit_action:{{label:"Cancel"}}}}
+data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:{{text:"Select Your Class",color:"gold",bold:true}},body:{{type:"minecraft:item",item:{{id:"minecraft:crossbow"}},description:{{contents:{{text:"Choose a class for multiplayer",color:"gray"}}}},show_decoration:false,show_tooltip:true}},actions:[],columns:2,pause:false,after_action:"none",exit_action:{json.dumps(Dialogs.close_action("Cancel"))}}}
 
 data modify storage {ns}:temp class_iter set from storage {ns}:multiplayer classes_list
 
@@ -75,7 +81,9 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 			"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set 1"},
 		}],
 		"columns": 1,
-		"exit_action": {"label": {"translate": "gui.cancel"}},
+		"pause": False,
+		"after_action": "none",
+		"exit_action": Dialogs.close_action({"translate": "gui.cancel"}),
 	}))
 
 	# Merged, so other packs' entries stay.

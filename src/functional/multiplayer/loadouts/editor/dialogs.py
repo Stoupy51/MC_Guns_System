@@ -23,7 +23,7 @@ contents:$(hint)\
 }}],\
 actions:[],\
 columns:$(columns),\
-after_action:"close",\
+pause:false,after_action:"none",\
 exit_action:{{label:"Back",action:{{type:"run_command",command:"/trigger {ns}.player.config set {TRIG_HUB}"}}}}\
 }}
 """)
