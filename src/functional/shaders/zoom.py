@@ -40,9 +40,9 @@ class ScopeLevel:
 
 
 SCOPE_LEVELS: list[ScopeLevel] = [
-	ScopeLevel(level=2, magnify=0.25, lens_radius=0.00),
-	ScopeLevel(level=3, magnify=0.30, lens_radius=0.21),
-	ScopeLevel(level=4, magnify=0.45, lens_radius=0.30),
+	ScopeLevel(level=2, magnify=0.20, lens_radius=0.00),
+	ScopeLevel(level=3, magnify=0.20, lens_radius=0.10),
+	ScopeLevel(level=4, magnify=0.30, lens_radius=0.25),
 ]
 """ Level 2 is the centre-only pull used by weapons without a scope, so it has no lens. """
 
