@@ -11,7 +11,7 @@ Known limits:
 - The muzzle spark also draws in third person, and over the gun under Iris: no post effect sees the camera perspective, nor the hand depth under Iris.
 - Re-aiming during the zoom fade-out restarts the ramp from zero, since each direction is its own id with its own clock.
 - A crosshair ramp starts from the previous transition's end, so changing movement state mid-ramp jumps.
-- Each id compiles on first use, so each of the 25 crosshair variants can stutter once.
+- Each id compiles on first use, so each of the 36 crosshair variants can stutter once.
 """
 # Imports
 from beet import FragmentShader

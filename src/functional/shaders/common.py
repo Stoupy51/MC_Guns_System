@@ -96,7 +96,10 @@ def register_common(ns: str) -> None:
 	Mem.ctx.assets[ns].fragment_shaders["post/copy"] = FragmentShader(COPY_FSH)
 
 
-def timed_effect(ns: str, effect_id: str, shader: str, uniforms: JsonDict, inputs: list[JsonDict] | None = None) -> None:
+def timed_effect(
+	ns: str, effect_id: str, shader: str, uniforms: JsonDict,
+	inputs: list[JsonDict] | None = None, pre_passes: list[JsonDict] | None = None, targets: JsonDict | None = None,
+) -> None:
 	""" Register a `/posteffect` chain whose clock restarts on every `posteffect add`.
 
 	The apply pass gets `ClockSampler` and `InSampler` (bound to `minecraft:main`) and writes a scratch target that a last pass copies back.
@@ -104,11 +107,14 @@ def timed_effect(ns: str, effect_id: str, shader: str, uniforms: JsonDict, input
 	Extra `inputs` are appended in order, so their `SamplerInfo` entries follow `OutSize`, `ClockSize` and `InSize`.
 
 	Args:
-		effect_id: path under `assets/<ns>/post_effect/`, the id `/posteffect add` takes.
-		shader:    fragment shader id of the apply pass, ex: "mgs:post/flash".
-		uniforms:  std140 blocks baked into the apply pass, as `{block_name: [{name, type, value}]}`.
+		effect_id:  path under `assets/<ns>/post_effect/`, the id `/posteffect add` takes.
+		shader:     fragment shader id of the apply pass, ex: "mgs:post/flash".
+		uniforms:   std140 blocks baked into the apply pass, as `{block_name: [{name, type, value}]}`.
+		pre_passes: run before the clock, to prepare targets the extra `inputs` read.
+		targets:    the targets those passes write, declared beside the clock's.
 	"""
 	passes: list[JsonDict] = [
+		*(pre_passes or []),
 		{
 			"vertex_shader": SCREENQUAD,
 			"fragment_shader": f"{ns}:post/clock",
@@ -144,6 +150,7 @@ def timed_effect(ns: str, effect_id: str, shader: str, uniforms: JsonDict, input
 			"clock":      {"width": 1, "height": 1, "persistent": True, "clear_color": 0},
 			"clock_next": {"width": 1, "height": 1},
 			"swap":       {},
+			**(targets or {}),
 		},
 		"passes": passes,
 	}

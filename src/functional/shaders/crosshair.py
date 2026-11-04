@@ -1,7 +1,8 @@
 """ Movement-driven crosshair, drawn by inverting the pixels under its arms.
 
-The vanilla crosshair sprite is replaced by a transparent pixel, so this shader owns the whole thing.
-Spread cannot be passed as a parameter, so every from-to pair of the five movement states gets its own id with the two ends of the ramp baked as uniforms.
+The vanilla crosshair sprite is replaced by a transparent pixel, so this shader owns the whole thing, the vanilla one shown without a gun included.
+The HUD draws `hud/crosshair` whatever the player holds (`Hud.extractCrosshair`), so no pack can switch that sprite with the held item.
+Spread cannot be passed as a parameter, so every from-to pair of the states gets its own id with the two ends of the ramp baked as uniforms.
 """
 # Imports
 from beet import FragmentShader, Texture
@@ -11,8 +12,8 @@ from stewbeet import Mem, write_versioned_function
 from .common import HEADER, timed_effect, uniform
 
 # Constants
-SPREAD_LEVELS: int = 5
-""" 0 sneak, 1 standing, 2 walking, 3 sprinting, 4 airborne. """
+SPREAD_LEVELS: int = 6
+""" 0 sneak, 1 standing, 2 walking, 3 sprinting, 4 airborne, 5 the vanilla plus, held without a gun. """
 
 DURATION: float = 4.0
 """ Ticks a spread transition takes. A change arriving mid-ramp restarts from the previous end. """
@@ -25,7 +26,7 @@ uniform sampler2D ClockSampler;
 uniform sampler2D InSampler;
 
 layout(std140) uniform CrosshairConfig {
-    vec2 Spread;     // movement level 0..4, at the start and at the end of the ramp
+    vec2 Spread;     // level 0..5, at the start and at the end of the ramp
     float Duration;  // ramp length in ticks
 };
 
@@ -35,12 +36,23 @@ layout(location = 0) out vec4 fragColor;
 void main() {
     fragColor = texture(InSampler, texCoord);
 
-    float spread = mix(Spread.x, Spread.y, mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
-
     // The HUD scale is not exposed to post shaders, so it is inferred from the window height the
     // same way vanilla picks its default: roughly 2 at 1080p, 3 at 1440p, 4 at 4K.
     vec2 inSize = vec2(textureSize(InSampler, 0));
     float guiScale = max(1.0, round(inSize.y / 540.0));
+
+    // The vanilla sprite: a 9 px plus whose centre is texel 7 of a 15 px sprite blitted at ((guiWidth - 15) / 2, (guiHeight - 15) / 2).
+    if (Spread.y > 4.5) {
+        ivec2 guiSize = ivec2(ceil(inSize / guiScale));
+        ivec2 guiPixel = ivec2(gl_FragCoord.xy / guiScale);
+        guiPixel.y = guiSize.y - 1 - guiPixel.y;
+        ivec2 d = abs(guiPixel - ((guiSize - 15) / 2 + 7));
+        if (min(d.x, d.y) == 0 && max(d.x, d.y) <= 4) fragColor.rgb = vec3(1.0) - fragColor.rgb;
+        return;
+    }
+
+    float start = Spread.x > 4.5 ? Spread.y : Spread.x;
+    float spread = mix(start, Spread.y, mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
 
     int gap = int(round((1.5 + spread * 2.0) * guiScale));
     int armEnd = gap + int(round(3.0 * guiScale));
@@ -58,7 +70,7 @@ void main() {
 
 # Functions
 def main() -> None:
-	""" Register the 25 crosshair ids, blank the vanilla sprite, and wire the spread state machine. """
+	""" Register the 36 crosshair ids, blank the vanilla sprite, and wire the spread state machine. """
 	ns: str = Mem.ctx.project_id
 	if not Mem.ctx.meta.get("mgs_custom_crosshair", False):
 		# zoom/main calls these every tick, and a call to a missing function fails the caller at load
@@ -99,9 +111,9 @@ execute unless predicate {ns}:v{version}/is_on_ground if predicate {ns}:v{versio
 function {ns}:v{version}/zoom/crosshair_apply
 """)
 
-	# The vanilla sprite is blanked for everyone, so without a gun this still has to draw something.
+	# The vanilla sprite is blanked for everyone, so without a gun this draws a copy of it.
 	write_versioned_function("zoom/crosshair_base", f"""
-scoreboard players set #spread {ns}.data 1
+scoreboard players set #spread {ns}.data {SPREAD_LEVELS - 1}
 function {ns}:v{version}/zoom/crosshair_apply
 """)
 

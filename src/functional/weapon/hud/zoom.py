@@ -87,7 +87,7 @@ function {ns}:v{version}/zoom/fx_leave
 """)
 
 	write_versioned_function("zoom/check_slowness", f"""
-# No gun: the vanilla crosshair sprite is blank, so the static base one shows.
+# No gun: the vanilla crosshair sprite is blank, so the shader draws a copy of it.
 function {ns}:v{version}/zoom/crosshair_base
 
 # Switched away from a gun while zoomed: remove the slowness.
