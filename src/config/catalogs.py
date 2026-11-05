@@ -151,6 +151,14 @@ SCOPE_NAMES: dict[str, str] = {
 	"_4": "Mk4 (4x Scope)",
 }
 
+SCOPE_NAME_OVERRIDES: dict[str, str] = {
+	"mosin_1": "PU Scope (4x)",
+	"ak47_4": "PSO (4x Scope)",
+	"svd_4": "PSO (4x Scope)",
+	"rpk_4": "PSO (4x Scope)",
+}
+""" Scoped item ids whose sight is not the one `SCOPE_NAMES` gives their suffix. """
+
 ALL_SCOPE_SUFFIXES: list[str] = ["", "_1", "_2", "_3", "_4"]
 """ Ordered scope suffixes for trigger offset mapping (offset 0-4). """
 

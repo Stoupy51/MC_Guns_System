@@ -20,6 +20,7 @@ from stewbeet import (
 from .config.catalogs import (
 	GRENADE_TYPES,
 	PRIMARY_WEAPONS,
+	SCOPE_NAME_OVERRIDES,
 	SCOPE_NAMES,
 	SECONDARY_WEAPONS,
 )
@@ -123,7 +124,7 @@ def setup_gun(ns: str, item: str, obj: Item, gun_stats: JsonDict) -> None:
 
 	display_name: str | None = gun_display_name(base_name.removesuffix(scope_suffix), gun_stats)
 	if display_name:
-		scope_name: str | None = SCOPE_NAMES.get(scope_suffix)
+		scope_name: str | None = SCOPE_NAME_OVERRIDES.get(base_name, SCOPE_NAMES.get(scope_suffix))
 		if scope_suffix and scope_name:
 			display_name = f"{display_name} ({scope_name})"
 		obj.components["item_name"] = [{"text": display_name, "color": "gold", "italic": False}]

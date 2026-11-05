@@ -29,6 +29,9 @@ OUT_TICKS: float = 4.0
 DISTORTION: float = 0.55
 """ Barrel strength of the lens, unitless. """
 
+VIGNETTE_START: float = 0.55
+""" Fraction of the lens radius where the black edge starts, reaching full black at the rim. """
+
 LENS_IN_TICKS: list[float] = [5.0, 6.0]
 """ The lens appears between these ticks, once the scope model has finished swinging to the centre. """
 
@@ -49,7 +52,7 @@ class ScopeLevel:
 
 SCOPE_LEVELS: dict[int, ScopeLevel] = {
 	2: ScopeLevel(level=2, magnify=0.20, lens_radius=0.00),
-	3: ScopeLevel(level=3, magnify=0.20, lens_radius=0.10),
+	3: ScopeLevel(level=3, magnify=0.20, lens_radius=0.12),
 	4: ScopeLevel(level=4, magnify=0.30, lens_radius=0.25),
 }
 """ Level 2 is the centre-only pull of iron sights and red dots, so it has no lens. """
@@ -78,7 +81,7 @@ SIGHTS: list[Sight] = [
 	Sight(name="acog",  source="reticles",      column=2, level=3, rest_side=0.1599, marker_row=1, reticle_scale=0.2269),
 	Sight(name="aug",   source="reticles",      column=3, level=2, rest_side=0.0255),
 	Sight(name="mk4",   source="reticles_1024", column=0, level=4, rest_side=0.2789),
-	Sight(name="pu",    source="reticles_1024", column=1, level=2, rest_side=0.2457),
+	Sight(name="pu",    source="reticles_1024", column=1, level=4, rest_side=0.2457),
 	Sight(name="pso",   source="reticles_1024", column=2, level=4, rest_side=0.2611, marker_row=1),
 ]
 """ The PSO marks its second quad, the same square as its reticle's, since its reticle region is the ACOG dot's in the other texture. """
@@ -202,6 +205,7 @@ void main() {
 SIGHT_FSH: str = HEADER + f"""
 #define MARKER_SPAN {(MARKER_TEXELS - 1 - 2 * MARKER_INSET) / MARKER_TEXELS}
 #define MARKER_TEXELS {MARKER_TEXELS}.0
+#define VIGNETTE_START {VIGNETTE_START}
 """ + """
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
@@ -326,7 +330,9 @@ void main() {
         float theta = atan(screenCoord.y, screenCoord.x);
         vec2 lensCoord = vec2(cos(theta), sin(theta)) * r / Lens.x;
         vec2 pixCoord = mix(lensCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5), vec2(0.5), magnify);
-        fragColor = mix(fragColor, textureBicubic(InSampler, pixCoord, inSize), lensAlpha);
+        vec4 lensColor = textureBicubic(InSampler, pixCoord, inSize);
+        lensColor.rgb *= 1.0 - smoothstep(VIGNETTE_START, 1.0, length(screenCoord) / Lens.y);
+        fragColor = mix(fragColor, lensColor, lensAlpha);
     }
 
     // Outside the lens the sight's body hides the reticle as it hid the reticle quad: the held item is the only depth at exactly 1.0.

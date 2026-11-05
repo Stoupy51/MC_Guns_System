@@ -6,6 +6,7 @@ from .....config.catalogs import (
 	ALL_SCOPE_SUFFIXES,
 	COST_PRIMARY_SCOPE,
 	COST_SECONDARY_SCOPE,
+	SCOPE_NAME_OVERRIDES,
 	SCOPE_NAMES,
 	TRIG_PRIMARY_SCOPE_BASE,
 	TRIG_SECONDARY_SCOPE_BASE,
@@ -21,12 +22,12 @@ def write_editor_scopes() -> None:
 	fn: str = editor_fn(ns, version)
 
 	## Scope dialogs (variant subsets per gun)
-	def scope_actions_snbt(trig_base: int, variants: tuple[str, ...], cost: int) -> str:
+	def scope_actions_snbt(trig_base: int, variants: tuple[str, ...], cost: int, names: dict[str, str] = SCOPE_NAMES) -> str:
 		actions: list[str] = []
 		for suffix in variants:
 			i = ALL_SCOPE_SUFFIXES.index(suffix)
 			trig = trig_base + i
-			name = SCOPE_NAMES[suffix]
+			name = names[suffix]
 			scope_cost = cost if suffix != "" else 0
 			tooltip: str = '{text:"Free"}' if scope_cost == 0 else f'[{{text:"-{scope_cost}","color":"gold"}}, " pt"]'
 			label_color = "green" if scope_cost == 0 else "yellow"
@@ -42,11 +43,12 @@ def write_editor_scopes() -> None:
 		"no4": ("", "_1", "_2", "_3"),
 		"1only": ("", "_1"),
 	}
+	names_by_variants: dict[str, dict[str, str]] = {"1only": SCOPE_NAMES | {"_1": SCOPE_NAME_OVERRIDES["mosin_1"]}}
 	for func_suffix, variants in suffix_variants.items():
 		write_static_dialog(ns, version,
 			f"scope_primary_{func_suffix}", "Primary Scope",
 			f"Choose your optic (-{COST_PRIMARY_SCOPE} pt for any scope, iron sights free)",
-			scope_actions_snbt(TRIG_PRIMARY_SCOPE_BASE, variants, COST_PRIMARY_SCOPE),
+			scope_actions_snbt(TRIG_PRIMARY_SCOPE_BASE, variants, COST_PRIMARY_SCOPE, names_by_variants.get(func_suffix, SCOPE_NAMES)),
 		)
 	write_static_dialog(ns, version,
 		"scope_secondary_4only", "Secondary Scope",
@@ -69,6 +71,7 @@ def write_editor_scopes() -> None:
 	write_versioned_function("multiplayer/editor/pick_primary_scope", f"""
 data modify storage {ns}:temp _ed_bak set from storage {ns}:temp editor
 {gen_pick_scope_lines("primary", TRIG_PRIMARY_SCOPE_BASE)}
+{override_lines(ns)}
 execute store success score #ed_ok {ns}.data run function {fn}/commit_check
 
 # A denied scope stays on iron sights; camo follows either way.
@@ -83,3 +86,12 @@ execute store success score #ed_ok {ns}.data run function {fn}/commit_check
 function {fn}/show_secondary_camo_dialog
 """)
 
+
+def override_lines(ns: str) -> str:
+	""" Lines renaming the picked primary scope for the guns whose sight is not the one its suffix usually means. """
+	return "\n".join(
+		f'execute if data storage {ns}:temp editor{{primary:"{gun}",primary_scope:"_{suffix}"}} run '
+		f'data modify storage {ns}:temp editor.primary_scope_name set value "{name}"'
+		for item, name in SCOPE_NAME_OVERRIDES.items()
+		for gun, suffix in [item.rsplit("_", 1)]
+	)
