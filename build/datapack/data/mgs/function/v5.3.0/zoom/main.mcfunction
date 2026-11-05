@@ -7,6 +7,9 @@
 #			mgs:v5.3.0/dialog/close_then
 #
 
+# Spectators see no crosshair.
+execute if entity @s[gamemode=spectator] run return run function mgs:v5.3.0/zoom/crosshair_clear
+
 # No gun.
 execute unless data storage mgs:gun all.gun run return run function mgs:v5.3.0/zoom/check_slowness
 

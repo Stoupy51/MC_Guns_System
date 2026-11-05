@@ -11,6 +11,9 @@ def main() -> None:
 	version: str = Mem.ctx.project_version
 
 	write_versioned_function("zoom/main", f"""
+# Spectators see no crosshair.
+execute if entity @s[gamemode=spectator] run return run function {ns}:v{version}/zoom/crosshair_clear
+
 # No gun.
 execute unless data storage {ns}:gun all.gun run return run function {ns}:v{version}/zoom/check_slowness
 
