@@ -26,6 +26,7 @@ TEAMS: list[TeamDef] = [
 	TeamDef(suffix="zombies", color="yellow",   friendly_fire=False, nametag_visibility="hideForOtherTeams"),
 	TeamDef(suffix="missions", color="aqua",    friendly_fire=False, nametag_visibility="hideForOtherTeams"),
 	TeamDef(suffix="mi_mobs", color="dark_red", friendly_fire=True,  nametag_visibility="always"),
+	TeamDef(suffix="downed",  color="gold",     friendly_fire=False, nametag_visibility="never"),
 ]
 """ Every team shared across modes. Sidebars show per team color, so the teams of different modes never share a color. The escort horde team lives with the escort code (it is AI-only). """
 

@@ -22,6 +22,7 @@ data remove storage mgs:temp _body_at
 # Glowing, so the squad finds a body on the floor in a horde before it bleeds out.
 summon minecraft:mannequin ~ ~1.5 ~ {Invulnerable:1b,Glowing:1b,pose:"swimming",hide_description:true,Tags:["mgs.downed_mannequin","mgs.downed_new","mgs.zombies_entity"]}
 
+team join mgs.downed @n[tag=mgs.downed_new]
 scoreboard players operation @n[tag=mgs.downed_new] mgs.zb.downed_id = @s mgs.zb.downed_id
 
 data modify entity @n[tag=mgs.downed_new] equipment set from entity @s equipment

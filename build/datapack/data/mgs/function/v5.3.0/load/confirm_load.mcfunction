@@ -221,6 +221,11 @@ team modify mgs.mi_mobs color dark_red
 team modify mgs.mi_mobs friendlyFire true
 team modify mgs.mi_mobs nametagVisibility always
 
+team add mgs.downed
+team modify mgs.downed color gold
+team modify mgs.downed friendlyFire false
+team modify mgs.downed nametagVisibility never
+
 # Ticks before a dropped gun despawns.
 scoreboard objectives add mgs.drop_timer dummy
 

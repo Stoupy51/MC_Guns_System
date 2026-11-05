@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Pack-a-Punch (PaP) Fire Sound Generator for StoupGun
+Pack-a-Punch (PaP) Fire Sound Generator for MC_Guns_System
 =====================================================
 Generates PaP versions of weapon fire sounds by layering
 a synthesized descending sine sweep ("pew") over the gun shot.
