@@ -41,7 +41,7 @@
 								},
 								"minecraft:item_name": [
 									{
-										"translate": "mgs.rpk_mk4_4x_scope","fallback": "RPK (Mk4 (4x Scope))",
+										"translate": "mgs.rpk_pso_4x_scope","fallback": "RPK (PSO (4x Scope))",
 										"color": "gold",
 										"italic": false
 									}

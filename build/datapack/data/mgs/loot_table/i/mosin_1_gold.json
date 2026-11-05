@@ -41,7 +41,7 @@
 								},
 								"minecraft:item_name": [
 									{
-										"translate": "mgs.mosin_nagant_holographic","fallback": "Mosin-Nagant (Holographic)",
+										"translate": "mgs.mosin_nagant_pu_scope_4x","fallback": "Mosin-Nagant (PU Scope (4x))",
 										"color": "gold",
 										"italic": false
 									}

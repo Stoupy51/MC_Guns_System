@@ -3,6 +3,7 @@
 
 #define MARKER_SPAN 0.5625
 #define MARKER_TEXELS 16.0
+#define VIGNETTE_START 0.55
 
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
@@ -127,7 +128,9 @@ void main() {
         float theta = atan(screenCoord.y, screenCoord.x);
         vec2 lensCoord = vec2(cos(theta), sin(theta)) * r / Lens.x;
         vec2 pixCoord = mix(lensCoord * vec2(1.0 / aspectRatio, 1.0) + vec2(0.5), vec2(0.5), magnify);
-        fragColor = mix(fragColor, textureBicubic(InSampler, pixCoord, inSize), lensAlpha);
+        vec4 lensColor = textureBicubic(InSampler, pixCoord, inSize);
+        lensColor.rgb *= 1.0 - smoothstep(VIGNETTE_START, 1.0, length(screenCoord) / Lens.y);
+        fragColor = mix(fragColor, lensColor, lensAlpha);
     }
 
     // Outside the lens the sight's body hides the reticle as it hid the reticle quad: the held item is the only depth at exactly 1.0.

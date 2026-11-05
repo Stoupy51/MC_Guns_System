@@ -82,6 +82,8 @@ tag @s remove mgs.ticking
 # The length of the item id string.
 execute store result score @s mgs.previous_selected run data get storage mgs:gun SelectedItem.id
 
+execute if score @s mgs.kick matches 0.. run function mgs:v5.3.0/kicks/tick
+
 # Bookshelf SUID.
 execute unless score @s bs.id matches 0.. run function #bs.id:give_suid
 

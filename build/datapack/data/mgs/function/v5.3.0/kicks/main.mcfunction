@@ -5,13 +5,10 @@
 #			mgs:v5.3.0/player/right_click
 #
 
-# Kick type, and a random value from 1 to 5.
 scoreboard players set #kick mgs.data 0
 execute store result score #kick mgs.data run data get storage mgs:gun all.stats.kick
-execute store result score #random mgs.data run random value 1..5
-
-# Deadshot Daiquiri (zombies): the 65% kick tables.
-execute if score @s mgs.special.deadshot matches 1 run return run function mgs:v5.3.0/kicks/apply_ds
-
-function mgs:v5.3.0/kicks/apply
+execute if score #kick mgs.data matches ..-1 run scoreboard players set #kick mgs.data 0
+execute if score #kick mgs.data matches 6.. run scoreboard players set #kick mgs.data 5
+scoreboard players operation @s mgs.kick = #kick mgs.data
+execute store result score @s mgs.kick_dir run random value 1..5
 

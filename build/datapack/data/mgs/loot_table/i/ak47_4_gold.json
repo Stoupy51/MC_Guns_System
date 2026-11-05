@@ -41,7 +41,7 @@
 								},
 								"minecraft:item_name": [
 									{
-										"translate": "mgs.ak_47_mk4_4x_scope","fallback": "AK-47 (Mk4 (4x Scope))",
+										"translate": "mgs.ak_47_pso_4x_scope","fallback": "AK-47 (PSO (4x Scope))",
 										"color": "gold",
 										"italic": false
 									}
