@@ -2,6 +2,7 @@
 #extension GL_ARB_separate_shader_objects : require
 
 #define MARKER_SPAN 0.5625
+#define MARKER_TEXELS 16.0
 
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
@@ -20,6 +21,7 @@ layout(std140) uniform SightConfig {
     float Duration;      // ramp length in ticks
     float ReticleScale;  // side of the reticle over the side of the marker square
     float ReticleAlpha;  // 0 on the way out, where the held model draws its own reticle again
+    float RestSide;      // side of the marker square over the screen height, aimed and still
 };
 
 layout(location = 0) in vec2 texCoord;
@@ -85,19 +87,33 @@ void main() {
 
     vec2 inSize = vec2(textureSize(InSampler, 0));
     vec2 source = mix(texCoord, vec2(0.5), magnify);
-    fragColor = texture(InSampler, source);
-    // A marker shows wherever no lens covers it, so the pixels beside it stand in.
-    vec2 directions[4] = vec2[](vec2(1.0, 0.0), vec2(-1.0, 0.0), vec2(0.0, 1.0), vec2(0.0, -1.0));
-    for (int i = 0; i < 4 && is_marker(fragColor.rgb); i++) {
-        fragColor = texture(InSampler, source + directions[i] * 8.0 / inSize);
-    }
 
     // The marker square in pixels of the unmagnified frame, signed to run from the blue texel to the green one.
     vec2 blue = unpack_marker(0) * inSize;
     vec2 green = unpack_marker(1) * inSize;
     vec2 square = (green - blue) / MARKER_SPAN;
-    if (abs(square.x) < 2.0 || abs(square.y) < 2.0) return;
+    bool unseen = abs(square.x) < 2.0 || abs(square.y) < 2.0;
+    if (unseen) {
+        // The blue texel is the top-left one, and screen y runs upwards.
+        square = vec2(1.0, -1.0) * RestSide * inSize.y;
+        blue = (inSize - square * MARKER_SPAN) * 0.5;
+        green = inSize - blue;
+    }
     vec2 centre = (blue + green) * 0.5;
+
+    // A marker shows wherever no lens covers it, so the pixels beside it stand in.
+    fragColor = texture(InSampler, source);
+    vec2 directions[4] = vec2[](vec2(1.0, 0.0), vec2(-1.0, 0.0), vec2(0.0, 1.0), vec2(0.0, -1.0));
+    for (int i = 0; i < 4 && is_marker(fragColor.rgb); i++) {
+        fragColor = texture(InSampler, source + directions[i] * 8.0 / inSize);
+    }
+    // Unseen markers cannot be told by colour, so the pixels toward the centre stand in around where they should be.
+    vec2 marker = distance(source * inSize, blue) < distance(source * inSize, green) ? blue : green;
+    vec2 gap = abs(source * inSize - marker);
+    float reach = abs(square.y) / MARKER_TEXELS + 2.0;
+    if (unseen && lensAlpha * ReticleAlpha > 0.0 && max(gap.x, gap.y) < reach) {
+        fragColor = texture(InSampler, source + vec2(sign(centre.x - marker.x) * 2.0 * reach, 0.0) / inSize);
+    }
 
     float aspectRatio = inSize.x / inSize.y;
     // The markers were found in the unmagnified frame: this is where the pull above puts their centre on screen.
@@ -120,5 +136,6 @@ void main() {
     bool hidden = !inLens && texelFetch(DepthSampler, ivec2(source * inSize), 0).r == 1.0;
     if (hidden || any(lessThan(uv, vec2(0.0))) || any(greaterThan(uv, vec2(1.0)))) return;
     vec4 reticle = reticle_at(uv, (1.0 - magnify) / reticleSize);
-    fragColor.rgb = mix(fragColor.rgb, reticle.rgb, reticle.a * ReticleAlpha);
+    // The rest square is only right once the model has swung in, which is when the lens appears.
+    fragColor.rgb = mix(fragColor.rgb, reticle.rgb, reticle.a * ReticleAlpha * (unseen ? lensAlpha : 1.0));
 }
