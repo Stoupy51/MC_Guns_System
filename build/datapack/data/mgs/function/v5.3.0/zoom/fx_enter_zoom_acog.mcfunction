@@ -6,6 +6,6 @@
 #
 
 posteffect add @s mgs:zoom_acog
-scoreboard players set @s mgs.zoom_fx 4
+scoreboard players set @s mgs.zoom_fx 2
 scoreboard players reset @s mgs.zoom_fx_off
 

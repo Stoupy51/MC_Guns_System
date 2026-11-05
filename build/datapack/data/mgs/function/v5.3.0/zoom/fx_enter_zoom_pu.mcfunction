@@ -6,6 +6,6 @@
 #
 
 posteffect add @s mgs:zoom_pu
-scoreboard players set @s mgs.zoom_fx 7
+scoreboard players set @s mgs.zoom_fx 4
 scoreboard players reset @s mgs.zoom_fx_off
 

@@ -2,8 +2,8 @@
 	"parent": "mgs:item/g3a3_1_zoom",
 	"textures": {
 		"a": "mgs:item/mk4details_galaxy",
-		"c": "mgs:item/sight_marker",
-		"b": "mgs:item/sight_marker",
+		"c": "mgs:item/reticles_1024",
+		"b": "mgs:item/reticles",
 		"1": "mgs:item/olive_polymer_galaxy",
 		"0": "mgs:item/g3details_galaxy",
 		"3": "mgs:item/metal_brighter_galaxy",
