@@ -7,9 +7,9 @@
 
 Guns, Call of Duty style game modes and a Zombies mode for Minecraft 26.3, as a datapack and a resource pack. No mods.
 
-It is a rewrite of MGS 4.2 by TheBradqq, whose models, textures and sounds it mostly reuses. The rest is new.
+It is a rewrite of [MGS 4.2 by TheBradqq](https://www.youtube.com/watch?v=Ia5Mlkn6ipM), whose models, textures and sounds it mostly reuses. The rest is new.
 
-![Admin menu](./assets/img/config_menu.png)
+![Admin menu](https://github.com/Stoupy51/MC_Guns_System/blob/main/assets/img/config_menu.png)
 
 ## Install
 
@@ -32,7 +32,7 @@ It is a rewrite of MGS 4.2 by TheBradqq, whose models, textures and sounds it mo
 
 ## Weapons
 
-About thirty guns, [listed here](./GUNS.md) (pistols, SMGs, rifles, LMGs, shotguns, snipers, the RPG-7 and the Ray Gun), plus frag, semtex, smoke and flash grenades, and a knife with three Zombies upgrades.
+About thirty guns, [listed here](https://github.com/Stoupy51/MC_Guns_System/blob/main/GUNS.md) (pistols, SMGs, rifles, LMGs, shotguns, snipers, the RPG-7 and the Ray Gun), plus frag, semtex, smoke and flash grenades, and a knife with three Zombies upgrades.
 
 - Hitscan bullets with spread, damage falloff and headshots. Rockets travel and explode.
 - Each gun keeps its original fire modes (auto, semi, burst, pump). Drop the gun (`Q`) to switch.
@@ -106,7 +106,7 @@ Place the base coordinates first: every position is saved relative to them, so a
 
 https://github.com/user-attachments/assets/7b429b68-c476-4b08-98ce-0fa53cb72608
 
-![Editor elements](./assets/img/editor_elements.png)
+![Editor elements](https://github.com/Stoupy51/MC_Guns_System/blob/main/assets/img/editor_elements.png)
 
 ### Ship a map with the pack
 
@@ -167,6 +167,6 @@ After changing XP awards in `src/functional/progression/awards.py` or a challeng
 ## Not included
 
 - The crafting system of MGS 4.2 is not part of this rewrite.
-- The Multiplayer final kill cam is designed in [specs/004-multiplayer-kill-cam](specs/004-multiplayer-kill-cam/) and not built.
+- The Multiplayer final kill cam is designed in [specs/004-multiplayer-kill-cam](https://github.com/Stoupy51/MC_Guns_System/blob/main/specs/004-multiplayer-kill-cam/) and not built.
 - Missions ship without a built-in map: make one in the editor.
 
