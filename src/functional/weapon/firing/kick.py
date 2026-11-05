@@ -1,6 +1,6 @@
-""" Weapon recoil: rotates the player's view by the weapon's kick value. """
+""" Weapon recoil: the view climbs over the ticks after a shot, from the weapon's kick level down to level 0. """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ....config.stats.keys import KICK
 
@@ -10,29 +10,40 @@ def main() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
 
+	write_load_file(f"""
+scoreboard objectives add {ns}.kick dummy
+scoreboard objectives add {ns}.kick_dir dummy
+""")
+
 	write_versioned_function("player/right_click", f"""
 function {ns}:v{version}/kicks/main
 """)
+	write_versioned_function("player/tick", f"""
+execute if score @s {ns}.kick matches 0.. run function {ns}:v{version}/kicks/tick
+""")
 
+	# A shot restarts the climb at the weapon's level, playing that level and every lower one on the following ticks.
 	write_versioned_function("kicks/main", f"""
-# Kick type, and a random value from 1 to 5.
 scoreboard players set #kick {ns}.data 0
 execute store result score #kick {ns}.data run data get storage {ns}:gun all.stats.{KICK}
-execute store result score #random {ns}.data run random value 1..5
+execute if score #kick {ns}.data matches ..-1 run scoreboard players set #kick {ns}.data 0
+execute if score #kick {ns}.data matches 6.. run scoreboard players set #kick {ns}.data 5
+scoreboard players operation @s {ns}.kick = #kick {ns}.data
+execute store result score @s {ns}.kick_dir run random value 1..5
+""")
 
-# Deadshot Daiquiri (zombies): the 65% kick tables.
-execute if score @s {ns}.special.deadshot matches 1 run return run function {ns}:v{version}/kicks/apply_ds
-
-function {ns}:v{version}/kicks/apply
+	# Deadshot Daiquiri (zombies): the 65% kick tables.
+	write_versioned_function("kicks/tick", f"""
+execute if score @s {ns}.special.deadshot matches 1 run function {ns}:v{version}/kicks/apply_ds
+execute unless score @s {ns}.special.deadshot matches 1 run function {ns}:v{version}/kicks/apply
+scoreboard players remove @s {ns}.kick 1
 """)
 
 	# Shared by the normal and Deadshot (_ds) kick tables.
-	kick_ranges: list[str] = ["..0", "1", "2", "3", "4", "5.."]
-
 	def kick_switch(suffix: str) -> str:
 		return "\n".join(
-			f"execute if score #kick {ns}.data matches {rng} run function {ns}:v{version}/kicks/type_{i}{suffix}"
-			for i, rng in enumerate(kick_ranges)
+			f"execute if score @s {ns}.kick matches {i} run function {ns}:v{version}/kicks/type_{i}{suffix}"
+			for i in range(6)
 		)
 	write_versioned_function("kicks/apply", kick_switch(""))
 	write_versioned_function("kicks/apply_ds", kick_switch("_ds"))
@@ -50,7 +61,7 @@ function {ns}:v{version}/kicks/apply
 		for i, kicks in enumerate(all_kicks):
 			# /rotate, never /tp: the server drops a player's movement until a teleport is acknowledged, so a gun firing every tick pins them.
 			write_versioned_function(f"kicks/type_{i}{suffix}", "\n".join(
-				f"execute if score #random {ns}.data matches {j+1} run rotate @s ~{round(yaw * factor, 4)} ~{round(pitch * factor, 4)}"
+				f"execute if score @s {ns}.kick_dir matches {j+1} run rotate @s ~{round(yaw * factor, 4)} ~{round(pitch * factor, 4)}"
 				for j, (yaw, pitch) in enumerate(kicks)
 			))
 
