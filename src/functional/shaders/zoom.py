@@ -55,7 +55,7 @@ SCOPE_LEVELS: dict[int, ScopeLevel] = {
 	3: ScopeLevel(level=3, magnify=0.20, lens_radius=0.12),
 	4: ScopeLevel(level=4, magnify=0.30, lens_radius=0.25),
 }
-""" Level 2 is the centre-only pull of iron sights and red dots, so it has no lens. """
+""" Level 2 is the centre-only pull of iron sights and of sights without a lens, so it has no lens. """
 
 
 @dataclass(frozen=True)
@@ -76,15 +76,13 @@ class Sight:
 
 
 SIGHTS: list[Sight] = [
-	Sight(name="kobra", source="reticles",      column=0, level=2, rest_side=0.0270),
-	Sight(name="holo",  source="reticles",      column=1, level=2, rest_side=0.0354),
 	Sight(name="acog",  source="reticles",      column=2, level=3, rest_side=0.1599, marker_row=1, reticle_scale=0.2269),
-	Sight(name="aug",   source="reticles",      column=3, level=2, rest_side=0.0255),
 	Sight(name="mk4",   source="reticles_1024", column=0, level=4, rest_side=0.2789),
 	Sight(name="pu",    source="reticles_1024", column=1, level=4, rest_side=0.2457),
 	Sight(name="pso",   source="reticles_1024", column=2, level=4, rest_side=0.2611, marker_row=1),
 ]
-""" The PSO marks its second quad, the same square as its reticle's, since its reticle region is the ACOG dot's in the other texture. """
+""" Only sights with a lens: the others keep their reticle on the model and zoom like iron sights.
+The PSO marks its second quad, the same square as its reticle's, since its reticle region is the ACOG dot's in the other texture. """
 
 MARKER_TEXELS: int = 16
 """ Side of a UV region in the marker texture, a marker being one texel of it. """
