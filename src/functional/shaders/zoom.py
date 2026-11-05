@@ -8,6 +8,7 @@ Their reticle faces sample `sight_marker` instead, transparent but for a blue te
 inside the opening, where the lens covers them, yet out of the small centre the lens magnifies.
 Lighting only scales a colour, so both keep two channels at exactly 0 on screen: two passes reduce each to its centroid,
 and the shader draws the reticle, from `textures/effect/reticle/<sight>.png`, in the square they span, with the lens centred on it.
+A shader pack (Iris) lights and grades the markers past recognition, so until they are seen the square is the one the aimed model has at rest.
 """
 # Imports
 from dataclasses import dataclass
@@ -62,6 +63,9 @@ class Sight:
 	column: int
 	""" Which 4-unit UV region of the top row holds the reticle. """
 	level: int
+	rest_side: float
+	""" Side of the marker quad over the screen height once aimed and still, the median over the guns carrying the sight.
+	The aimed models centre it on screen, and the hand camera has a fixed 70 degree FOV, so it holds at any window size. """
 	marker_row: int = 0
 	""" UV row of the region whose quad carries the markers, 1 when the reticle quad is too small to keep them out of the lens. """
 	reticle_scale: float = 1.0
@@ -69,13 +73,13 @@ class Sight:
 
 
 SIGHTS: list[Sight] = [
-	Sight(name="kobra", source="reticles",      column=0, level=2),
-	Sight(name="holo",  source="reticles",      column=1, level=2),
-	Sight(name="acog",  source="reticles",      column=2, level=3, marker_row=1, reticle_scale=0.2269),
-	Sight(name="aug",   source="reticles",      column=3, level=2),
-	Sight(name="mk4",   source="reticles_1024", column=0, level=4),
-	Sight(name="pu",    source="reticles_1024", column=1, level=2),
-	Sight(name="pso",   source="reticles_1024", column=2, level=4, marker_row=1),
+	Sight(name="kobra", source="reticles",      column=0, level=2, rest_side=0.0270),
+	Sight(name="holo",  source="reticles",      column=1, level=2, rest_side=0.0354),
+	Sight(name="acog",  source="reticles",      column=2, level=3, rest_side=0.1599, marker_row=1, reticle_scale=0.2269),
+	Sight(name="aug",   source="reticles",      column=3, level=2, rest_side=0.0255),
+	Sight(name="mk4",   source="reticles_1024", column=0, level=4, rest_side=0.2789),
+	Sight(name="pu",    source="reticles_1024", column=1, level=2, rest_side=0.2457),
+	Sight(name="pso",   source="reticles_1024", column=2, level=4, rest_side=0.2611, marker_row=1),
 ]
 """ The PSO marks its second quad, the same square as its reticle's, since its reticle region is the ACOG dot's in the other texture. """
 
@@ -92,7 +96,7 @@ LENS_GRID: int = 32
 """ Side of the block grid each marker search is reduced through, before its single centroid pixel. """
 
 LENS_CENTRE_CLEAR: int = 0x7F7F7F7F
-""" Both markers at the screen centre, as the centroid pass packs them: an empty square, so no reticle before the markers are seen. """
+""" Both markers at the screen centre, as the centroid pass packs them: an empty square, read as markers not seen yet. """
 
 LENS_SEARCH_GLSL: str = f"""
 #define GRID {LENS_GRID}
@@ -197,6 +201,7 @@ void main() {
 
 SIGHT_FSH: str = HEADER + f"""
 #define MARKER_SPAN {(MARKER_TEXELS - 1 - 2 * MARKER_INSET) / MARKER_TEXELS}
+#define MARKER_TEXELS {MARKER_TEXELS}.0
 """ + """
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
@@ -215,6 +220,7 @@ layout(std140) uniform SightConfig {
     float Duration;      // ramp length in ticks
     float ReticleScale;  // side of the reticle over the side of the marker square
     float ReticleAlpha;  // 0 on the way out, where the held model draws its own reticle again
+    float RestSide;      // side of the marker square over the screen height, aimed and still
 };
 
 layout(location = 0) in vec2 texCoord;
@@ -280,19 +286,33 @@ void main() {
 
     vec2 inSize = vec2(textureSize(InSampler, 0));
     vec2 source = mix(texCoord, vec2(0.5), magnify);
-    fragColor = texture(InSampler, source);
-    // A marker shows wherever no lens covers it, so the pixels beside it stand in.
-    vec2 directions[4] = vec2[](vec2(1.0, 0.0), vec2(-1.0, 0.0), vec2(0.0, 1.0), vec2(0.0, -1.0));
-    for (int i = 0; i < 4 && is_marker(fragColor.rgb); i++) {
-        fragColor = texture(InSampler, source + directions[i] * 8.0 / inSize);
-    }
 
     // The marker square in pixels of the unmagnified frame, signed to run from the blue texel to the green one.
     vec2 blue = unpack_marker(0) * inSize;
     vec2 green = unpack_marker(1) * inSize;
     vec2 square = (green - blue) / MARKER_SPAN;
-    if (abs(square.x) < 2.0 || abs(square.y) < 2.0) return;
+    bool unseen = abs(square.x) < 2.0 || abs(square.y) < 2.0;
+    if (unseen) {
+        // The blue texel is the top-left one, and screen y runs upwards.
+        square = vec2(1.0, -1.0) * RestSide * inSize.y;
+        blue = (inSize - square * MARKER_SPAN) * 0.5;
+        green = inSize - blue;
+    }
     vec2 centre = (blue + green) * 0.5;
+
+    // A marker shows wherever no lens covers it, so the pixels beside it stand in.
+    fragColor = texture(InSampler, source);
+    vec2 directions[4] = vec2[](vec2(1.0, 0.0), vec2(-1.0, 0.0), vec2(0.0, 1.0), vec2(0.0, -1.0));
+    for (int i = 0; i < 4 && is_marker(fragColor.rgb); i++) {
+        fragColor = texture(InSampler, source + directions[i] * 8.0 / inSize);
+    }
+    // Unseen markers cannot be told by colour, so the pixels toward the centre stand in around where they should be.
+    vec2 marker = distance(source * inSize, blue) < distance(source * inSize, green) ? blue : green;
+    vec2 gap = abs(source * inSize - marker);
+    float reach = abs(square.y) / MARKER_TEXELS + 2.0;
+    if (unseen && lensAlpha * ReticleAlpha > 0.0 && max(gap.x, gap.y) < reach) {
+        fragColor = texture(InSampler, source + vec2(sign(centre.x - marker.x) * 2.0 * reach, 0.0) / inSize);
+    }
 
     float aspectRatio = inSize.x / inSize.y;
     // The markers were found in the unmagnified frame: this is where the pull above puts their centre on screen.
@@ -315,7 +335,8 @@ void main() {
     bool hidden = !inLens && texelFetch(DepthSampler, ivec2(source * inSize), 0).r == 1.0;
     if (hidden || any(lessThan(uv, vec2(0.0))) || any(greaterThan(uv, vec2(1.0)))) return;
     vec4 reticle = reticle_at(uv, (1.0 - magnify) / reticleSize);
-    fragColor.rgb = mix(fragColor.rgb, reticle.rgb, reticle.a * ReticleAlpha);
+    // The rest square is only right once the model has swung in, which is when the lens appears.
+    fragColor.rgb = mix(fragColor.rgb, reticle.rgb, reticle.a * ReticleAlpha * (unseen ? lensAlpha : 1.0));
 }
 """
 
@@ -424,6 +445,7 @@ def register_sight(ns: str, sight: Sight, fading_out: bool) -> None:
 			uniform("Duration", "float", OUT_TICKS if fading_out else IN_TICKS),
 			uniform("ReticleScale", "float", sight.reticle_scale),
 			uniform("ReticleAlpha", "float", 0.0 if fading_out else 1.0),
+			uniform("RestSide", "float", sight.rest_side),
 		]},
 		inputs=[
 			{"sampler_name": "Lens", "target": "lens_next"},
