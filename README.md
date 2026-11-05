@@ -9,7 +9,7 @@ Guns, Call of Duty style game modes and a Zombies mode for Minecraft 26.3, as a 
 
 It is a rewrite of [MGS 4.2 by TheBradqq](https://www.youtube.com/watch?v=Ia5Mlkn6ipM), whose models, textures and sounds it mostly reuses. The rest is new.
 
-![Admin menu](https://github.com/Stoupy51/MC_Guns_System/blob/main/assets/img/config_menu.png)
+![Admin menu](https://raw.githubusercontent.com/Stoupy51/MC_Guns_System/refs/heads/main/assets/img/config_menu.png)
 
 ## Install
 
@@ -92,12 +92,12 @@ Maps of all three modes are made in game. Open it from `/function mgs:config`, G
 
 The editor gives spawn eggs, one per kind of element. Place them where the element goes:
 
-| Mode | Elements |
-|---|---|
-| Multiplayer | red, blue and shared spawns, objective points for Search and Destroy, Domination and Hardpoint |
-| Missions | player spawns, enemies (with the function that sets each one up) |
-| Zombies | player, zombie and special spawns, wallbuys, doors, traps, perk machines, Mystery Box spots, the power switch |
-| All | base coordinates, boundary corners, out-of-bounds points |
+| Mode        | Elements                                                                                                      |
+|-------------|---------------------------------------------------------------------------------------------------------------|
+| Multiplayer | red, blue and shared spawns, objective points for Search and Destroy, Domination and Hardpoint                |
+| Missions    | player spawns, enemies (with the function that sets each one up)                                              |
+| Zombies     | player, zombie and special spawns, wallbuys, doors, traps, perk machines, Mystery Box spots, the power switch |
+| All         | base coordinates, boundary corners, out-of-bounds points                                                      |
 
 The Configure egg lists an element's fields in chat: a door's price and the doors it opens with, a trap's duration and cooldown, a perk machine's perk and price. Spawns and Mystery Box spots also get a form, and a spawn's activation box shows as particles.
 The Destroy egg removes the nearest element, and its chat message has a Revert button.
@@ -106,7 +106,7 @@ Place the base coordinates first: every position is saved relative to them, so a
 
 https://github.com/user-attachments/assets/7b429b68-c476-4b08-98ce-0fa53cb72608
 
-![Editor elements](https://github.com/Stoupy51/MC_Guns_System/blob/main/assets/img/editor_elements.png)
+![Editor elements](https://raw.githubusercontent.com/Stoupy51/MC_Guns_System/refs/heads/main/assets/img/editor_elements.png)
 
 ### Ship a map with the pack
 
@@ -118,11 +118,11 @@ https://github.com/user-attachments/assets/7b429b68-c476-4b08-98ce-0fa53cb72608
 	execute unless data storage mgs:maps multiplayer[{id:"hijacked"}] run data modify storage mgs:maps multiplayer append value {...}
 	```
 
-| Mode | File | Registered by | Runs |
-|---|---|---|---|
-| Multiplayer | `src/functional/multiplayer/maps.py` | `#mgs:maps/register` | on every load |
-| Zombies | `src/functional/zombies/maps.py` | `#mgs:zombies/register_maps` | at every Zombies game start |
-| Missions | `src/functional/missions/maps.py` | none yet | |
+| Mode        | File                                 | Registered by                | Runs                        |
+|-------------|--------------------------------------|------------------------------|-----------------------------|
+| Multiplayer | `src/functional/multiplayer/maps.py` | `#mgs:maps/register`         | on every load               |
+| Zombies     | `src/functional/zombies/maps.py`     | `#mgs:zombies/register_maps` | at every Zombies game start |
+| Missions    | `src/functional/missions/maps.py`    | none yet                     |                             |
 
 A world that already has a map with that id keeps its own copy, so edits made in game survive a reload.
 To push a changed built-in map to a world, remove the stored one first, for example `/data remove storage mgs:maps multiplayer[{id:"hijacked"}]`, then `/reload`.
@@ -148,13 +148,13 @@ The datapack, the resource pack and the four zips land in `build/`, which is tra
 
 Checks, all run with `uv run python scripts/verify.py <command>`:
 
-| Command | What it does |
-|---|---|
-| `baseline` | Saves `build/` to compare against |
-| `check [--diff]` | Rebuilds and lists what changed since the baseline, ignoring comments and blank lines |
-| `validate` | Parses every function with mecha and lists missing and unreachable resources |
-| `server --java <absolute path to Java 25>` | Loads and reloads the pack in a real 26.3 server |
-| `lint` | ruff, pyright strict, complexipy |
+| Command                                    | What it does                                                                          |
+|--------------------------------------------|---------------------------------------------------------------------------------------|
+| `baseline`                                 | Saves `build/` to compare against                                                     |
+| `check [--diff]`                           | Rebuilds and lists what changed since the baseline, ignoring comments and blank lines |
+| `validate`                                 | Parses every function with mecha and lists missing and unreachable resources          |
+| `server --java <absolute path to Java 25>` | Loads and reloads the pack in a real 26.3 server                                      |
+| `lint`                                     | ruff, pyright strict, complexipy                                                      |
 
 After changing XP awards in `src/functional/progression/awards.py` or a challenge threshold, run `/function mgs:v<version>/progression/recompute_all` in game (for example `mgs:v5.3.0/...`). It rebuilds every online player's levels and challenges from their banked XP.
 
@@ -163,10 +163,4 @@ After changing XP awards in `src/functional/progression/awards.py` or a challeng
 - `src/setup_definitions.py` registers every item from the stats in `src/config` and the builders in `src/database`.
 - `src/link.py` writes every function, one package of `src/functional/` per system: `weapon`, `core` (bounds, maps, spawning, menus shared by the modes), `progression`, `stats`, `multiplayer`, `missions`, `zombies`, `map_editor`, `shaders`.
 - `assets/` holds textures, sounds and shaders. `specs/` holds one folder per planned feature, and its README lists their state.
-
-## Not included
-
-- The crafting system of MGS 4.2 is not part of this rewrite.
-- The Multiplayer final kill cam is designed in [specs/004-multiplayer-kill-cam](https://github.com/Stoupy51/MC_Guns_System/blob/main/specs/004-multiplayer-kill-cam/) and not built.
-- Missions ship without a built-in map: make one in the editor.
 
