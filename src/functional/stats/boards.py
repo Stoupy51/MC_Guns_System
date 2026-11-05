@@ -126,7 +126,8 @@ execute unless data storage {ns}:temp _lb_walk[0] run return 0
 execute if score #lb_k {ns}.data matches {TOP}.. run return 0
 
 scoreboard players add #lb_k {ns}.data 1
-data modify storage {ns}:temp _lb_row set from storage {ns}:temp _lb_walk[0]
+data modify storage {ns}:temp _lb_row set value {{players:1}}
+data modify storage {ns}:temp _lb_row merge from storage {ns}:temp _lb_walk[0]
 execute store result storage {ns}:temp _lb_row.rank int 1 run scoreboard players get #lb_k {ns}.data
 execute store result score #lb_v {ns}.data run data get storage {ns}:temp _lb_row.value 0.05
 execute store result storage {ns}:temp _lb_row.min int 1 run scoreboard players operation #lb_v {ns}.data /= #60 {ns}.data

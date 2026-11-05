@@ -12,7 +12,8 @@ execute unless data storage mgs:temp _lb_walk[0] run return 0
 execute if score #lb_k mgs.data matches 10.. run return 0
 
 scoreboard players add #lb_k mgs.data 1
-data modify storage mgs:temp _lb_row set from storage mgs:temp _lb_walk[0]
+data modify storage mgs:temp _lb_row set value {players:1}
+data modify storage mgs:temp _lb_row merge from storage mgs:temp _lb_walk[0]
 execute store result storage mgs:temp _lb_row.rank int 1 run scoreboard players get #lb_k mgs.data
 execute store result score #lb_v mgs.data run data get storage mgs:temp _lb_row.value 0.05
 execute store result storage mgs:temp _lb_row.min int 1 run scoreboard players operation #lb_v mgs.data /= #60 mgs.data
