@@ -15,8 +15,8 @@ execute if score @s mgs.zb.in_game matches 1 if data storage mgs:zombies game{st
 
 scoreboard players remove @s mgs.pending_clicks 1
 
-# 3 s after the last click, the lore and reserve ammo are refreshed.
-execute if score @s mgs.pending_clicks matches -60 if data storage mgs:gun all.gun run function mgs:v5.3.0/ammo/modify_lore {slot:"weapon.mainhand"}
+# 3 s after the last click, the lore and reserve ammo are refreshed; zoom/remove does it when the scope is left.
+execute if score @s mgs.pending_clicks matches -60 unless score @s mgs.zoom matches 1.. if data storage mgs:gun all.gun run function mgs:v5.3.0/ammo/modify_lore {slot:"weapon.mainhand"}
 
 execute if score @s mgs.cooldown > #total_tick mgs.data run return fail
 execute if score @s mgs.pending_clicks matches ..-1 run return fail

@@ -173,8 +173,8 @@ execute store result score @s {ns}.previous_selected run data get storage {ns}:g
 	write_versioned_function("player/right_click", f"""
 scoreboard players remove @s {ns}.pending_clicks 1
 
-# 3 s after the last click, the lore and reserve ammo are refreshed.
-execute if score @s {ns}.pending_clicks matches -60 if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
+# 3 s after the last click, the lore and reserve ammo are refreshed; zoom/remove does it when the scope is left.
+execute if score @s {ns}.pending_clicks matches -60 unless score @s {ns}.zoom matches 1.. if data storage {ns}:gun all.gun run function {ns}:v{version}/ammo/modify_lore {{slot:"weapon.mainhand"}}
 
 execute if score @s {ns}.cooldown > #total_tick {ns}.data run return fail
 execute if score @s {ns}.pending_clicks matches ..-1 run return fail
