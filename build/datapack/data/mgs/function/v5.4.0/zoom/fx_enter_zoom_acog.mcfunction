@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.0/zoom/fx_enter_zoom_acog
+#
+# @within	mgs:v5.4.0/dialog/close_then
+#			mgs:v5.4.0/zoom/fx_enter
+#
+
+posteffect add @s mgs:zoom_acog
+scoreboard players set @s mgs.zoom_fx 2
+scoreboard players reset @s mgs.zoom_fx_off
+

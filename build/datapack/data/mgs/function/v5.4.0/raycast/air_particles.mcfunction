@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.0/raycast/air_particles
+#
+# @within	mgs:v5.4.0/dialog/close_then
+#			mgs:v5.4.0/raycast/on_entry_point with storage mgs:input with
+#
+# @args		block (string)
+#
+
+$particle $(block) ~ ~ ~ 0 0 0 0 1 force @a[distance=..128]
+

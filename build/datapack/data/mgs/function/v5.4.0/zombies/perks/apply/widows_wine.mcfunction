@@ -1,0 +1,16 @@
+
+#> mgs:v5.4.0/zombies/perks/apply/widows_wine
+#
+# @within	mgs:v5.4.0/dialog/close_then
+#			mgs:v5.4.0/zombies/perks/apply
+#
+
+scoreboard players set @s mgs.special.widows_wine 1
+attribute @s minecraft:attack_damage modifier add mgs:widows_wine 6 add_value
+function mgs:v5.4.0/zombies/inventory/loot_replace_lethal
+item modify entity @s hotbar.7 mgs:v5.4.0/grenade/set_count_2
+function mgs:v5.4.0/zombies/inventory/apply_slot_tag {slot:"hotbar.7",group:"hotbar",index:7}
+execute at @s run playsound mgs:zombies/perks/widows_wine ambient @s ~ ~ ~ 1.0 1.0
+tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],"🕸 ",{"translate":"mgs.widows_wine_web_grenades_webbing_melee","fallback":"Widow's Wine! Web grenades & webbing melee","color":"dark_red"},[" ",{"text":"+5 XP","color":"gold"}]]
+function mgs:v5.4.0/progression/zb/award_perk
+

@@ -1,9 +1,0 @@
-
-#> mgs:v5.3.0/multiplayer/gamemodes/tdm/tick
-#
-# @within	mgs:v5.3.0/dialog/close_then
-#			mgs:v5.3.0/multiplayer/game_tick
-#
-
-# TDM scoring handled by kill signal
-

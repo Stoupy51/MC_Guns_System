@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.0/progression/adv/zb/kills/reward_4
+#
+# @executed	as the player & at current position
+#
+# @within	advancement mgs:challenges/zb/kills_4
+#			mgs:v5.4.0/dialog/close_then
+#
+
+function mgs:v5.4.0/progression/adv/reward_zb {title:'{"translate":"mgs.exterminator","fallback":"Exterminator","color":"yellow"}',description:'{"translate":"mgs.kill_1000_zombies","fallback":"Kill 1,000 zombies","color":"gray"}',xp:50,branch:"zb",chain:"kills",tier:4}
+

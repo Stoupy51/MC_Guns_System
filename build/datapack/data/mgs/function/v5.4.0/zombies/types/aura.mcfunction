@@ -1,0 +1,29 @@
+
+#> mgs:v5.4.0/zombies/types/aura
+#
+# @within	mgs:v5.4.0/dialog/close_then
+#			mgs:v5.4.0/zombies/types/apply
+#
+
+tag @s add mgs.zb_aura
+
+# 90% of the round's speed; the escort taxi reads this base value.
+execute store result storage mgs:temp _zb_speed.value double 0.0009 run attribute @s minecraft:movement_speed base get 1000
+function mgs:v5.4.0/zombies/set_speed with storage mgs:temp _zb_speed
+execute store result score #zb_speed mgs.data run attribute @s minecraft:movement_speed base get 1000
+execute if score #zb_speed mgs.data matches 290.. run tag @s add mgs.zb_sprint
+execute if score #zb_speed mgs.data matches ..289 run tag @s remove mgs.zb_sprint
+
+# 200% of the health the round just gave (#zb_hp).
+scoreboard players operation #zb_hp mgs.data *= #200 mgs.data
+scoreboard players operation #zb_hp mgs.data /= #100 mgs.data
+execute if score #zb_hp mgs.data matches 3073.. run scoreboard players set #zb_hp mgs.data 3072
+function mgs:v5.4.0/zombies/apply_zombie_hp
+
+attribute @s minecraft:scale base set 1.15
+item replace entity @s armor.head with minecraft:golden_helmet[attribute_modifiers=[],unbreakable={}]
+item replace entity @s armor.chest with minecraft:golden_chestplate[attribute_modifiers=[],unbreakable={}]
+item replace entity @s armor.legs with minecraft:golden_leggings[attribute_modifiers=[],unbreakable={}]
+item replace entity @s armor.feet with minecraft:golden_boots[attribute_modifiers=[],unbreakable={}]
+data modify entity @s drop_chances set value {head:0f,chest:0f,legs:0f,feet:0f}
+
