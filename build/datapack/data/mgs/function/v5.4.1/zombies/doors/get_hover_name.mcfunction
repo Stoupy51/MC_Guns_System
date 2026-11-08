@@ -1,0 +1,12 @@
+
+#> mgs:v5.4.1/zombies/doors/get_hover_name
+#
+# @within	mgs:v5.4.1/dialog/close_then
+#			mgs:v5.4.1/zombies/doors/on_right_click with storage mgs:temp _door_hover
+#			mgs:v5.4.1/zombies/doors/on_hover with storage mgs:temp _door_hover
+#
+# @args		id (unknown)
+#
+
+$data modify storage mgs:temp _door_hover_name set from storage mgs:zombies door_names."$(id)".name
+

@@ -755,7 +755,7 @@
 	"mgs.lmg": "LMG",
 	"mgs.lmgwith_m249_magdamage_13_capacity_150_600_rpm_reload_8_8_s": "LMG\nWith m249_mag\nDamage 13 · Capacity 150 · 600 RPM · Reload 8.8 s",
 	"mgs.lmgwith_rpk_magdamage_15_capacity_75_600_rpm_reload_5_8_s": "LMG\nWith rpk_mag\nDamage 15 · Capacity 75 · 600 RPM · Reload 5.8 s",
-	"mgs.loaded_mc_guns_system_v5_4_0": "[Loaded MC Guns System v5.4.0]",
+	"mgs.loaded_mc_guns_system_v5_4_1": "[Loaded MC Guns System v5.4.1]",
 	"mgs.loading_mission_area": "Loading mission area...",
 	"mgs.loading_zombies_map": "Loading zombies map...",
 	"mgs.loadout": "Loadout",

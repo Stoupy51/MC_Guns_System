@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.1/progression/adv/zb/revives/reward_9
+#
+# @executed	as the player & at current position
+#
+# @within	advancement mgs:challenges/zb/revives_9
+#			mgs:v5.4.1/dialog/close_then
+#
+
+function mgs:v5.4.1/progression/adv/reward_zb {title:'{"translate":"mgs.second_chances","fallback":"Second Chances","color":"yellow"}',description:'{"translate":"mgs.revive_100_teammates","fallback":"Revive 100 teammates","color":"gray"}',xp:275,branch:"zb",chain:"revives",tier:9}
+

@@ -1,0 +1,22 @@
+
+#> mgs:v5.4.1/grenade/detonate_smoke
+#
+# @within	mgs:v5.4.1/dialog/close_then
+#			mgs:v5.4.1/grenade/detonate
+#
+
+playsound minecraft:block.fire.extinguish player @a[distance=..32] ~ ~ ~ 1 0.8
+playsound minecraft:entity.generic.extinguish_fire player @a[distance=..32] ~ ~ ~ 1 0.5
+
+# The fuse score counts the duration down.
+execute store result score @s mgs.data run data get entity @s data.config.grenade_duration
+
+# The tick skips movement for active effects.
+tag @s add mgs.grenade_active_effect
+
+scoreboard players set @s bs.vel.x 0
+scoreboard players set @s bs.vel.y 0
+scoreboard players set @s bs.vel.z 0
+
+particle campfire_signal_smoke ~ ~ ~ 1.5 1 1.5 0.02 200 force @a[distance=..128]
+

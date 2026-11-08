@@ -1,0 +1,15 @@
+
+#> mgs:v5.4.1/multiplayer/create_sidebar_team
+#
+# @within	mgs:v5.4.1/dialog/close_then
+#			mgs:v5.4.1/multiplayer/start {title:"Team Deathmatch"}
+#
+# @args		title (string)
+#
+
+scoreboard players reset * mgs.sidebar
+$function #bs.sidebar:create {objective:"mgs.sidebar",display_name:{text:"$(title)",color:"gold",bold:true},contents:[[" ⏱ ",[{score:{name:"#timer_min",objective:"mgs.data"},"color":"yellow"},{text:":"},{score:{name:"#timer_tens",objective:"mgs.data"}},{score:{name:"#timer_ones",objective:"mgs.data"}}]]," ",[["", " 🔴 ",{translate:"mgs.red",fallback:"Red",color:"red"}],[" ",{score:{name:"#red",objective:"mgs.mp.team"},color:"white"}]],[["", " 🔵 ",{translate:"mgs.blue",fallback:"Blue",color:"blue"}],[" ",{score:{name:"#blue",objective:"mgs.mp.team"},color:"white"}]]," ",[[{text:" ",color:"gray"}, {translate:"mgs.first_to",fallback:"First to "}],{score:{name:"#score_limit",objective:"mgs.data"},color:"white"}]]}
+scoreboard objectives setdisplay sidebar.team.red mgs.sidebar
+scoreboard objectives setdisplay sidebar.team.blue mgs.sidebar
+scoreboard objectives setdisplay sidebar.team.gold mgs.sidebar
+

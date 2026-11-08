@@ -23,6 +23,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.4.0/progression/adv/zb/perks/reward_4"
+		"function": "mgs:v5.4.1/progression/adv/zb/perks/reward_4"
 	}
 }

@@ -1,6 +1,6 @@
 {
 	"values": [
-		"mgs:v5.4.0/multiplayer/xp/on_game_end",
-		"mgs:v5.4.0/stats/mp/on_game_end"
+		"mgs:v5.4.1/multiplayer/xp/on_game_end",
+		"mgs:v5.4.1/stats/mp/on_game_end"
 	]
 }

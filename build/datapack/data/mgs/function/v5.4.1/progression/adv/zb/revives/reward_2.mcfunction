@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.1/progression/adv/zb/revives/reward_2
+#
+# @executed	as the player & at current position
+#
+# @within	advancement mgs:challenges/zb/revives_2
+#			mgs:v5.4.1/dialog/close_then
+#
+
+function mgs:v5.4.1/progression/adv/reward_zb {title:'{"translate":"mgs.good_hands","fallback":"Good Hands","color":"yellow"}',description:'{"translate":"mgs.revive_3_teammates","fallback":"Revive 3 teammates","color":"gray"}',xp:20,branch:"zb",chain:"revives",tier:2}
+

@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.1/zombies/escort/on_escorted_killed
+#
+# @within	mgs:v5.4.1/dialog/close_then
+#			mgs:v5.4.1/zombies/on_zombie_dying [ at @s ]
+#
+
+tag @s remove mgs.zb_escorted
+scoreboard players remove #zb_escort_count mgs.data 1
+execute as @n[type=minecraft:wandering_trader,tag=mgs.zb_escort,distance=..8] run function mgs:v5.4.1/zombies/escort/discard_trader
+

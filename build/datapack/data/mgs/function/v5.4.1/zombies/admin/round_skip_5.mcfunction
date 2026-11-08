@@ -1,0 +1,14 @@
+
+#> mgs:v5.4.1/zombies/admin/round_skip_5
+#
+# @within	mgs:v5.4.1/dialog/close_then
+#			dialog mgs:v5.4.1/zombies/admin
+#
+
+execute unless data storage mgs:zombies game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_zombies_game_is_active","fallback":"No zombies game is active.","color":"red"}]
+execute store result score #zb_round mgs.data run data get storage mgs:zombies game.round
+scoreboard players add #zb_round mgs.data 4
+execute store result storage mgs:zombies game.round int 1 run scoreboard players get #zb_round mgs.data
+function mgs:v5.4.1/zombies/admin/force_round_end
+tellraw @a[scores={mgs.zb.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.an_operator_skipped_ahead_5_rounds","fallback":"An operator skipped ahead 5 round(s).","color":"yellow"}]
+

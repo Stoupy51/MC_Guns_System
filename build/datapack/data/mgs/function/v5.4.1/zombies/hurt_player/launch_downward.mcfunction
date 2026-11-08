@@ -1,0 +1,13 @@
+
+#> mgs:v5.4.1/zombies/hurt_player/launch_downward
+#
+# @within	mgs:v5.4.1/dialog/close_then
+#			mgs:v5.4.1/zombies/hurt_player/on_hurt
+#
+
+# Counters the small upward knockback.
+scoreboard players set $x player_motion.api.launch 0
+scoreboard players set $y player_motion.api.launch -5000
+scoreboard players set $z player_motion.api.launch 0
+function player_motion:api/launch_xyz
+

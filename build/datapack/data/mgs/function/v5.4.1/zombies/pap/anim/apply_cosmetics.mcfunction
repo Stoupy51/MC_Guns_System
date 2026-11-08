@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.1/zombies/pap/anim/apply_cosmetics
+#
+# @within	mgs:v5.4.1/dialog/close_then
+#			mgs:v5.4.1/zombies/pap/anim/step
+#
+
+execute store result storage mgs:temp _pap_cosm_fetch.id int 1 run scoreboard players get @s mgs.zb.pap.id
+function mgs:v5.4.1/zombies/pap/anim/fetch_cosmetics with storage mgs:temp _pap_cosm_fetch
+execute as @n[tag=mgs.pap_weapon_display,distance=..2] run function mgs:v5.4.1/zombies/pap/anim/apply_cosmetics_to_display
+

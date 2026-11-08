@@ -5,5 +5,5 @@
 #
 
 tag @s add mgs.config_access
-dialog show @s mgs:v5.4.0/config
+dialog show @s mgs:v5.4.1/config
 
