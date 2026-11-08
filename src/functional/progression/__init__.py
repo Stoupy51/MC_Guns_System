@@ -68,9 +68,9 @@ $xp set @s $(level) levels
 execute unless score @s {ns}.mp.xp_level matches 1.. run function {ns}:v{version}/progression/mp/init
 execute unless score @s {ns}.zb.xp_level matches 1.. run function {ns}:v{version}/progression/zb/init
 
-# Zombies owns the bar while its game runs; elsewhere the multiplayer level shows.
+# Zombies owns the bar while its game runs; the multiplayer level shows only to its players, so a host datapack can keep using the vanilla XP.
 execute if score @s {ns}.zb.in_game matches 1 run return run function {ns}:v{version}/progression/zb/refresh_bar
-function {ns}:v{version}/progression/mp/refresh_bar
+execute if score @s {ns}.mp.in_game matches 1 run function {ns}:v{version}/progression/mp/refresh_bar
 """)
 
 	write_tick_file(f"""
