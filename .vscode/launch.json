@@ -5,7 +5,10 @@
             "request": "attach",
             "name": "Connect to Minecraft",
             "address": "ws://localhost:25599/dap",
-            "user": "Stoupy51"
+            "user": "Stoupy51",
+            "pathMapping": {
+                "D:/latest_snapshot/world": "${workspaceFolder}"
+            }
         }
     ]
 }
