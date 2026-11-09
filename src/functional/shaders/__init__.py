@@ -17,7 +17,7 @@ Known limits:
 from beet import FragmentShader
 from stewbeet import Mem, write_load_file, write_tick_file, write_versioned_function
 
-from . import crosshair, flash, hurt, zoom
+from . import crosshair, flash, hit_direction, hurt, zoom
 from .common import HEADER, register_common, timed_effect
 
 # Constants
@@ -26,6 +26,7 @@ FX_SCORES: list[str] = [
 	"zoom_fx", "zoom_fx_off",
 	"cross_from", "cross_to",
 	"hurt_fx", "hurt_from", "hurt_pending", "hurt_fall_until", "hurt_out_until",
+	"hit_dir_sector", "hit_dir_slot", "hit_dir_off",
 ]
 """ Which post effect each player currently has, mirrored as scores so ids can be taken off again. """
 
@@ -90,6 +91,7 @@ def main() -> None:
 	zoom.main()
 	crosshair.main()
 	hurt.main()
+	hit_direction.main()
 	write_lifecycle(ns)
 
 
@@ -143,8 +145,9 @@ scoreboard players operation #fx_sweep {ns}.data %= #fx_sweep_period {ns}.data
 execute if score @s {ns}.fx_deaths matches 1.. run function {ns}:v{version}/player/fx_after_death
 execute if score @s {ns}.fx_rejoins matches 1.. run function {ns}:v{version}/player/fx_after_rejoin
 
-# Shader ids that expire on their own: the muzzle flash burst and the zoom and hurt fade-outs
+# Shader ids that expire on their own: the muzzle flash burst, the hit arc and the zoom and hurt fade-outs
 execute if score @s {ns}.flash_off <= #total_tick {ns}.data run function {ns}:v{version}/player/flash_tick
+execute if score @s {ns}.hit_dir_off <= #total_tick {ns}.data run function {ns}:v{version}/player/hit_dir_expire
 execute if score @s {ns}.zoom_fx matches ..-1 run function {ns}:v{version}/zoom/fx_tick
 execute if score @s {ns}.hurt_out_until <= #total_tick {ns}.data run function {ns}:v{version}/player/hurt_out_clear
 

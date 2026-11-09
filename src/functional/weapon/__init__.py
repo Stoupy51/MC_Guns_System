@@ -12,7 +12,6 @@ from .firing.raycast import main as raycast_main
 from .firing.sound import main as sound_main
 from .grenade import main as grenade_main
 from .hud.actionbar import main as actionbar_main
-from .hud.hit_indicator import main as hit_indicator_main
 from .hud.zoom import main as zoom_main
 
 
@@ -31,5 +30,4 @@ def main() -> None:
 	ammo_main()
 	actionbar_main()                     # Fire mode + ammo display
 	sound_main()
-	hit_indicator_main()
 
