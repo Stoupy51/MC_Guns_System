@@ -45,7 +45,7 @@ class Rewards:
 		def message(*parts: str) -> str:
 			return f'{{"text":"","hover_event":{hover},"extra":[{MGS_TAG},{{"text":"🏆 ","color":"white"}},{",".join(parts)}]}}'
 
-		## Everyone hears about every unlock; only the earner sees the amount.
+		## Every player in a game of that side hears about every unlock; only the earner sees the amount.
 		earner_tag: str = f"{ns}.{EARNER_TAG}"
 		payload: str = '{branch:"$(branch)",chain:"$(chain)",tier:$(tier),side:"' + side + '",xp:$(xp)}'
 
@@ -54,7 +54,7 @@ class Rewards:
 scoreboard players operation {SAVED_GAIN} {ns}.data = #xp_gain {ns}.data
 $scoreboard players set #xp_gain {ns}.data $(xp)
 tag @s add {earner_tag}
-$tellraw @a[tag=!{earner_tag}] {message(Text.player(ns, "@s", side=side, color="yellow"), '{"text":" unlocked challenge: ","color":"gray"}', "$(title)")}
+$tellraw @a[scores={{{ns}.{side}.in_game=1}},tag=!{earner_tag}] {message(Text.player(ns, "@s", side=side, color="yellow"), '{"text":" unlocked challenge: ","color":"gray"}', "$(title)")}
 tag @s remove {earner_tag}
 $tellraw @s {message('{"text":"Challenge unlocked: ","color":"gray"}', "$(title)", Xp.suffix(side, AWARD_KEY))}
 {Xp.give(side, AWARD_KEY)}

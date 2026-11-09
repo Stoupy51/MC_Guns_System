@@ -39,8 +39,8 @@ class Xp:
 		return Curve.award_call(Mem.ctx.project_id, Mem.ctx.project_version, side, key, selector, guard)
 
 	@staticmethod
-	def announce(side: str, key: str, body: str, earner: str = "@s", audience: str = "@a") -> str:
-		""" Award XP and broadcast the event, with the amount visible only to whoever earned it.
+	def announce(side: str, key: str, body: str, earner: str = "@s") -> str:
+		""" Award XP and broadcast the event to the players in a game of that side, with the amount visible only to whoever earned it.
 
 		A score component resolves for the executor, not per reader, so the line is sent twice, split on a temporary tag.
 		Earners get the suffix, everyone else the same line without it.
@@ -50,17 +50,14 @@ class Xp:
 			key: Row key in that side's table.
 			body: The message's components, WITHOUT the enclosing brackets.
 			earner: Who earned it, ex: "@s" or "@a[tag=mgs.demo_atk]".
-			audience: Who sees the message at all.
 		Returns:
 			str: Six commands, one per line.
 		"""
 		ns: str = Mem.ctx.project_id
 		tag: str = f"{ns}.{EARNER_TAG}"
-		# The exclusion is spliced into the caller's selector.
-		others: str = f"{audience[:-1]},tag=!{tag}]" if audience.endswith("]") else f"{audience}[tag=!{tag}]"
 		return f"""tag @a remove {tag}
 tag {earner} add {tag}
-tellraw {others} [{body}]
+tellraw @a[scores={{{ns}.{side}.in_game=1}},tag=!{tag}] [{body}]
 tellraw @a[tag={tag}] [{body},{Xp.suffix(side, key)}]
 {Xp.give(side, key, f"@a[tag={tag}]")}
 tag @a remove {tag}"""

@@ -94,7 +94,7 @@ title @s actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":
 
 		## Defenders win. try_defuse tagged the channelers this tick, so the existing announce line pays them.
 		variant.sub("bomb_defused", f"""
-tellraw @a[tag=!{ns}.{EARNER_TAG}] [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}}]
+tellraw @a[scores={{{ns}.mp.in_game=1}},tag=!{ns}.{EARNER_TAG}] [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}}]
 tellraw @a[tag={ns}.{EARNER_TAG}] [{MGS_TAG},{{"text":"💣 ","color":"white"}},{{"text":"BOMB DEFUSED!","color":"aqua","bold":true}},{Xp.suffix("mp", "bomb_defuse")}]
 {Xp.give("mp", "bomb_defuse", f"@a[tag={ns}.{EARNER_TAG}]")}
 kill @e[tag={ns}.snd_bomb]

@@ -135,7 +135,7 @@ effect clear {selector} night_vision
 		parts.extend([
 			f'# Teleport to spawn\nfunction {respawn_function}',
 			f'# Call map join script (executed as the joining player)\nfunction {ns}:v{version}/shared/maps/call_script_at_base {{mode:"{storage}",script:"join"}}',
-			f'# Announce\ntellraw @a ["",{Text.player(ns, "@s", side=xp_side, color=announce_color)},{{"text":" {announce_text}","color":"{announce_color}"}}]',
+			f'# Announce\ntellraw @a[scores={{{in_game_objective}=1}}] ["",{Text.player(ns, "@s", side=xp_side, color=announce_color)},{{"text":" {announce_text}","color":"{announce_color}"}}]',
 		])
 		return "\n\n".join(parts)
 

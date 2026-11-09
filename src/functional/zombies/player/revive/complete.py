@@ -88,7 +88,7 @@ function {ns}:v{version}/zombies/perks/tombstone_on_revived
 {TitleTimes.EVENT.cmd()}
 title @s title ["❤"]
 title @s subtitle [{{"text":"You have been revived!","color":"green"}}]
-{Xp.announce("zb", "revive", f'{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":" has been revived!","color":"gray"}}', earner=f"@a[tag={ns}.zb_reviver]", audience=f"@a[scores={{{ns}.zb.in_game=1}}]")}
+{Xp.announce("zb", "revive", f'{MGS_TAG},{Text.player(ns, "@s", side="zb", color="green")},{{"text":" has been revived!","color":"gray"}}', earner=f"@a[tag={ns}.zb_reviver]")}
 """)
 
 	# Run as the downed spectator who was not revived in time.

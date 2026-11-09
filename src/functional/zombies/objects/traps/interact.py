@@ -43,7 +43,7 @@ execute as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.tr
 execute unless score @s {ns}.special.timeslip matches 1.. as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data run scoreboard players set @s {ns}.zb.trap.timeslip 0
 execute if score @s {ns}.special.timeslip matches 1.. as @e[type=minecraft:marker,tag={ns}.trap_center] if score @s {ns}.zb.trap.id = #trap_id {ns}.data run scoreboard players set @s {ns}.zb.trap.timeslip 1
 
-{Xp.announce("zb", "trap", f'{MGS_TAG},{{"text":"Trap activated for ","color":"gold"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}', audience=f"@a[scores={{{ns}.zb.in_game=1}}]")}
+{Xp.announce("zb", "trap", f'{MGS_TAG},{{"text":"Trap activated for ","color":"gold"}},{{"score":{{"name":"#trap_price","objective":"{ns}.data"}},"color":"yellow"}},{{"text":" points.","color":"gold"}}')}
 {ZombiesFeedback.zb_sound('announce')}
 """)
 
