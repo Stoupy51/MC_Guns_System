@@ -68,9 +68,9 @@ execute as @a[scores={{{ns}.mp.in_game=1}},gamemode=!spectator] at @s run functi
 	## Run as the tracked player, at them: the footprint shows to enemy Tracker holders only
 	## (team modes: the other team; FFA: every other holder, the player excluded by distance).
 	write_versioned_function("multiplayer/perks/tracker_footprint", f"""
-execute if score @s {ns}.mp.team matches 1 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..,{ns}.mp.team=2}}]
-execute if score @s {ns}.mp.team matches 2 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..,{ns}.mp.team=1}}]
-execute if score @s {ns}.mp.team matches 0 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.special.tracker=1..}},distance=0.1..]
+execute if score @s {ns}.mp.team matches 1 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.mp.in_game=1,{ns}.special.tracker=1..,{ns}.mp.team=2}}]
+execute if score @s {ns}.mp.team matches 2 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.mp.in_game=1,{ns}.special.tracker=1..,{ns}.mp.team=1}}]
+execute if score @s {ns}.mp.team matches 0 run particle minecraft:dust{{color:[0.95,0.85,0.2],scale:0.8}} ~ ~0.1 ~ 0.15 0.02 0.15 0 3 force @a[scores={{{ns}.mp.in_game=1,{ns}.special.tracker=1..}},distance=0.1..]
 """)
 
 	## Actionbar timer (minutes:seconds).

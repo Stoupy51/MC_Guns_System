@@ -55,17 +55,17 @@ scoreboard players operation #mp_timer {ns}.data = #demo_timer {ns}.data
 
 # Every attacker carries a bomb on every respawn, so no carry, drop or pickup machinery: the tag is the bomb.
 tag @a remove {ns}.demo_atk
-execute if score #demo_attackers {ns}.data matches 1 run tag @a[scores={{{ns}.mp.team=1}}] add {ns}.demo_atk
-execute if score #demo_attackers {ns}.data matches 2 run tag @a[scores={{{ns}.mp.team=2}}] add {ns}.demo_atk
+execute if score #demo_attackers {ns}.data matches 1 run tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}] add {ns}.demo_atk
+execute if score #demo_attackers {ns}.data matches 2 run tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}] add {ns}.demo_atk
 
 # Spectators are pulled out and their countdown cleared, so a death from the last round cannot respawn them mid-round.
-execute as @a[scores={{{ns}.mp.team=1..2}},gamemode=spectator] run spectate @s
-gamemode adventure @a[scores={{{ns}.mp.team=1..2}},gamemode=spectator]
-scoreboard players set @a[scores={{{ns}.mp.team=1..2}}] {ns}.mp.spectate_timer 0
-execute as @a[scores={{{ns}.mp.team=1}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"red"}}
-execute as @a[scores={{{ns}.mp.team=2}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator] run spectate @s
+gamemode adventure @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator]
+scoreboard players set @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}}] {ns}.mp.spectate_timer 0
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"red"}}
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
 tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
-execute as @a[scores={{{ns}.mp.team=1..2}}] at @s run function {ns}:v{version}/multiplayer/apply_class
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}}] at @s run function {ns}:v{version}/multiplayer/apply_class
 
 # Last, once the sites are intact and everyone is placed.
 scoreboard players set #demo_round_active {ns}.data 1
@@ -136,8 +136,8 @@ playsound minecraft:block.note_block.xylophone player @a[scores={{{ns}.mp.in_gam
 # mp.kills is per player and only zeroed by multiplayer/start.
 scoreboard players set #demo_kills_red {ns}.data 0
 scoreboard players set #demo_kills_blue {ns}.data 0
-execute as @a[scores={{{ns}.mp.team=1}}] run scoreboard players operation #demo_kills_red {ns}.data += @s {ns}.mp.kills
-execute as @a[scores={{{ns}.mp.team=2}}] run scoreboard players operation #demo_kills_blue {ns}.data += @s {ns}.mp.kills
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}] run scoreboard players operation #demo_kills_red {ns}.data += @s {ns}.mp.kills
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}] run scoreboard players operation #demo_kills_blue {ns}.data += @s {ns}.mp.kills
 
 # A tie leaves Red attacking, like the side-picking fallback.
 scoreboard players set #demo_attackers {ns}.data 1

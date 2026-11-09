@@ -35,8 +35,8 @@ execute if score #mp_kill_headshot {ns}.data matches 1 run {Xp.give("mp", "heads
 	## Run from multiplayer/stop, before the ranked stats line reads xp_session and before mp.in_game is cleared;
 	## it shows in each player's `+N XP`.
 	write_versioned_function("multiplayer/xp/on_game_end", f"""
-execute if score #red {ns}.mp.team > #blue {ns}.mp.team run tag @a[scores={{{ns}.mp.team=1}}] add {ns}.{WINNER_TAG}
-execute if score #blue {ns}.mp.team > #red {ns}.mp.team run tag @a[scores={{{ns}.mp.team=2}}] add {ns}.{WINNER_TAG}
+execute if score #red {ns}.mp.team > #blue {ns}.mp.team run tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}] add {ns}.{WINNER_TAG}
+execute if score #blue {ns}.mp.team > #red {ns}.mp.team run tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}] add {ns}.{WINNER_TAG}
 
 {Xp.give("mp", "match_win", f"@a[scores={{{ns}.mp.in_game=1}},tag={ns}.{WINNER_TAG}]")}
 {Xp.give("mp", "match_loss", f"@a[scores={{{ns}.mp.in_game=1}},tag=!{ns}.{WINNER_TAG}]")}

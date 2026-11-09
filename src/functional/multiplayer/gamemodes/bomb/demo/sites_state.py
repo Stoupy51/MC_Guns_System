@@ -124,8 +124,8 @@ playsound minecraft:block.note_block.pling player @a[scores={{{ns}.mp.in_game=1}
 		## Run as a planted site, at it. Keyed on demo_owner, so each site says who may defuse it and the two stay independent.
 		variant.sub("site_defuse_tick", f"""
 scoreboard players set #demo_ch {ns}.data 0
-execute if score @s {ns}.demo_owner matches 1 store result score #demo_ch {ns}.data if entity @a[scores={{{ns}.mp.team=2}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}]
-execute if score @s {ns}.demo_owner matches 2 store result score #demo_ch {ns}.data if entity @a[scores={{{ns}.mp.team=1}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}]
+execute if score @s {ns}.demo_owner matches 1 store result score #demo_ch {ns}.data if entity @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}]
+execute if score @s {ns}.demo_owner matches 2 store result score #demo_ch {ns}.data if entity @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}]
 
 # #demo_ch counts defusers and is only tested against zero.
 execute if score #demo_ch {ns}.data matches 0 run scoreboard players set @s {ns}.demo_prog 0
@@ -133,8 +133,8 @@ execute if score #demo_ch {ns}.data matches 1.. run scoreboard players operation
 
 # Only the defending side sees it, or an attacker crouched by their own bomb would read that they are defusing.
 scoreboard players operation #demo_prog_shown {ns}.data = @s {ns}.demo_prog
-execute if score #demo_ch {ns}.data matches 1.. if score @s {ns}.demo_owner matches 1 run title @a[scores={{{ns}.mp.team=2}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#demo_prog_shown","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{DEFUSE_TICKS}"}}]
-execute if score #demo_ch {ns}.data matches 1.. if score @s {ns}.demo_owner matches 2 run title @a[scores={{{ns}.mp.team=1}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#demo_prog_shown","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{DEFUSE_TICKS}"}}]
+execute if score #demo_ch {ns}.data matches 1.. if score @s {ns}.demo_owner matches 1 run title @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#demo_prog_shown","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{DEFUSE_TICKS}"}}]
+execute if score #demo_ch {ns}.data matches 1.. if score @s {ns}.demo_owner matches 2 run title @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] actionbar [{{"text":"Defusing... ","color":"aqua"}},{{"score":{{"name":"#demo_prog_shown","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{DEFUSE_TICKS}"}}]
 
 execute if score @s {ns}.demo_prog matches {DEFUSE_TICKS}.. run function {ns}:v{version}/multiplayer/gamemodes/demo/site_defused
 """)
@@ -143,8 +143,8 @@ execute if score @s {ns}.demo_prog matches {DEFUSE_TICKS}.. run function {ns}:v{
 		## demo_owner names the defusers, so it is read before being cleared below.
 		variant.sub("site_defused", f"""
 tag @a remove {ns}.{EARNER_TAG}
-execute if score @s {ns}.demo_owner matches 1 run tag @a[scores={{{ns}.mp.team=2}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] add {ns}.{EARNER_TAG}
-execute if score @s {ns}.demo_owner matches 2 run tag @a[scores={{{ns}.mp.team=1}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] add {ns}.{EARNER_TAG}
+execute if score @s {ns}.demo_owner matches 1 run tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] add {ns}.{EARNER_TAG}
+execute if score @s {ns}.demo_owner matches 2 run tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}},predicate={ns}:v{version}/is_sneaking,gamemode=!spectator,distance=..{SITE_RANGE}] add {ns}.{EARNER_TAG}
 {Xp.give("mp", "bomb_defuse", f"@a[tag={ns}.{EARNER_TAG}]")}
 
 scoreboard players set @s {ns}.demo_state 0

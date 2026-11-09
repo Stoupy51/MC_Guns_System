@@ -49,15 +49,15 @@ scoreboard players set #snd_round_timer {ns}.data {ROUND_TICKS}
 scoreboard players set #mp_timer {ns}.data {ROUND_TICKS}
 
 # S&D deaths skip the respawn countdown.
-execute as @a[scores={{{ns}.mp.team=1..2}},gamemode=spectator] run spectate @s
-gamemode adventure @a[scores={{{ns}.mp.team=1..2}},gamemode=spectator]
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator] run spectate @s
+gamemode adventure @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator]
 
-tag @a[scores={{{ns}.mp.team=1..2}},gamemode=!spectator] add {ns}.snd_alive
+tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=!spectator] add {ns}.snd_alive
 
-execute as @a[scores={{{ns}.mp.team=1}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"red"}}
-execute as @a[scores={{{ns}.mp.team=2}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"red"}}
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
 tag @e[tag={ns}.spawn_used] remove {ns}.spawn_used
-execute as @a[scores={{{ns}.mp.team=1..2}}] at @s run function {ns}:v{version}/multiplayer/apply_class
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}}] at @s run function {ns}:v{version}/multiplayer/apply_class
 
 # One bomb per round, held by nobody: collecting it gives the defenders time to set up, unlike a Counter-Strike round.
 tag @a remove {ns}.snd_carrier
