@@ -89,7 +89,7 @@ scoreboard players set @n[tag={ns}.drop_new] {ns}.drop_timer 600
 tag @n[tag={ns}.drop_new] remove {ns}.drop_new
 
 # Pickup hitbox (Bookshelf right-click).
-summon minecraft:interaction ~ ~ ~ {{width:0.9f,height:0.6f,response:true,Tags:["{ns}.drop_int","bs.entity.interaction","{ns}.drop_new"]}}
+summon minecraft:interaction ~ ~ ~ {{width:0.9f,height:0.6f,response:true,Tags:["{ns}.drop_int","{ns}.drop_new"]}}
 scoreboard players set @n[tag={ns}.drop_new] {ns}.drop_timer 600
 execute as @n[tag={ns}.drop_new] run function #bs.interaction:on_right_click {{run:"function {ns}:v{version}/shared/drops/pickup",executor:"source"}}
 tag @n[tag={ns}.drop_new] remove {ns}.drop_new

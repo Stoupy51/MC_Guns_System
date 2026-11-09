@@ -49,7 +49,7 @@ execute if data storage {ns}:temp _pw_iter[0] run function {ns}:v{version}/zombi
 """)
 
 	write_versioned_function("zombies/power/place_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:0.9f,height:0.9f,response:true,Tags:["{ns}.power_switch","{ns}.zombies_entity","bs.entity.interaction","_pw_new"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:0.9f,height:0.9f,response:true,Tags:["{ns}.power_switch","{ns}.zombies_entity","_pw_new"]}}
 
 $execute positioned $(x) $(y) $(z) align xyz positioned ~.5 ~.5 ~.5 run summon minecraft:item_display ~ ~ ~ {{Rotation:[$(yaw)f,0f],Tags:["{ns}.power_switch_disp","{ns}.zombies_entity"],item_display:"fixed",billboard:"fixed",item:{{id:"minecraft:lever",count:1,components:{{"minecraft:item_model":"{ns}:power_switch"}}}},transformation:{{left_rotation:[0f,0f,0f,1f],right_rotation:[0f,0f,0f,1f],translation:[0f,0f,0f],scale:[1f,1f,1f]}}}}
 

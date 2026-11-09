@@ -109,7 +109,7 @@ execute if data storage {ns}:temp _trap_iter[0] run function {ns}:v{version}/zom
 
 	write_versioned_function("zombies/traps/place_at", f"""
 # height -2.0 makes a downward hitbox, raised 2 blocks right after, so it covers the 2-block turret (as the perk machine does).
-$execute positioned $(ix) $(iy) $(iz) run summon minecraft:interaction ~ ~2 ~ {{width:1.1f,height:-2.0f,response:true,Tags:["{ns}.trap_interact","{ns}.zombies_entity","bs.entity.interaction","{ns}._trap_new_i","{ns}._trap_new_bs"]}}
+$execute positioned $(ix) $(iy) $(iz) run summon minecraft:interaction ~ ~2 ~ {{width:1.1f,height:-2.0f,response:true,Tags:["{ns}.trap_interact","{ns}.zombies_entity","{ns}._trap_new_i","{ns}._trap_new_bs"]}}
 
 $summon minecraft:marker $(cx) $(cy) $(cz) {{Tags:["{ns}.trap_center","{ns}.zombies_entity","{ns}._trap_new_m"]}}
 """)

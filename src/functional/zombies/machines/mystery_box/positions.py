@@ -91,7 +91,7 @@ execute if data storage {ns}:temp _mb_iter[0] run function {ns}:v{version}/zombi
 
 	# The rotation is [yaw, pitch]: interactions keep it for the box's displays and its caret frame, though their hitbox never turns.
 	write_versioned_function("zombies/mystery_box/summon_pos_at", f"""
-$summon minecraft:interaction $(x) $(y) $(z) {{width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.zombies_entity","{ns}.mb_new","bs.entity.interaction"]}}
+$summon minecraft:interaction $(x) $(y) $(z) {{width:2.0f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["{ns}.mystery_box_pos","{ns}.zombies_entity","{ns}.mb_new"]}}
 """)
 
 	## Run as a new box interaction, at its map position and turned as the box: up to its centre, then above it.
