@@ -88,6 +88,18 @@ item replace entity @n[type=minecraft:mannequin,tag={ns}.death_mannequin] weapon
 kill @n[type=minecraft:mannequin,tag={ns}.death_mannequin]
 """)
 
+	## Run as each player at the start of a match: a client downloads a skin the first time it draws it, so every skin is drawn once before any death needs it.
+	write_versioned_function("multiplayer/preload_skin", f"""
+summon minecraft:mannequin ~ ~ ~ {{hide_description:true,Silent:true,NoGravity:true,Invulnerable:true,attributes:[{{id:"minecraft:scale",base:0.05d}}],Tags:["{ns}.skin_preload","{ns}.skin_new"]}}
+loot replace entity @n[type=minecraft:mannequin,tag={ns}.skin_new] weapon.mainhand loot {ns}:get_username
+data modify entity @n[type=minecraft:mannequin,tag={ns}.skin_new] profile set from entity @n[type=minecraft:mannequin,tag={ns}.skin_new] equipment.mainhand.components."minecraft:profile"
+item replace entity @n[type=minecraft:mannequin,tag={ns}.skin_new] weapon.mainhand with minecraft:air
+tag @n[type=minecraft:mannequin,tag={ns}.skin_new] remove {ns}.skin_new
+""")
+	write_versioned_function("multiplayer/clear_skin_preload", f"""
+kill @e[type=minecraft:mannequin,tag={ns}.skin_preload]
+""")
+
 	## Run as the victim; $(attacker) is the attacker selector.
 	write_versioned_function("multiplayer/simulate_death_fire_kill", f"""
 $tag $(attacker) add {ns}.temp_killer

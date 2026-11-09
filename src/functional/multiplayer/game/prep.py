@@ -28,5 +28,8 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run scoreboard players operation @s 
 function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"multiplayer",script:"start"}}
 
 tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","⚔ ",[{{"text":"","color":"green","bold":true}},{{"text":"GO! GO! GO!"}}]]
+
+execute as @a[scores={{{ns}.mp.in_game=1}}] at @s run function {ns}:v{version}/multiplayer/preload_skin
+schedule function {ns}:v{version}/multiplayer/clear_skin_preload 100t
 """)
 
