@@ -93,6 +93,24 @@ title @s subtitle [{{"text":"You have been revived!","color":"green"}}]
 
 	# Run as the downed spectator who was not revived in time.
 	write_versioned_function("zombies/revive/bleed_out", f"""
+function {ns}:v{version}/zombies/revive/stay_down
+{TitleTimes.BAD_NEWS.cmd()}
+title @s title ["☠"]
+title @s subtitle [{{"text":"You bled out. Respawning next round...","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="dark_red")},{{"text":" has bled out.","color":"gray"}}]
+""")
+
+	# Run as the downed spectator whose body left the map bounds or fell into the void.
+	write_versioned_function("zombies/revive/body_lost", f"""
+function {ns}:v{version}/zombies/revive/stay_down
+{TitleTimes.BAD_NEWS.cmd()}
+title @s title ["☠"]
+title @s subtitle [{{"text":"Your body left the map. Respawning next round...","color":"gray"}}]
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="dark_red")},{{"text":"'s body left the map.","color":"gray"}}]
+""")
+
+	## The end of a down without a revive, the message left to the caller.
+	write_versioned_function("zombies/revive/stay_down", f"""
 scoreboard players add @s {ns}.st.zb.deaths 1
 scoreboard players set @s {ns}.zb.downed 0
 scoreboard players set @s {ns}.zb.revive_p 0
@@ -113,11 +131,6 @@ gamemode spectator @s
 execute as @r[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,limit=1] run spectate @s
 # No alive player: stay where the camera was.
 execute unless entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] run tp @s ~ ~ ~
-
-{TitleTimes.BAD_NEWS.cmd()}
-title @s title ["☠"]
-title @s subtitle [{{"text":"You bled out. Respawning next round...","color":"gray"}}]
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{Text.player(ns, "@s", side="zb", color="dark_red")},{{"text":" has bled out.","color":"gray"}}]
 """)
 
 	## Hide the body of @s (id-matched through #my_downed_id) far below the world, which avoids the death animation and drops.

@@ -48,7 +48,7 @@ tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed
 
 # A body out of the map bounds dies like a zombie would, and one gone (bounds or the void) ends the down at once.
 execute if score #zb_has_bounds {ns}.data matches 1 as @n[tag={ns}.downed_mine_temp] at @s run function {ns}:v{version}/shared/check_bounds
-execute unless entity @n[tag={ns}.downed_mine_temp] run return run function {ns}:v{version}/zombies/revive/bleed_out
+execute unless entity @n[tag={ns}.downed_mine_temp] run return run function {ns}:v{version}/zombies/revive/body_lost
 
 # Crawl inputs and yaw (x100) are read here, while @s is the player, because move_mannequin cannot
 # find its owner reliably when several mannequins are close.
