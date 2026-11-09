@@ -1,6 +1,6 @@
 """ Player stats per mode, kept as scores and copied into `mgs:stats` at login and at the end of a game.
 
-Spec: `specs/011-player-stats-leaderboards`. Nothing here runs every tick but the three commands of each leaderboard command block.
+Nothing here runs every tick but the three commands of each leaderboard command block.
 Counters ride the award functions and the event sites, and the time and roster ride `progression/tick_player`, once a second.
 Storage is written at login, at a game end and when a stats page opens.
 """
