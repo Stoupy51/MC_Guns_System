@@ -117,8 +117,9 @@ execute if score #blue {ns}.mp.team >= #snd_win_threshold {ns}.data run return r
 
 # Sides swap at halftime.
 scoreboard players add #snd_round {ns}.data 1
-execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} if score #snd_attackers {ns}.data matches 1 run scoreboard players set #snd_attackers {ns}.data 2
-execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} if score #snd_attackers {ns}.data matches 2 run scoreboard players set #snd_attackers {ns}.data 1
+# 1 becomes 2 and 2 becomes 1.
+execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} store result score #snd_attackers {ns}.data if score #snd_attackers {ns}.data matches 1
+execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run scoreboard players add #snd_attackers {ns}.data 1
 execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run tellraw @a[scores={{{ns}.mp.in_game=1}}] [{MGS_TAG},{{"text":"⚔ ","color":"white"}},{{"text":"Sides swapped!","color":"gold"}}]
 execute if score #snd_round {ns}.data matches {HALFTIME_ROUND} run playsound minecraft:block.note_block.xylophone player @a[scores={{{ns}.mp.in_game=1}}] ~ ~ ~ 1 1.0
 # 3 s later.
