@@ -45,6 +45,8 @@ execute if score #mp_death_attacked {ns}.data matches 1 run function {ns}:v{vers
 # No attacker: a random self-death message.
 execute if score #mp_death_attacked {ns}.data matches 0 run function {ns}:v{version}/multiplayer/random_death_message
 
+execute at @s run function {ns}:v{version}/multiplayer/death_animation
+
 # Shared with vanilla deaths (on_respawn).
 function {ns}:v{version}/multiplayer/enter_death_spectate
 """)
@@ -69,6 +71,21 @@ tag @a[tag={ns}.temp_killer] remove {ns}.temp_killer
 title @s title ["☠"]
 title @s subtitle [{{"text":"Respawning in 3 seconds...","color":"gray"}}]
 execute at @s run playsound minecraft:entity.player.hurt ambient @s
+""")
+
+	## Run as the victim, at them: a simulated death has no vanilla animation, so a copy of them dies in their place.
+	## A mannequin drops nothing on death, so the copy cannot duplicate the gun or the armor.
+	write_versioned_function("multiplayer/death_animation", f"""
+summon minecraft:mannequin ~ ~ ~ {{hide_description:true,Tags:["{ns}.death_mannequin"]}}
+data modify entity @n[type=minecraft:mannequin,tag={ns}.death_mannequin] Rotation set from entity @s Rotation
+data modify entity @n[type=minecraft:mannequin,tag={ns}.death_mannequin] equipment set from entity @s equipment
+
+# The get_username loot table gives a player_head with the profile, for the skin.
+loot replace entity @n[type=minecraft:mannequin,tag={ns}.death_mannequin] weapon.mainhand loot {ns}:get_username
+data modify entity @n[type=minecraft:mannequin,tag={ns}.death_mannequin] profile set from entity @n[type=minecraft:mannequin,tag={ns}.death_mannequin] equipment.mainhand.components."minecraft:profile"
+item replace entity @n[type=minecraft:mannequin,tag={ns}.death_mannequin] weapon.mainhand from entity @s weapon.mainhand
+
+kill @n[type=minecraft:mannequin,tag={ns}.death_mannequin]
 """)
 
 	## Run as the victim; $(attacker) is the attacker selector.
