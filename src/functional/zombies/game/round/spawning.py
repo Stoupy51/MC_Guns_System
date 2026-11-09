@@ -85,6 +85,7 @@ tag @e[type=minecraft:marker,tag={ns}.zb_near] remove {ns}.zb_near
 	write_versioned_function("zombies/do_spawn", f"""
 scoreboard players set #zb_spawned {ns}.data 1
 data modify storage {ns}:temp _mob set from entity @s data.mob
+execute if score #zb_jockey_round {ns}.data matches 1 run function {ns}:v{version}/zombies/jockey/replace_mob
 scoreboard players operation #zb_spawn_sid {ns}.data = @s {ns}.zb.spawn.sid
 execute store result score #zb_spawn_x {ns}.data run data get entity @s Pos[0]
 execute store result score #zb_spawn_z {ns}.data run data get entity @s Pos[2]

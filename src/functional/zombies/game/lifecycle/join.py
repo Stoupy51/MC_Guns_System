@@ -75,7 +75,7 @@ scoreboard players operation @s {ns}.zb.kills += #zb_kills_delta {ns}.data
 	# +10 per bullet hit on a live round zombie.
 	write_versioned_function("zombies/on_hit_signal", f"""
 execute unless data storage {ns}:zombies game{{state:"active"}} run return fail
-execute unless entity @s[tag={ns}.zombie_round] run return fail
+execute unless entity @s[tag={ns}.zombie_round] unless entity @s[tag={ns}.zb_jockey_rider] run return fail
 
 # Only player kills drop power-ups.
 scoreboard players operation @s {ns}.zb.player_hit = #total_tick {ns}.data

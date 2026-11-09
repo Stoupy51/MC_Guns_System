@@ -4,6 +4,7 @@ Wave-based round progression with enemy spawning, scaling, and round completion.
 # Imports
 from ...enemies.mob import write_enemy_mobs
 from ...enemies.types import write_enemy_types
+from ...enemies.types.jockey import write_jockey
 from .arrival import write_arrivals
 from .completion import write_round_completion
 from .hooks import write_round_hooks
@@ -20,6 +21,7 @@ def generate_zombies_rounds() -> None:
 	write_arrivals()
 	write_enemy_mobs()
 	write_enemy_types()
+	write_jockey()
 	write_enemy_lifecycle()
 	write_round_completion()
 	write_watchdog()

@@ -49,6 +49,9 @@ execute if data entity @s data.walk_to run function {ns}:v{version}/zombies/esco
 # From the marker passenger to its vehicle, once DeathTime starts.
 execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if data entity @s {{DeathTime:1s}} run function {ns}:v{version}/zombies/on_zombie_dying
 
+# A jockey part at 0 Health takes its mate down now, not 17 ticks later when the intercept above fires.
+execute if score #zb_jockey_round {ns}.data matches 1 as @e[type=minecraft:marker,tag={ns}.death_watch] on vehicle if entity @s[tag={ns}.zb_jockey,tag=!{ns}.zb_jockey_linked] if data entity @s {{Health:0.0f}} run function {ns}:v{version}/zombies/jockey/link
+
 # Death groan keyed on Health, which is 0 the instant it dies: DeathTime is preset to -16, so the intercept above
 # lands 17 ticks late. zb_dying fires it once; other entities than zombies die with their own vocals.
 execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if entity @s[type=minecraft:zombie,tag={ns}.zombie_round,tag=!{ns}.zb_dying] if data entity @s {{Health:0.0f}} run function {ns}:v{version}/zombies/vocals/death
@@ -56,7 +59,11 @@ execute as @e[type=minecraft:marker,tag={ns}.death_watch] at @s on vehicle if en
 
 	## Intercept a dying enemy before DeathTime reaches 20.
 	write_versioned_function("zombies/on_zombie_dying", f"""
+# A rider whose chicken is gone first has no one left to clear it.
+execute if entity @s[tag={ns}.zb_jockey_rider] run return run function {ns}:v{version}/zombies/jockey/remove_rider
 execute unless entity @s[tag={ns}.zombie_round] run return 0
+
+execute if entity @s[tag={ns}.zb_jockey_mount] run function {ns}:v{version}/zombies/jockey/clear_rider
 
 # Kill the death-watch marker while still mounted, so none are orphaned.
 kill @n[type=minecraft:marker,tag={ns}.death_watch,distance=..1]

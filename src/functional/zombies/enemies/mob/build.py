@@ -50,9 +50,13 @@ function {ns}:v{version}/zombies/apply_zombie_hp
 function {ns}:v{version}/zombies/mob/speed
 execute if score #zb_type {ns}.data matches 1.. run function {ns}:v{version}/zombies/types/apply
 
+execute if data storage {ns}:temp _mob{{jockey:"mount"}} run tag @s add {ns}.zb_jockey
+execute if data storage {ns}:temp _mob{{jockey:"mount"}} run tag @s add {ns}.zb_jockey_mount
+execute if data storage {ns}:temp _mob{{jockey:"rider"}} run function {ns}:v{version}/zombies/jockey/as_rider
+
 # Shown on the players' locator bar.
-attribute @s minecraft:waypoint_transmit_range base set 256
-waypoint modify @s color green
+execute unless entity @s[tag={ns}.zb_jockey_rider] run attribute @s minecraft:waypoint_transmit_range base set 256
+execute unless entity @s[tag={ns}.zb_jockey_rider] run waypoint modify @s color green
 
 # The stuck rescue counts from here, and never sends it back to this spawn.
 scoreboard players operation @s {ns}.zb.spawn.sid = #zb_spawn_sid {ns}.data
@@ -63,6 +67,7 @@ scoreboard players operation @s {ns}.zb.stuck_ticks = #total_tick {ns}.data
 
 execute if data storage {ns}:temp _mob.gun unless data storage {ns}:temp _mob{{gun:0b}} run function {ns}:v{version}/zombies/mob/arm
 execute if data storage {ns}:temp _mob.riders[0] run function {ns}:v{version}/zombies/mob/riders
+execute if entity @s[tag={ns}.zb_jockey_mount] run function {ns}:v{version}/zombies/jockey/seat_marker
 """)
 
 	## The Missions gun AI with the duty cycle of Zonweeb armed zombies, 60 ticks firing then 40 resting.

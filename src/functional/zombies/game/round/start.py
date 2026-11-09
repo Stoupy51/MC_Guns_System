@@ -2,6 +2,8 @@
 # Imports
 from stewbeet import Mem, write_versioned_function
 
+from ...enemies.types.jockey import JOCKEY_EVERY, JOCKEY_FIRST_ROUND
+
 # Constants
 EARLY_ROUND_ZOMBIES: dict[int, int] = {1: 5, 2: 6, 3: 8, 4: 9, 5: 11, 6: 12, 7: 13, 8: 15, 9: 16}
 """ Zombies per player for rounds 1-9, replacing the standard `round + 7` base while it is still steep.
@@ -26,6 +28,13 @@ scoreboard players set #zb_special_round {ns}.data 0
 scoreboard players operation #zb_special_mod {ns}.data = #zb_round {ns}.data
 scoreboard players operation #zb_special_mod {ns}.data %= #5 {ns}.data
 execute if score #zb_round {ns}.data matches 5.. if score #zb_special_mod {ns}.data matches 0 if entity @e[type=minecraft:marker,tag={ns}.spawn_special,tag={ns}.spawn_unlocked,tag={ns}.spawn_round_ok] run scoreboard players set #zb_special_round {ns}.data 1
+
+# Jockey round: Zonweeb only, every 10th round from round 8, and never a special round.
+scoreboard players set #zb_jockey_round {ns}.data 0
+scoreboard players operation #zb_jockey_mod {ns}.data = #zb_round {ns}.data
+scoreboard players remove #zb_jockey_mod {ns}.data {JOCKEY_FIRST_ROUND}
+scoreboard players operation #zb_jockey_mod {ns}.data %= #{JOCKEY_EVERY} {ns}.data
+execute if data storage {ns}:zombies game{{variant:"zonweeb"}} if score #zb_round {ns}.data matches {JOCKEY_FIRST_ROUND}.. if score #zb_jockey_mod {ns}.data matches 0 unless score #zb_special_round {ns}.data matches 1 run scoreboard players set #zb_jockey_round {ns}.data 1
 
 # The round's tier, for armed enemies: rounds 1-5 give 1, 6-10 give 2, 11-15 give 3, 16+ give 4.
 scoreboard players set #zb_level {ns}.data 4

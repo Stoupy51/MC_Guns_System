@@ -60,7 +60,7 @@ Co-op PvE. Every enemy placed on the map spawns at the start, a compass points a
 
 Round-based survival in the style of Black Ops. One map ships with the pack, Kino der Toten.
 
-- Zombies get faster and tougher by round. Special zombies join at round 5 (fast), 10 (tank), 15 (armed with a gun) and 20 (an aura zombie that shields the horde). Special rounds bring hounds.
+- Zombies get faster and tougher by round. Special zombies join at round 5 (fast), 10 (tank), 15 (armed with a gun) and 20 (an aura zombie that shields the horde). Special rounds bring hounds, and every 10th round from round 8 is a chicken jockey round.
 - Points from kills and repairs pay for doors, wallbuys, the power switch, traps and the Mystery Box.
 - 14 perks: Juggernog, Speed Cola, Double Tap, Quick Revive, Mule Kick, Stamin-Up, PhD Flopper, Deadshot Daiquiri, Timeslip, Electric Cherry, Tombstone, Who's Who, Dying Wish and Widow's Wine, from their machines or from Der Wunderfizz.
 - Pack-a-Punch, barricades, downs and revives, monkey bombs.
