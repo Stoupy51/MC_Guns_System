@@ -48,6 +48,9 @@ effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
 effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
 gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
 
+# The deciding kill's victim still shows its respawn countdown.
+title @a[scores={{{ns}.mp.in_game=1}}] clear
+
 # Mode cleanup before the multiplayer_entity sweep: S&D restores its sites with `execute at @e[tag=snd_obj] run fill`,
 # which needs the markers to still exist.
 {gm_dispatch(ns, version, "cleanup")}
