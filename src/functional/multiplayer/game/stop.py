@@ -27,8 +27,15 @@ def write_multiplayer_stop() -> None:
 		ns, version, "multiplayer/announce_stats", "mp.in_game", "mp.kills", mp_stat_line
 	)
 
+	## Run by every win path once it has announced. A win path can run inside the kill signal, halfway through the victim's simulate_death,
+	## so stop waits for the next game_tick: the deciding kill pays its XP and its victim is reset with everyone else.
+	write_versioned_function("multiplayer/request_end", f"""
+scoreboard players operation #mp_end_tick {ns}.data = #total_tick {ns}.data
+""")
+
 	write_versioned_function("multiplayer/stop", f"""
 data modify storage {ns}:multiplayer game.state set value "lobby"
+scoreboard players set #mp_end_tick {ns}.data 0
 schedule clear {ns}:v{version}/multiplayer/end_prep
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base reset
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base reset

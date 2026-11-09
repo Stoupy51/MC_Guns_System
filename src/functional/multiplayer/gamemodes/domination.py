@@ -182,7 +182,7 @@ execute store result score #dom_b {ns}.data if entity @e[tag={ns}.dom_point,scor
 scoreboard players operation #red {ns}.mp.team += #dom_r {ns}.data
 scoreboard players operation #blue {ns}.mp.team += #dom_b {ns}.data
 
-# XP for standing on a held point, once per point per 5 s. Before check_team_win, which can end the match and leave nobody to pay.
+# XP for standing on a held point, once per point per 5 s.
 execute as @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=1}}] at @s run {Xp.give("mp", "dom_hold", f"@a[distance=..5,scores={{{ns}.mp.team=1,{ns}.mp.in_game=1}}]")}
 execute as @e[tag={ns}.dom_point,scores={{{ns}.mp.dom_owner=2}}] at @s run {Xp.give("mp", "dom_hold", f"@a[distance=..5,scores={{{ns}.mp.team=2,{ns}.mp.in_game=1}}]")}
 

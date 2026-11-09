@@ -37,7 +37,7 @@ tag @s add {ns}.{WINNER_TAG}
 tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","🏆 ",{Text.player(ns, "@s", color="gold", bold="true")}," ",{{"text":"wins!","color":"gold","bold":true}}]
 tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","  ",{{"text":"Score: ","color":"gray"}},{{"score":{{"name":"@s","objective":"{ns}.mp.kills"}},"color":"yellow"}}," ",{{"text":"kills","color":"gray"}}]
 
-function {ns}:v{version}/multiplayer/stop
+function {ns}:v{version}/multiplayer/request_end
 """)
 
 		## +1 personal score, no team score.

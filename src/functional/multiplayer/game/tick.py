@@ -20,6 +20,9 @@ execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function 
 """)
 
 	write_versioned_function("multiplayer/game_tick", f"""
+# A win path requested the end (see multiplayer/request_end).
+execute if score #mp_end_tick {ns}.data matches 1.. run return run function {ns}:v{version}/multiplayer/stop
+
 # The XP bar is the progression HUD, so a stray orb would show a level nobody earned; tick_player re-asserts the bar every second.
 kill @e[type=experience_orb]
 
@@ -37,7 +40,8 @@ scoreboard players operation #tick_mod {ns}.data %= #20 {ns}.data
 execute if score #tick_mod {ns}.data matches 0 run function {ns}:v{version}/multiplayer/timer_display
 
 # Never for a mode that owns the score, where 0 is a round event it handles.
-execute if score #mp_mode_owns_timer {ns}.data matches 0 if score #mp_timer {ns}.data matches ..0 run function {ns}:v{version}/multiplayer/time_up
+# Returns, or a point scored below in the same tick would announce a second winner.
+execute if score #mp_mode_owns_timer {ns}.data matches 0 if score #mp_timer {ns}.data matches ..0 run return run function {ns}:v{version}/multiplayer/time_up
 
 # See multiplayer/enforce_bounds.
 execute store result score #bounds_phase {ns}.data run scoreboard players get #total_tick {ns}.data
@@ -109,7 +113,7 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] if score @s {ns}.mp.kills = #max_kil
 
 	write_versioned_function("multiplayer/game_draw", f"""
 tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","🤝 ",{{"text":"Draw!","color":"gold","bold":true}}]
-function {ns}:v{version}/multiplayer/stop
+function {ns}:v{version}/multiplayer/request_end
 """)
 
 	## Run as each in-game player, at them.

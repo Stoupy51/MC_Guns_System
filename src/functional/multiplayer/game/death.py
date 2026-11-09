@@ -181,13 +181,17 @@ execute store result score #random_message {ns}.data run random value 1..{len(ki
 execute unless data storage {ns}:multiplayer game{{state:"active"}} run return fail
 execute unless score @s {ns}.mp.in_game matches 1 run return fail
 
+# The match is decided: a later kill of the same tick scores nothing and reaches no win path.
+execute if score #mp_end_tick {ns}.data matches 1.. run return fail
+
 {gm_dispatch(ns, version, "on_kill", ret=True)}
 """, tags=[f"{ns}:signals/on_kill"])
 
 	## Shared by TDM, DOM and HP.
 	write_versioned_function("multiplayer/check_team_win", f"""
 execute store result score #score_limit {ns}.data run data get storage {ns}:multiplayer game.score_limit
-execute if score #red {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
+# A Domination score tick can take both teams over the limit: one winner only.
+execute if score #red {ns}.mp.team >= #score_limit {ns}.data run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
 execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
 """)
 
@@ -195,6 +199,6 @@ execute if score #blue {ns}.mp.team >= #score_limit {ns}.data run function {ns}:
 $tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","🏆 ",{{"text":"$(team) Team Wins!","color":"gold","bold":true}}]
 tellraw @a[scores={{{ns}.mp.in_game=1}}] ["",[{{"text":"","color":"gray"}},"  ",{{"text":"Final Score - Red"}},": "],{{"score":{{"name":"#red","objective":"{ns}.mp.team"}},"color":"red"}},[{{"text":"","color":"gray"}}," ",{{"text":"vs Blue"}},": "],{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}},"color":"blue"}}]
 
-function {ns}:v{version}/multiplayer/stop
+function {ns}:v{version}/multiplayer/request_end
 """)
 
