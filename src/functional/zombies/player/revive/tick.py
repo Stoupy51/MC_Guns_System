@@ -46,6 +46,10 @@ kill @s
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] add {ns}.downed_mine_temp
 
+# A body out of the map bounds dies like a zombie would, and one gone (bounds or the void) ends the down at once.
+execute if score #zb_has_bounds {ns}.data matches 1 as @n[tag={ns}.downed_mine_temp] at @s run function {ns}:v{version}/shared/check_bounds
+execute unless entity @n[tag={ns}.downed_mine_temp] run return run function {ns}:v{version}/zombies/revive/bleed_out
+
 # Crawl inputs and yaw (x100) are read here, while @s is the player, because move_mannequin cannot
 # find its owner reliably when several mannequins are close.
 execute store result score #rv_yaw {ns}.data run data get entity @s Rotation[0] 100
