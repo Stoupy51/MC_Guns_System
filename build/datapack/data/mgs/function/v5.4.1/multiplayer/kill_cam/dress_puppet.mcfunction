@@ -2,6 +2,7 @@
 #> mgs:v5.4.1/multiplayer/kill_cam/dress_puppet
 #
 # @within	mgs:v5.4.1/dialog/close_then
+#			mgs:v5.4.1/multiplayer/death_animation
 #			mgs:v5.4.1/multiplayer/kill_cam/init_puppet [ as @a ]
 #
 
