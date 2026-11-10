@@ -510,6 +510,7 @@ scoreboard players set #zoom_sight {ns}.data 0
 function {ns}:v{version}/zoom/fx_sight with storage {ns}:gun all.stats.models
 function {ns}:v{version}/zoom/fx_clear
 {swap_in}
+function {ns}:v{version}/player/hit_dir_to_back
 """)
 	write_versioned_function("zoom/fx_sight", f"""
 $execute store result score #zoom_sight {ns}.data run data get storage {ns}:data zoom_sights."$(zoom)"
@@ -546,6 +547,7 @@ execute if score @s {ns}.zoom_fx matches {score} run scoreboard players set @s {
 execute unless score @s {ns}.zoom_fx matches 1.. run return 0
 {leave}
 scoreboard players set @s {ns}.zoom_fx_off {int(OUT_TICKS) + 1}
+function {ns}:v{version}/player/hit_dir_to_back
 """)
 
 	# Same id removed and re-added in one tick: the client keeps the chain and its clock, only the order changes.
@@ -558,6 +560,7 @@ execute if score @s {ns}.zoom_fx matches {sign}{score} run posteffect add @s {ns
 # Post effects run in list order. The flash lights the scene from the unmagnified depth buffer,
 # so it has to run before the zoom, or its lighting lands on the wrong blocks once magnified.
 {to_back}
+function {ns}:v{version}/player/hit_dir_to_back
 """)
 
 	expire: str = "\n".join(

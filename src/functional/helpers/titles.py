@@ -45,10 +45,6 @@ class TitleTimes:
 		"before the next packet replaces it, and a fade-out would leave the tooltip hanging after you look "
 		"away. The 0.5s stay is what makes it vanish promptly instead of flickering between ticks."
 	))
-	HIT_DIRECTION: TitleTiming = TitleTiming(fade_in=0, stay=8, fade_out=6, note=(
-		"The arc glyph flashed around the crosshair when you are hit. Instant, then gone in ~0.7s: any "
-		"fade-in would land after the shot that caused it."
-	))
 	RESPAWN: TitleTiming = TitleTiming(fade_in=0, stay=70, fade_out=10, note=(
 		"The death skull, whose subtitle the respawn countdown then rewrites second by second. The stay has "
 		"to outlast that whole countdown (60 ticks) or the title fades out from under it."
