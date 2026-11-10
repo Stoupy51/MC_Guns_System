@@ -28,15 +28,15 @@ scoreboard players set #snd_round_timer mgs.data 3000
 scoreboard players set #mp_timer mgs.data 3000
 
 # S&D deaths skip the respawn countdown.
-execute as @a[scores={mgs.mp.team=1..2},gamemode=spectator] run spectate @s
-gamemode adventure @a[scores={mgs.mp.team=1..2},gamemode=spectator]
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator] run spectate @s
+gamemode adventure @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator]
 
-tag @a[scores={mgs.mp.team=1..2},gamemode=!spectator] add mgs.snd_alive
+tag @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=!spectator] add mgs.snd_alive
 
-execute as @a[scores={mgs.mp.team=1}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"red"}
-execute as @a[scores={mgs.mp.team=2}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"blue"}
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"red"}
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=2}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"blue"}
 tag @e[tag=mgs.spawn_used] remove mgs.spawn_used
-execute as @a[scores={mgs.mp.team=1..2}] at @s run function mgs:v5.4.1/multiplayer/apply_class
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2}] at @s run function mgs:v5.4.1/multiplayer/apply_class
 
 # One bomb per round, held by nobody: collecting it gives the defenders time to set up, unlike a Counter-Strike round.
 tag @a remove mgs.snd_carrier
@@ -50,4 +50,7 @@ execute unless entity @e[tag=mgs.snd_loose_at] at @e[tag=mgs.spawn_point,limit=1
 
 # Last, once everyone is tagged and placed: until then the tick judges nothing, so the gap is never read as a wipe.
 scoreboard players set #snd_round_active mgs.data 1
+
+# A round that can end the match is recorded whole.
+function mgs:v5.4.1/multiplayer/kill_cam/check_window
 

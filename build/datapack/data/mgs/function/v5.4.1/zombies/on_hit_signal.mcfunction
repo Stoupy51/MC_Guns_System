@@ -6,7 +6,7 @@
 #
 
 execute unless data storage mgs:zombies game{state:"active"} run return fail
-execute unless entity @s[tag=mgs.zombie_round] run return fail
+execute unless entity @s[tag=mgs.zombie_round] unless entity @s[tag=mgs.zb_jockey_rider] run return fail
 
 # Only player kills drop power-ups.
 scoreboard players operation @s mgs.zb.player_hit = #total_tick mgs.data

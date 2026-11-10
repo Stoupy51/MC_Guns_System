@@ -19,8 +19,9 @@ execute if score #any_game_active mgs.data matches 1 run function mgs:v5.4.1/pla
 execute if score @s mgs.fx_deaths matches 1.. run function mgs:v5.4.1/player/fx_after_death
 execute if score @s mgs.fx_rejoins matches 1.. run function mgs:v5.4.1/player/fx_after_rejoin
 
-# Shader ids that expire on their own: the muzzle flash burst and the zoom and hurt fade-outs
+# Shader ids that expire on their own: the muzzle flash burst, the hit arc and the zoom and hurt fade-outs
 execute if score @s mgs.flash_off <= #total_tick mgs.data run function mgs:v5.4.1/player/flash_tick
+execute if score @s mgs.hit_dir_off <= #total_tick mgs.data run function mgs:v5.4.1/player/hit_dir_expire
 execute if score @s mgs.zoom_fx matches ..-1 run function mgs:v5.4.1/zoom/fx_tick
 execute if score @s mgs.hurt_out_until <= #total_tick mgs.data run function mgs:v5.4.1/player/hurt_out_clear
 

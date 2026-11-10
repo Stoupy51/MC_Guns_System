@@ -86,7 +86,7 @@
 scoreboard players operation #adv_gain_prev mgs.data = #xp_gain mgs.data
 $scoreboard players set #xp_gain mgs.data $(xp)
 tag @s add mgs.xp_earner
-$tellraw @a[tag=!mgs.xp_earner] {"text":"","hover_event":{"action":"show_text","value":[$(title),"\n",$(description)]},"extra":[[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"🏆 ","color":"white"},["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"yellow"}],[{"text":" ","color":"gray"}, {"translate":"mgs.unlocked_challenge","fallback":"unlocked challenge: "}],$(title)]}
+$tellraw @a[scores={mgs.mp.in_game=1},tag=!mgs.xp_earner] {"text":"","hover_event":{"action":"show_text","value":[$(title),"\n",$(description)]},"extra":[[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"🏆 ","color":"white"},["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.mp.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"yellow"}],[{"text":" ","color":"gray"}, {"translate":"mgs.unlocked_challenge","fallback":"unlocked challenge: "}],$(title)]}
 tag @s remove mgs.xp_earner
 $tellraw @s {"text":"","hover_event":{"action":"show_text","value":[$(title),"\n",$(description)]},"extra":[[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"🏆 ","color":"white"},{"translate":"mgs.challenge_unlocked","fallback":"Challenge unlocked: ","color":"gray"},$(title),[" ",{"text":"+","color":"gold"},{"score":{"name":"#xp_gain","objective":"mgs.data"},"color":"gold"},{"text":" XP","color":"gold"}]]}
 function mgs:v5.4.1/progression/mp/award_challenge

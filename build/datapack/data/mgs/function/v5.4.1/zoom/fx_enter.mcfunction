@@ -14,4 +14,5 @@ execute if score #zoom_sight mgs.data matches 1 run function mgs:v5.4.1/zoom/fx_
 execute if score #zoom_sight mgs.data matches 2 run function mgs:v5.4.1/zoom/fx_enter_zoom_mk4
 execute if score #zoom_sight mgs.data matches 3 run function mgs:v5.4.1/zoom/fx_enter_zoom_pu
 execute if score #zoom_sight mgs.data matches 4 run function mgs:v5.4.1/zoom/fx_enter_zoom_pso
+function mgs:v5.4.1/player/hit_dir_to_back
 

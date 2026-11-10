@@ -8,6 +8,7 @@
 
 scoreboard players set #zb_spawned mgs.data 1
 data modify storage mgs:temp _mob set from entity @s data.mob
+execute if score #zb_jockey_round mgs.data matches 1 run function mgs:v5.4.1/zombies/jockey/replace_mob
 scoreboard players operation #zb_spawn_sid mgs.data = @s mgs.zb.spawn.sid
 execute store result score #zb_spawn_x mgs.data run data get entity @s Pos[0]
 execute store result score #zb_spawn_z mgs.data run data get entity @s Pos[2]

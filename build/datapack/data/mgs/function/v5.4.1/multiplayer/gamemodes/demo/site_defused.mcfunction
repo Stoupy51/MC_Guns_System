@@ -6,8 +6,8 @@
 #
 
 tag @a remove mgs.xp_earner
-execute if score @s mgs.demo_owner matches 1 run tag @a[scores={mgs.mp.team=2},predicate=mgs:v5.4.1/is_sneaking,gamemode=!spectator,distance=..3.0] add mgs.xp_earner
-execute if score @s mgs.demo_owner matches 2 run tag @a[scores={mgs.mp.team=1},predicate=mgs:v5.4.1/is_sneaking,gamemode=!spectator,distance=..3.0] add mgs.xp_earner
+execute if score @s mgs.demo_owner matches 1 run tag @a[scores={mgs.mp.in_game=1,mgs.mp.team=2},predicate=mgs:v5.4.1/is_sneaking,gamemode=!spectator,distance=..3.0] add mgs.xp_earner
+execute if score @s mgs.demo_owner matches 2 run tag @a[scores={mgs.mp.in_game=1,mgs.mp.team=1},predicate=mgs:v5.4.1/is_sneaking,gamemode=!spectator,distance=..3.0] add mgs.xp_earner
 execute as @a[tag=mgs.xp_earner] run function mgs:v5.4.1/progression/mp/award_bomb_defuse
 
 scoreboard players set @s mgs.demo_state 0

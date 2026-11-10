@@ -9,6 +9,10 @@
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.downed_id
 tag @e[tag=mgs.downed_mannequin,predicate=mgs:v5.4.1/zombies/revive/downed_id_match] add mgs.downed_mine_temp
 
+# A body out of the map bounds dies like a zombie would, and one gone (bounds or the void) ends the down at once.
+execute if score #zb_has_bounds mgs.data matches 1 as @n[tag=mgs.downed_mine_temp] at @s run function mgs:v5.4.1/shared/check_bounds
+execute unless entity @n[tag=mgs.downed_mine_temp] run return run function mgs:v5.4.1/zombies/revive/body_lost
+
 # Crawl inputs and yaw (x100) are read here, while @s is the player, because move_mannequin cannot
 # find its owner reliably when several mannequins are close.
 execute store result score #rv_yaw mgs.data run data get entity @s Rotation[0] 100

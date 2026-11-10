@@ -21,3 +21,9 @@ function mgs:v5.4.1/shared/maps/call_script_at_base {mode:"multiplayer",script:"
 
 tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"green","bold":true},{"translate":"mgs.go_go_go","fallback":"GO! GO! GO!"}]]
 
+execute as @a[scores={mgs.mp.in_game=1}] at @s run function mgs:v5.4.1/multiplayer/preload_skin
+schedule function mgs:v5.4.1/multiplayer/clear_skin_preload 100t
+
+# A score limit within one chain records from the start.
+function mgs:v5.4.1/multiplayer/kill_cam/check_window
+

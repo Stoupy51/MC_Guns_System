@@ -36,17 +36,17 @@ scoreboard players operation #mp_timer mgs.data = #demo_timer mgs.data
 
 # Every attacker carries a bomb on every respawn, so no carry, drop or pickup machinery: the tag is the bomb.
 tag @a remove mgs.demo_atk
-execute if score #demo_attackers mgs.data matches 1 run tag @a[scores={mgs.mp.team=1}] add mgs.demo_atk
-execute if score #demo_attackers mgs.data matches 2 run tag @a[scores={mgs.mp.team=2}] add mgs.demo_atk
+execute if score #demo_attackers mgs.data matches 1 run tag @a[scores={mgs.mp.in_game=1,mgs.mp.team=1}] add mgs.demo_atk
+execute if score #demo_attackers mgs.data matches 2 run tag @a[scores={mgs.mp.in_game=1,mgs.mp.team=2}] add mgs.demo_atk
 
 # Spectators are pulled out and their countdown cleared, so a death from the last round cannot respawn them mid-round.
-execute as @a[scores={mgs.mp.team=1..2},gamemode=spectator] run spectate @s
-gamemode adventure @a[scores={mgs.mp.team=1..2},gamemode=spectator]
-scoreboard players set @a[scores={mgs.mp.team=1..2}] mgs.mp.spectate_timer 0
-execute as @a[scores={mgs.mp.team=1}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"red"}
-execute as @a[scores={mgs.mp.team=2}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"blue"}
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator] run spectate @s
+gamemode adventure @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator]
+scoreboard players set @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2}] mgs.mp.spectate_timer 0
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"red"}
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=2}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"blue"}
 tag @e[tag=mgs.spawn_used] remove mgs.spawn_used
-execute as @a[scores={mgs.mp.team=1..2}] at @s run function mgs:v5.4.1/multiplayer/apply_class
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2}] at @s run function mgs:v5.4.1/multiplayer/apply_class
 
 # Last, once the sites are intact and everyone is placed.
 scoreboard players set #demo_round_active mgs.data 1

@@ -19,6 +19,13 @@ scoreboard players operation #zb_special_mod mgs.data = #zb_round mgs.data
 scoreboard players operation #zb_special_mod mgs.data %= #5 mgs.data
 execute if score #zb_round mgs.data matches 5.. if score #zb_special_mod mgs.data matches 0 if entity @e[type=minecraft:marker,tag=mgs.spawn_special,tag=mgs.spawn_unlocked,tag=mgs.spawn_round_ok] run scoreboard players set #zb_special_round mgs.data 1
 
+# Jockey round: Zonweeb only, every 10th round from round 8, and never a special round.
+scoreboard players set #zb_jockey_round mgs.data 0
+scoreboard players operation #zb_jockey_mod mgs.data = #zb_round mgs.data
+scoreboard players remove #zb_jockey_mod mgs.data 8
+scoreboard players operation #zb_jockey_mod mgs.data %= #10 mgs.data
+execute if data storage mgs:zombies game{variant:"zonweeb"} if score #zb_round mgs.data matches 8.. if score #zb_jockey_mod mgs.data matches 0 unless score #zb_special_round mgs.data matches 1 run scoreboard players set #zb_jockey_round mgs.data 1
+
 # The round's tier, for armed enemies: rounds 1-5 give 1, 6-10 give 2, 11-15 give 3, 16+ give 4.
 scoreboard players set #zb_level mgs.data 4
 execute if score #zb_round mgs.data matches ..15 run scoreboard players set #zb_level mgs.data 3

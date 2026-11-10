@@ -6,6 +6,8 @@
 #			mgs:v5.4.1/multiplayer/on_respawn
 #
 
+function mgs:v5.4.1/multiplayer/kill_cam/on_death
+
 # First, while the gun is still held: it can be picked up for 30 s.
 execute at @s run function mgs:v5.4.1/multiplayer/drop_held_weapon
 

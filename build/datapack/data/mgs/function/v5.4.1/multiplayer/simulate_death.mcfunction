@@ -36,6 +36,8 @@ execute if score #mp_death_attacked mgs.data matches 1 run function mgs:v5.4.1/m
 # No attacker: a random self-death message.
 execute if score #mp_death_attacked mgs.data matches 0 run function mgs:v5.4.1/multiplayer/random_death_message
 
+execute at @s run function mgs:v5.4.1/multiplayer/death_animation
+
 # Shared with vanilla deaths (on_respawn).
 function mgs:v5.4.1/multiplayer/enter_death_spectate
 

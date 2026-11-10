@@ -8,8 +8,8 @@
 # mp.kills is per player and only zeroed by multiplayer/start.
 scoreboard players set #demo_kills_red mgs.data 0
 scoreboard players set #demo_kills_blue mgs.data 0
-execute as @a[scores={mgs.mp.team=1}] run scoreboard players operation #demo_kills_red mgs.data += @s mgs.mp.kills
-execute as @a[scores={mgs.mp.team=2}] run scoreboard players operation #demo_kills_blue mgs.data += @s mgs.mp.kills
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1}] run scoreboard players operation #demo_kills_red mgs.data += @s mgs.mp.kills
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=2}] run scoreboard players operation #demo_kills_blue mgs.data += @s mgs.mp.kills
 
 # A tie leaves Red attacking, like the side-picking fallback.
 scoreboard players set #demo_attackers mgs.data 1

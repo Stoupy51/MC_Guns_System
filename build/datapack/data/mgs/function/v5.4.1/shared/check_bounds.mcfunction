@@ -5,6 +5,7 @@
 #			mgs:v5.4.1/zombies/game_tick [ as @e[tag=mgs.zombie_round] & at @s ]
 #			mgs:v5.4.1/missions/game_tick [ as @e[tag=mgs.mission_enemy] & at @s ]
 #			mgs:v5.4.1/missions/game_tick [ at @s ]
+#			mgs:v5.4.1/zombies/revive/downed_tick [ at @s ]
 #
 
 execute at @s summon minecraft:marker run function mgs:v5.4.1/shared/probe_pos

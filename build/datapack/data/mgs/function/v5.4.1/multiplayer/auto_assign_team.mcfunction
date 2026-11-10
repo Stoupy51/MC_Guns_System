@@ -11,8 +11,8 @@
 # FFA: everyone goes to the single FFA team instead of being split red and blue.
 execute if data storage mgs:multiplayer game{gamemode:"ffa"} run return run function mgs:v5.4.1/multiplayer/join_ffa
 
-execute store result score #red_count mgs.data if entity @a[scores={mgs.mp.team=1}]
-execute store result score #blue_count mgs.data if entity @a[scores={mgs.mp.team=2}]
+execute store result score #red_count mgs.data if entity @a[scores={mgs.mp.in_game=1,mgs.mp.team=1}]
+execute store result score #blue_count mgs.data if entity @a[scores={mgs.mp.in_game=1,mgs.mp.team=2}]
 
 # The player's own team does not count, so re-running auto-assign stays stable instead of clumping onto one side.
 execute if score @s mgs.mp.team matches 1 run scoreboard players remove #red_count mgs.data 1

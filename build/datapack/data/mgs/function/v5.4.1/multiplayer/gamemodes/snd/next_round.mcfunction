@@ -21,10 +21,14 @@ tag @a remove mgs.snd_alive
 execute if score #red mgs.mp.team >= #snd_win_threshold mgs.data run return run function mgs:v5.4.1/multiplayer/team_wins {team:"Red"}
 execute if score #blue mgs.mp.team >= #snd_win_threshold mgs.data run return run function mgs:v5.4.1/multiplayer/team_wins {team:"Blue"}
 
+# The match goes on, so this round's recording can never be replayed.
+function mgs:v5.4.1/multiplayer/kill_cam/close
+
 # Sides swap at halftime.
 scoreboard players add #snd_round mgs.data 1
-execute if score #snd_round mgs.data matches 4 if score #snd_attackers mgs.data matches 1 run scoreboard players set #snd_attackers mgs.data 2
-execute if score #snd_round mgs.data matches 4 if score #snd_attackers mgs.data matches 2 run scoreboard players set #snd_attackers mgs.data 1
+# 1 becomes 2 and 2 becomes 1.
+execute if score #snd_round mgs.data matches 4 store result score #snd_attackers mgs.data if score #snd_attackers mgs.data matches 1
+execute if score #snd_round mgs.data matches 4 run scoreboard players add #snd_attackers mgs.data 1
 execute if score #snd_round mgs.data matches 4 run tellraw @a[scores={mgs.mp.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"text":"⚔ ","color":"white"},{"translate":"mgs.sides_swapped","fallback":"Sides swapped!","color":"gold"}]
 execute if score #snd_round mgs.data matches 4 run playsound minecraft:block.note_block.xylophone player @a[scores={mgs.mp.in_game=1}] ~ ~ ~ 1 1.0
 # 3 s later.

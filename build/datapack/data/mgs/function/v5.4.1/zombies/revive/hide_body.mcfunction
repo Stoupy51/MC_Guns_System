@@ -5,7 +5,7 @@
 #			mgs:v5.4.1/zombies/whos_who/revive_complete
 #			mgs:v5.4.1/zombies/whos_who/forfeit
 #			mgs:v5.4.1/zombies/revive/revive_complete
-#			mgs:v5.4.1/zombies/revive/bleed_out
+#			mgs:v5.4.1/zombies/revive/stay_down
 #
 
 tag @e[tag=mgs.downed_mannequin,predicate=mgs:v5.4.1/zombies/revive/downed_id_match] add mgs.downed_mine_temp

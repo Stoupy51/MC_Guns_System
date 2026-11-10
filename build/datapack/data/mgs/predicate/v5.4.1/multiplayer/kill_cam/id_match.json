@@ -1,0 +1,24 @@
+{
+	"type": "minecraft:entity_scores",
+	"entity": "this",
+	"scores": {
+		"mgs.mp.kc_id": {
+			"min": {
+				"type": "minecraft:score",
+				"target": {
+					"type": "minecraft:fixed",
+					"name": "#kc_sid"
+				},
+				"score": "mgs.data"
+			},
+			"max": {
+				"type": "minecraft:score",
+				"target": {
+					"type": "minecraft:fixed",
+					"name": "#kc_sid"
+				},
+				"score": "mgs.data"
+			}
+		}
+	}
+}

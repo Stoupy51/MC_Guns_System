@@ -8,7 +8,11 @@
 execute if entity @s[tag=mgs.zb_escorted] at @s run function mgs:v5.4.1/zombies/escort/on_escorted_killed
 
 
+# A rider whose chicken is gone first has no one left to clear it.
+execute if entity @s[tag=mgs.zb_jockey_rider] run return run function mgs:v5.4.1/zombies/jockey/remove_rider
 execute unless entity @s[tag=mgs.zombie_round] run return 0
+
+execute if entity @s[tag=mgs.zb_jockey_mount] run function mgs:v5.4.1/zombies/jockey/clear_rider
 
 # Kill the death-watch marker while still mounted, so none are orphaned.
 kill @n[type=minecraft:marker,tag=mgs.death_watch,distance=..1]

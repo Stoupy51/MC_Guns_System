@@ -53,5 +53,5 @@ function mgs:v5.4.1/zombies/respawn_tp
 function mgs:v5.4.1/shared/maps/call_script_at_base {mode:"zombies",script:"join"}
 
 # Announce
-tellraw @a ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"dark_green"}],[{"text":" ","color":"dark_green"}, {"translate":"mgs.joined_the_zombies_game","fallback":"joined the zombies game!"}]]
+tellraw @a[scores={mgs.zb.in_game=1}] ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"dark_green"}],[{"text":" ","color":"dark_green"}, {"translate":"mgs.joined_the_zombies_game","fallback":"joined the zombies game!"}]]
 

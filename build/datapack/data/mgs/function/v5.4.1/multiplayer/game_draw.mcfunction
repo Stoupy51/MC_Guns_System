@@ -7,5 +7,5 @@
 #
 
 tellraw @a[scores={mgs.mp.in_game=1}] ["","🤝 ",{"translate":"mgs.draw","fallback":"Draw!","color":"gold","bold":true}]
-function mgs:v5.4.1/multiplayer/stop
+function mgs:v5.4.1/multiplayer/request_end
 

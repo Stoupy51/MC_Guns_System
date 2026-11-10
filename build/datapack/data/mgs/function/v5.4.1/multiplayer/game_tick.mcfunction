@@ -7,6 +7,12 @@
 
 execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.4.1/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.4.1/multiplayer/game_tick"}
 
+# Ahead of the end, so the deciding tick has its frame.
+execute if score #kc_window mgs.data matches 1 run function mgs:v5.4.1/multiplayer/kill_cam/record
+
+# A win path requested the end (see multiplayer/request_end).
+execute if score #mp_end_tick mgs.data matches 1.. run return run function mgs:v5.4.1/multiplayer/end
+
 # The XP bar is the progression HUD, so a stray orb would show a level nobody earned; tick_player re-asserts the bar every second.
 kill @e[type=experience_orb]
 
@@ -34,7 +40,8 @@ scoreboard players operation #tick_mod mgs.data %= #20 mgs.data
 execute if score #tick_mod mgs.data matches 0 run function mgs:v5.4.1/multiplayer/timer_display
 
 # Never for a mode that owns the score, where 0 is a round event it handles.
-execute if score #mp_mode_owns_timer mgs.data matches 0 if score #mp_timer mgs.data matches ..0 run function mgs:v5.4.1/multiplayer/time_up
+# Returns, or a point scored below in the same tick would announce a second winner.
+execute if score #mp_mode_owns_timer mgs.data matches 0 if score #mp_timer mgs.data matches ..0 run return run function mgs:v5.4.1/multiplayer/time_up
 
 # See multiplayer/enforce_bounds.
 execute store result score #bounds_phase mgs.data run scoreboard players get #total_tick mgs.data

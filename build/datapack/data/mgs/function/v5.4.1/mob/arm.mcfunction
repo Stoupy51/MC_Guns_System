@@ -14,7 +14,7 @@
 tag @s add mgs.armed
 $data modify entity @s CustomName set value [{"text":"","color":"red"},"Armed ",{"translate":"entity.minecraft.$(entity)"}," [Lv.$(level)]"]
 data modify entity @s DeathLootTable set value "minecraft:empty"
-data modify entity @s drop_chances set value {mainhand:0.0f,offhand:0.0f}
+data modify entity @s drop_chances set value {mainhand:0.0f,offhand:0.0f,head:0.0f,chest:0.0f,legs:0.0f,feet:0.0f}
 data modify entity @s PersistenceRequired set value true
 attribute @s minecraft:waypoint_transmit_range base set 32
 

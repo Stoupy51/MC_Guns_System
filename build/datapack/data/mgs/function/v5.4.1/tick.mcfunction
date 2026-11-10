@@ -49,6 +49,7 @@ execute if data storage mgs:zombies game{state:"active"} if score #zb_freeze mgs
 
 execute if data storage mgs:multiplayer game{state:"active"} run function mgs:v5.4.1/multiplayer/game_tick
 execute if data storage mgs:multiplayer game{state:"preparing"} run function mgs:v5.4.1/multiplayer/prep_tick
+execute if data storage mgs:multiplayer game{state:"ended"} run function mgs:v5.4.1/multiplayer/kill_cam/tick
 
 execute if data storage mgs:missions game{state:"active"} run function mgs:v5.4.1/missions/game_tick
 execute if data storage mgs:missions game{state:"preparing"} run function mgs:v5.4.1/missions/prep_tick

@@ -17,5 +17,5 @@
 $tellraw @a[scores={mgs.mp.in_game=1}] ["","🏆 ",{"text":"$(team) Team Wins!","color":"gold","bold":true}]
 tellraw @a[scores={mgs.mp.in_game=1}] ["",[{"text":"","color":"gray"},"  ",{"translate":"mgs.final_score_red","fallback":"Final Score - Red"},": "],{"score":{"name":"#red","objective":"mgs.mp.team"},"color":"red"},[{"text":"","color":"gray"}," ",{"translate":"mgs.vs_blue","fallback":"vs Blue"},": "],{"score":{"name":"#blue","objective":"mgs.mp.team"},"color":"blue"}]
 
-function mgs:v5.4.1/multiplayer/stop
+function mgs:v5.4.1/multiplayer/request_end
 

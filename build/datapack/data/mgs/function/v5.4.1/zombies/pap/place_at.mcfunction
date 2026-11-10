@@ -10,5 +10,5 @@
 #			rotation (unknown)
 #
 
-$summon minecraft:interaction $(x) $(y) $(z) {width:1.69f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["mgs.pap_machine","mgs.zombies_entity","bs.entity.interaction","mgs.pap_new"]}
+$summon minecraft:interaction $(x) $(y) $(z) {width:1.69f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["mgs.pap_machine","mgs.zombies_entity","mgs.pap_new"]}
 

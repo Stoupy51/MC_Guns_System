@@ -10,5 +10,5 @@
 #			rotation (unknown)
 #
 
-$summon minecraft:interaction $(x) $(y) $(z) {width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["mgs.wunderfizz_machine","mgs.zombies_entity","bs.entity.interaction","mgs.wf_new"]}
+$summon minecraft:interaction $(x) $(y) $(z) {width:1.2f,height:-2.0f,response:true,Rotation:$(rotation),Tags:["mgs.wunderfizz_machine","mgs.zombies_entity","mgs.wf_new"]}
 

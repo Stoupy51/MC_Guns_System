@@ -2,22 +2,20 @@
 #> mgs:v5.4.1/multiplayer/stop
 #
 # @within	mgs:v5.4.1/dialog/close_then
-#			mgs:v5.4.1/multiplayer/team_wins
-#			mgs:v5.4.1/multiplayer/game_draw
-#			mgs:v5.4.1/multiplayer/gamemodes/ffa/player_wins
+#			mgs:v5.4.1/multiplayer/end
+#			mgs:v5.4.1/multiplayer/kill_cam/post_roll
 #
 
 execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.4.1/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.4.1/multiplayer/stop"}
 
+function mgs:v5.4.1/multiplayer/kill_cam/cleanup
+
+# Map scripts only run during a match, so the leave script comes before the lobby state.
+execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.4.1/shared/maps/call_script_at_base {mode:"multiplayer",script:"leave"}
+
 data modify storage mgs:multiplayer game.state set value "lobby"
+scoreboard players set #mp_end_tick mgs.data 0
 schedule clear mgs:v5.4.1/multiplayer/end_prep
-execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:movement_speed base reset
-execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:jump_strength base reset
-execute as @a[scores={mgs.mp.in_game=1}] run attribute @s minecraft:waypoint_receive_range base reset
-effect clear @a[scores={mgs.mp.in_game=1}] darkness
-effect clear @a[scores={mgs.mp.in_game=1}] blindness
-effect clear @a[scores={mgs.mp.in_game=1}] night_vision
-gamemode adventure @a[scores={mgs.mp.in_game=1},gamemode=spectator]
 
 # Mode cleanup before the multiplayer_entity sweep: S&D restores its sites with `execute at @e[tag=snd_obj] run fill`,
 # which needs the markers to still exist.
@@ -49,7 +47,7 @@ execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.4.1/player/fx_reset
 tellraw @a[scores={mgs.mp.in_game=1}] ["","⚔ ",[{"text":"","color":"gold","bold":true},{"translate":"mgs.game_over","fallback":"Game Over"},"! "]]
 execute unless data storage mgs:multiplayer game{gamemode:"ffa"} run tellraw @a[scores={mgs.mp.in_game=1}] ["",{"translate":"mgs.red","fallback":"Red","color":"red"},{"text":": "},{"score":{"name":"#red","objective":"mgs.mp.team"}}," | ",{"translate":"mgs.blue","fallback":"Blue","color":"blue"},{"text":": "},{"score":{"name":"#blue","objective":"mgs.mp.team"}}]
 
-# Best first; the bare selector shows the team colour, which still applies before the team leave below.
+# Best first; the bare selector shows the team colour, which still applies until reset_player below.
 tag @a[scores={mgs.mp.in_game=1}] add mgs.stat_cand
 function mgs:v5.4.1/multiplayer/announce_stats_iter
 tag @a remove mgs.stat_cand
@@ -59,15 +57,7 @@ scoreboard objectives setdisplay sidebar.team.blue
 scoreboard objectives setdisplay sidebar.team.gold
 scoreboard objectives remove mgs.sidebar
 scoreboard objectives setdisplay list
-team leave @a[scores={mgs.mp.in_game=1}]
 
-# The state is still active or preparing here.
-execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.4.1/shared/maps/call_script_at_base {mode:"multiplayer",script:"leave"}
-execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.4.1/lobby/return
-
-scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.team 0
-scoreboard players set @a[scores={mgs.mp.in_game=1}] mgs.mp.spectate_timer 0
-scoreboard players set @a mgs.mp.in_game 0
+execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.4.1/multiplayer/reset_player
 scoreboard players set #mp_has_boundary mgs.data 0
-tag @a[tag=mgs.give_class_menu] remove mgs.give_class_menu
 

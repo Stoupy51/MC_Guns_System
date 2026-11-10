@@ -2,7 +2,7 @@
 #> mgs:v5.4.1/zombies/perks/tombstone_on_bleed_out
 #
 # @within	mgs:v5.4.1/dialog/close_then
-#			mgs:v5.4.1/zombies/revive/bleed_out
+#			mgs:v5.4.1/zombies/revive/stay_down
 #
 
 execute unless entity @e[tag=mgs.tombstone,predicate=mgs:v5.4.1/zombies/revive/downed_id_match] run return 0

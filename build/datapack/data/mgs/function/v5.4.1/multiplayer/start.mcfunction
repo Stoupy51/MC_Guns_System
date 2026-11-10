@@ -8,6 +8,7 @@ execute unless score #in_multiplayer_map mgs.data matches 1 run return run funct
 
 execute if data storage mgs:multiplayer game{state:"active"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.game_already_in_progress","fallback":"Game already in progress!","color":"red"}]
 execute if data storage mgs:multiplayer game{state:"preparing"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.game_already_preparing","fallback":"Game already preparing!","color":"red"}]
+execute if data storage mgs:multiplayer game{state:"ended"} run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.game_already_in_progress","fallback":"Game already in progress!","color":"red"}]
 
 # Players join a side through Manage Players or + Join.
 execute unless entity @a[scores={mgs.mp.in_game=1}] run return run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.no_players_have_joined_a_team_use_manage_players_first","fallback":"No players have joined a team. Use Manage Players first.","color":"red"}]

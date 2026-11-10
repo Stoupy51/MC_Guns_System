@@ -19,6 +19,7 @@
 #			mgs:v5.4.1/multiplayer/actual_respawn {mode:"multiplayer",fn:"mgs:v5.4.1/multiplayer/actual_respawn"}
 #			mgs:v5.4.1/multiplayer/gamemodes/demo/start_round {mode:"multiplayer",fn:"mgs:v5.4.1/multiplayer/gamemodes/demo/start_round"}
 #			mgs:v5.4.1/multiplayer/gamemodes/snd/start_round {mode:"multiplayer",fn:"mgs:v5.4.1/multiplayer/gamemodes/snd/start_round"}
+#			mgs:v5.4.1/multiplayer/kill_cam/tick {mode:"multiplayer",fn:"mgs:v5.4.1/multiplayer/kill_cam/tick"}
 #			mgs:v5.4.1/multiplayer/stop {mode:"multiplayer",fn:"mgs:v5.4.1/multiplayer/stop"}
 #			mgs:v5.4.1/missions/start {mode:"missions",fn:"mgs:v5.4.1/missions/start"}
 #			mgs:v5.4.1/missions/preload_complete {mode:"missions",fn:"mgs:v5.4.1/missions/preload_complete"}

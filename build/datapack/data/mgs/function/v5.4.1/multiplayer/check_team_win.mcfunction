@@ -8,6 +8,7 @@
 #
 
 execute store result score #score_limit mgs.data run data get storage mgs:multiplayer game.score_limit
-execute if score #red mgs.mp.team >= #score_limit mgs.data run function mgs:v5.4.1/multiplayer/team_wins {team:"Red"}
+# A Domination score tick can take both teams over the limit: one winner only.
+execute if score #red mgs.mp.team >= #score_limit mgs.data run return run function mgs:v5.4.1/multiplayer/team_wins {team:"Red"}
 execute if score #blue mgs.mp.team >= #score_limit mgs.data run function mgs:v5.4.1/multiplayer/team_wins {team:"Blue"}
 

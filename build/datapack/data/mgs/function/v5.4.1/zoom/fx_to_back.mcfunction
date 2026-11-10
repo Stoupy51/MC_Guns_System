@@ -28,4 +28,5 @@ execute if score @s mgs.zoom_fx matches 5 run posteffect remove @s mgs:zoom_pso
 execute if score @s mgs.zoom_fx matches 5 run posteffect add @s mgs:zoom_pso
 execute if score @s mgs.zoom_fx matches -5 run posteffect remove @s mgs:zoom_pso_out
 execute if score @s mgs.zoom_fx matches -5 run posteffect add @s mgs:zoom_pso_out
+function mgs:v5.4.1/player/hit_dir_to_back
 

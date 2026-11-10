@@ -30,6 +30,9 @@ scoreboard players reset @s mgs.hurt_from
 scoreboard players reset @s mgs.hurt_pending
 scoreboard players reset @s mgs.hurt_fall_until
 scoreboard players reset @s mgs.hurt_out_until
+scoreboard players reset @s mgs.hit_dir_sector
+scoreboard players reset @s mgs.hit_dir_slot
+scoreboard players reset @s mgs.hit_dir_off
 
 # The red overlay fades out instead of vanishing
 execute if score #hurt_was mgs.data matches 1.. run function mgs:v5.4.1/player/hurt_fade_out
