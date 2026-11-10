@@ -2,6 +2,7 @@
 # Imports
 from .game import generate_game
 from .gamemodes import generate_gamemodes
+from .kill_cam import generate_kill_cam
 from .loadout import generate_loadouts
 from .loadouts import generate_class_selection, generate_custom_loadouts
 from .maps import generate_maps
@@ -14,6 +15,7 @@ from .xp import generate_multiplayer_xp
 def main() -> None:
 	generate_game()
 	generate_gamemodes()
+	generate_kill_cam()
 	generate_multiplayer_xp()
 	generate_teams()
 	generate_loadouts()

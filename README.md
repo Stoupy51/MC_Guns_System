@@ -50,6 +50,8 @@ Players pick a class before each life. A few balanced classes ship with the pack
 
 Kills and wins give XP towards a Multiplayer level, and challenges unlock as advancements.
 
+When a player kill ends a Free For All, Team Deathmatch or Search and Destroy match, a kill cam replays the final killer's streak from their eyes to every player before the summary.
+
 https://github.com/user-attachments/assets/e6f96ed9-383e-48d2-8c2b-bb47300bba42
 
 ## Missions

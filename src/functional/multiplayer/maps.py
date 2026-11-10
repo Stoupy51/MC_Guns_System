@@ -32,9 +32,10 @@ execute unless data storage {ns}:maps multiplayer[{{id:"highrise"}}] run data mo
 	write_versioned_function("maps/multiplayer/hijacked/respawn", "# Hijacked map respawn")
 
 	# Each script guards on the map, then delegates; registered to the shared function tags.
+	# Any state but lobby: stop runs the leave script from the kill cam's "ended" state.
 	guard_mp_hijacked: str = (
 		f'execute if data storage {ns}:temp _base{{mode:"multiplayer"}}'
-		f' if data storage {ns}:multiplayer game{{state:"active"}}'
+		f' unless data storage {ns}:multiplayer game{{state:"lobby"}}'
 		f' if data storage {ns}:multiplayer game{{map_id:"hijacked"}}'
 	)
 	for script in ["start", "tick", "join", "leave", "respawn"]:

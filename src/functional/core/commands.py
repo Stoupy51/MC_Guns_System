@@ -7,7 +7,7 @@ MAP_ENTRIES: dict[str, tuple[str, ...]] = {
 	"zombies": ("start", "preload_complete", "end_prep", "game_tick", "freeze_tick", "join_game", "respawn_tp", "stop"),
 	"multiplayer": (
 		"start", "end_prep", "prep_tick", "game_tick", "join_game", "respawn_tp", "actual_respawn",
-		"gamemodes/demo/start_round", "gamemodes/snd/start_round", "stop",
+		"gamemodes/demo/start_round", "gamemodes/snd/start_round", "kill_cam/tick", "stop",
 	),
 	"missions": ("start", "preload_complete", "end_prep", "prep_tick", "game_tick", "join_game", "respawn_tp", "actual_respawn", "stop"),
 }

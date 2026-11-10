@@ -28,12 +28,23 @@ def write_multiplayer_stop() -> None:
 	)
 
 	## Run by every win path once it has announced. A win path can run inside the kill signal, halfway through the victim's simulate_death,
-	## so stop waits for the next game_tick: the deciding kill pays its XP and its victim is reset with everyone else.
+	## so multiplayer/end waits for the next game_tick: the deciding kill pays its XP and its victim is reset with everyone else.
 	write_versioned_function("multiplayer/request_end", f"""
 scoreboard players operation #mp_end_tick {ns}.data = #total_tick {ns}.data
+
+# Inside a kill, the death logged next is the final kill (see kill_cam/on_death).
+execute if entity @a[tag={ns}.temp_victim] run scoreboard players set #kc_final {ns}.data 1
+""")
+
+	## Run by game_tick once an end is requested: the kill cam when a player kill ended the match, then stop.
+	write_versioned_function("multiplayer/end", f"""
+data modify storage {ns}:multiplayer game.state set value "ended"
+execute unless function {ns}:v{version}/multiplayer/kill_cam/start run function {ns}:v{version}/multiplayer/stop
 """)
 
 	write_versioned_function("multiplayer/stop", f"""
+function {ns}:v{version}/multiplayer/kill_cam/cleanup
+
 # Map scripts only run during a match, so the leave script comes before the lobby state.
 execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"multiplayer",script:"leave"}}
 

@@ -71,6 +71,9 @@ execute unless entity @e[tag={ns}.snd_loose_at] at @e[tag={ns}.spawn_point,limit
 
 # Last, once everyone is tagged and placed: until then the tick judges nothing, so the gap is never read as a wipe.
 scoreboard players set #snd_round_active {ns}.data 1
+
+# A round that can end the match is recorded whole.
+function {ns}:v{version}/multiplayer/kill_cam/check_window
 """)
 
 		variant.sub("attackers_win", f"""
@@ -114,6 +117,9 @@ tag @a remove {ns}.snd_alive
 # Threshold set in setup, also read by the sidebar.
 execute if score #red {ns}.mp.team >= #snd_win_threshold {ns}.data run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Red"}}
 execute if score #blue {ns}.mp.team >= #snd_win_threshold {ns}.data run return run function {ns}:v{version}/multiplayer/team_wins {{team:"Blue"}}
+
+# The match goes on, so this round's recording can never be replayed.
+function {ns}:v{version}/multiplayer/kill_cam/close
 
 # Sides swap at halftime.
 scoreboard players add #snd_round {ns}.data 1

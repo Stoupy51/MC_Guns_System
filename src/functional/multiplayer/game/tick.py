@@ -17,11 +17,15 @@ def write_multiplayer_tick() -> None:
 	write_tick_file(f"""
 execute if data storage {ns}:multiplayer game{{state:"active"}} run function {ns}:v{version}/multiplayer/game_tick
 execute if data storage {ns}:multiplayer game{{state:"preparing"}} run function {ns}:v{version}/multiplayer/prep_tick
+execute if data storage {ns}:multiplayer game{{state:"ended"}} run function {ns}:v{version}/multiplayer/kill_cam/tick
 """)
 
 	write_versioned_function("multiplayer/game_tick", f"""
+# Ahead of the end, so the deciding tick has its frame.
+execute if score #kc_window {ns}.data matches 1 run function {ns}:v{version}/multiplayer/kill_cam/record
+
 # A win path requested the end (see multiplayer/request_end).
-execute if score #mp_end_tick {ns}.data matches 1.. run return run function {ns}:v{version}/multiplayer/stop
+execute if score #mp_end_tick {ns}.data matches 1.. run return run function {ns}:v{version}/multiplayer/end
 
 # The XP bar is the progression HUD, so a stray orb would show a level nobody earned; tick_player re-asserts the bar every second.
 kill @e[type=experience_orb]

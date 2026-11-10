@@ -68,6 +68,9 @@ class TitleTimes:
 	FREEZE: TitleTiming = TitleTiming(fade_in=5, stay=60, fade_out=10, note=(
 		"The admin freeze overlay, re-sent while the freeze holds."
 	))
+	KILL_CAM: TitleTiming = TitleTiming(fade_in=5, stay=30, fade_out=10, note=(
+		"KILLCAM and the killer's name over the replay's opening hold, fading out once the scene starts to move."
+	))
 	BANNER: TitleTiming = TitleTiming(fade_in=10, stay=80, fade_out=20, note=(
 		"End of a game. The only place a long stay is right: there is nothing left to look at behind it."
 	))

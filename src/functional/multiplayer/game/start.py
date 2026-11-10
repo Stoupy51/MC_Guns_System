@@ -15,6 +15,7 @@ def write_multiplayer_start() -> None:
 	## A map must be loaded first.
 	write_versioned_function("multiplayer/start", f"""
 {GameLifecycle.game_start_guards(ns, "multiplayer", "Game")}
+execute if data storage {ns}:multiplayer game{{state:"ended"}} run return run tellraw @s [{MGS_TAG},{{"text":"Game already in progress!","color":"red"}}]
 
 # Players join a side through Manage Players or + Join.
 execute unless entity @a[scores={{{ns}.mp.in_game=1}}] run return run tellraw @s [{MGS_TAG},{{"text":"No players have joined a team. Use Manage Players first.","color":"red"}}]
