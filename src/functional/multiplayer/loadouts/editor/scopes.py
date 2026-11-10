@@ -95,3 +95,4 @@ def override_lines(ns: str) -> str:
 		for item, name in SCOPE_NAME_OVERRIDES.items()
 		for gun, suffix in [item.rsplit("_", 1)]
 	)
+
