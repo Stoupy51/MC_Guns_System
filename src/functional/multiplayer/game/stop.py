@@ -51,16 +51,6 @@ execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/
 data modify storage {ns}:multiplayer game.state set value "lobby"
 scoreboard players set #mp_end_tick {ns}.data 0
 schedule clear {ns}:v{version}/multiplayer/end_prep
-execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:movement_speed base reset
-execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:jump_strength base reset
-execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base reset
-effect clear @a[scores={{{ns}.mp.in_game=1}}] darkness
-effect clear @a[scores={{{ns}.mp.in_game=1}}] blindness
-effect clear @a[scores={{{ns}.mp.in_game=1}}] night_vision
-gamemode adventure @a[scores={{{ns}.mp.in_game=1}},gamemode=spectator]
-
-# The deciding kill's victim still shows its respawn countdown.
-title @a[scores={{{ns}.mp.in_game=1}}] clear
 
 # Mode cleanup before the multiplayer_entity sweep: S&D restores its sites with `execute at @e[tag=snd_obj] run fill`,
 # which needs the markers to still exist.
@@ -74,7 +64,7 @@ function #{ns}:multiplayer/on_game_end
 tellraw @a[scores={{{ns}.mp.in_game=1}}] ["","⚔ ",[{{"text":"","color":"gold","bold":true}},{{"text":"Game Over"}},"! "]]
 execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} run tellraw @a[scores={{{ns}.mp.in_game=1}}] ["",{{"text":"Red","color":"red"}},{{"text":": "}},{{"score":{{"name":"#red","objective":"{ns}.mp.team"}}}}," | ",{{"text":"Blue","color":"blue"}},{{"text":": "}},{{"score":{{"name":"#blue","objective":"{ns}.mp.team"}}}}]
 
-# Best first; the bare selector shows the team colour, which still applies before the team leave below.
+# Best first; the bare selector shows the team colour, which still applies until reset_player below.
 {mp_ranked_stats}
 
 scoreboard objectives setdisplay sidebar.team.red
@@ -82,14 +72,33 @@ scoreboard objectives setdisplay sidebar.team.blue
 scoreboard objectives setdisplay sidebar.team.gold
 scoreboard objectives remove {ns}.sidebar
 scoreboard objectives setdisplay list
-team leave @a[scores={{{ns}.mp.in_game=1}}]
 
-execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/lobby/return
-
-scoreboard players set @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.team 0
-scoreboard players set @a[scores={{{ns}.mp.in_game=1}}] {ns}.mp.spectate_timer 0
-scoreboard players set @a {ns}.mp.in_game 0
+execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/multiplayer/reset_player
 scoreboard players set #mp_has_boundary {ns}.data 0
-tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
+""")
+
+	## Run as each match player by stop, and at login for one who left as a spectator (dead, or watching the kill cam) and missed it.
+	write_versioned_function("multiplayer/reset_player", f"""
+attribute @s minecraft:movement_speed base reset
+attribute @s minecraft:jump_strength base reset
+attribute @s minecraft:waypoint_receive_range base reset
+effect clear @s darkness
+effect clear @s blindness
+effect clear @s night_vision
+gamemode adventure @s[gamemode=spectator]
+
+# The deciding kill's victim still shows its respawn countdown.
+title @s clear
+
+team leave @s
+function {ns}:v{version}/lobby/return
+scoreboard players set @s {ns}.mp.team 0
+scoreboard players set @s {ns}.mp.spectate_timer 0
+scoreboard players set @s {ns}.mp.in_game 0
+tag @s remove {ns}.give_class_menu
+tag @s remove {ns}.kc_viewer
+""")
+	write_versioned_function("stats/login", f"""
+execute if entity @s[gamemode=spectator,scores={{{ns}.mp.in_game=1}}] if data storage {ns}:multiplayer game{{state:"lobby"}} run function {ns}:v{version}/multiplayer/reset_player
 """)
 
