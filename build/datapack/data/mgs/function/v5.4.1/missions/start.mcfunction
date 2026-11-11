@@ -48,7 +48,7 @@ tag @a[scores={mgs.mi.in_game=1}] add mgs.give_class_menu
 # Baseline for the per-mission kill count.
 execute as @a[scores={mgs.mi.in_game=1}] run scoreboard players operation @s mgs.mi.kill_base = @s mgs.mi.kill_total
 
-gamemode spectator @a[scores={mgs.mi.in_game=1}]
+execute as @a[scores={mgs.mi.in_game=1}] run gamemode spectator @s
 gamerule immediate_respawn true
 gamerule keep_inventory true
 

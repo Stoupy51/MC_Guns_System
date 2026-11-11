@@ -75,7 +75,7 @@ scoreboard players set @a[scores={mgs.zb.in_game=1}] mgs.stam_seen 0
 # Post effects live in player NBT, so a round that ended badly could still apply them.
 execute as @a[scores={mgs.zb.in_game=1}] run function mgs:v5.4.1/player/fx_reset
 
-gamemode spectator @a[scores={mgs.zb.in_game=1}]
+execute as @a[scores={mgs.zb.in_game=1}] run gamemode spectator @s
 gamerule immediate_respawn true
 gamerule keep_inventory true
 gamerule max_entity_cramming 96

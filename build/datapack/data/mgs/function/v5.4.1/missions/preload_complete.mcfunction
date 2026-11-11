@@ -9,7 +9,7 @@ execute unless score #in_missions_map mgs.data matches 1 run return run function
 
 execute unless data storage mgs:missions game{state:"preparing"} run return fail
 
-gamemode adventure @a[scores={mgs.mi.in_game=1}]
+execute as @a[scores={mgs.mi.in_game=1}] run gamemode adventure @s
 
 function mgs:v5.4.1/shared/summon_oob {mode:"missions"}
 

@@ -41,7 +41,7 @@ execute if score #demo_attackers mgs.data matches 2 run tag @a[scores={mgs.mp.in
 
 # Spectators are pulled out and their countdown cleared, so a death from the last round cannot respawn them mid-round.
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator] run spectate @s
-gamemode adventure @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator]
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator] run gamemode adventure @s
 scoreboard players set @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2}] mgs.mp.spectate_timer 0
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"red"}
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=2}] at @s run function mgs:v5.4.1/multiplayer/pick_spawn {type:"blue"}

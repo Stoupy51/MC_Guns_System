@@ -29,7 +29,7 @@ scoreboard players set #mp_timer mgs.data 3000
 
 # S&D deaths skip the respawn countdown.
 execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator] run spectate @s
-gamemode adventure @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator]
+execute as @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=spectator] run gamemode adventure @s
 
 tag @a[scores={mgs.mp.in_game=1,mgs.mp.team=1..2},gamemode=!spectator] add mgs.snd_alive
 

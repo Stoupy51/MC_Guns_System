@@ -9,7 +9,7 @@ execute unless score #in_zombies_map mgs.data matches 1 run return run function 
 
 execute unless data storage mgs:zombies game{state:"preparing"} run return fail
 
-gamemode adventure @a[scores={mgs.zb.in_game=1}]
+execute as @a[scores={mgs.zb.in_game=1}] run gamemode adventure @s
 
 execute if data storage mgs:zombies game.map.out_of_bounds run function mgs:v5.4.1/shared/summon_oob {mode:"zombies"}
 

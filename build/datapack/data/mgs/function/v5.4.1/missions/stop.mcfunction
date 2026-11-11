@@ -15,7 +15,7 @@ execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:jump_strengt
 effect clear @a[scores={mgs.mi.in_game=1}] darkness
 effect clear @a[scores={mgs.mi.in_game=1}] blindness
 effect clear @a[scores={mgs.mi.in_game=1}] night_vision
-gamemode adventure @a[scores={mgs.mi.in_game=1},gamemode=spectator]
+execute as @a[scores={mgs.mi.in_game=1},gamemode=spectator] run gamemode adventure @s
 clear @a[scores={mgs.mi.in_game=1}] compass[custom_data~{mgs:{compass:true}}]
 
 kill @e[tag=mgs.mission_enemy]
