@@ -15,9 +15,16 @@ from dataclasses import dataclass
 
 from beet import FragmentShader, Texture
 from PIL import Image
-from stewbeet import JsonDict, Mem, write_load_file, write_versioned_function
-
-from .common import HEADER, SCREENQUAD, timed_effect, uniform
+from stewbeet import (
+	POST_SHADER_HEADER,
+	SCREENQUAD_VERTEX_SHADER,
+	JsonDict,
+	Mem,
+	post_uniform,
+	timed_post_effect,
+	write_load_file,
+	write_versioned_function,
+)
 
 # Constants
 IN_TICKS: float = 7.0
@@ -113,7 +120,7 @@ ivec2 lens_origin(ivec2 inSize) {{
 """
 """ Shared by the two passes that locate the markers, so they agree on where each block lies. """
 
-LENS_BLOCKS_FSH: str = HEADER + LENS_SEARCH_GLSL + """
+LENS_BLOCKS_FSH: str = POST_SHADER_HEADER + LENS_SEARCH_GLSL + """
 uniform sampler2D InSampler;
 
 layout(location = 0) in vec2 texCoord;
@@ -144,7 +151,7 @@ void main() {
 }
 """
 
-LENS_CENTRE_FSH: str = HEADER + LENS_SEARCH_GLSL + """
+LENS_CENTRE_FSH: str = POST_SHADER_HEADER + LENS_SEARCH_GLSL + """
 uniform sampler2D BlocksSampler;
 uniform sampler2D PreviousSampler;
 uniform sampler2D InSampler;
@@ -178,7 +185,7 @@ void main() {
 }
 """
 
-IRON_FSH: str = HEADER + """
+IRON_FSH: str = POST_SHADER_HEADER + """
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
 
@@ -194,13 +201,13 @@ layout(location = 0) in vec2 texCoord;
 layout(location = 0) out vec4 fragColor;
 
 void main() {
-    float magnify = mix(Magnify.x, Magnify.y, mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
+    float magnify = mix(Magnify.x, Magnify.y, clock_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
     fragColor = texture(InSampler, mix(texCoord, vec2(0.5), magnify));
 }
 """
 """ Iron sights: the centre-only pull, with no marker to look for. """
 
-SIGHT_FSH: str = HEADER + f"""
+SIGHT_FSH: str = POST_SHADER_HEADER + f"""
 #define MARKER_SPAN {(MARKER_TEXELS - 1 - 2 * MARKER_INSET) / MARKER_TEXELS}
 #define MARKER_TEXELS {MARKER_TEXELS}.0
 #define VIGNETTE_START {VIGNETTE_START}
@@ -283,8 +290,8 @@ vec4 reticle_at(vec2 uv, vec2 footprint) {
 
 void main() {
     vec4 clock = texture(ClockSampler, vec2(0.5));
-    float magnify = mix(Magnify.x, Magnify.y, mgs_ramp(clock, GameTime, Duration));
-    float lensAlpha = mix(LensAlpha.x, LensAlpha.y, smoothstep(LensTicks.x, LensTicks.y, mgs_elapsed(clock, GameTime)));
+    float magnify = mix(Magnify.x, Magnify.y, clock_ramp(clock, GameTime, Duration));
+    float lensAlpha = mix(LensAlpha.x, LensAlpha.y, smoothstep(LensTicks.x, LensTicks.y, clock_elapsed(clock, GameTime)));
 
     vec2 inSize = vec2(textureSize(InSampler, 0));
     vec2 source = mix(texCoord, vec2(0.5), magnify);
@@ -416,13 +423,12 @@ def resolve_model(ns: str, data: JsonDict) -> tuple[dict[str, str], list[JsonDic
 def register_iron(ns: str, fading_out: bool) -> None:
 	""" Register one direction of the iron sights zoom, the ramp running forwards or in reverse. """
 	magnify: float = SCOPE_LEVELS[2].magnify
-	timed_effect(
-		ns,
+	timed_post_effect(
 		f"zoom_iron{'_out' if fading_out else ''}",
 		f"{ns}:post/zoom",
 		{"IronConfig": [
-			uniform("Magnify", "vec2", [magnify, 0.0] if fading_out else [0.0, magnify]),
-			uniform("Duration", "float", OUT_TICKS if fading_out else IN_TICKS),
+			post_uniform("Magnify", "vec2", [magnify, 0.0] if fading_out else [0.0, magnify]),
+			post_uniform("Duration", "float", OUT_TICKS if fading_out else IN_TICKS),
 		]},
 	)
 
@@ -437,19 +443,18 @@ def register_sight(ns: str, sight: Sight, fading_out: bool) -> None:
 	reticle.putalpha(reticle.getchannel("A").point([alpha if alpha >= CUTOUT_ALPHA else 0 for alpha in range(256)]))
 	Mem.ctx.assets[ns].textures[f"effect/reticle/{sight.name}"] = Texture(reticle)
 
-	timed_effect(
-		ns,
+	timed_post_effect(
 		f"zoom_{sight.name}{'_out' if fading_out else ''}",
 		f"{ns}:post/sight",
 		{"SightConfig": [
-			uniform("Magnify", "vec2", [scope.magnify, 0.0] if fading_out else [0.0, scope.magnify]),
-			uniform("LensAlpha", "vec2", [1.0, 0.0] if fading_out else [0.0, 1.0]),
-			uniform("Lens", "vec4", [float(scope.level), scope.lens_radius, DISTORTION, 0.0]),
-			uniform("LensTicks", "vec2", LENS_OUT_TICKS if fading_out else LENS_IN_TICKS),
-			uniform("Duration", "float", OUT_TICKS if fading_out else IN_TICKS),
-			uniform("ReticleScale", "float", sight.reticle_scale),
-			uniform("ReticleAlpha", "float", 0.0 if fading_out else 1.0),
-			uniform("RestSide", "float", sight.rest_side),
+			post_uniform("Magnify", "vec2", [scope.magnify, 0.0] if fading_out else [0.0, scope.magnify]),
+			post_uniform("LensAlpha", "vec2", [1.0, 0.0] if fading_out else [0.0, 1.0]),
+			post_uniform("Lens", "vec4", [float(scope.level), scope.lens_radius, DISTORTION, 0.0]),
+			post_uniform("LensTicks", "vec2", LENS_OUT_TICKS if fading_out else LENS_IN_TICKS),
+			post_uniform("Duration", "float", OUT_TICKS if fading_out else IN_TICKS),
+			post_uniform("ReticleScale", "float", sight.reticle_scale),
+			post_uniform("ReticleAlpha", "float", 0.0 if fading_out else 1.0),
+			post_uniform("RestSide", "float", sight.rest_side),
 		]},
 		inputs=[
 			{"sampler_name": "Lens", "target": "lens_next"},
@@ -458,13 +463,13 @@ def register_sight(ns: str, sight: Sight, fading_out: bool) -> None:
 		],
 		pre_passes=[
 			{
-				"vertex_shader": SCREENQUAD,
+				"vertex_shader": SCREENQUAD_VERTEX_SHADER,
 				"fragment_shader": f"{ns}:post/lens_blocks",
 				"inputs": [{"sampler_name": "In", "target": "minecraft:main"}],
 				"output": "lens_blocks",
 			},
 			{
-				"vertex_shader": SCREENQUAD,
+				"vertex_shader": SCREENQUAD_VERTEX_SHADER,
 				"fragment_shader": f"{ns}:post/lens_centre",
 				"inputs": [
 					{"sampler_name": "Blocks", "target": "lens_blocks"},
@@ -474,7 +479,7 @@ def register_sight(ns: str, sight: Sight, fading_out: bool) -> None:
 				"output": "lens_next",
 			},
 			{
-				"vertex_shader": SCREENQUAD,
+				"vertex_shader": SCREENQUAD_VERTEX_SHADER,
 				"fragment_shader": f"{ns}:post/copy",
 				"inputs": [{"sampler_name": "In", "target": "lens_next"}],
 				"output": "lens",

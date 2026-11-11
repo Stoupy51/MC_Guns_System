@@ -8,9 +8,7 @@ Healing waits for the bar to settle, so a fast regeneration crossing both thresh
 from dataclasses import dataclass
 
 from beet import FragmentShader
-from stewbeet import Mem, write_versioned_function
-
-from .common import HEADER, timed_effect, uniform
+from stewbeet import POST_SHADER_HEADER, Mem, post_uniform, timed_post_effect, write_versioned_function
 
 # Constants
 RISE_TICKS: float = 5.0
@@ -63,7 +61,7 @@ LEVELS: range = range(len(HURT_TIERS) + 1)
 TRANSITIONS: list[tuple[int, int]] = [(start, end) for start in LEVELS for end in LEVELS if (start, end) != (0, 0)]
 """ Every applied id as (from level, to level). A same-level pair holds that look. """
 
-HURT_FSH: str = HEADER + """
+HURT_FSH: str = POST_SHADER_HEADER + """
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
 
@@ -108,7 +106,7 @@ float fbm(vec2 p) {
 }
 
 void main() {
-    float t = mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration);
+    float t = clock_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration);
     vec4 tint = mix(TintFrom, TintTo, t);
     vec2 shape = mix(Shape.xy, Shape.zw, t);
     float aberration = mix(PulseAberration.z, PulseAberration.w, t);
@@ -166,16 +164,15 @@ def register_transition(ns: str, start: int, end: int) -> None:
 	source: HurtLook = look_of(start, end)
 	target: HurtLook = look_of(end, start)
 	duration: float = RISE_TICKS if end > start else float(FALL_TICKS) if end < start else 1.0
-	timed_effect(
-		ns,
+	timed_post_effect(
 		f"hurt_{start}_{end}",
 		f"{ns}:post/hurt",
 		{"HurtConfig": [
-			uniform("TintFrom", "vec4", source.tint),
-			uniform("TintTo", "vec4", target.tint),
-			uniform("Shape", "vec4", [*source.shape, *target.shape]),
-			uniform("PulseAberration", "vec4", [source.heartbeat, target.heartbeat, source.aberration, target.aberration]),
-			uniform("Duration", "float", duration),
+			post_uniform("TintFrom", "vec4", source.tint),
+			post_uniform("TintTo", "vec4", target.tint),
+			post_uniform("Shape", "vec4", [*source.shape, *target.shape]),
+			post_uniform("PulseAberration", "vec4", [source.heartbeat, target.heartbeat, source.aberration, target.aberration]),
+			post_uniform("Duration", "float", duration),
 		]},
 	)
 

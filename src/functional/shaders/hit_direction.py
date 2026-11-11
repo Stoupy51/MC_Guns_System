@@ -5,9 +5,7 @@ Two hits one after the other swap between the two slots, so a new hit is always 
 """
 # Imports
 from beet import FragmentShader
-from stewbeet import Mem, write_versioned_function
-
-from .common import HEADER, timed_effect, uniform
+from stewbeet import POST_SHADER_HEADER, Mem, post_uniform, timed_post_effect, write_versioned_function
 
 # Constants
 SECTORS: int = 36
@@ -29,7 +27,7 @@ ARC_RADIUS: float = 0.14
 ARC_WIDTH: float = 0.014
 """ Outer ring radius and thickness, as fractions of the screen height: the HUD scale is not exposed to post shaders. """
 
-HIT_FSH: str = HEADER + """
+HIT_FSH: str = POST_SHADER_HEADER + """
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
 
@@ -53,7 +51,7 @@ layout(location = 0) out vec4 fragColor;
 void main() {
     fragColor = texture(InSampler, texCoord);
 
-    float life = clamp((FADE_END - mgs_elapsed(texture(ClockSampler, vec2(0.5)), GameTime)) / (FADE_END - FULL), 0.0, 1.0);
+    float life = clamp((FADE_END - clock_elapsed(texture(ClockSampler, vec2(0.5)), GameTime)) / (FADE_END - FULL), 0.0, 1.0);
     if (life <= 0.0) return;
 
     vec2 inSize = vec2(textureSize(InSampler, 0));
@@ -80,8 +78,8 @@ def main() -> None:
 	Mem.ctx.assets[ns].fragment_shaders["post/hit_direction"] = FragmentShader(HIT_FSH)
 	for sector in range(SECTORS):
 		for slot in (0, 1):
-			timed_effect(ns, f"hit_dir_{sector}_{slot}", f"{ns}:post/hit_direction", {
-				"HitConfig": [uniform("Direction", "float", 360.0 / SECTORS * sector)],
+			timed_post_effect(f"hit_dir_{sector}_{slot}", f"{ns}:post/hit_direction", {
+				"HitConfig": [post_uniform("Direction", "float", 360.0 / SECTORS * sector)],
 			})
 	write_functions(ns)
 

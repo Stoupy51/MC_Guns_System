@@ -7,9 +7,7 @@ Spread cannot be passed as a parameter, so every from-to pair of the states gets
 # Imports
 from beet import FragmentShader, Texture
 from PIL import Image
-from stewbeet import Mem, write_versioned_function
-
-from .common import HEADER, timed_effect, uniform
+from stewbeet import POST_SHADER_HEADER, Mem, post_uniform, timed_post_effect, write_versioned_function
 
 # Constants
 SPREAD_LEVELS: int = 6
@@ -18,7 +16,7 @@ SPREAD_LEVELS: int = 6
 DURATION: float = 4.0
 """ Ticks a spread transition takes. A change arriving mid-ramp restarts from the previous end. """
 
-CROSSHAIR_FSH: str = HEADER + """
+CROSSHAIR_FSH: str = POST_SHADER_HEADER + """
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
 
@@ -52,7 +50,7 @@ void main() {
     }
 
     float start = Spread.x > 4.5 ? Spread.y : Spread.x;
-    float spread = mix(start, Spread.y, mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
+    float spread = mix(start, Spread.y, clock_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
 
     int gap = int(round((1.5 + spread * 2.0) * guiScale));
     int armEnd = gap + int(round(3.0 * guiScale));
@@ -83,13 +81,12 @@ def main() -> None:
 
 	for start in range(SPREAD_LEVELS):
 		for end in range(SPREAD_LEVELS):
-			timed_effect(
-				ns,
+			timed_post_effect(
 				f"crosshair_{start}_{end}",
 				f"{ns}:post/crosshair",
 				{"CrosshairConfig": [
-					uniform("Spread", "vec2", [float(start), float(end)]),
-					uniform("Duration", "float", DURATION),
+					post_uniform("Spread", "vec2", [float(start), float(end)]),
+					post_uniform("Duration", "float", DURATION),
 				]},
 			)
 	write_functions(ns)

@@ -9,9 +9,7 @@ new burst is always a brand new chain with a fresh clock.
 from dataclasses import dataclass
 
 from beet import FragmentShader, Texture
-from stewbeet import JsonDict, McFunction, Mem, write_versioned_function
-
-from .common import HEADER, timed_effect, uniform
+from stewbeet import POST_SHADER_HEADER, JsonDict, McFunction, Mem, post_uniform, timed_post_effect, write_versioned_function
 
 # Constants
 FULL_TICKS: float = 1.0
@@ -62,7 +60,7 @@ FLASH_VARIANTS: list[FlashVariant] = [
 FLASH_IDS: list[str] = [f"flash{variant.suffix}_{slot}" for variant in FLASH_VARIANTS for slot in (0, 1)]
 """ Every applied id. `{ns}.flash_id` stores an index into this list plus one, 0 meaning none. """
 
-FLASH_FSH: str = HEADER + """
+FLASH_FSH: str = POST_SHADER_HEADER + """
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
 
@@ -101,7 +99,7 @@ void main() {
     vec4 clock = texture(ClockSampler, vec2(0.5));
     fragColor = texture(InSampler, texCoord);
 
-    float life = 1.0 - smoothstep(Timing.x, Timing.y, mgs_elapsed(clock, GameTime));
+    float life = 1.0 - smoothstep(Timing.x, Timing.y, clock_elapsed(clock, GameTime));
     if (life <= 0.0) return;
 
     // The held item is drawn before post effects, so without this the spark would sit on the gun.
@@ -135,7 +133,7 @@ void main() {
     vec2 lb = Spark.xy - Spark.zw / 2.0;
     vec2 ub = Spark.xy + Spark.zw / 2.0;
     if (screenCoord.x > lb.x && screenCoord.y > lb.y && screenCoord.x < ub.x && screenCoord.y < ub.y) {
-        float noise = fract(sin(mgs_unpack_time(clock.rgb) * 1237.0) * 43758.5453);
+        float noise = fract(sin(clock_unpack_time(clock.rgb) * 1237.0) * 43758.5453);
         int spriteIndex = int(floor(noise * 9.0));
         vec2 spriteOffset = vec2(spriteIndex % SPRITE_SQRT, spriteIndex / SPRITE_SQRT) / float(SPRITE_SQRT);
         vec4 sparkColor = texture(SparkSampler, (screenCoord - lb) / (Spark.zw * float(SPRITE_SQRT)) + spriteOffset);
@@ -149,7 +147,7 @@ void main() {
 }
 """
 
-HAND_DEPTH_FSH: str = HEADER + """
+HAND_DEPTH_FSH: str = POST_SHADER_HEADER + """
 uniform sampler2D InSampler;
 
 layout(location = 0) in vec2 texCoord;
@@ -192,14 +190,13 @@ def register_variants(ns: str) -> None:
 		tint: list[float] = [*PAP_TINT, 1.0] if variant.pap else [*FLASH_TINT, 0.0]
 		spark: list[float] = [0.0, -0.125, 0.6, 0.6] if variant.zoomed else [0.085, -0.11, 0.45, 0.45]
 		for slot in (0, 1):
-			timed_effect(
-				ns,
+			timed_post_effect(
 				f"flash{variant.suffix}_{slot}",
 				f"{ns}:post/flash",
 				{"FlashConfig": [
-					uniform("Color", "vec4", tint),
-					uniform("Spark", "vec4", spark),
-					uniform("Timing", "vec2", [FULL_TICKS, FADE_END_TICKS]),
+					post_uniform("Color", "vec4", tint),
+					post_uniform("Spark", "vec4", spark),
+					post_uniform("Timing", "vec2", [FULL_TICKS, FADE_END_TICKS]),
 				]},
 				inputs=inputs,
 			)

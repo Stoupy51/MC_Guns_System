@@ -2,7 +2,7 @@
 
 Every effect is a per-player id the datapack applies and removes.
 The server cannot pass a value to a shader, so each discrete state gets its own id with its parameters baked into the JSON.
-Each chain times itself from the activation edge (see [common.py](common.py)).
+Each chain times itself from the activation edge, with `timed_post_effect` of StewBeet.
 
 Nothing here overrides a core shader, so the pack depends neither on the particle pipeline nor on Fabulous graphics.
 Iris shaderpacks compose with all of it, since post effects run after the level is finished.
@@ -15,10 +15,9 @@ Known limits:
 """
 # Imports
 from beet import FragmentShader
-from stewbeet import Mem, write_load_file, write_tick_file, write_versioned_function
+from stewbeet import POST_SHADER_HEADER, Mem, timed_post_effect, write_load_file, write_tick_file, write_versioned_function
 
 from . import crosshair, flash, hit_direction, hurt, zoom
-from .common import HEADER, register_common, timed_effect
 
 # Constants
 FX_SCORES: list[str] = [
@@ -30,7 +29,7 @@ FX_SCORES: list[str] = [
 ]
 """ Which post effect each player currently has, mirrored as scores so ids can be taken off again. """
 
-DEBUG_FSH: str = HEADER + """
+DEBUG_FSH: str = POST_SHADER_HEADER + """
 #include <minecraft:globals.glsl>
 #include <mgs:clock.glsl>
 
@@ -47,7 +46,7 @@ void main() {
     // Bottom strip (texCoord.y grows upward): red if the clock never armed, green while running, blue once settled.
     // Its width is the elapsed time, one tenth of the screen per tick, so a stuck clock is obvious at a glance.
     if (texCoord.y < 0.03) {
-        float ticks = mgs_elapsed(clock, GameTime);
+        float ticks = clock_elapsed(clock, GameTime);
         fragColor = clock.a < 0.25 ? vec4(1.0, 0.0, 0.0, 1.0) : clock.a > 0.75 ? vec4(0.0, 0.0, 1.0, 1.0) : vec4(0.0, 1.0, 0.0, 1.0);
         if (texCoord.x > fract(ticks / 10.0)) fragColor = vec4(0.0, 0.0, 0.0, 1.0);
     }
@@ -55,7 +54,7 @@ void main() {
 """
 """ `/posteffect add @s mgs:debug_clock` checks the activation clock without launching a round. """
 
-DEBUG_DEPTH_FSH: str = HEADER + """
+DEBUG_DEPTH_FSH: str = POST_SHADER_HEADER + """
 uniform sampler2D ClockSampler;
 uniform sampler2D InSampler;
 uniform sampler2D DepthSampler;
@@ -81,11 +80,10 @@ def main() -> None:
 	""" Register every post effect and the per-tick hooks that keep the applied ids in sync. """
 	ns: str = Mem.ctx.project_id
 
-	register_common(ns)
 	Mem.ctx.assets[ns].fragment_shaders["post/debug_clock"] = FragmentShader(DEBUG_FSH)
-	timed_effect(ns, "debug_clock", f"{ns}:post/debug_clock", {})
+	timed_post_effect("debug_clock", f"{ns}:post/debug_clock", {})
 	Mem.ctx.assets[ns].fragment_shaders["post/debug_depth"] = FragmentShader(DEBUG_DEPTH_FSH)
-	timed_effect(ns, "debug_depth", f"{ns}:post/debug_depth", {}, inputs=[{"sampler_name": "Depth", "target": "minecraft:main", "use_depth_buffer": True}])
+	timed_post_effect("debug_depth", f"{ns}:post/debug_depth", {}, inputs=[{"sampler_name": "Depth", "target": "minecraft:main", "use_depth_buffer": True}])
 
 	flash.main()
 	zoom.main()
