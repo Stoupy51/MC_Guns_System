@@ -108,12 +108,13 @@ scoreboard players set #fx_sweep_period {ns}.data 40
 """)
 
 	# Post effects live in player NBT, so a round that ends badly would leave someone scoped for good.
-	# Every game start and stop runs this.
+	# Every game start and stop runs this. `posteffect clear` would also take off the ids another pack applied.
+	remove_ids: str = "\n".join(f"posteffect remove @s {ns}:{effect_id}" for effect_id in Mem.ctx.assets[ns].post_effects)
 	reset_scores: str = "\n".join(f"scoreboard players reset @s {ns}.{score}" for score in FX_SCORES)
 	write_versioned_function("player/fx_reset", f"""
 scoreboard players set #hurt_was {ns}.data 0
 execute if score @s {ns}.hurt_fx matches 1.. run scoreboard players operation #hurt_was {ns}.data = @s {ns}.hurt_fx
-posteffect clear @s
+{remove_ids}
 {reset_scores}
 
 # The red overlay fades out instead of vanishing
