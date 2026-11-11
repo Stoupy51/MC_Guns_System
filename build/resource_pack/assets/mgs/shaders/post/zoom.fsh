@@ -16,6 +16,6 @@ layout(location = 0) in vec2 texCoord;
 layout(location = 0) out vec4 fragColor;
 
 void main() {
-    float magnify = mix(Magnify.x, Magnify.y, mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
+    float magnify = mix(Magnify.x, Magnify.y, clock_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
     fragColor = texture(InSampler, mix(texCoord, vec2(0.5), magnify));
 }

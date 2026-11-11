@@ -39,7 +39,7 @@ void main() {
     vec4 clock = texture(ClockSampler, vec2(0.5));
     fragColor = texture(InSampler, texCoord);
 
-    float life = 1.0 - smoothstep(Timing.x, Timing.y, mgs_elapsed(clock, GameTime));
+    float life = 1.0 - smoothstep(Timing.x, Timing.y, clock_elapsed(clock, GameTime));
     if (life <= 0.0) return;
 
     // The held item is drawn before post effects, so without this the spark would sit on the gun.
@@ -73,7 +73,7 @@ void main() {
     vec2 lb = Spark.xy - Spark.zw / 2.0;
     vec2 ub = Spark.xy + Spark.zw / 2.0;
     if (screenCoord.x > lb.x && screenCoord.y > lb.y && screenCoord.x < ub.x && screenCoord.y < ub.y) {
-        float noise = fract(sin(mgs_unpack_time(clock.rgb) * 1237.0) * 43758.5453);
+        float noise = fract(sin(clock_unpack_time(clock.rgb) * 1237.0) * 43758.5453);
         int spriteIndex = int(floor(noise * 9.0));
         vec2 spriteOffset = vec2(spriteIndex % SPRITE_SQRT, spriteIndex / SPRITE_SQRT) / float(SPRITE_SQRT);
         vec4 sparkColor = texture(SparkSampler, (screenCoord - lb) / (Spark.zw * float(SPRITE_SQRT)) + spriteOffset);

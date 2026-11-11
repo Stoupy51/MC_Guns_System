@@ -17,7 +17,7 @@ void main() {
     // Bottom strip (texCoord.y grows upward): red if the clock never armed, green while running, blue once settled.
     // Its width is the elapsed time, one tenth of the screen per tick, so a stuck clock is obvious at a glance.
     if (texCoord.y < 0.03) {
-        float ticks = mgs_elapsed(clock, GameTime);
+        float ticks = clock_elapsed(clock, GameTime);
         fragColor = clock.a < 0.25 ? vec4(1.0, 0.0, 0.0, 1.0) : clock.a > 0.75 ? vec4(0.0, 0.0, 1.0, 1.0) : vec4(0.0, 1.0, 0.0, 1.0);
         if (texCoord.x > fract(ticks / 10.0)) fragColor = vec4(0.0, 0.0, 0.0, 1.0);
     }

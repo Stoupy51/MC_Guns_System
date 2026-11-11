@@ -45,7 +45,7 @@ float fbm(vec2 p) {
 }
 
 void main() {
-    float t = mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration);
+    float t = clock_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration);
     vec4 tint = mix(TintFrom, TintTo, t);
     vec2 shape = mix(Shape.xy, Shape.zw, t);
     float aberration = mix(PulseAberration.z, PulseAberration.w, t);

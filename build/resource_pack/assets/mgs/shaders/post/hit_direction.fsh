@@ -24,7 +24,7 @@ layout(location = 0) out vec4 fragColor;
 void main() {
     fragColor = texture(InSampler, texCoord);
 
-    float life = clamp((FADE_END - mgs_elapsed(texture(ClockSampler, vec2(0.5)), GameTime)) / (FADE_END - FULL), 0.0, 1.0);
+    float life = clamp((FADE_END - clock_elapsed(texture(ClockSampler, vec2(0.5)), GameTime)) / (FADE_END - FULL), 0.0, 1.0);
     if (life <= 0.0) return;
 
     vec2 inSize = vec2(textureSize(InSampler, 0));

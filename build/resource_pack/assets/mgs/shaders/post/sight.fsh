@@ -83,8 +83,8 @@ vec4 reticle_at(vec2 uv, vec2 footprint) {
 
 void main() {
     vec4 clock = texture(ClockSampler, vec2(0.5));
-    float magnify = mix(Magnify.x, Magnify.y, mgs_ramp(clock, GameTime, Duration));
-    float lensAlpha = mix(LensAlpha.x, LensAlpha.y, smoothstep(LensTicks.x, LensTicks.y, mgs_elapsed(clock, GameTime)));
+    float magnify = mix(Magnify.x, Magnify.y, clock_ramp(clock, GameTime, Duration));
+    float lensAlpha = mix(LensAlpha.x, LensAlpha.y, smoothstep(LensTicks.x, LensTicks.y, clock_elapsed(clock, GameTime)));
 
     vec2 inSize = vec2(textureSize(InSampler, 0));
     vec2 source = mix(texCoord, vec2(0.5), magnify);

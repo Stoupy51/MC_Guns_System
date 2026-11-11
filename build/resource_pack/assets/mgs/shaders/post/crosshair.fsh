@@ -34,7 +34,7 @@ void main() {
     }
 
     float start = Spread.x > 4.5 ? Spread.y : Spread.x;
-    float spread = mix(start, Spread.y, mgs_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
+    float spread = mix(start, Spread.y, clock_ramp(texture(ClockSampler, vec2(0.5)), GameTime, Duration));
 
     int gap = int(round((1.5 + spread * 2.0) * guiScale));
     int armEnd = gap + int(round(3.0 * guiScale));
