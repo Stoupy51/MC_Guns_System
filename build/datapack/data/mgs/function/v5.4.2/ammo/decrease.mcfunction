@@ -1,0 +1,19 @@
+
+#> mgs:v5.4.2/ammo/decrease
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/player/right_click
+#
+
+# Read by the mid-cooldown pump check.
+execute if data storage mgs:gun all.stats{fire_mode:"pump"} run tag @s add mgs.pump_sound
+
+# Infinite ammo refills to capacity and consumes nothing.
+execute if score @s mgs.special.infinite_ammo matches 1.. run return run function mgs:v5.4.2/ammo/infinite_refill
+
+scoreboard players remove @s mgs.remaining_bullets 1
+execute if score @s mgs.remaining_bullets matches ..0 run function mgs:v5.4.2/ammo/reload
+
+# Read by the mid-reload sound check.
+execute if data storage mgs:gun all.sounds.playermid run tag @s add mgs.reload_mid_sound
+

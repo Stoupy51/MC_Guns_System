@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.2/progression/adv/mi/completed/reward_5
+#
+# @executed	as the player & at current position
+#
+# @within	advancement mgs:challenges/mi/completed_5
+#			mgs:v5.4.2/dialog/close_then
+#
+
+function mgs:v5.4.2/progression/adv/reward_mp {title:'{"translate":"mgs.specialist","fallback":"Specialist","color":"yellow"}',description:'{"translate":"mgs.complete_20_missions","fallback":"Complete 20 missions","color":"gray"}',xp:75,branch:"mi",chain:"completed",tier:5}
+

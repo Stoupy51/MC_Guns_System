@@ -1,0 +1,12 @@
+
+#> mgs:v5.4.2/zombies/perks/electric_cherry_damage
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/zombies/perks/electric_cherry_shock with storage mgs:temp _ec
+#
+# @args		radius (unknown)
+#			scale (unknown)
+#
+
+$execute as @e[tag=mgs.zombie_round,distance=..$(radius)] run function mgs:v5.4.2/zombies/perks/electric_cherry_hit {scale:"$(scale)"}
+

@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.2/progression/adv/zb/pack_a_punch/reward_7
+#
+# @executed	as the player & at current position
+#
+# @within	advancement mgs:challenges/zb/pack_a_punch_7
+#			mgs:v5.4.2/dialog/close_then
+#
+
+function mgs:v5.4.2/progression/adv/reward_zb {title:'{"translate":"mgs.fully_packed","fallback":"Fully Packed","color":"yellow"}',description:'{"translate":"mgs.upgrade_50_weapons","fallback":"Upgrade 50 weapons","color":"gray"}',xp:160,branch:"zb",chain:"pack_a_punch",tier:7}
+

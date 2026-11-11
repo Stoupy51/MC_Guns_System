@@ -1,0 +1,20 @@
+
+#> mgs:v5.4.2/progression/mp/award_bomb_plant
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/multiplayer/gamemodes/snd/bomb_planted
+#			mgs:v5.4.2/multiplayer/gamemodes/demo/site_planted [ as @a[tag=mgs.xp_earner] ]
+#
+
+# S&D or Demolition plant, to whoever was channeling it
+scoreboard players add @s mgs.mp.xp_total 20
+scoreboard players add @s mgs.mp.xp_prog 20
+scoreboard players add @s mgs.mp.xp_session 20
+
+# Observers of this award
+scoreboard players add @s mgs.adv.mp.objectives 1
+function mgs:v5.4.2/progression/adv/mp/objectives/check
+function mgs:v5.4.2/progression/mp/settle
+
+scoreboard players add @s mgs.st.mp.plants 1
+

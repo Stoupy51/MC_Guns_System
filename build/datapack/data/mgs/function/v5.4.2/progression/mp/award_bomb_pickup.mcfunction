@@ -1,0 +1,13 @@
+
+#> mgs:v5.4.2/progression/mp/award_bomb_pickup
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/multiplayer/gamemodes/snd/try_pickup [ as @a[tag=mgs.xp_earner] ]
+#
+
+# Picking the S&D bomb up off the ground; small on purpose
+scoreboard players add @s mgs.mp.xp_total 2
+scoreboard players add @s mgs.mp.xp_prog 2
+scoreboard players add @s mgs.mp.xp_session 2
+function mgs:v5.4.2/progression/mp/settle
+

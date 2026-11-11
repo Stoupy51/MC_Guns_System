@@ -23,6 +23,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.4.1/progression/adv/mi/reward_flawless"
+		"function": "mgs:v5.4.2/progression/adv/mi/reward_flawless"
 	}
 }

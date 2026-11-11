@@ -1,0 +1,13 @@
+
+#> mgs:v5.4.2/zombies/monkey/on_throw
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/grenade/init
+#
+
+# Read by the attraction hook (grenade/tick) and by cleanup.
+tag @s add mgs.monkey_bomb
+
+# TODO: placeholder until the real toy-jingle .ogg exists.
+playsound minecraft:block.note_block.chime ambient @a[distance=..24] ~ ~ ~ 0.8 1.6
+

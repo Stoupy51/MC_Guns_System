@@ -1,0 +1,14 @@
+
+#> mgs:v5.4.2/shared/run_respawn_commands_iter
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/shared/run_respawn_commands [ at @s ]
+#			mgs:v5.4.2/shared/run_respawn_commands_iter [ at @s ]
+#
+
+data modify storage mgs:temp _respawn_cmd.command set from storage mgs:temp _respawn_cmd_iter[0].command
+
+function mgs:v5.4.2/shared/run_respawn_command with storage mgs:temp _respawn_cmd
+data remove storage mgs:temp _respawn_cmd_iter[0]
+execute if data storage mgs:temp _respawn_cmd_iter[0] at @s run function mgs:v5.4.2/shared/run_respawn_commands_iter
+

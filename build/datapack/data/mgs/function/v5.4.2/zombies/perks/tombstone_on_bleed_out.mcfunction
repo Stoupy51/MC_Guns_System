@@ -1,0 +1,11 @@
+
+#> mgs:v5.4.2/zombies/perks/tombstone_on_bleed_out
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/zombies/revive/stay_down
+#
+
+execute unless entity @e[tag=mgs.tombstone,predicate=mgs:v5.4.2/zombies/revive/downed_id_match] run return 0
+execute store result storage mgs:temp _ts_id.id int 1 run scoreboard players get @s mgs.zb.downed_id
+function mgs:v5.4.2/zombies/perks/tombstone_snapshot_inv with storage mgs:temp _ts_id
+

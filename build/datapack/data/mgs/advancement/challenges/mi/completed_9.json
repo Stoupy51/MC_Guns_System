@@ -23,6 +23,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.4.1/progression/adv/mi/completed/reward_9"
+		"function": "mgs:v5.4.2/progression/adv/mi/completed/reward_9"
 	}
 }

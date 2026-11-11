@@ -11,6 +11,9 @@
 		},
 		{
 			"path": "../../forks/beet"
+		},
+		{
+			"path": "../Cinemalya"
 		}
 	],
 	"settings": {

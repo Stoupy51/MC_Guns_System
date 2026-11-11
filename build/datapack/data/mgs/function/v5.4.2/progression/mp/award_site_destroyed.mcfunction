@@ -1,0 +1,17 @@
+
+#> mgs:v5.4.2/progression/mp/award_site_destroyed
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/multiplayer/gamemodes/demo/site_destroyed [ as @a[tag=mgs.xp_earner] ]
+#
+
+# A Demolition site actually going down, to the attackers in the blast
+scoreboard players add @s mgs.mp.xp_total 20
+scoreboard players add @s mgs.mp.xp_prog 20
+scoreboard players add @s mgs.mp.xp_session 20
+
+# Observers of this award
+scoreboard players add @s mgs.adv.mp.objectives 1
+function mgs:v5.4.2/progression/adv/mp/objectives/check
+function mgs:v5.4.2/progression/mp/settle
+

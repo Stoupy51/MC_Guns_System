@@ -1,0 +1,13 @@
+
+#> mgs:v5.4.2/maps/editor/dedupe/out_of_bounds
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/maps/editor/remove_duplicates [ at @s ]
+#
+
+execute if entity @s[tag=mgs.ed_dup] run return 0
+tag @s add mgs.ed_keep
+execute unless entity @e[type=minecraft:marker,tag=mgs.element.out_of_bounds,tag=!mgs.ed_keep,distance=..0.01] run return 0
+function mgs:v5.4.2/maps/editor/dedupe_read
+execute as @e[type=minecraft:marker,tag=mgs.element.out_of_bounds,tag=!mgs.ed_keep,distance=..0.01] run function mgs:v5.4.2/maps/editor/dedupe_same
+

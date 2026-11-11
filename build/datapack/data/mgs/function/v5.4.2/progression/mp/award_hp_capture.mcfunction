@@ -1,0 +1,20 @@
+
+#> mgs:v5.4.2/progression/mp/award_hp_capture
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/multiplayer/gamemodes/hp/score_tick [ as @a[tag=mgs.in_hp_zone,scores={mgs.mp.team=1,mgs.mp.in_game=1}] ]
+#			mgs:v5.4.2/multiplayer/gamemodes/hp/score_tick [ as @a[tag=mgs.in_hp_zone,scores={mgs.mp.team=2,mgs.mp.in_game=1}] ]
+#
+
+# First hold of a Hardpoint hill after it rotates
+scoreboard players add @s mgs.mp.xp_total 20
+scoreboard players add @s mgs.mp.xp_prog 20
+scoreboard players add @s mgs.mp.xp_session 20
+
+# Observers of this award
+scoreboard players add @s mgs.adv.mp.objectives 1
+function mgs:v5.4.2/progression/adv/mp/objectives/check
+function mgs:v5.4.2/progression/mp/settle
+
+scoreboard players add @s mgs.st.mp.captures 1
+

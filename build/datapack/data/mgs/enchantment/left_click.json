@@ -20,7 +20,7 @@
       {
         "effect": {
           "type": "run_function",
-          "function": "mgs:v5.4.1/weapon/left_click"
+          "function": "mgs:v5.4.2/weapon/left_click"
         }
       }
     ]

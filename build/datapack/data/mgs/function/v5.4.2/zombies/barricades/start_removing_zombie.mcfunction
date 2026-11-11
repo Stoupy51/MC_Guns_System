@@ -1,0 +1,12 @@
+
+#> mgs:v5.4.2/zombies/barricades/start_removing_zombie
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/zombies/barricades/find_remover
+#
+
+# Run as the zombie assigned as remover.
+tag @s add mgs.barricade_removing
+scoreboard players operation @s mgs.zb.barricade.removing_id = #barricade_id mgs.data
+scoreboard players set #barricade_found_remover mgs.data 1
+

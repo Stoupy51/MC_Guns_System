@@ -1,0 +1,20 @@
+
+#> mgs:v5.4.2/zombies/wallbuys/buy_knife
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/zombies/wallbuys/on_right_click with storage mgs:temp _wb_weapon
+#
+# @args		weapon_id (unknown)
+#
+
+$execute if items entity @s hotbar.0 *[custom_data~{mgs:{$(weapon_id):true}}] run return run function mgs:v5.4.2/zombies/deny/message {msg:'{"translate":"mgs.you_already_own_this_knife","fallback":"You already own this knife.","color":"yellow"}'}
+
+scoreboard players operation #wb_price mgs.data = #wb_buy_price mgs.data
+execute unless score @s mgs.zb.points >= #wb_price mgs.data run return run function mgs:v5.4.2/zombies/deny/not_enough_points {score:"#wb_price",obj:"mgs.data"}
+scoreboard players operation @s mgs.zb.points -= #wb_price mgs.data
+
+# Re-tagged for the zombies slot enforcement (inventory/check_slots).
+$loot replace entity @s hotbar.0 loot mgs:i/$(weapon_id)
+function mgs:v5.4.2/zombies/inventory/apply_slot_tag {slot:"hotbar.0",group:"hotbar",index:0}
+function mgs:v5.4.2/zombies/wallbuys/msg_purchased
+

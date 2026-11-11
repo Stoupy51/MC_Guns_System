@@ -1,0 +1,12 @@
+
+#> mgs:v5.4.2/mob/default/on_new_lv5
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:mob/default/level_5 {entity:"$(entity)"}
+#
+# @args		entity (string)
+#
+
+$function mgs:v5.4.2/mob/default/on_new {entity:"$(entity)",level:5,active_time:72000,sleep_time:0}
+tag @s add mgs.mob_lv5
+

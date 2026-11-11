@@ -23,6 +23,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.4.1/progression/adv/zb/reward_solo_run"
+		"function": "mgs:v5.4.2/progression/adv/zb/reward_solo_run"
 	}
 }

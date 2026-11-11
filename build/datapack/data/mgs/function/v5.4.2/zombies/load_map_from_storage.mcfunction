@@ -1,0 +1,12 @@
+
+#> mgs:v5.4.2/zombies/load_map_from_storage
+#
+# @within	mgs:v5.4.2/dialog/close_then
+#			mgs:v5.4.2/zombies/start with storage mgs:zombies game
+#
+# @args		map_id (unknown)
+#
+
+data remove storage mgs:temp map_load
+$execute store success score #map_load_found mgs.data run data modify storage mgs:temp map_load.result set from storage mgs:maps zombies[{id:"$(map_id)"}]
+

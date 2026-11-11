@@ -26,6 +26,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.4.1/progression/adv/mp/kills/reward_7"
+		"function": "mgs:v5.4.2/progression/adv/mp/kills/reward_7"
 	}
 }
