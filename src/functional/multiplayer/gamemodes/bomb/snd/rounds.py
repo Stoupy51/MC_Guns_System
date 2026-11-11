@@ -50,7 +50,7 @@ scoreboard players set #mp_timer {ns}.data {ROUND_TICKS}
 
 # S&D deaths skip the respawn countdown.
 execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator] run spectate @s
-gamemode adventure @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator]
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator] run gamemode adventure @s
 
 tag @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=!spectator] add {ns}.snd_alive
 

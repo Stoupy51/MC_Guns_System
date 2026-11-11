@@ -58,7 +58,7 @@ tag @e[tag={ns}.zb_frozen_ai] remove {ns}.zb_frozen_ai
 
 {GameLifecycle.regen_enable_lines(ns, f"@a[scores={{{ns}.zb.in_game=1}}]")}
 
-gamemode spectator @a[scores={{{ns}.zb.in_game=1}}]
+execute as @a[scores={{{ns}.zb.in_game=1}}] run gamemode spectator @s
 gamerule immediate_respawn true
 gamerule keep_inventory true
 gamerule max_entity_cramming 96
@@ -98,7 +98,7 @@ tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","b
 	write_versioned_function("zombies/preload_complete", f"""
 execute unless data storage {ns}:zombies game{{state:"preparing"}} run return fail
 
-gamemode adventure @a[scores={{{ns}.zb.in_game=1}}]
+execute as @a[scores={{{ns}.zb.in_game=1}}] run gamemode adventure @s
 
 execute if data storage {ns}:zombies game.map.out_of_bounds run function {ns}:v{version}/shared/summon_oob {{mode:"zombies"}}
 

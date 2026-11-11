@@ -44,7 +44,7 @@ execute unless data storage {ns}:multiplayer game{{gamemode:"ffa"}} as @a[scores
 
 tag @a[scores={{{ns}.mp.in_game=1}}] add {ns}.give_class_menu
 
-gamemode adventure @a[scores={{{ns}.mp.in_game=1}}]
+execute as @a[scores={{{ns}.mp.in_game=1}}] run gamemode adventure @s
 execute as @a[scores={{{ns}.mp.in_game=1}}] run attribute @s minecraft:waypoint_receive_range base set 0.0
 gamerule immediate_respawn true
 gamerule keep_inventory true

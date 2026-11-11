@@ -38,7 +38,7 @@ tag @a[scores={{{ns}.mi.in_game=1}}] add {ns}.give_class_menu
 # Baseline for the per-mission kill count.
 execute as @a[scores={{{ns}.mi.in_game=1}}] run scoreboard players operation @s {ns}.mi.kill_base = @s {ns}.mi.kill_total
 
-gamemode spectator @a[scores={{{ns}.mi.in_game=1}}]
+execute as @a[scores={{{ns}.mi.in_game=1}}] run gamemode spectator @s
 gamerule immediate_respawn true
 gamerule keep_inventory true
 
@@ -67,7 +67,7 @@ tellraw @a[scores={{{ns}.mi.in_game=1}}] ["",{{"text":"","color":"aqua","bold":t
 	write_versioned_function("missions/preload_complete", f"""
 execute unless data storage {ns}:missions game{{state:"preparing"}} run return fail
 
-gamemode adventure @a[scores={{{ns}.mi.in_game=1}}]
+execute as @a[scores={{{ns}.mi.in_game=1}}] run gamemode adventure @s
 
 function {ns}:v{version}/shared/summon_oob {{mode:"missions"}}
 

@@ -60,7 +60,7 @@ execute if score #demo_attackers {ns}.data matches 2 run tag @a[scores={{{ns}.mp
 
 # Spectators are pulled out and their countdown cleared, so a death from the last round cannot respawn them mid-round.
 execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator] run spectate @s
-gamemode adventure @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator]
+execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}},gamemode=spectator] run gamemode adventure @s
 scoreboard players set @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1..2}}] {ns}.mp.spectate_timer 0
 execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=1}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"red"}}
 execute as @a[scores={{{ns}.mp.in_game=1,{ns}.mp.team=2}}] at @s run function {ns}:v{version}/multiplayer/pick_spawn {{type:"blue"}}
