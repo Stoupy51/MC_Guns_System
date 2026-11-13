@@ -9,6 +9,7 @@
 #			mgs:v5.4.2/zombies/mystery_box/move_anim_transition
 #			mgs:v5.4.2/zombies/mystery_box/collect
 #			mgs:v5.4.2/zombies/mystery_box/reset_one
+#			mgs:v5.4.2/zombies/save/restore_box
 #
 
 execute as @e[tag=mgs.mystery_box_pos] at @s run function mgs:v5.4.2/zombies/mystery_box/sync_interaction_one

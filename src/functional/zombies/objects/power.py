@@ -64,22 +64,27 @@ tag @e[tag=_pw_new] remove _pw_new
 
 execute if score #zb_power {ns}.data matches 1 run return run {deny_already_on}
 
-scoreboard players set #zb_power {ns}.data 1
-tag @e[type=minecraft:marker,tag={ns}.spawn_point] add {ns}.spawn_powered
-
 execute as @e[tag={ns}.power_switch] at @s run particle minecraft:electric_spark ~ ~1 ~ 0.5 0.5 0.5 0.1 20
 execute as @e[tag={ns}.power_switch] at @s run playsound minecraft:entity.firework_rocket.twinkle_far ambient @a[scores={{{ns}.zb.in_game=1}}] ~ ~ ~ 2 1
+
+function {ns}:v{version}/zombies/power/turn_on
+
+# The whole roster earns it, so no earner split.
+tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Power is ON!","color":"green","bold":true}},{Xp.suffix("zb", "power")}]
+{Xp.give("zb", "power", f"@a[scores={{{ns}.zb.in_game=1}}]")}
+{ZombiesFeedback.zb_sound('power_on')}
+""")
+
+	## The silent half of on_activate, which a loaded save replays. The map's power script is map state, so it runs here.
+	write_versioned_function("zombies/power/turn_on", f"""
+scoreboard players set #zb_power {ns}.data 1
+tag @e[type=minecraft:marker,tag={ns}.spawn_point] add {ns}.spawn_powered
 
 # Displays switch to the lit model.
 execute as @e[tag={ns}.power_switch_disp] run data modify entity @s item.components."minecraft:item_model" set value "{ns}:power_switch_on"
 
 # One-time use: the interactions go, the displays stay.
 kill @e[tag={ns}.power_switch]
-
-# The whole roster earns it, so no earner split.
-tellraw @a[scores={{{ns}.zb.in_game=1}}] [{MGS_TAG},{{"text":"Power is ON!","color":"green","bold":true}},{Xp.suffix("zb", "power")}]
-{Xp.give("zb", "power", f"@a[scores={{{ns}.zb.in_game=1}}]")}
-{ZombiesFeedback.zb_sound('power_on')}
 
 function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"zombies",script:"power"}}
 """)

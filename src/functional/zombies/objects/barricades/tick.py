@@ -103,16 +103,20 @@ execute as @e[tag={ns}.barricade_removing] if score @s {ns}.zb.barricade.removin
 
 	write_versioned_function("zombies/barricades/destroy", f"""
 # Run as the barricade display: intact to destroyed.
-scoreboard players set @s {ns}.zb.barricade.state 1
-scoreboard players set @s {ns}.zb.barricade.r_timer 0
+function {ns}:v{version}/zombies/barricades/break
 
 execute as @e[tag={ns}.barricade_removing] if score @s {ns}.zb.barricade.removing_id = #barricade_id {ns}.data run tag @s remove {ns}.barricade_removing
-
-data modify entity @s block_state set from entity @s data.block_disabled
 
 particle minecraft:large_smoke ~ ~0.5 ~ 0.4 0.4 0.4 0.02 6
 particle minecraft:crit ~ ~0.5 ~ 0.4 0.4 0.4 0.05 8
 playsound {ns}:{SOUND_SNAP} block @a[distance=..32] ~ ~ ~ 1.0 1.0
+""")
+
+	## The silent half of destroy, which a loaded save replays.
+	write_versioned_function("zombies/barricades/break", f"""
+scoreboard players set @s {ns}.zb.barricade.state 1
+scoreboard players set @s {ns}.zb.barricade.r_timer 0
+data modify entity @s block_state set from entity @s data.block_disabled
 """)
 
 	write_versioned_function("zombies/barricades/destroyed_tick", f"""

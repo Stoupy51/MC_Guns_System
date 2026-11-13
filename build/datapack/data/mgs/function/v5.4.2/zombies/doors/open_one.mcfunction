@@ -3,6 +3,7 @@
 #
 # @within	mgs:v5.4.2/dialog/close_then
 #			mgs:v5.4.2/zombies/doors/on_right_click [ as @e[tag=mgs.door] & at @s ]
+#			mgs:v5.4.2/zombies/save/restore_door_open [ at @s ]
 #
 
 # Stored rotation and side-aware offset, so both interactions target the same door block.

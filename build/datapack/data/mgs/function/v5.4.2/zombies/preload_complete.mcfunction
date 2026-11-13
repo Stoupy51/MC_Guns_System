@@ -41,9 +41,9 @@ schedule function mgs:v5.4.2/zombies/end_prep 200t
 
 function mgs:v5.4.2/zombies/create_sidebar
 
-# Perk wording only for Zonweeb.
-execute if data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_10_seconds","fallback":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}]
-execute unless data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_round_1_starts_in_10_seconds","fallback":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}]
+# Perk wording only for Zonweeb. A loaded save announces its own round.
+execute unless data storage mgs:zombies_saves loading if data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_choose_your_perk_round_1_starts_in_10_seconds","fallback":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}]
+execute unless data storage mgs:zombies_saves loading unless data storage mgs:zombies game{variant:"zonweeb"} run tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.preparing_round_1_starts_in_10_seconds","fallback":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}]
 
 function mgs:v5.4.2/zombies/escort/setup_lure_center
 
@@ -66,4 +66,6 @@ execute if data storage mgs:zombies game.map.perks[0] run function mgs:v5.4.2/zo
 execute if data storage mgs:zombies game.map.wunderfizz[0] run function mgs:v5.4.2/zombies/wunderfizz/setup
 
 execute if data storage mgs:zombies game.map.traps[0] run function mgs:v5.4.2/zombies/traps/setup
+
+execute if data storage mgs:zombies_saves loading run function mgs:v5.4.2/zombies/save/restore
 

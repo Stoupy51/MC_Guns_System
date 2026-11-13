@@ -3,6 +3,7 @@
 #
 # @within	mgs:v5.4.2/dialog/close_then
 #			mgs:v5.4.2/zombies/start with storage mgs:zombies game
+#			mgs:v5.4.2/zombies/save/load with storage mgs:temp _sv_map
 #
 # @args		map_id (unknown)
 #

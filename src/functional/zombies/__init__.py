@@ -28,6 +28,7 @@ from .player.revive import generate_revive
 from .player.whos_who import generate_whos_who
 from .rewards.bonus import main as bonus_main
 from .rewards.powerups import generate_powerups
+from .save import generate_zombies_save
 from .xp import generate_zombies_xp
 
 
@@ -62,4 +63,6 @@ def main() -> None:
 	generate_traps()
 	generate_hurt_player()
 	generate_zombies_xp()
+	# Last: its preload_complete lines replay a save over every element set up before.
+	generate_zombies_save()
 

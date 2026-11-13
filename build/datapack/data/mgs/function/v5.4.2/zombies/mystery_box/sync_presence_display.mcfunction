@@ -3,6 +3,7 @@
 #
 # @within	mgs:v5.4.2/dialog/close_then
 #			mgs:v5.4.2/zombies/mystery_box/setup_positions
+#			mgs:v5.4.2/zombies/save/restore_box
 #
 
 kill @e[tag=mgs.mb_presence]

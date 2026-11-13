@@ -4,6 +4,7 @@
 # @within	mgs:v5.4.2/dialog/close_then
 #			mgs:v5.4.2/zombies/wunderfizz/setup
 #			mgs:v5.4.2/zombies/wunderfizz/do_relocate
+#			mgs:v5.4.2/zombies/save/restore_wunderfizz
 #
 
 execute as @e[tag=mgs.wf_display] run function mgs:v5.4.2/zombies/wunderfizz/set_display_disabled

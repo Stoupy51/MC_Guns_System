@@ -44,6 +44,7 @@ def generate_zombies_menus() -> None:
 		# The zombies equivalent of multiplayer's "Auto Team".
 		Dialogs.dialog_run_btn("👥 All Players Join", f"/execute as @a run function {ns}:v{version}/players/zb_join", "Add every online player to the zombies game", "green"),
 		Dialogs.dialog_final_btn("+ Join", "zombies/join_game", "Join the ongoing zombies game as a late joiner", "yellow"),
+		Dialogs.dialog_run_btn("📂 Load Save", f"/function {ns}:v{version}/zombies/save/load_menu", "Resume a game saved between two rounds", "gold"),
 		Dialogs.dialog_show_btn(f"{ns}:zombies/admin", "🛠 Admin / Debug", "Skip rounds, grant points and force power-ups (operators only)"),
 		Dialogs.dialog_run_btn("🎁 Box Pool", f"/function {ns}:v{version}/zombies/mystery_box/pool/edit_global", "Weapons of the mystery box and their weights, for every map without its own pool", "light_purple"),
 		Dialogs.dialog_run_btn("🎁 Map Box Pool", f"/function {ns}:v{version}/zombies/mystery_box/pool/edit_map", "Give the selected map a mystery box pool of its own", "light_purple"),
@@ -156,6 +157,7 @@ tag @a[tag={ns}.pu_collecting] remove {ns}.pu_collecting
 			Dialogs.dialog_run_btn("⟲ Reset Points", f"/function {ns}:v{version}/zombies/admin/points_reset", "Set every player's points back to 0", "red"),
 			Dialogs.dialog_run_btn("+2500 Points", f"/function {ns}:v{version}/zombies/admin/points_add_2500", "Give every player 2500 points", "green"),
 			Dialogs.dialog_run_btn("+500000 Points", f"/function {ns}:v{version}/zombies/admin/points_add_500000", "Give every player 500000 points", "green"),
+			Dialogs.dialog_run_btn("💾 Save & Quit", f"/function {ns}:v{version}/zombies/save/save_menu", "Save the game between two rounds, then stop it", "gold"),
 			Dialogs.dialog_run_btn("⏸ Freeze / Unfreeze", f"/function {ns}:v{version}/zombies/admin/freeze_toggle", "Pause the game: no mob moves, no player moves, every timer stops", "aqua"),
 			Dialogs.dialog_run_btn("🔧 Unfreeze Round", f"/function {ns}:zombies/recover", "Rebuild a round that has stopped advancing (stuck at 0 zombies)", "aqua"),
 		],

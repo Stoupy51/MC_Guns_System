@@ -23,6 +23,7 @@
 #			mgs:v5.4.2/zombies/wallbuys/replace_pair {slot:"inventory.$(inventory)",group:"inventory",index:$(inventory)}
 #			mgs:v5.4.2/zombies/perks/apply/widows_wine {slot:"hotbar.7",group:"hotbar",index:7}
 #			mgs:v5.4.2/zombies/perks/reapply/widows_wine {slot:"hotbar.7",group:"hotbar",index:7}
+#			mgs:v5.4.2/zombies/save/restore_player {slot:"hotbar.7",group:"hotbar",index:7}
 #
 # @args		group (string)
 #			index (int)

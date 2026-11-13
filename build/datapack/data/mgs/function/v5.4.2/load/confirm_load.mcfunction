@@ -561,6 +561,8 @@ scoreboard objectives add mgs.zb.trap.rx dummy
 scoreboard objectives add mgs.zb.trap.ry dummy
 scoreboard objectives add mgs.zb.trap.rz dummy
 
+execute unless data storage mgs:zombies_saves slots[4] run data modify storage mgs:zombies_saves slots set value [{},{},{},{},{}]
+
 ## 1 red, 2 blue, 0 none or spectator.
 scoreboard objectives add mgs.mp.team dummy
 scoreboard objectives add mgs.mp.kills dummy

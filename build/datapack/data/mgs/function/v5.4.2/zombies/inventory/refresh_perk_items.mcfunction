@@ -7,6 +7,7 @@
 #			mgs:v5.4.2/zombies/perks/tombstone_collect
 #			mgs:v5.4.2/zombies/perks/lose_all
 #			mgs:v5.4.2/zombies/whos_who/revive_complete
+#			mgs:v5.4.2/zombies/save/restore_player
 #
 
 execute if score @s mgs.zb.perk.juggernog matches 1 unless items entity @s inventory.26 *[custom_data~{mgs:{zb_perk_display:true}}] run item replace entity @s inventory.26 with minecraft:paper[item_model="mgs:perk_machine_juggernog",custom_data={mgs:{zb_perk_display:true}},item_name={"translate":"mgs.juggernog","fallback":"Juggernog","color":"red","italic":false},lore=[{"translate":"mgs.raises_your_max_health_to_40_x4","fallback":"Raises your max health to 40 (x4).","color":"gray","italic":false},{"translate":"mgs.survive_far_more_hits_before_going_down","fallback":"Survive far more hits before going down.","color":"gray","italic":false},{"translate":"mgs.owned_perk","fallback":"Owned perk","color":"dark_gray","italic":false}]]

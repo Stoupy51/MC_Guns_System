@@ -3,6 +3,7 @@
 #
 # @within	mgs:v5.4.2/dialog/close_then
 #			mgs:v5.4.2/switch/on_weapon_switch
+#			mgs:v5.4.2/zombies/save/capture_player
 #
 
 execute store result storage mgs:temp remaining_bullets int 1 run scoreboard players get @s mgs.remaining_bullets

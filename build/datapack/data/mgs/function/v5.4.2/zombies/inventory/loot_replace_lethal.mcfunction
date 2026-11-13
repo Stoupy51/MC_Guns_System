@@ -5,6 +5,7 @@
 #			mgs:v5.4.2/zombies/inventory/give_lethal_type
 #			mgs:v5.4.2/zombies/perks/apply/widows_wine
 #			mgs:v5.4.2/zombies/perks/reapply/widows_wine
+#			mgs:v5.4.2/zombies/save/restore_player
 #
 
 execute if score @s mgs.special.widows_wine matches 1 run return run loot replace entity @s hotbar.7 loot mgs:i/web_grenade

@@ -16,7 +16,7 @@
 #			mgs:v5.4.2/missions/actual_respawn {mode:"missions",script:"respawn"}
 #			mgs:v5.4.2/missions/stop {mode:"missions",script:"leave"} [ as @a[scores={mgs.mi.in_game=1}] ]
 #			mgs:v5.4.2/zombies/reset_player {mode:"zombies",script:"leave"}
-#			mgs:v5.4.2/zombies/power/on_activate {mode:"zombies",script:"power"}
+#			mgs:v5.4.2/zombies/power/turn_on {mode:"zombies",script:"power"}
 #			mgs:v5.4.2/zombies/revive/do_round_respawn {mode:"zombies",script:"respawn"}
 #
 # @args		mode (string)

@@ -10,6 +10,10 @@
 #			mgs:v5.4.2/zombies/knife_camo/menu with storage mgs:temp
 #			mgs:v5.4.2/zombies/mystery_box/pool/dialog_global with storage mgs:temp
 #			mgs:v5.4.2/zombies/mystery_box/pool/dialog_map with storage mgs:temp
+#			mgs:v5.4.2/zombies/save/save_menu with storage mgs:temp
+#			mgs:v5.4.2/zombies/save/request with storage mgs:temp
+#			mgs:v5.4.2/zombies/save/load_menu with storage mgs:temp
+#			mgs:v5.4.2/zombies/save/delete_ask with storage mgs:temp
 #			mgs:v5.4.2/multiplayer/select_class with storage mgs:temp
 #			mgs:v5.4.2/multiplayer/editor/hub with storage mgs:temp
 #			mgs:v5.4.2/multiplayer/editor/show_primary_dialog with storage mgs:temp

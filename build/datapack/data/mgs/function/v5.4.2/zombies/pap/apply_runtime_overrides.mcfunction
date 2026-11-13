@@ -4,6 +4,7 @@
 # @within	mgs:v5.4.2/dialog/close_then
 #			mgs:v5.4.2/zombies/pap/on_right_click
 #			mgs:v5.4.2/zombies/pap/upgrade_core
+#			mgs:v5.4.2/zombies/save/rebuild_pap
 #
 
 execute if data storage mgs:temp _pap_extract.stats.pap_stats.capacity run function mgs:v5.4.2/zombies/pap/apply_field {field:"capacity"}

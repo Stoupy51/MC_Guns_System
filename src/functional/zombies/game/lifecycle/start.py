@@ -125,9 +125,9 @@ schedule function {ns}:v{version}/zombies/end_prep 200t
 
 function {ns}:v{version}/zombies/create_sidebar
 
-# Perk wording only for Zonweeb.
-execute if data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}}]
-execute unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}}]
+# Perk wording only for Zonweeb. A loaded save announces its own round.
+execute unless data storage {ns}:zombies_saves loading if data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Choose your perk! Round 1 starts in 10 seconds!","color":"yellow"}}]
+execute unless data storage {ns}:zombies_saves loading unless data storage {ns}:zombies game{{variant:"zonweeb"}} run tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{{"text":"","color":"dark_green","bold":true}},"🧟 ",{{"text":"Preparing! Round 1 starts in 10 seconds!","color":"yellow"}}]
 """)
 
 	write_versioned_function("zombies/end_prep", f"""

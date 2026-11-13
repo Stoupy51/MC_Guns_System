@@ -1,0 +1,36 @@
+{
+	"description": "Bulletproof",
+	"supported_items": "minecraft:stone",
+	"weight": 1,
+	"max_level": 1,
+	"min_cost": {
+		"base": 99,
+		"per_level_above_first": 1
+	},
+	"max_cost": {
+		"base": 99,
+		"per_level_above_first": 1
+	},
+	"anvil_cost": 99,
+	"slots": [
+		"any"
+	],
+	"effects": {
+		"minecraft:damage_immunity": [
+			{
+				"effect": {},
+				"requirements": {
+					"type": "minecraft:damage_source_properties",
+					"predicate": {
+						"tags": [
+							{
+								"id": "mgs:bullet",
+								"expected": true
+							}
+						]
+					}
+				}
+			}
+		]
+	}
+}
