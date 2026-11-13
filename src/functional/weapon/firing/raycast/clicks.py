@@ -93,10 +93,12 @@ function {ns}:v{version}/raycast/accuracy/get_value
 execute if score @s {ns}.special.deadshot matches 1 run function {ns}:v{version}/raycast/accuracy/deadshot_scale
 
 # Raycast, and a cloud particle forward.
+scoreboard players set #bullet_hit {ns}.data 0
 tag @s add bs.raycast.omit
 execute anchored eyes positioned ^ ^ ^2 run particle minecraft:cloud ~ ~ ~ ^ ^ ^1000000000 0.00000002 0 force @a[tag=!bs.raycast.omit,distance=..32]
 execute anchored eyes positioned ^ ^ ^ summon marker run function {ns}:v{version}/raycast/main
 tag @s remove bs.raycast.omit
+function {ns}:v{version}/stats/record_bullet
 
 scoreboard players remove #bullets_to_fire {ns}.data 1
 execute if score #bullets_to_fire {ns}.data matches 1.. run function {ns}:v{version}/player/shoot

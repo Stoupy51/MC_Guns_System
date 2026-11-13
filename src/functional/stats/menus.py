@@ -28,12 +28,16 @@ PAGE_SIZE: int = 10
 """ Players listed per page. """
 STAT_PAGES: int = 4
 """ Trigger values reserved per player, one per mode and a spare, so `TRIG_PLAYER_STATS_BASE + index * 4 + mode`. """
+ACCURACY: Ratio = Ratio(field="accuracy", label="Accuracy", numerator="hits", denominator="shots", scale=1000, suffix="%")
+""" Bullets that hit a target over bullets fired. """
 RATIOS: dict[str, tuple[Ratio, ...]] = {
+	"zb": (ACCURACY,),
 	"mp": (
 		Ratio(field="kd", label="K/D", numerator="kills", denominator="deaths", scale=10),
 		Ratio(field="win_rate", label="Win rate", numerator="wins", denominator="games", scale=1000, suffix="%"),
+		ACCURACY,
 	),
-	"mi": (Ratio(field="kd", label="K/D", numerator="kills", denominator="deaths", scale=10),),
+	"mi": (Ratio(field="kd", label="K/D", numerator="kills", denominator="deaths", scale=10), ACCURACY),
 }
 """ Per mode, the ratios computed at display. A zero denominator counts as 1. """
 

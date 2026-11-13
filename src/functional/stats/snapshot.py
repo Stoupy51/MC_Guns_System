@@ -36,6 +36,16 @@ $scoreboard players add @s {ns}.st.mp.$(gamemode).wins 1
 	for mode in MODES:
 		write_mode_recording(ns, version, mode)
 
+	## Run as the shooter once per hitscan bullet; #bullet_hit is set by raycast/on_targeted_entity.
+	record_bullet: str = ""
+	for mode in MODES:
+		active: str = f'if score @s {mode.in_game} matches 1 if data storage {ns}:{mode.storage} game{{state:"active"}}'
+		record_bullet += f"""
+execute {active} run scoreboard players add @s {mode.stat("shots").objective} 1
+execute {active} if score #bullet_hit {ns}.data matches 1 run scoreboard players add @s {mode.stat("hits").objective} 1
+"""
+	write_versioned_function("stats/record_bullet", record_bullet)
+
 	## Run once per cleared round, for the whole roster, like the round XP.
 	write_versioned_function("stats/zb/on_round_end", f"scoreboard players add @a[scores={{{ns}.zb.in_game=1}}] {ns}.st.zb.rounds 1", tags=[f"{ns}:zombies/on_round_end"])
 
