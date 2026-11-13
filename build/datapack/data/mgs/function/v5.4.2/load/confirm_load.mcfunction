@@ -652,6 +652,8 @@ execute unless data storage mgs:missions game run data modify storage mgs:missio
 scoreboard objectives add mgs.st.login custom:leave_game
 scoreboard objectives add mgs.st.zb.games dummy
 scoreboard objectives add mgs.st.zb.rounds dummy
+scoreboard objectives add mgs.st.zb.shots dummy
+scoreboard objectives add mgs.st.zb.hits dummy
 scoreboard objectives add mgs.st.zb.downs dummy
 scoreboard objectives add mgs.st.zb.deaths dummy
 scoreboard objectives add mgs.st.zb.points_earned dummy
@@ -666,12 +668,16 @@ scoreboard objectives add mgs.st.zb.time dummy
 scoreboard objectives add mgs.st.mp.games dummy
 scoreboard objectives add mgs.st.mp.losses dummy
 scoreboard objectives add mgs.st.mp.deaths dummy
+scoreboard objectives add mgs.st.mp.shots dummy
+scoreboard objectives add mgs.st.mp.hits dummy
 scoreboard objectives add mgs.st.mp.captures dummy
 scoreboard objectives add mgs.st.mp.plants dummy
 scoreboard objectives add mgs.st.mp.defuses dummy
 scoreboard objectives add mgs.st.mp.time dummy
 scoreboard objectives add mgs.st.mi.games dummy
 scoreboard objectives add mgs.st.mi.headshots dummy
+scoreboard objectives add mgs.st.mi.shots dummy
+scoreboard objectives add mgs.st.mi.hits dummy
 scoreboard objectives add mgs.st.mi.deaths dummy
 scoreboard objectives add mgs.st.mi.time dummy
 scoreboard objectives add mgs.st.mp.ffa.games dummy

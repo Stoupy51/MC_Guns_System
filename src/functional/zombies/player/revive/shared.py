@@ -5,6 +5,8 @@ from stewbeet import Mem
 # Constants
 BLEED_OUT_TICKS: int = 1200
 """ 60 seconds to be revived before bleed out. """
+BODY_REBUILD_TICKS: int = 100
+""" A body missing in the first 5 seconds of a down is rebuilt instead of costing the player their game. """
 REVIVE_TICKS: int = 60
 """ 3 seconds of proximity to revive. """
 REVIVE_RANGE: float = 2.5

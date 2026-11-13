@@ -13,6 +13,8 @@ $scoreboard players reset $(name) mgs.st.zb.rounds
 $scoreboard players reset $(name) mgs.adv.zb.best_round
 $scoreboard players reset $(name) mgs.adv.zb.kills
 $scoreboard players reset $(name) mgs.adv.zb.headshots
+$scoreboard players reset $(name) mgs.st.zb.shots
+$scoreboard players reset $(name) mgs.st.zb.hits
 $scoreboard players reset $(name) mgs.st.zb.downs
 $scoreboard players reset $(name) mgs.st.zb.deaths
 $scoreboard players reset $(name) mgs.adv.zb.revives
@@ -34,6 +36,8 @@ $scoreboard players reset $(name) mgs.st.mp.losses
 $scoreboard players reset $(name) mgs.adv.mp.kills
 $scoreboard players reset $(name) mgs.st.mp.deaths
 $scoreboard players reset $(name) mgs.adv.mp.headshots
+$scoreboard players reset $(name) mgs.st.mp.shots
+$scoreboard players reset $(name) mgs.st.mp.hits
 $scoreboard players reset $(name) mgs.st.mp.captures
 $scoreboard players reset $(name) mgs.st.mp.plants
 $scoreboard players reset $(name) mgs.st.mp.defuses
@@ -43,6 +47,8 @@ $scoreboard players reset $(name) mgs.st.mi.games
 $scoreboard players reset $(name) mgs.adv.mi.completed
 $scoreboard players reset $(name) mgs.adv.mi.kills
 $scoreboard players reset $(name) mgs.st.mi.headshots
+$scoreboard players reset $(name) mgs.st.mi.shots
+$scoreboard players reset $(name) mgs.st.mi.hits
 $scoreboard players reset $(name) mgs.st.mi.deaths
 $scoreboard players reset $(name) mgs.st.mi.time
 $scoreboard players reset $(name) mgs.st.mp.ffa.games

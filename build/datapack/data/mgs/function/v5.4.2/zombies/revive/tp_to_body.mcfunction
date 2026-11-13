@@ -3,6 +3,7 @@
 #
 # @within	mgs:v5.4.2/dialog/close_then
 #			mgs:v5.4.2/zombies/revive/on_down with storage mgs:temp
+#			mgs:v5.4.2/zombies/revive/body_missing with storage mgs:temp
 #
 # @args		rv_dim (unknown)
 #			rv_x (unknown)

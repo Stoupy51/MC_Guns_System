@@ -4,6 +4,7 @@
 # @within	mgs:v5.4.2/dialog/close_then
 #			mgs:v5.4.2/zombies/whos_who/on_down
 #			mgs:v5.4.2/zombies/revive/on_down
+#			mgs:v5.4.2/zombies/revive/body_missing
 #
 
 data modify storage mgs:temp rv_dim set from entity @s Dimension

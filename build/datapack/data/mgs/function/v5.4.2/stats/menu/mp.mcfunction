@@ -27,6 +27,13 @@ scoreboard players operation #st_n mgs.data /= #st_d mgs.data
 scoreboard players operation #st_d mgs.data = #st_n mgs.data
 execute store result storage mgs:temp _sv.d.win_rate_i int 1 run scoreboard players operation #st_n mgs.data /= #10 mgs.data
 execute store result storage mgs:temp _sv.d.win_rate_d int 1 run scoreboard players operation #st_d mgs.data %= #10 mgs.data
+execute store result score #st_n mgs.data run data get storage mgs:temp _sv.d.hits 1000
+execute store result score #st_d mgs.data run data get storage mgs:temp _sv.d.shots
+execute if score #st_d mgs.data matches 0 run scoreboard players set #st_d mgs.data 1
+scoreboard players operation #st_n mgs.data /= #st_d mgs.data
+scoreboard players operation #st_d mgs.data = #st_n mgs.data
+execute store result storage mgs:temp _sv.d.accuracy_i int 1 run scoreboard players operation #st_n mgs.data /= #10 mgs.data
+execute store result storage mgs:temp _sv.d.accuracy_d int 1 run scoreboard players operation #st_d mgs.data %= #10 mgs.data
 data modify storage mgs:temp _sv.d.ffa_games set from storage mgs:temp _sv.p.mp.modes.ffa.games
 data modify storage mgs:temp _sv.d.ffa_wins set from storage mgs:temp _sv.p.mp.modes.ffa.wins
 data modify storage mgs:temp _sv.d.tdm_games set from storage mgs:temp _sv.p.mp.modes.tdm.games

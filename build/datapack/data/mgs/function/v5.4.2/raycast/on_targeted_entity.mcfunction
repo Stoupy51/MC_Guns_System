@@ -11,6 +11,7 @@ execute if entity @s[type=player] unless entity @s[tag=mgs.ticking] store result
 execute if entity @s[type=player] unless entity @s[tag=mgs.ticking] if score #shooter_team mgs.data matches 1.. if score @s mgs.mp.team = #shooter_team mgs.data run return fail
 
 scoreboard players set #is_entity_hit mgs.data 1
+scoreboard players set #bullet_hit mgs.data 1
 tag @s add mgs.raycast_target
 
 # Only the first 3 entities hit per shot bleed.

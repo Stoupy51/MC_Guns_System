@@ -41,6 +41,8 @@ $execute if score $(old) mgs.zb.ability matches -2147483648.. run scoreboard pla
 $execute if score $(old) mgs.zb.knife_camo matches -2147483648.. run scoreboard players operation $(name) mgs.zb.knife_camo = $(old) mgs.zb.knife_camo
 $execute if score $(old) mgs.st.zb.games matches -2147483648.. run scoreboard players operation $(name) mgs.st.zb.games = $(old) mgs.st.zb.games
 $execute if score $(old) mgs.st.zb.rounds matches -2147483648.. run scoreboard players operation $(name) mgs.st.zb.rounds = $(old) mgs.st.zb.rounds
+$execute if score $(old) mgs.st.zb.shots matches -2147483648.. run scoreboard players operation $(name) mgs.st.zb.shots = $(old) mgs.st.zb.shots
+$execute if score $(old) mgs.st.zb.hits matches -2147483648.. run scoreboard players operation $(name) mgs.st.zb.hits = $(old) mgs.st.zb.hits
 $execute if score $(old) mgs.st.zb.downs matches -2147483648.. run scoreboard players operation $(name) mgs.st.zb.downs = $(old) mgs.st.zb.downs
 $execute if score $(old) mgs.st.zb.deaths matches -2147483648.. run scoreboard players operation $(name) mgs.st.zb.deaths = $(old) mgs.st.zb.deaths
 $execute if score $(old) mgs.st.zb.points_earned matches -2147483648.. run scoreboard players operation $(name) mgs.st.zb.points_earned = $(old) mgs.st.zb.points_earned
@@ -55,12 +57,16 @@ $execute if score $(old) mgs.st.zb.time matches -2147483648.. run scoreboard pla
 $execute if score $(old) mgs.st.mp.games matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.games = $(old) mgs.st.mp.games
 $execute if score $(old) mgs.st.mp.losses matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.losses = $(old) mgs.st.mp.losses
 $execute if score $(old) mgs.st.mp.deaths matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.deaths = $(old) mgs.st.mp.deaths
+$execute if score $(old) mgs.st.mp.shots matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.shots = $(old) mgs.st.mp.shots
+$execute if score $(old) mgs.st.mp.hits matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.hits = $(old) mgs.st.mp.hits
 $execute if score $(old) mgs.st.mp.captures matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.captures = $(old) mgs.st.mp.captures
 $execute if score $(old) mgs.st.mp.plants matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.plants = $(old) mgs.st.mp.plants
 $execute if score $(old) mgs.st.mp.defuses matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.defuses = $(old) mgs.st.mp.defuses
 $execute if score $(old) mgs.st.mp.time matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.time = $(old) mgs.st.mp.time
 $execute if score $(old) mgs.st.mi.games matches -2147483648.. run scoreboard players operation $(name) mgs.st.mi.games = $(old) mgs.st.mi.games
 $execute if score $(old) mgs.st.mi.headshots matches -2147483648.. run scoreboard players operation $(name) mgs.st.mi.headshots = $(old) mgs.st.mi.headshots
+$execute if score $(old) mgs.st.mi.shots matches -2147483648.. run scoreboard players operation $(name) mgs.st.mi.shots = $(old) mgs.st.mi.shots
+$execute if score $(old) mgs.st.mi.hits matches -2147483648.. run scoreboard players operation $(name) mgs.st.mi.hits = $(old) mgs.st.mi.hits
 $execute if score $(old) mgs.st.mi.deaths matches -2147483648.. run scoreboard players operation $(name) mgs.st.mi.deaths = $(old) mgs.st.mi.deaths
 $execute if score $(old) mgs.st.mi.time matches -2147483648.. run scoreboard players operation $(name) mgs.st.mi.time = $(old) mgs.st.mi.time
 $execute if score $(old) mgs.st.mp.ffa.games matches -2147483648.. run scoreboard players operation $(name) mgs.st.mp.ffa.games = $(old) mgs.st.mp.ffa.games

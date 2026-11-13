@@ -3,7 +3,10 @@
 from stewbeet import Mem, write_versioned_function
 
 from ....helpers import MGS_TAG
+from ....helpers.probes import Probe
 from .shared import (
+	BLEED_OUT_TICKS,
+	BODY_REBUILD_TICKS,
 	CRAWL_SPEED,
 	SOLO_QR_MAX,
 	SOLO_QR_TICKS,
@@ -40,15 +43,31 @@ execute as @e[tag={ns}.downed_cam,predicate={ns}:v{version}/zombies/revive/downe
 kill @s
 """)
 
+	## Run as the downed player whose body is gone. Early on it is a spawn failure, not the player's fault; bleed keeps counting so the rebuilds are bounded.
+	write_versioned_function("zombies/revive/body_missing", f"""
+execute unless score @s {ns}.zb.bleed matches {BLEED_OUT_TICKS - BODY_REBUILD_TICKS}.. run return run function {ns}:v{version}/zombies/revive/body_lost
+scoreboard players operation @s {ns}.zb.bleed -= #tick_delta {ns}.data
+
+scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
+execute as @e[type=minecraft:text_display,tag={ns}.downed_hud,predicate={ns}:v{version}/zombies/revive/downed_id_match] run kill @s
+
+ride @s dismount
+function {ns}:v{version}/zombies/revive/respawn_near_player
+{Probe.pos()}
+data modify storage {ns}:temp _body_at set from storage {ns}:temp _probe_pos
+function {ns}:v{version}/zombies/revive/spawn_downed_body
+function {ns}:v{version}/zombies/revive/tp_to_body with storage {ns}:temp
+""")
+
 	## Run as the downed spectating player.
 	write_versioned_function("zombies/revive/downed_tick", f"""
 # Tag this player's mannequin once; everything below reuses that tag.
 scoreboard players operation #my_downed_id {ns}.data = @s {ns}.zb.downed_id
 tag @e[tag={ns}.downed_mannequin,predicate={ns}:v{version}/zombies/revive/downed_id_match] add {ns}.downed_mine_temp
 
-# A body out of the map bounds dies like a zombie would, and one gone (bounds or the void) ends the down at once.
+# A body out of the map bounds dies like a zombie would, and one gone (bounds or the void) ends the down.
 execute if score #zb_has_bounds {ns}.data matches 1 as @n[tag={ns}.downed_mine_temp] at @s run function {ns}:v{version}/shared/check_bounds
-execute unless entity @n[tag={ns}.downed_mine_temp] run return run function {ns}:v{version}/zombies/revive/body_lost
+execute unless entity @n[tag={ns}.downed_mine_temp] run return run function {ns}:v{version}/zombies/revive/body_missing
 
 # Crawl inputs and yaw (x100) are read here, while @s is the player, because move_mannequin cannot
 # find its owner reliably when several mannequins are close.

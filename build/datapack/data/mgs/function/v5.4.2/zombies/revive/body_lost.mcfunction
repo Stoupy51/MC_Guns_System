@@ -2,7 +2,7 @@
 #> mgs:v5.4.2/zombies/revive/body_lost
 #
 # @within	mgs:v5.4.2/dialog/close_then
-#			mgs:v5.4.2/zombies/revive/downed_tick
+#			mgs:v5.4.2/zombies/revive/body_missing
 #
 
 function mgs:v5.4.2/zombies/revive/stay_down

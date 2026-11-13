@@ -8,6 +8,7 @@
 #			mgs:v5.4.2/zombies/max_ammo_at_self [ at @s ]
 #			mgs:v5.4.2/zombies/escort/retarget [ at @p[scores={mgs.zb.in_game=1,mgs.zb.downed=0},gamemode=!spectator] ]
 #			mgs:v5.4.2/zombies/powerups/spawn_random_at_self [ at @s ]
+#			mgs:v5.4.2/zombies/revive/body_missing [ at @s ]
 #			mgs:v5.4.2/zombies/revive/void_revive_whos_who [ at @s ]
 #			mgs:v5.4.2/multiplayer/check_bounds [ at @s ]
 #			mgs:v5.4.2/multiplayer/spawn_calc_dist [ at @p[tag=mgs.spawn_enemy] ]
