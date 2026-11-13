@@ -21,6 +21,7 @@ $data modify {slot} set value {{format:{FORMAT},pack:"{version}",name:"$(name)",
 data modify {slot}.map_id set from storage {ns}:zombies game.map_id
 data modify {slot}.variant set from storage {ns}:zombies game.variant
 data modify {slot}.round set from storage {ns}:zombies game.round
+execute store result {slot}.next_special_round int 1 run scoreboard players get #zb_next_special_round {ns}.data
 execute store result {slot}.saved_at long 1 run time query gametime
 
 execute as @a[scores={{{ns}.zb.in_game=1}}] run function {ns}:v{version}/zombies/save/capture_player

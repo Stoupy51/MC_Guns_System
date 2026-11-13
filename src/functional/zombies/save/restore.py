@@ -19,7 +19,8 @@ def write_save_restore() -> None:
 execute unless data storage {ns}:zombies game{{state:"lobby"}} run return run tellraw @s [{MGS_TAG},{{"text":"A zombies game is running: stop it before loading a save.","color":"red"}}]
 $data modify {loading} set from storage {ns}:zombies_saves slots[$(slot)]
 execute unless data {loading}.format run return run function {ns}:v{version}/zombies/save/load_refused {{reason:"This slot is empty."}}
-execute unless data {loading}{{format:{FORMAT}}} run return run function {ns}:v{version}/zombies/save/load_refused {{reason:"This save comes from a newer version of the pack."}}
+execute store result score #sv_format {ns}.data run data get {loading}.format
+execute unless score #sv_format {ns}.data matches ..{FORMAT} run return run function {ns}:v{version}/zombies/save/load_refused {{reason:"This save comes from a newer version of the pack."}}
 
 data modify storage {ns}:temp _sv_map.map_id set from {loading}.map_id
 function {ns}:v{version}/zombies/load_map_from_storage with storage {ns}:temp _sv_map
@@ -79,6 +80,12 @@ execute if data storage {ns}:temp _sv_iter[0] run function {ns}:v{version}/zombi
 # start_round adds one: the next round is the one after the saved round.
 data modify storage {ns}:zombies game.round set from {loading}.round
 execute store result score #zb_round {ns}.data run data get {loading}.round
+# A format 1 slot holds no schedule: its run had a special round every 5th round, so the next is the first multiple of 5 after the saved round.
+scoreboard players operation #zb_next_special_round {ns}.data = #zb_round {ns}.data
+scoreboard players operation #zb_next_special_round {ns}.data /= #5 {ns}.data
+scoreboard players add #zb_next_special_round {ns}.data 1
+scoreboard players operation #zb_next_special_round {ns}.data *= #5 {ns}.data
+execute unless data {loading}{{format:1}} store result score #zb_next_special_round {ns}.data run data get {loading}.next_special_round
 data modify storage {ns}:temp _sv_missing set value []
 
 execute if data {loading}.map{{power:1b}} run function {ns}:v{version}/zombies/power/turn_on

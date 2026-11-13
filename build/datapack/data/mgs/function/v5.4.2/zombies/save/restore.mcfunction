@@ -8,6 +8,12 @@
 # start_round adds one: the next round is the one after the saved round.
 data modify storage mgs:zombies game.round set from storage mgs:zombies_saves loading.round
 execute store result score #zb_round mgs.data run data get storage mgs:zombies_saves loading.round
+# A format 1 slot holds no schedule: its run had a special round every 5th round, so the next is the first multiple of 5 after the saved round.
+scoreboard players operation #zb_next_special_round mgs.data = #zb_round mgs.data
+scoreboard players operation #zb_next_special_round mgs.data /= #5 mgs.data
+scoreboard players add #zb_next_special_round mgs.data 1
+scoreboard players operation #zb_next_special_round mgs.data *= #5 mgs.data
+execute unless data storage mgs:zombies_saves loading{format:1} store result score #zb_next_special_round mgs.data run data get storage mgs:zombies_saves loading.next_special_round
 data modify storage mgs:temp _sv_missing set value []
 
 execute if data storage mgs:zombies_saves loading.map{power:1b} run function mgs:v5.4.2/zombies/power/turn_on

@@ -13,11 +13,15 @@ execute store result storage mgs:zombies game.round int 1 run scoreboard players
 
 function mgs:v5.4.2/zombies/spawns/check_rounds
 
-# Special round: every 5th round from 5, when a special spawn is open and in its round bounds.
+# Special round: drawn like BO1 dog rounds, the first in 5..7, each next one 4..5 rounds later.
+# A due round without a special spawn open and in its round bounds stays normal, and the schedule moves on as if it had been special.
+execute if score #zb_round mgs.data matches 1 store result score #zb_next_special_round mgs.data run random value 5..7
+# At or after, since an admin round skip can jump over the due round.
+execute store result score #zb_special_due mgs.data if score #zb_round mgs.data >= #zb_next_special_round mgs.data
 scoreboard players set #zb_special_round mgs.data 0
-scoreboard players operation #zb_special_mod mgs.data = #zb_round mgs.data
-scoreboard players operation #zb_special_mod mgs.data %= #5 mgs.data
-execute if score #zb_round mgs.data matches 5.. if score #zb_special_mod mgs.data matches 0 if entity @e[type=minecraft:marker,tag=mgs.spawn_special,tag=mgs.spawn_unlocked,tag=mgs.spawn_round_ok] run scoreboard players set #zb_special_round mgs.data 1
+execute if score #zb_special_due mgs.data matches 1 if entity @e[type=minecraft:marker,tag=mgs.spawn_special,tag=mgs.spawn_unlocked,tag=mgs.spawn_round_ok] run scoreboard players set #zb_special_round mgs.data 1
+execute if score #zb_special_due mgs.data matches 1 store result score #zb_next_special_round mgs.data run random value 4..5
+execute if score #zb_special_due mgs.data matches 1 run scoreboard players operation #zb_next_special_round mgs.data += #zb_round mgs.data
 
 # Jockey round: Zonweeb only, every 10th round from round 8, and never a special round.
 scoreboard players set #zb_jockey_round mgs.data 0

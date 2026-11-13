@@ -10,6 +10,12 @@ EARLY_ROUND_ZOMBIES: dict[int, int] = {1: 5, 2: 6, 3: 8, 4: 9, 5: 11, 6: 12, 7: 
 The ramp lands on 16 at round 9 and hands over to `round + 7` = 17 at round 10 with no step or drop.
 """
 
+SPECIAL_FIRST_ROUNDS: str = "5..7"
+""" Where the first special round falls, `randomintrange( 5, 8 )` of BO1's dog_round_tracker (its maximum is exclusive). """
+
+SPECIAL_ROUND_GAPS: str = "4..5"
+""" Rounds from one special round to the next, `randomintrange( 4, 6 )` in BO1. """
+
 
 # Functions
 def write_round_start() -> None:
@@ -23,11 +29,15 @@ execute store result storage {ns}:zombies game.round int 1 run scoreboard player
 
 function {ns}:v{version}/zombies/spawns/check_rounds
 
-# Special round: every 5th round from 5, when a special spawn is open and in its round bounds.
+# Special round: drawn like BO1 dog rounds, the first in {SPECIAL_FIRST_ROUNDS}, each next one {SPECIAL_ROUND_GAPS} rounds later.
+# A due round without a special spawn open and in its round bounds stays normal, and the schedule moves on as if it had been special.
+execute if score #zb_round {ns}.data matches 1 store result score #zb_next_special_round {ns}.data run random value {SPECIAL_FIRST_ROUNDS}
+# At or after, since an admin round skip can jump over the due round.
+execute store result score #zb_special_due {ns}.data if score #zb_round {ns}.data >= #zb_next_special_round {ns}.data
 scoreboard players set #zb_special_round {ns}.data 0
-scoreboard players operation #zb_special_mod {ns}.data = #zb_round {ns}.data
-scoreboard players operation #zb_special_mod {ns}.data %= #5 {ns}.data
-execute if score #zb_round {ns}.data matches 5.. if score #zb_special_mod {ns}.data matches 0 if entity @e[type=minecraft:marker,tag={ns}.spawn_special,tag={ns}.spawn_unlocked,tag={ns}.spawn_round_ok] run scoreboard players set #zb_special_round {ns}.data 1
+execute if score #zb_special_due {ns}.data matches 1 if entity @e[type=minecraft:marker,tag={ns}.spawn_special,tag={ns}.spawn_unlocked,tag={ns}.spawn_round_ok] run scoreboard players set #zb_special_round {ns}.data 1
+execute if score #zb_special_due {ns}.data matches 1 store result score #zb_next_special_round {ns}.data run random value {SPECIAL_ROUND_GAPS}
+execute if score #zb_special_due {ns}.data matches 1 run scoreboard players operation #zb_next_special_round {ns}.data += #zb_round {ns}.data
 
 # Jockey round: Zonweeb only, every 10th round from round 8, and never a special round.
 scoreboard players set #zb_jockey_round {ns}.data 0

@@ -27,8 +27,8 @@ class SavedMapScore:
 
 
 # Constants
-FORMAT: int = 1
-""" Bumped when a slot written by this version cannot be read by the restore of the next one. """
+FORMAT: int = 2
+""" Bumped when the slot shape changes: the restore reads every format up to this one and refuses a newer slot. """
 
 PLAYER_SCORES: list[SavedScore] = [
 	SavedScore(objective="zb.points", key="points"),

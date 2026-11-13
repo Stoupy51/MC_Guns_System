@@ -1,7 +1,7 @@
 """ Save slots: a run taken out of the world between two rounds, and put back later on the same map.
 
 A slot of `mgs:zombies_saves slots[]` is empty (`{}`) or written by save/capture, read by save/restore:
-{format, pack, name, map_id, variant, round, saved_at, players:[{uuid, scores:{...}, inventory:[...]}],
+{format, pack, name, map_id, variant, round, next_special_round, saved_at, players:[{uuid, scores:{...}, inventory:[...]}],
 map:{power, opened:[link ids], doors:[{id, paid}], barricades:[{id, state}], traps:[{id, cd}], box, box_pulls, box_dry_ray_gun, wunderfizz, wunderfizz_uses}}
 """
 # Imports
