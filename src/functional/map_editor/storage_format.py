@@ -3,7 +3,7 @@
 An element leaves out every field holding its `ElementDef.defaults` value, and keeps its yaw as whole degrees, left out at 0:
 `{pos:[-46,-21,5],yaw:90,perk_id:"stamin_up"}`. Only spawns keep a group_id, left out at 0.
 A map writes the `shared_fields` of a kind once, under `shared.<etype>`, from the first element saved; the others leave out the same values.
-Doors are grouped by link, each block keeping its own block id and yaw only when they differ from its link's:
+Doors are grouped by link, each block keeping a field (block id, yaw, name...) only when it differs from its link's:
 `{link_id:2,name:"Parking",price:750,block:"minecraft:waxed_copper_bars",yaw:180,blocks:[{pos:[-8,-7,2]},{pos:[3,-6,12],block:"minecraft:oak_planks",yaw:0}]}`.
 
 `maps/inflate` turns the map in `{ns}:temp _inf_map` back into what the game and the editor read: one compound per element, every field set,
@@ -12,7 +12,6 @@ and `rotation:[yaw,pitch]` in place of yaw. An element still holding a rotation,
 # Imports
 from stewbeet import Mem, write_load_file, write_versioned_function
 
-from ..helpers import MGS_TAG
 from ..helpers.snbt import snbt
 from ..map_editor_defs import ElementDef
 from .shared import GROUP_ID_ELEMENTS, ZB_ELEMENTS
@@ -132,31 +131,25 @@ data remove storage {ns}:temp _save_zb.pos
 function {compact}/door_link with storage {ns}:temp _save_zb
 """)
 
-	differs_warning: str = (
-		f'[{MGS_TAG},{{"text":"⚠ The door at ","color":"yellow"}},{{"entity":"@s","nbt":"Pos","color":"white"}},'
-		f'{{"text":" differs from the rest of link ","color":"yellow"}},{{"storage":"{ns}:temp","nbt":"_save_zb.link_id","color":"white"}},'
-		f'{{"text":", which keeps the values of one of its doors. The ✎ buttons of a door set its whole link.","color":"yellow"}}]'
+	# A field a door lacks holds its default, so a stripped default and a written one compare equal.
+	field_diffs: str = "\n".join(
+		f"""execute unless data storage {ns}:temp _save_zb.{field} run data modify storage {ns}:temp _save_zb.{field} set value {snbt(default)}
+execute unless data storage {ns}:temp _door_link.{field} run data modify storage {ns}:temp _door_link.{field} set value {snbt(default)}
+data remove storage {ns}:temp _cmp
+data modify storage {ns}:temp _cmp set from storage {ns}:temp _save_zb.{field}
+execute store success score #differs {ns}.data run data modify storage {ns}:temp _cmp set from storage {ns}:temp _door_link.{field}
+execute if score #differs {ns}.data matches 1 run data modify storage {ns}:temp _door_block.{field} set from storage {ns}:temp _save_zb.{field}"""
+		for field, default in ZB_ELEMENTS["door"].defaults.items() if field != "link_id"
 	)
 	## Macro (link_id), run as the door marker.
 	write_versioned_function("maps/compact/door_link", f"""
 $execute unless data storage {link} run function {compact}/door_new
 $data modify storage {ns}:temp _door_link set from storage {link}
 
-data remove storage {ns}:temp _cmp
-data modify storage {ns}:temp _cmp set from storage {ns}:temp _save_zb.block
-execute store success score #differs {ns}.data run data modify storage {ns}:temp _cmp set from storage {ns}:temp _door_link.block
-execute if score #differs {ns}.data matches 1 run data modify storage {ns}:temp _door_block.block set from storage {ns}:temp _save_zb.block
+{field_diffs}
 execute store result score #link_yaw {ns}.data run data get storage {ns}:temp _door_link.yaw
 execute unless score #yaw {ns}.data = #link_yaw {ns}.data store result storage {ns}:temp _door_block.yaw int 1 run scoreboard players get #yaw {ns}.data
 $data modify storage {link}.blocks append from storage {ns}:temp _door_block
-
-data remove storage {ns}:temp _door_link.blocks
-data remove storage {ns}:temp _door_link.block
-data remove storage {ns}:temp _door_link.yaw
-data remove storage {ns}:temp _save_zb.block
-data remove storage {ns}:temp _save_zb.yaw
-execute store success score #differs {ns}.data run data modify storage {ns}:temp _door_link set from storage {ns}:temp _save_zb
-execute if score #differs {ns}.data matches 1 run tellraw @a[tag={ns}.map_editor] {differs_warning}
 """)
 
 	write_versioned_function("maps/compact/door_new", f"""

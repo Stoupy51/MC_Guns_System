@@ -117,16 +117,15 @@ def field_config_row(ns: str, version: str, etype: str, field: str, default_val:
 	# A marker keeps its element's name under title (see AXIOM_KEYS).
 	key: str = "title" if field == "name" else field
 
-	# Door fields except link_id apply to every door with the same link_id; two entry points, since a macro cannot re-quote its argument.
+	# Optional list fields suggest a usable template instead of empty brackets.
+	edit_cmd: str = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{key} set value {OPTIONAL_LIST_FIELDS.get(field, snbt_val)}"
+	edit_btn = Dialogs.btn("✎", edit_cmd, "yellow", f"Click to edit {field}", action="suggest_command")
 	if etype == "door" and field != "link_id":
+		# Two entry points for the link, since a macro cannot re-quote its argument.
 		kind: str = "text" if isinstance(default_val, str) else "number"
-		edit_cmd: str = f'/function {ns}:v{version}/maps/editor/set_door_link_{kind} {{field:"{key}",value:{snbt_val}}}'
-		hover_text: str = f"Sets {field} on ALL doors with same link_id"
-	else:
-		# Optional list fields suggest a usable template instead of empty brackets.
-		edit_cmd = f"/data modify entity @n[tag={ns}.element.{etype},distance=..10] data.{key} set value {OPTIONAL_LIST_FIELDS.get(field, snbt_val)}"
-		hover_text = f"Click to edit {field}"
-	edit_btn = Dialogs.btn("✎", edit_cmd, "yellow", hover_text, action="suggest_command")
+		link_cmd: str = f'/function {ns}:v{version}/maps/editor/set_door_link_{kind} {{field:"{key}",value:{snbt_val}}}'
+		link_btn = Dialogs.btn("✎ link", link_cmd, "gold", f"Sets {field} on ALL doors with same link_id", action="suggest_command")
+		edit_btn = f'{Dialogs.btn("✎ block", edit_cmd, "yellow", f"Sets {field} on the nearest door block only", action="suggest_command")}," ",{link_btn}'
 
 	# Optional list fields get a "✗" button that sets them back to [].
 	clear_component: str = ""
