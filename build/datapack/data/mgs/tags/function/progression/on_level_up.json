@@ -1,7 +1,7 @@
 {
 	"values": [
-		"mgs:v5.4.2/progression/adv/mp/level/check",
-		"mgs:v5.4.2/progression/adv/zb/level/check",
-		"mgs:v5.4.2/zombies/knife_camo/on_level_up"
+		"mgs:v5.4.3/progression/adv/mp/level/check",
+		"mgs:v5.4.3/progression/adv/zb/level/check",
+		"mgs:v5.4.3/zombies/knife_camo/on_level_up"
 	]
 }

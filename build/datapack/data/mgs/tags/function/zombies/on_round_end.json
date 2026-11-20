@@ -1,7 +1,7 @@
 {
 	"values": [
-		"mgs:v5.4.2/zombies/adv/on_round_end",
-		"mgs:v5.4.2/zombies/xp/on_round_end",
-		"mgs:v5.4.2/stats/zb/on_round_end"
+		"mgs:v5.4.3/zombies/adv/on_round_end",
+		"mgs:v5.4.3/zombies/xp/on_round_end",
+		"mgs:v5.4.3/stats/zb/on_round_end"
 	]
 }

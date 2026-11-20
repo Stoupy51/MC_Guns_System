@@ -29,6 +29,6 @@
 		}
 	},
 	"rewards": {
-		"function": "mgs:v5.4.2/progression/adv/mp/level/reward_4"
+		"function": "mgs:v5.4.3/progression/adv/mp/level/reward_4"
 	}
 }
