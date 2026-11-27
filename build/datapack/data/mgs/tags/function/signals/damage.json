@@ -1,9 +1,9 @@
 {
 	"values": [
-		"mgs:v5.4.3/weapon/hit_direction",
-		"mgs:v5.4.3/weapon/dps_collect",
-		"mgs:v5.4.3/player/config/damage_debug",
-		"mgs:v5.4.3/player/config/hitmarker_sound",
-		"mgs:v5.4.3/zombies/on_hit_signal"
+		"mgs:v5.4.4/weapon/hit_direction",
+		"mgs:v5.4.4/weapon/dps_collect",
+		"mgs:v5.4.4/player/config/damage_debug",
+		"mgs:v5.4.4/player/config/hitmarker_sound",
+		"mgs:v5.4.4/zombies/on_hit_signal"
 	]
 }
