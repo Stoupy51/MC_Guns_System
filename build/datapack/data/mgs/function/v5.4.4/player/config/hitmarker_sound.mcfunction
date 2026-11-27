@@ -5,7 +5,7 @@
 #			mgs:v5.4.4/dialog/close_then
 #
 
-execute as @a[tag=mgs.ticking] if score @s mgs.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
+execute as @a[tag=mgs.ticking] unless score @s mgs.player.hitmarker matches 0 at @s run playsound mgs:common/hitmarker player @s ~ ~ ~ 0.6
 # Skipped when already played through ticking.
-execute as @a[tag=mgs.temp_shooter,tag=!mgs.ticking] if score @s mgs.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
+execute as @a[tag=mgs.temp_shooter,tag=!mgs.ticking] unless score @s mgs.player.hitmarker matches 0 at @s run playsound mgs:common/hitmarker player @s ~ ~ ~ 0.6
 

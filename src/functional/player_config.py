@@ -76,7 +76,7 @@ def main() -> None:
 	write_versioned_function("load/confirm_load", f"""
 scoreboard objectives add {ns}.player.config trigger
 
-# Off by default.
+# Damage debug is off by default. The hitmarker sound is on until a player's score is set to 0.
 scoreboard objectives add {ns}.player.hitmarker dummy
 scoreboard objectives add {ns}.player.damage_debug dummy
 """, prepend=True)
@@ -200,10 +200,13 @@ execute if score #dialog_shown {ns}.data matches 0 run dialog clear @s
 scoreboard players set @s {ns}.player.config 0
 """)
 
-	for score_name, display_name in [("hitmarker", "Hitmarker Sound"), ("damage_debug", "Damage Debug")]:
+	for score_name, display_name, was_off in [
+		("hitmarker", "Hitmarker Sound", f"if score @s {ns}.player.hitmarker matches 0"),
+		("damage_debug", "Damage Debug", f"unless score @s {ns}.player.damage_debug matches 1"),
+	]:
 		write_versioned_function(f"player/config/toggle_{score_name}", f"""
 # #toggle = 1 when it was off.
-execute store success score #toggle {ns}.data unless score @s {ns}.player.{score_name} matches 1
+execute store success score #toggle {ns}.data {was_off}
 execute if score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.{score_name} 1
 execute unless score #toggle {ns}.data matches 1 run scoreboard players set @s {ns}.player.{score_name} 0
 execute if score #toggle {ns}.data matches 1 run tellraw @s [{MGS_TAG},["",{{"text":"{display_name}"}},": "],{{"text":"ON","color":"green"}},{{"text":" ✔","color":"green"}}]
@@ -217,8 +220,8 @@ function {ns}:v{version}/player/config/menu
 	write_versioned_function("player/config/menu", f"""
 data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🎮 ",{{text:"Player Settings",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Toggle your personal settings","color":"gray"}}}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{Dialogs.close_done_snbt()}}}
 
-execute if score @s {ns}.player.hitmarker matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"ON ✔",color:"green"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
-execute unless score @s {ns}.player.hitmarker matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"OFF ✘",color:"red"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
+execute unless score @s {ns}.player.hitmarker matches 0 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"ON ✔",color:"green"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
+execute if score @s {ns}.player.hitmarker matches 0 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"OFF ✘",color:"red"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
 
 execute if score @s {ns}.player.damage_debug matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Damage Debug: "}},{{text:"ON ✔",color:"green"}}],tooltip:{{text:"Toggle damage numbers in chat"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 3"}}}}
 execute unless score @s {ns}.player.damage_debug matches 1 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Damage Debug: "}},{{text:"OFF ✘",color:"red"}}],tooltip:{{text:"Toggle damage numbers in chat"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 3"}}}}
@@ -251,8 +254,8 @@ tag @a[tag={ns}.temp_dmg_reader] remove {ns}.temp_dmg_reader
 
 	## Hitscan shooters carry {ns}.ticking, explosion shooters {ns}.temp_shooter.
 	write_versioned_function("player/config/hitmarker_sound", f"""
-execute as @a[tag={ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
+execute as @a[tag={ns}.ticking] unless score @s {ns}.player.hitmarker matches 0 at @s run playsound {ns}:common/hitmarker player @s ~ ~ ~ 0.6
 # Skipped when already played through ticking.
-execute as @a[tag={ns}.temp_shooter,tag=!{ns}.ticking] if score @s {ns}.player.hitmarker matches 1 at @s run playsound minecraft:entity.experience_orb.pickup player @s ~ ~ ~ 1.0 2.0
+execute as @a[tag={ns}.temp_shooter,tag=!{ns}.ticking] unless score @s {ns}.player.hitmarker matches 0 at @s run playsound {ns}:common/hitmarker player @s ~ ~ ~ 0.6
 """, tags=[f"{ns}:signals/damage"])
 

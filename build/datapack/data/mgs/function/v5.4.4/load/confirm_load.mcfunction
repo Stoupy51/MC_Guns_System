@@ -7,7 +7,7 @@
 
 scoreboard objectives add mgs.player.config trigger
 
-# Off by default.
+# Damage debug is off by default. The hitmarker sound is on until a player's score is set to 0.
 scoreboard objectives add mgs.player.hitmarker dummy
 scoreboard objectives add mgs.player.damage_debug dummy
 

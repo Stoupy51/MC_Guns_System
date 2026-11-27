@@ -67,6 +67,10 @@
 		"subtitle": "common/flyby",
 		"sounds": ["mgs:common/flyby01","mgs:common/flyby02","mgs:common/flyby03","mgs:common/flyby04","mgs:common/flyby05"]
 	},
+	"common/hitmarker": {
+		"subtitle": "common/hitmarker",
+		"sounds": ["mgs:common/hitmarker"]
+	},
 	"common/large_crack_0_distant": {
 		"subtitle": "common/large_crack_0_distant",
 		"sounds": ["mgs:common/large_crack_0_distant"]

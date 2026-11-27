@@ -6,7 +6,7 @@
 #
 
 # #toggle = 1 when it was off.
-execute store success score #toggle mgs.data unless score @s mgs.player.hitmarker matches 1
+execute store success score #toggle mgs.data if score @s mgs.player.hitmarker matches 0
 execute if score #toggle mgs.data matches 1 run scoreboard players set @s mgs.player.hitmarker 1
 execute unless score #toggle mgs.data matches 1 run scoreboard players set @s mgs.player.hitmarker 0
 execute if score #toggle mgs.data matches 1 run tellraw @s [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],["",{"translate":"mgs.hitmarker_sound_2","fallback":"Hitmarker Sound"},": "],{"text":"ON","color":"green"},{"text":" ✔","color":"green"}]
