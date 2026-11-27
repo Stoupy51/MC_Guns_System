@@ -14,7 +14,7 @@
 #			dialog mgs:v5.4.3/missions/setup
 #
 
-data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.select_your_class",fallback:"Select Your Class",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:crossbow"},description:{contents:{translate:"mgs.choose_a_class_for_multiplayer",fallback:"Choose a class for multiplayer",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:2,pause:false,after_action:"none",exit_action:{"label": "Cancel", "action": {"type": "run_command", "command": "/trigger mgs.player.config set 1640"}}}
+data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:{translate:"mgs.select_your_class_2",fallback:"Select Your Class",color:"gold",bold:true},body:{type:"minecraft:item",item:{id:"minecraft:crossbow"},description:{contents:{translate:"mgs.choose_a_class_for_multiplayer",fallback:"Choose a class for multiplayer",color:"gray"}},show_decoration:false,show_tooltip:true},actions:[],columns:2,pause:false,after_action:"none",exit_action:{"label": "Cancel", "action": {"type": "run_command", "command": "/trigger mgs.player.config set 1640"}}}
 
 data modify storage mgs:temp class_iter set from storage mgs:multiplayer classes_list
 

@@ -38,7 +38,7 @@ execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage
 execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"electric_cherry"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
 execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"tombstone"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
 execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"whos_who"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
-execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"dying_wish"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 2000
+execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"dying_wish"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 5000
 execute if score @n[tag=mgs.pk_new] mgs.zb.perk.price matches -1 if data storage mgs:temp _pk_price{perk_id:"widows_wine"} run scoreboard players set @n[tag=mgs.pk_new] mgs.zb.perk.price 4000
 scoreboard players operation @n[tag=mgs.pk_new] mgs.zb.perk.base_price = @n[tag=mgs.pk_new] mgs.zb.perk.price
 # Quick Revive machines get dynamic solo pricing.

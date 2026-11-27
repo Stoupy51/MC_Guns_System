@@ -26,10 +26,11 @@ def write_editor_manage() -> None:
 			{"type": "minecraft:text", "key": "name", "label": "Name", "initial": "", "max_length": 64, "width": 300},
 			{"type": "minecraft:text", "key": "description", "label": "Description", "initial": "", "max_length": 256, "width": 300},
 			{"type": "minecraft:text", "key": "dimension", "label": "Dimension", "initial": "minecraft:overworld", "max_length": 128, "width": 300},
+			*({"type": "minecraft:text", "key": axis, "label": f"Base {axis.upper()}", "initial": "0", "max_length": 9, "width": 96} for axis in "xyz"),
 		],
 		"yes": {"label": {"text": "Save", "color": "green"}, "action": {
 			"type": "dynamic/run_command",
-			"template": f'/function {editor}/settings_apply {{name:"$(name)",description:"$(description)",dimension:"$(dimension)"}}',
+			"template": f'/function {editor}/settings_apply {{name:"$(name)",description:"$(description)",dimension:"$(dimension)",x:$(x),y:$(y),z:$(z)}}',
 		}},
 		"no": {"label": {"text": "Cancel", "color": "red"}, "action": {"type": "run_command", "command": ""}},
 	}
@@ -59,11 +60,22 @@ $data modify storage {ns}:temp dialog.inputs[0].initial set from storage {ns}:ma
 $data modify storage {ns}:temp dialog.inputs[1].initial set from storage {ns}:maps $(mode)[$(idx)].description
 $data modify storage {ns}:temp dialog.inputs[2].initial set from storage {ns}:maps $(mode)[$(idx)].dimension
 $data modify storage {ns}:temp dialog.no.action.command set value "/function {editor}/list/$(mode)"
+$execute store result storage {ns}:temp map_settings.base.x int 1 run data get storage {ns}:maps $(mode)[$(idx)].base_coordinates[0]
+$execute store result storage {ns}:temp map_settings.base.y int 1 run data get storage {ns}:maps $(mode)[$(idx)].base_coordinates[1]
+$execute store result storage {ns}:temp map_settings.base.z int 1 run data get storage {ns}:maps $(mode)[$(idx)].base_coordinates[2]
+function {editor}/settings_base with storage {ns}:temp map_settings.base
 {show_dialog}
 """)
 
+	## Macro (x, y, z): a dialog text input only takes a string, which a macro makes of the integers.
+	write_versioned_function("maps/editor/settings_base", f"""
+$data modify storage {ns}:temp dialog.inputs[3].initial set value "$(x)"
+$data modify storage {ns}:temp dialog.inputs[4].initial set value "$(y)"
+$data modify storage {ns}:temp dialog.inputs[5].initial set value "$(z)"
+""")
+
 	write_versioned_function("maps/editor/settings_apply", f"""
-$data modify storage {ns}:temp map_settings.fields set value {{name:"$(name)",description:"$(description)",dimension:"$(dimension)"}}
+$data modify storage {ns}:temp map_settings.fields set value {{name:"$(name)",description:"$(description)",dimension:"$(dimension)",base_coordinates:[$(x),$(y),$(z)]}}
 function {editor}/settings_write with storage {ns}:temp map_settings.target
 tellraw @s [{MGS_TAG},{{"text":"Map settings saved.","color":"green"}}]
 """)

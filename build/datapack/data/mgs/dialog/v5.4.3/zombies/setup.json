@@ -5,31 +5,31 @@
 	"title": [
 		"",
 		"🧟 ",
-		{"text": "Zombies Setup","color": "dark_green","bold": true},
+		{"translate": "mgs.zombies_setup","fallback": "Zombies Setup","color": "dark_green","bold": true},
 		" 🧟"
 	],
 	"body": [
-		{"type": "minecraft:plain_message","contents": {"text": "Pick a map and variant, then Start","color": "gray"}}
+		{"type": "minecraft:plain_message","contents": {"translate": "mgs.pick_a_map_and_variant_then_start","fallback": "Pick a map and variant, then Start","color": "gray"}}
 	],
 	"actions": [
-		{"label": ["","🗺 ",{"text": "Select Map","color": "dark_green"}],"tooltip": {"text": "Browse and select a zombies map"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/map_select"}},
-		{"label": ["","🧬 ",{"text": "Variant"}],"tooltip": {"text": "Choose the zombies experience"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.4.3/zombies/setup/variant"}},
-		{"label": ["","▶ ",{"text": "START","color": "green"}],"tooltip": {"text": "Start the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/dialog/close_then {run:\"zombies/start\"}"}},
-		{"label": ["","■ ",{"text": "STOP","color": "red"}],"tooltip": {"text": "Stop the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/dialog/close_then {run:\"zombies/stop\"}"}},
-		{"label": ["","⟲ ",{"text": "Fast Restart","color": "gold"}],"tooltip": {"text": "Stop and immediately restart with the same map, variant and players"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/dialog/close_then {run:\"zombies/restart\"}"}},
-		{"label": ["","👥 ",{"text": "Manage Players","color": "dark_aqua"}],"tooltip": {"text": "Add or remove players from the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/players/list_zombies"}},
-		{"label": ["","👥 ",{"text": "All Players Join","color": "green"}],"tooltip": {"text": "Add every online player to the zombies game"},"action": {"type": "run_command","command": "/execute as @a run function mgs:v5.4.3/players/zb_join"}},
-		{"label": ["","+ ",{"text": "Join","color": "yellow"}],"tooltip": {"text": "Join the ongoing zombies game as a late joiner"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/dialog/close_then {run:\"zombies/join_game\"}"}},
-		{"label": ["","📂 ",{"text": "Load Save","color": "gold"}],"tooltip": {"text": "Resume a game saved between two rounds"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/save/load_menu"}},
-		{"label": ["","🛠 ",{"text": "Admin / Debug"}],"tooltip": {"text": "Skip rounds, grant points and force power-ups (operators only)"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.4.3/zombies/admin"}},
-		{"label": ["","🎁 ",{"text": "Box Pool","color": "light_purple"}],"tooltip": {"text": "Weapons of the mystery box and their weights, for every map without its own pool"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/mystery_box/pool/edit_global"}},
-		{"label": ["","🎁 ",{"text": "Map Box Pool","color": "light_purple"}],"tooltip": {"text": "Give the selected map a mystery box pool of its own"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/mystery_box/pool/edit_map"}},
-		{"label": ["","🎁 ",{"text": "Clear Map Box Pool","color": "gray"}],"tooltip": {"text": "The selected map goes back to the global pool"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/mystery_box/pool/clear_map"}}
+		{"label": ["","🗺 ",{"translate": "mgs.select_map","fallback": "Select Map","color": "dark_green"}],"tooltip": {"translate": "mgs.browse_and_select_a_zombies_map","fallback": "Browse and select a zombies map"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/map_select"}},
+		{"label": ["","🧬 ",{"translate": "mgs.variant","fallback": "Variant"}],"tooltip": {"translate": "mgs.choose_the_zombies_experience","fallback": "Choose the zombies experience"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.4.3/zombies/setup/variant"}},
+		{"label": ["","▶ ",{"translate": "mgs.start","fallback": "START","color": "green"}],"tooltip": {"translate": "mgs.start_the_zombies_game","fallback": "Start the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/dialog/close_then {run:\"zombies/start\"}"}},
+		{"label": ["","■ ",{"translate": "mgs.stop","fallback": "STOP","color": "red"}],"tooltip": {"translate": "mgs.stop_the_zombies_game","fallback": "Stop the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/dialog/close_then {run:\"zombies/stop\"}"}},
+		{"label": ["","⟲ ",{"translate": "mgs.fast_restart","fallback": "Fast Restart","color": "gold"}],"tooltip": {"translate": "mgs.stop_and_immediately_restart_with_the_same_map_variant_and_playe","fallback": "Stop and immediately restart with the same map, variant and players"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/dialog/close_then {run:\"zombies/restart\"}"}},
+		{"label": ["","👥 ",{"translate": "mgs.manage_players","fallback": "Manage Players","color": "dark_aqua"}],"tooltip": {"translate": "mgs.add_or_remove_players_from_the_zombies_game","fallback": "Add or remove players from the zombies game"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/players/list_zombies"}},
+		{"label": ["","👥 ",{"translate": "mgs.all_players_join","fallback": "All Players Join","color": "green"}],"tooltip": {"translate": "mgs.add_every_online_player_to_the_zombies_game","fallback": "Add every online player to the zombies game"},"action": {"type": "run_command","command": "/execute as @a run function mgs:v5.4.3/players/zb_join"}},
+		{"label": ["","+ ",{"translate": "mgs.join","fallback": "Join","color": "yellow"}],"tooltip": {"translate": "mgs.join_the_ongoing_zombies_game_as_a_late_joiner","fallback": "Join the ongoing zombies game as a late joiner"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/dialog/close_then {run:\"zombies/join_game\"}"}},
+		{"label": ["","📂 ",{"translate": "mgs.load_save","fallback": "Load Save","color": "gold"}],"tooltip": {"translate": "mgs.resume_a_game_saved_between_two_rounds","fallback": "Resume a game saved between two rounds"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/save/load_menu"}},
+		{"label": ["","🛠 ",{"translate": "mgs.admin_debug","fallback": "Admin / Debug"}],"tooltip": {"translate": "mgs.skip_rounds_grant_points_and_force_power_ups_operators_only","fallback": "Skip rounds, grant points and force power-ups (operators only)"},"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.4.3/zombies/admin"}},
+		{"label": ["","🎁 ",{"translate": "mgs.box_pool","fallback": "Box Pool","color": "light_purple"}],"tooltip": {"translate": "mgs.weapons_of_the_mystery_box_and_their_weights_for_every_map_witho","fallback": "Weapons of the mystery box and their weights, for every map without its own pool"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/mystery_box/pool/edit_global"}},
+		{"label": ["","🎁 ",{"translate": "mgs.map_box_pool","fallback": "Map Box Pool","color": "light_purple"}],"tooltip": {"translate": "mgs.give_the_selected_map_a_mystery_box_pool_of_its_own","fallback": "Give the selected map a mystery box pool of its own"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/mystery_box/pool/edit_map"}},
+		{"label": ["","🎁 ",{"translate": "mgs.clear_map_box_pool","fallback": "Clear Map Box Pool","color": "gray"}],"tooltip": {"translate": "mgs.the_selected_map_goes_back_to_the_global_pool","fallback": "The selected map goes back to the global pool"},"action": {"type": "run_command","command": "/function mgs:v5.4.3/zombies/mystery_box/pool/clear_map"}}
 	],
 	"columns": 2,
 	"exit_action": {
-		"label": ["","◀ ",{"text": "Back","color": "gray"}],
-		"tooltip": {"text": "Return to the configuration menu"},
+		"label": ["","◀ ",{"translate": "mgs.back","fallback": "Back","color": "gray"}],
+		"tooltip": {"translate": "mgs.return_to_the_configuration_menu","fallback": "Return to the configuration menu"},
 		"action": {"type": "minecraft:show_dialog","dialog": "mgs:v5.4.3/config"}
 	}
 }

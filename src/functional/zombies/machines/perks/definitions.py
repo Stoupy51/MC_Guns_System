@@ -233,7 +233,7 @@ RECOMMENDED_PRICES: dict[str, int] = {
 	"juggernog": 2500, "speed_cola": 3000, "double_tap": 2000, "quick_revive": 1500,
 	"mule_kick": 4000, "stamin_up": 2000, "phd_flopper": 2000, "deadshot": 1500,
 	"timeslip": 1500, "electric_cherry": 2000, "tombstone": 2000, "whos_who": 2000,
-	"dying_wish": 2000, "widows_wine": 4000,
+	"dying_wish": 5000, "widows_wine": 4000,
 }
 
 PERK_DESCRIPTIONS: dict[str, list[str]] = {
