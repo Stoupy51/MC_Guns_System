@@ -2,13 +2,14 @@
 # Imports
 from stewbeet import Mem, write_tag, write_versioned_function
 
-from .shared import MAX_ESCORTS, PAP_ROOM_RADIUS
+from .shared import MAX_ESCORTS, PAP_ROOM_TAG
 
 
 # Functions
 def write_escort_lure() -> None:
 	ns: str = Mem.ctx.project_id
 	version: str = Mem.ctx.project_version
+	room_tag: str = f"{ns}.{PAP_ROOM_TAG}"
 
 	# PaP-room lure.
 	write_tag("zombies/setup_lure", Mem.ctx.data[ns].function_tags, [])
@@ -31,8 +32,7 @@ scoreboard players set #zb_lure {ns}.data 0
 	# On while at least one player is alive and every alive player is in the PaP room.
 	write_versioned_function("zombies/escort/update_lure", f"""
 execute store result score #zb_lure_alive {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator]
-scoreboard players set #zb_lure_inpap {ns}.data 0
-execute as @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator] at @s if entity @e[type=minecraft:interaction,tag={ns}.pap_machine,distance=..{PAP_ROOM_RADIUS}] run scoreboard players add #zb_lure_inpap {ns}.data 1
+execute store result score #zb_lure_inpap {ns}.data if entity @a[scores={{{ns}.zb.in_game=1,{ns}.zb.downed=0}},gamemode=!spectator,tag={room_tag}]
 
 scoreboard players set #zb_lure {ns}.data 0
 execute if score #zb_lure_alive {ns}.data matches 1.. if score #zb_lure_inpap {ns}.data = #zb_lure_alive {ns}.data run scoreboard players set #zb_lure {ns}.data 1
@@ -40,4 +40,13 @@ execute if score #zb_lure_alive {ns}.data matches 1.. if score #zb_lure_inpap {n
 # A few stray zombies get centre-bound escorts (cap-gated; retarget reads #zb_lure).
 execute if score #zb_lure {ns}.data matches 1 if score #zb_escort_count {ns}.data matches ..{MAX_ESCORTS - 1} as @e[tag={ns}.zombie_round,tag=!{ns}.zb_rising,tag=!{ns}.zb_escorted,tag=!{ns}.zb_escort_failed,limit=2,sort=random] at @s unless entity @e[tag={ns}.lure_center,distance=..16] run function {ns}:v{version}/zombies/escort/start
 """)
+
+	## Out of the room on a down, a fall, the end of the game, and on entering a game: a leftover tag would hold the lure on.
+	## A player who logs off keeps it until they log back in. Prepended where an early return could skip it.
+	write_versioned_function("zombies/start", f"tag @a remove {room_tag}")
+	write_versioned_function("zombies/join_game", f"tag @s remove {room_tag}")
+	write_versioned_function("zombies/on_rejoin", f"tag @s remove {room_tag}", prepend=True)
+	write_versioned_function("zombies/on_respawn", f"tag @s remove {room_tag}")
+	write_versioned_function("zombies/revive/full_death", f"tag @s remove {room_tag}", prepend=True)
+	write_versioned_function("zombies/reset_player", f"tag @s remove {room_tag}")
 

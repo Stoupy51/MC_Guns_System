@@ -7,6 +7,7 @@
 
 # In-game players within 3 blocks go to the projection room.
 tag @a[distance=..3,scores={mgs.zb.in_game=1},gamemode=!spectator] add mgs.kino.in_tp
+tag @a[tag=mgs.kino.in_tp] add mgs.zb_in_pap_room
 execute positioned ~57 ~1 ~-9 run tp @a[tag=mgs.kino.in_tp] ~-22 ~6 ~0
 execute as @a[tag=mgs.kino.in_tp] at @s run playsound minecraft:entity.enderman.teleport block @s ~ ~ ~ 1 1
 

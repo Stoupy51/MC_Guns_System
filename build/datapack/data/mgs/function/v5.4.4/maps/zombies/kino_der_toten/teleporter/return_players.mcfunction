@@ -6,6 +6,7 @@
 #
 
 execute as @a[tag=mgs.kino.in_tp] run function mgs:v5.4.4/maps/zombies/kino_der_toten/teleporter/return_one
+tag @a remove mgs.zb_in_pap_room
 # kino.in_tp stays: return_to_lobby needs it 5 s later.
 
 scoreboard players set #kino_tp_state mgs.data 5

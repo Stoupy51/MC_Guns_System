@@ -14,3 +14,5 @@ scoreboard players add @s mgs.st.zb.downs 1
 
 function mgs:v5.4.4/zombies/revive/on_down
 
+tag @s remove mgs.zb_in_pap_room
+

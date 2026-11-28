@@ -3,9 +3,9 @@
 #
 # @within	mgs:v5.4.4/dialog/close_then
 #			mgs:v5.4.4/zombies/rejoin
+#			mgs:v5.4.4/zombies/revive/full_death
 #			mgs:v5.4.4/zombies/whos_who/bleed_out
 #			mgs:v5.4.4/zombies/revive/on_down
-#			mgs:v5.4.4/zombies/revive/full_death
 #
 
 scoreboard players operation #my_downed_id mgs.data = @s mgs.zb.ww.id

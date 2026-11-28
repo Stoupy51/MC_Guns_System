@@ -2,9 +2,9 @@
 #> mgs:v5.4.4/zombies/perks/lose_all
 #
 # @within	mgs:v5.4.4/dialog/close_then
+#			mgs:v5.4.4/zombies/revive/full_death
 #			mgs:v5.4.4/zombies/whos_who/on_down
 #			mgs:v5.4.4/zombies/revive/on_down
-#			mgs:v5.4.4/zombies/revive/full_death
 #			mgs:v5.4.4/zombies/revive/void_revive_solo_qr
 #
 

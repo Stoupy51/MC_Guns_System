@@ -4,6 +4,7 @@ from stewbeet import Mem, write_versioned_function
 
 from ..helpers import MGS_TAG
 from .common import ZombiesCommon
+from .enemies.escort.shared import PAP_ROOM_TAG
 
 
 # Functions
@@ -177,6 +178,7 @@ execute if score #kino_tp_timer {ns}.data matches ..0 run function {ns}:v{versio
 	write_versioned_function("maps/zombies/kino_der_toten/teleporter/do_teleport", f"""
 # In-game players within 3 blocks go to the projection room.
 tag @a[distance=..3,scores={{{ns}.zb.in_game=1}},gamemode=!spectator] add {ns}.kino.in_tp
+tag @a[tag={ns}.kino.in_tp] add {ns}.{PAP_ROOM_TAG}
 execute positioned ~57 ~1 ~-9 run tp @a[tag={ns}.kino.in_tp] ~-22 ~6 ~0
 execute as @a[tag={ns}.kino.in_tp] at @s run playsound minecraft:entity.enderman.teleport block @s ~ ~ ~ 1 1
 
@@ -213,6 +215,7 @@ execute if score #kino_tp_state {ns}.data matches 6 if score #kino_tp_cd {ns}.da
 	# teleporter/return_players
 	write_versioned_function("maps/zombies/kino_der_toten/teleporter/return_players", f"""
 execute as @a[tag={ns}.kino.in_tp] run function {ns}:v{version}/maps/zombies/kino_der_toten/teleporter/return_one
+tag @a remove {ns}.{PAP_ROOM_TAG}
 # kino.in_tp stays: return_to_lobby needs it 5 s later.
 
 scoreboard players set #kino_tp_state {ns}.data 5

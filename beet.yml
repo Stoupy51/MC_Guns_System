@@ -101,7 +101,7 @@ meta:
         # Optional list of destination paths where generated files will be copied
         build_copy_destinations:
             # Paths to copy the datapack(s) to
-            datapack: ["D:/latest_snapshot/world/datapacks"]
+            datapack: ["D:/latest_snapshot/world/datapacks","sftp://mgs_paralya@coll.paralya.fr/sftp/world/datapacks"]
             # Paths to copy the resource pack(s) to
             resource_pack: ["D:/minecraft/latest/resourcepacks","C:/Users/Alexandre-PC/AppData/Roaming/ModrinthApp/profiles/Fabric 26.3/resourcepacks"]
         # Custom item lore configuration. If set to "auto" or unset, uses project icon followed by PROJECT_NAME

@@ -47,6 +47,7 @@ execute store result score #lv_{p}_count {ns}.data if entity {members}
 execute if score #lv_{p}_round {ns}.data matches 1.. unless score #lv_{p}_count {ns}.data matches {queue.min_players}.. run function {path}/cancel_vote
 execute unless score #lv_{p}_round {ns}.data matches 1.. if score #lv_{p}_count {ns}.data matches {queue.min_players}.. if data storage {ns}:{mode} game{{state:"lobby"}} run function {path}/open_vote
 execute if score #lv_{p}_round {ns}.data matches 1.. run function {path}/vote_second
+execute unless score #lv_{p}_round {ns}.data matches 1.. unless score #lv_{p}_count {ns}.data matches {queue.min_players}.. if data storage {ns}:{mode} game{{state:"lobby"}} run title {members} actionbar [{{"text":"Waiting for players: ","color":"aqua"}},{{"score":{{"name":"#lv_{p}_count","objective":"{ns}.data"}},"color":"yellow"}},{{"text":"/{queue.min_players}","color":"yellow"}}]
 
 # A game nobody is online in waits {AWAY_SECONDS // 60} minutes for them, then frees the mode.
 execute unless entity @a[scores={{{queue.in_game}=1}}] {running} run scoreboard players add #lv_{p}_empty {ns}.data 1

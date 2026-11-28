@@ -7,6 +7,8 @@
 #			mgs:v5.4.4/dialog/close_then
 #
 
+tag @s remove mgs.zb_in_pap_room
+
 scoreboard players set @s mgs.zb.rejoins 0
 execute unless score @s mgs.zb.run matches 1.. run return 0
 

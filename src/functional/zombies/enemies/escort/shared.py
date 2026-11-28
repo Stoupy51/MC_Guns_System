@@ -26,11 +26,12 @@ RETARGET_MOVE: int = 4
 RELEASE_RADIUS: int = 10
 """ Hand back to vanilla zombie AI once an alive player is within this radius AND visible. """
 
-PAP_ROOM_RADIUS: int = 14
+PAP_ROOM_TAG: str = "zb_in_pap_room"
 LURE_RELEASE: int = 8
-""" PaP-room lure: when every alive player is within PAP_ROOM_RADIUS of a PaP machine, escorts aim at the map's lure centre instead of a player.
+""" PaP-room lure: when every alive player carries the `<ns>.zb_in_pap_room` tag, escorts aim at the map's lure centre instead of a player.
 That spreads the horde to the middle of the map.
-Maps opt in through the #<ns>:zombies/setup_lure tag; a lured zombie is released within LURE_RELEASE of the centre marker.
+Maps opt in through the #<ns>:zombies/setup_lure tag and put the tag on the players their teleporter sends into the room, then take it off on the way out.
+A lured zombie is released within LURE_RELEASE of the centre marker.
 """
 
 RELEASE_RADIUS_CLOSE: int = 6

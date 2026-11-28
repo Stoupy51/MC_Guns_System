@@ -113,6 +113,8 @@ schedule function mgs:v5.4.4/zombies/preload_complete 20t
 
 tellraw @a[scores={mgs.zb.in_game=1}] ["",{"text":"","color":"dark_green","bold":true},"🧟 ",{"translate":"mgs.loading_zombies_map","fallback":"Loading zombies map...","color":"yellow"}]
 
+tag @a remove mgs.zb_in_pap_room
+
 scoreboard players set #zb_escort_count mgs.data 0
 scoreboard players set #zb_escort_mode mgs.data 0
 scoreboard players set #zb_lure mgs.data 0

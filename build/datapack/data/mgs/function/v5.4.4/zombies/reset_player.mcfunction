@@ -32,6 +32,8 @@ scoreboard players set @s mgs.zb.prev_kills 0
 scoreboard players set @s mgs.mp.spectate_timer 0
 tag @s remove mgs.give_class_menu
 
+tag @s remove mgs.zb_in_pap_room
+
 scoreboard players reset @s mgs.mb.pid
 
 tag @s remove mgs.barricade_repairing

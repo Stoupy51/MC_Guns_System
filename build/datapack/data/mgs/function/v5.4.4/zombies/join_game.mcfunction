@@ -55,4 +55,5 @@ function mgs:v5.4.4/shared/maps/call_script_at_base {mode:"zombies",script:"join
 
 # Announce
 tellraw @a[scores={mgs.zb.in_game=1}] ["",["",{"text":"[","color":"dark_gray"},{"score":{"name":"@s","objective":"mgs.zb.xp_level"},"color":"gold"},{"text":"] ","color":"dark_gray"},{"selector":"@s","color":"dark_green"}],[{"text":" ","color":"dark_green"}, {"translate":"mgs.joined_the_zombies_game","fallback":"joined the zombies game!"}]]
+tag @s remove mgs.zb_in_pap_room
 

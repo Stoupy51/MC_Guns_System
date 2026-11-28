@@ -5,6 +5,8 @@
 #			mgs:v5.4.4/zombies/check_bounds_player
 #
 
+tag @s remove mgs.zb_in_pap_room
+
 # A doppelganger forfeits their unrevived body, as when going down again.
 execute if entity @s[tag=mgs.ww_active] run function mgs:v5.4.4/zombies/whos_who/forfeit
 
