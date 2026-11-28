@@ -1,5 +1,6 @@
 """ Multiplayer mode entry point. """
 # Imports
+from .dimension import generate_multiplayer_dimension
 from .game import generate_game
 from .gamemodes import generate_gamemodes
 from .kill_cam import generate_kill_cam
@@ -13,6 +14,7 @@ from .xp import generate_multiplayer_xp
 
 # Functions
 def main() -> None:
+	generate_multiplayer_dimension()
 	generate_game()
 	generate_gamemodes()
 	generate_kill_cam()
