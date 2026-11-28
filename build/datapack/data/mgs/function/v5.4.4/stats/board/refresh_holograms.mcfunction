@@ -7,6 +7,7 @@
 #			mgs:v5.4.4/stats/mp/game_end
 #			mgs:v5.4.4/stats/mi/game_end
 #			mgs:v5.4.4/stats/admin/reset_board
+#			mgs:v5.4.4/stats/board/forget
 #
 
 kill @e[type=minecraft:text_display,tag=mgs.lb_text]

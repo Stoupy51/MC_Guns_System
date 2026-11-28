@@ -21,6 +21,7 @@ def write_identity() -> None:
 	## The levels are initialised here too: this runs before `progression/tick_player` does it, and the snapshot copies them.
 	write_versioned_function("stats/login", f"""
 scoreboard players set @s {ns}.st.login 0
+execute if score @s {ns}.st.reset matches 1 run function {ns}:v{version}/stats/finish_reset
 execute unless score @s {ns}.mp.xp_level matches 1.. run function {ns}:v{version}/progression/mp/init
 execute unless score @s {ns}.zb.xp_level matches 1.. run function {ns}:v{version}/progression/zb/init
 
@@ -29,6 +30,12 @@ data modify storage {ns}:temp _st set value {{}}
 data modify storage {ns}:temp _st.uuid set from entity @s UUID
 data modify storage {ns}:temp _st.name set from storage {ns}:temp _name
 function {ns}:v{version}/stats/login_as with storage {ns}:temp _st
+""")
+
+	## A player reset while offline keeps their advancements until they are online to lose them.
+	write_versioned_function("stats/finish_reset", f"""
+advancement revoke @s everything
+scoreboard players reset @s {ns}.st.reset
 """)
 
 	write_versioned_function("stats/login_as", f"""

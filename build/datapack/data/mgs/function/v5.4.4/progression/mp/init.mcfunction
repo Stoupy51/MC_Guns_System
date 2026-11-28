@@ -4,6 +4,7 @@
 # @within	mgs:v5.4.4/dialog/close_then
 #			mgs:v5.4.4/progression/tick_player
 #			mgs:v5.4.4/stats/login
+#			mgs:v5.4.4/stats/admin/reset_name
 #
 
 scoreboard players add @s mgs.mp.xp_total 0

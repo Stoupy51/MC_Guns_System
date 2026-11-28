@@ -5,12 +5,11 @@ Counters ride the award functions and the event sites, and the time and roster r
 Storage is written at login, at a game end and when a stats page opens.
 """
 # Imports
-from stewbeet import Mem, write_versioned_function
+from stewbeet import Mem, write_load_file, write_versioned_function
 
 from ..helpers import MGS_TAG
-from ..multiplayer.gamemodes.dispatch import GAMEMODES
 from .boards import write_boards
-from .catalog import MODES
+from .catalog import PERSISTENT_OBJECTIVES
 from .identity import write_identity
 from .menus import write_stats_menus
 from .snapshot import write_snapshot
@@ -26,9 +25,9 @@ def generate_stats() -> None:
 	write_stats_menus()
 	write_boards()
 
-	objectives: list[str] = [stat.objective for mode in MODES for stat in mode.stats]
-	objectives += [f"{ns}.st.mp.{gamemode}.{key}" for gamemode in GAMEMODES for key in ("games", "wins")]
-	resets: str = "\n".join(f"$scoreboard players reset $(name) {objective}" for objective in objectives)
+	kept: set[str] = {"bs.id", "mgs.st.index", "mgs.mp.pid"}
+	resets: str = "\n".join(f"$scoreboard players reset $(name) {objective}" for objective in PERSISTENT_OBJECTIVES if objective not in kept)
+	write_load_file(f"scoreboard objectives add {ns}.st.reset dummy")
 	write_versioned_function("stats/admin/reset", f"""
 data modify storage {ns}:temp _st_one set value {{}}
 $data modify storage {ns}:temp _st_one.uuid set from storage {ns}:stats known[$(i)]
@@ -40,7 +39,14 @@ function {ns}:v{version}/stats/admin/reset_name with storage {ns}:temp _st_one
 """)
 	write_versioned_function("stats/admin/reset_name", f"""
 {resets}
+$scoreboard players set $(name) {ns}.mp.xp_level 1
+$scoreboard players set $(name) {ns}.zb.xp_level 1
+$function {ns}:v{version}/stats/board/forget {{uuid:$(uuid)}}
+$execute as $(name) run function {ns}:v{version}/progression/mp/init
+$execute as $(name) run function {ns}:v{version}/progression/zb/init
+$execute if entity $(name) run advancement revoke $(name) everything
+$execute unless entity $(name) run scoreboard players set $(name) {ns}.st.reset 1
 $function {ns}:v{version}/stats/snapshot/player {{uuid:$(uuid),name:"$(name)"}}
-$tellraw @s [{MGS_TAG},{{"text":"Stats reset for ","color":"yellow"}},{{"text":"$(name)","color":"white"}}]
+$tellraw @s [{MGS_TAG},{{"text":"Fully reset: ","color":"yellow"}},{{"text":"$(name)","color":"white"}}]
 """)
 

@@ -359,3 +359,30 @@ function {base}/refresh_holograms
 $tellraw @s [{MGS_TAG},{{"text":"Leaderboard reset: $(id)","color":"yellow"}}]
 """)
 
+	## Macro {uuid}: takes the player out of every board, since an insertion keeps the better of the old and new entries.
+	write_versioned_function("stats/board/forget", f"""
+$data remove storage {ns}:stats leaderboards.level_mp[{{uuid:$(uuid)}}]
+$data remove storage {ns}:stats leaderboards.level_zb[{{uuid:$(uuid)}}]
+data modify storage {ns}:temp _fg set value {{}}
+$data modify storage {ns}:temp _fg.uuid set value $(uuid)
+data modify storage {ns}:temp _fg.maps set from storage {ns}:maps zombies
+function {base}/forget_zb_next
+data modify storage {ns}:temp _fg.maps set from storage {ns}:maps missions
+function {base}/forget_mi_next
+function {base}/refresh_holograms
+""")
+	## Zombies boards are bucketed by player count, from 1 to 4.
+	for kind, buckets in (("zb", range(1, 5)), ("mi", [None])):
+		path: str = 'zb_map."$(id)"."{n}"' if kind == "zb" else 'mi_map."$(id)"'
+		removes: str = "\n".join(
+			f"$data remove storage {ns}:stats leaderboards.{path.format(n=n)}[{{uuid:$(uuid)}}]" for n in buckets
+		)
+		write_versioned_function(f"stats/board/forget_{kind}_one", removes)
+		write_versioned_function(f"stats/board/forget_{kind}_next", f"""
+execute unless data storage {ns}:temp _fg.maps[0] run return 0
+data modify storage {ns}:temp _fg.id set from storage {ns}:temp _fg.maps[0].id
+function {base}/forget_{kind}_one with storage {ns}:temp _fg
+data remove storage {ns}:temp _fg.maps[0]
+function {base}/forget_{kind}_next
+""")
+

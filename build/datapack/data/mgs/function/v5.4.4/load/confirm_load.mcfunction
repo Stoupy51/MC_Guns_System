@@ -699,6 +699,7 @@ scoreboard objectives add mgs.st.mi.game_id dummy
 execute unless score #st_zb_game mgs.data matches 0.. run scoreboard players set #st_zb_game mgs.data 0
 execute unless score #st_mp_game mgs.data matches 0.. run scoreboard players set #st_mp_game mgs.data 0
 execute unless score #st_mi_game mgs.data matches 0.. run scoreboard players set #st_mi_game mgs.data 0
+scoreboard objectives add mgs.st.reset dummy
 
 scoreboard objectives add mgs.mp.map_edit dummy
 scoreboard objectives add mgs.mp.map_idx dummy

@@ -8,6 +8,7 @@
 execute if entity @s[gamemode=spectator,scores={mgs.mp.in_game=1}] if data storage mgs:multiplayer game{state:"lobby"} run function mgs:v5.4.4/multiplayer/reset_player
 
 scoreboard players set @s mgs.st.login 0
+execute if score @s mgs.st.reset matches 1 run function mgs:v5.4.4/stats/finish_reset
 execute unless score @s mgs.mp.xp_level matches 1.. run function mgs:v5.4.4/progression/mp/init
 execute unless score @s mgs.zb.xp_level matches 1.. run function mgs:v5.4.4/progression/zb/init
 
