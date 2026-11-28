@@ -76,10 +76,16 @@ function {ns}:v{version}/multiplayer/show_dialog with storage {ns}:temp
 		"external_title": pack_name,
 		"title": {"text": pack_name, "color": "gold", "bold": True},
 		"body": [{"type": "minecraft:plain_message", "contents": {"text": "Settings, class, stats and players", "color": "gray"}}],
-		"actions": [{
-			"label": {"text": "Open Menu", "color": "green"},
-			"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set 1"},
-		}],
+		"actions": [
+			{
+				"label": {"text": "Open Menu", "color": "green"},
+				"action": {"type": "run_command", "command": f"/trigger {ns}.player.config set 1"},
+			},
+			{
+				"label": {"text": "Join the Discord", "color": "blue"},
+				"action": {"type": "open_url", "url": "https://discord.gg/anxzu6rA9F"},
+			},
+		],
 		"columns": 1,
 		"pause": False,
 		"after_action": "none",

@@ -10,7 +10,8 @@
 		{"type": "minecraft:plain_message","contents": {"translate": "mgs.settings_class_stats_and_players","fallback": "Settings, class, stats and players","color": "gray"}}
 	],
 	"actions": [
-		{"label": {"translate": "mgs.open_menu","fallback": "Open Menu","color": "green"},"action": {"type": "run_command","command": "/trigger mgs.player.config set 1"}}
+		{"label": {"translate": "mgs.open_menu","fallback": "Open Menu","color": "green"},"action": {"type": "run_command","command": "/trigger mgs.player.config set 1"}},
+		{"label": {"translate": "mgs.join_the_discord","fallback": "Join the Discord","color": "blue"},"action": {"type": "open_url","url": "https://discord.gg/anxzu6rA9F"}}
 	],
 	"columns": 1,
 	"pause": false,
