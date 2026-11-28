@@ -29,7 +29,7 @@ def write_zombies_over() -> None:
 	write_versioned_function("zombies/game_over", f"""
 data modify storage {ns}:zombies game.state set value "ended"
 
-# The roster snapshot lets a fast restart work after the auto-stop clears in_game 5 s later (see zombies/restart).
+# The roster snapshot lets a fast restart work after the auto-stop clears in_game 15 s later (see zombies/restart).
 tag @a remove {ns}.zb_last_roster
 tag @a[scores={{{ns}.zb.in_game=1}}] add {ns}.zb_last_roster
 
@@ -58,7 +58,7 @@ execute as @a[scores={{{ns}.zb.in_game=1}}] at @s run playsound {ns}:zombies/gam
 # suggest_command only runs at permission level 2, so the restart is operator-only.
 tellraw @a[scores={{{ns}.zb.in_game=1}}] ["",{MGS_TAG}," ",{Dialogs.btn("⟲ Fast Restart", f"/function {ns}:v{version}/zombies/restart", "green", "Restart with the same map, variant and players (operators only)")}]
 
-schedule function {ns}:v{version}/zombies/stop 100t
+schedule function {ns}:v{version}/zombies/stop 300t
 """)
 
 	write_versioned_function("zombies/stop", f"""

@@ -7,7 +7,7 @@
 
 data modify storage mgs:zombies game.state set value "ended"
 
-# The roster snapshot lets a fast restart work after the auto-stop clears in_game 5 s later (see zombies/restart).
+# The roster snapshot lets a fast restart work after the auto-stop clears in_game 15 s later (see zombies/restart).
 tag @a remove mgs.zb_last_roster
 tag @a[scores={mgs.zb.in_game=1}] add mgs.zb_last_roster
 
@@ -38,5 +38,5 @@ execute as @a[scores={mgs.zb.in_game=1}] at @s run playsound mgs:zombies/game_ov
 # suggest_command only runs at permission level 2, so the restart is operator-only.
 tellraw @a[scores={mgs.zb.in_game=1}] ["",[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "]," ",[{"text": "[", "color": "green", "click_event": {"action": "suggest_command", "command": "/function mgs:v5.4.4/zombies/restart"}, "hover_event": {"action": "show_text", "value": "Restart with the same map, variant and players (operators only)"}}, "\u27f2 Fast Restart", "]"]]
 
-schedule function mgs:v5.4.4/zombies/stop 100t
+schedule function mgs:v5.4.4/zombies/stop 300t
 

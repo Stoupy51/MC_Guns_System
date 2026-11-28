@@ -262,6 +262,9 @@ scoreboard objectives add mgs.adv.zb.spending dummy
 scoreboard objectives add mgs.adv.caught dummy
 scoreboard players reset * mgs.adv.caught
 
+execute unless data storage mgs:maps zombies run data modify storage mgs:maps zombies set value []
+function #mgs:zombies/register_maps
+
 scoreboard objectives add mgs.zb.in_game dummy
 scoreboard objectives add mgs.zb.points dummy
 scoreboard objectives add mgs.zb.kills dummy
@@ -648,6 +651,9 @@ scoreboard objectives add mgs.mp.by dummy
 scoreboard objectives add mgs.mp.bz dummy
 
 execute unless data storage mgs:missions game run data modify storage mgs:missions game set value {state:"lobby",map_id:""}
+
+execute unless data storage mgs:maps missions run data modify storage mgs:maps missions set value []
+function #mgs:missions/register_maps
 
 scoreboard objectives add mgs.st.login custom:leave_game
 scoreboard objectives add mgs.st.zb.games dummy

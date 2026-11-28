@@ -1,5 +1,6 @@
 {
 	"values": [
-		"mgs:v5.4.4/maps/zombies/kino_der_toten/register"
+		"mgs:v5.4.4/maps/zombies/kino_der_toten/register",
+		"mgs:v5.4.4/maps/zombies/beyounds/register"
 	]
 }

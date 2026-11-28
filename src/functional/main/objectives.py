@@ -95,6 +95,9 @@ scoreboard players set #real_prev {ns}.data 0
 	write_tick_file(f"""
 scoreboard players add #total_tick {ns}.data 1
 
+# player_motion summons its helper marker at load, before the forceloaded chunk 0 0 exists, so it can stay missing for good.
+execute in minecraft:overworld unless entity d4bd74a7-4e82-4a07-8850-dfc4d89f9e2f if loaded 0 0 0 run summon marker 0.0 0.0 0.0 {{UUID:[I;-725781337,1317161479,-2007965756,-660627921],Tags:["smithed.strict","smithed.entity"]}}
+
 # #tick_delta = real ticks since the previous game tick (about 1 at 20 TPS, 2+ under lag); mode timers subtract it so durations stay wall-clock accurate.
 # No lower clamp: ms rounding jitters deltas between 0, 1 and 2 but their sum stays exact. The upper clamp 40 (2 s) bounds the jump after a pause or freeze.
 execute store result score #real_tick {ns}.data run stopwatch query {ns}:clock 20

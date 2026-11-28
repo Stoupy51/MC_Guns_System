@@ -2,7 +2,7 @@
 #> mgs:v5.4.4/zombies/stop
 #
 # @within	mgs:v5.4.4/dialog/close_then
-#			mgs:v5.4.4/zombies/game_over 100t [ scheduled ]
+#			mgs:v5.4.4/zombies/game_over 300t [ scheduled ]
 #			mgs:v5.4.4/zombies/restart
 #			mgs:v5.4.4/zombies/save/save
 #			mgs:v5.4.4/lobby/zombies/leave
