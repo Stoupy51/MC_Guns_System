@@ -9,9 +9,9 @@
 clear @s
 
 item replace entity @s armor.head with air
-item replace entity @s armor.chest with leather_chestplate[dyed_color=10263702,unbreakable={}]
-item replace entity @s armor.legs with chainmail_leggings[unbreakable={}]
-item replace entity @s armor.feet with iron_boots[unbreakable={}]
+item replace entity @s armor.chest with leather_chestplate[dyed_color=10263702,unbreakable={},attribute_modifiers=[{type:"minecraft:armor",id:"mgs:armor_chest",amount:5,operation:"add_value",slot:"chest"}]]
+item replace entity @s armor.legs with chainmail_leggings[unbreakable={},attribute_modifiers=[{type:"minecraft:armor",id:"mgs:armor_legs",amount:5,operation:"add_value",slot:"legs"}]]
+item replace entity @s armor.feet with iron_boots[unbreakable={},attribute_modifiers=[{type:"minecraft:armor",id:"mgs:armor_feet",amount:5,operation:"add_value",slot:"feet"}]]
 
 # The knife is always given in hotbar.0, so weapons start at hotbar.1 and hotbar.2. The camo defaults to "":
 # standard classes never set it, and older loadouts have no field, which would fail the macro.
