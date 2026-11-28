@@ -14,10 +14,11 @@
 #			mgs:v5.4.4/missions/game_tick {mode:"missions",script:"tick"}
 #			mgs:v5.4.4/missions/join_game {mode:"missions",script:"join"}
 #			mgs:v5.4.4/missions/actual_respawn {mode:"missions",script:"respawn"}
-#			mgs:v5.4.4/missions/stop {mode:"missions",script:"leave"} [ as @a[scores={mgs.mi.in_game=1}] ]
 #			mgs:v5.4.4/zombies/reset_player {mode:"zombies",script:"leave"}
 #			mgs:v5.4.4/zombies/power/turn_on {mode:"zombies",script:"power"}
 #			mgs:v5.4.4/zombies/revive/do_round_respawn {mode:"zombies",script:"respawn"}
+#			mgs:v5.4.4/missions/reset_player {mode:"missions",script:"leave"}
+#			mgs:v5.4.4/lobby/multiplayer/leave {mode:"multiplayer",script:"leave"}
 #
 # @args		mode (string)
 #			script (string)

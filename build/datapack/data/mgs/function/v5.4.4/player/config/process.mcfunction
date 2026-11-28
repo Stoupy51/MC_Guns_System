@@ -89,6 +89,11 @@ execute if score @s mgs.player.config matches 1600 run function mgs:v5.4.4/multi
 execute if score @s mgs.player.config matches 1601 run function mgs:v5.4.4/multiplayer/marketplace/browse_fav_only
 execute if score @s mgs.player.config matches 1602 run function mgs:v5.4.4/multiplayer/marketplace/browse_likes
 execute if score @s mgs.player.config matches 1603 run function mgs:v5.4.4/multiplayer/my_loadouts/browse_fav_only
+# Public lobby.
+execute if score @s mgs.player.config matches 1650 run function mgs:v5.4.4/lobby/send_home
+execute if score @s mgs.player.config matches 1651 run function mgs:v5.4.4/lobby/multiplayer/join
+execute if score @s mgs.player.config matches 1652 run function mgs:v5.4.4/lobby/zombies/join
+execute if score @s mgs.player.config matches 1653 run function mgs:v5.4.4/lobby/missions/join
 
 function mgs:v5.4.4/multiplayer/editor/save_state with storage mgs:temp
 

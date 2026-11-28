@@ -4,15 +4,15 @@
 # @within	mgs:v5.4.4/dialog/close_then
 #			mgs:v5.4.4/stats/menu/mi with storage mgs:temp _sv.d
 #
-# @args		i (unknown)
+# @args		games (int)
+#			completed (int)
+#			kills (int)
+#			headshots (int)
+#			shots (int)
+#			hits (int)
+#			deaths (int)
+#			i (unknown)
 #			name (unknown)
-#			games (unknown)
-#			completed (unknown)
-#			kills (unknown)
-#			headshots (unknown)
-#			shots (unknown)
-#			hits (unknown)
-#			deaths (unknown)
 #			time_h (unknown)
 #			time_m (unknown)
 #			kd_i (unknown)

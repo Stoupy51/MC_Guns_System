@@ -4,19 +4,14 @@
 # @within	mgs:v5.4.4/dialog/close_then
 #			mgs:v5.4.4/missions/end_prep
 #			mgs:v5.4.4/missions/victory
+#			mgs:v5.4.4/lobby/missions/leave
+#			mgs:v5.4.4/lobby/missions/second
 #
 
 execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.4.4/shared/enter_map {mode:"missions",fn:"mgs:v5.4.4/missions/stop"}
 
 data modify storage mgs:missions game.state set value "lobby"
 schedule clear mgs:v5.4.4/missions/end_prep
-execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:movement_speed base reset
-execute as @a[scores={mgs.mi.in_game=1}] run attribute @s minecraft:jump_strength base reset
-effect clear @a[scores={mgs.mi.in_game=1}] darkness
-effect clear @a[scores={mgs.mi.in_game=1}] blindness
-effect clear @a[scores={mgs.mi.in_game=1}] night_vision
-execute as @a[scores={mgs.mi.in_game=1},gamemode=spectator] run gamemode adventure @s
-clear @a[scores={mgs.mi.in_game=1}] compass[custom_data~{mgs:{compass:true}}]
 
 kill @e[tag=mgs.mission_enemy]
 kill @e[tag=mgs.missions_entity]
@@ -42,10 +37,7 @@ execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.4.4/player/fx_reset
 
 tellraw @a[scores={mgs.mi.in_game=1}] [[{"text":"","color":"gold"},"[",{"translate":"mgs","fallback":"MGS"},"] "],{"translate":"mgs.mission_ended","fallback":"Mission ended.","color":"red"}]
 
-execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.4.4/shared/maps/call_script_at_base {mode:"missions",script:"leave"}
-execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.4.4/lobby/return
-
-scoreboard players set @a[scores={mgs.mi.in_game=1}] mgs.mp.team 0
+execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.4.4/missions/reset_player
 scoreboard players set @a mgs.mi.in_game 0
 scoreboard players set #mi_timer mgs.data 0
 scoreboard players set #mi_total_enemies mgs.data 0

@@ -3,6 +3,7 @@
 #
 # @within	mgs:v5.4.4/dialog/close_then
 #			mgs:v5.4.4/players/zb_join
+#			mgs:v5.4.4/lobby/zombies/second [ as @a[scores={mgs.lobby.queue=2}] ]
 #
 
 execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.4.4/shared/enter_map {mode:"zombies",fn:"mgs:v5.4.4/zombies/join_game"}

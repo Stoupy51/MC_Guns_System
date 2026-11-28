@@ -96,8 +96,12 @@ def write_mode_page(ns: str, version: str, index: int, mode: StatMode) -> None:
 	base: str = f"{ns}:v{version}/stats/menu"
 	flat: str = f"{ns}:temp _sv.d"
 
+	## Every field starts at 0: an entry written before a stat existed lacks its key, and a missing macro argument fails the whole page.
+	gamemode_keys: list[str] = [f"{gamemode}_{key}" for gamemode in GAMEMODES for key in ("games", "wins")] if mode is MULTIPLAYER else []
+	defaults: str = ",".join(f"{key}:0" for key in [stat.key for stat in mode.stats] + gamemode_keys)
 	prepare: list[str] = [
-		f"data modify storage {flat} set from storage {ns}:temp _sv.p.{mode.key}",
+		f"data modify storage {flat} set value {{{defaults}}}",
+		f"data modify storage {flat} merge from storage {ns}:temp _sv.p.{mode.key}",
 		f"data modify storage {flat}.name set from storage {ns}:temp _sv.p.name",
 		f"data modify storage {flat}.i set from storage {ns}:temp _sv.i",
 	]

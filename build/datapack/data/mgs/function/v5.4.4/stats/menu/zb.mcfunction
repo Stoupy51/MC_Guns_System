@@ -5,7 +5,8 @@
 #			mgs:v5.4.4/stats/menu/view
 #
 
-data modify storage mgs:temp _sv.d set from storage mgs:temp _sv.p.zb
+data modify storage mgs:temp _sv.d set value {games:0,rounds:0,best_round:0,kills:0,headshots:0,shots:0,hits:0,downs:0,deaths:0,revives:0,points_earned:0,points_spent:0,doors:0,boxes:0,wallbuys:0,perks:0,pap:0,traps:0,powerups:0,barricades:0,power:0,time:0}
+data modify storage mgs:temp _sv.d merge from storage mgs:temp _sv.p.zb
 data modify storage mgs:temp _sv.d.name set from storage mgs:temp _sv.p.name
 data modify storage mgs:temp _sv.d.i set from storage mgs:temp _sv.i
 execute store result storage mgs:temp _sv.d.points_spent int 100 run data get storage mgs:temp _sv.d.points_spent

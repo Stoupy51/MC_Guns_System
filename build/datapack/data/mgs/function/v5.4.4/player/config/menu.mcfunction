@@ -8,6 +8,7 @@
 #
 
 data modify storage mgs:temp dialog set value {type:"minecraft:multi_action",title:["","🎮 ",{translate:"mgs.player_settings",fallback:"Player Settings",color:"gold",bold:true}],body:[{type:"minecraft:plain_message",contents:{translate:"mgs.toggle_your_personal_settings",fallback:"Toggle your personal settings","color":"gray"}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{"label": {"translate": "gui.done"}, "action": {"type": "run_command", "command": "/trigger mgs.player.config set 1640"}}}
+execute if score #public_lobby mgs.config matches 1 run function mgs:v5.4.4/lobby/menu_buttons
 
 execute unless score @s mgs.player.hitmarker matches 0 run data modify storage mgs:temp dialog.actions append value {label:["",{translate:"mgs.hitmarker_sound",fallback:"Hitmarker Sound: "},{text:"ON ✔",color:"green"}],tooltip:{translate:"mgs.toggle_hitmarker_sound_on_entity_hit",fallback:"Toggle hitmarker sound on entity hit"},action:{type:"run_command",command:"/trigger mgs.player.config set 2"}}
 execute if score @s mgs.player.hitmarker matches 0 run data modify storage mgs:temp dialog.actions append value {label:["",{translate:"mgs.hitmarker_sound",fallback:"Hitmarker Sound: "},[{translate:"mgs.off",fallback:"OFF",color:"red"}, " ✘"]],tooltip:{translate:"mgs.toggle_hitmarker_sound_on_entity_hit",fallback:"Toggle hitmarker sound on entity hit"},action:{type:"run_command",command:"/trigger mgs.player.config set 2"}}

@@ -20,6 +20,13 @@ It is a rewrite of [MGS 4.2 by TheBradqq](https://www.youtube.com/watch?v=Ia5Mlk
 4. Open the world, or restart server.
 5. Run `/function mgs:config` to open the admin menu, and start a game from Game Setup.
 
+## Public server
+
+To let players run games themselves, open `/function mgs:config`, then Global Settings: Set Lobby Here, Enable Public Lobby, and Place Controls Display where the controls should stand.
+Players then join Multiplayer, Zombies or Missions from the Quick Actions menu or the chat, vote for the game and map, and play.
+Each mode has its own queue and vote, and the three run at the same time.
+A player who comes back after more than 10 minutes away starts in the lobby, and a game nobody is online in stops after 10 minutes.
+
 ## Commands
 
 | Command                            | For       | What it does                                                                                           |

@@ -31,6 +31,7 @@ from ..config.catalogs import (
 	TRIG_LB_ZB_MAP_BASE,
 	TRIG_LEADERBOARDS,
 	TRIG_LIKE_BASE,
+	TRIG_LOBBY_LEAVE,
 	TRIG_MANAGE_BASE,
 	TRIG_MARKETPLACE,
 	TRIG_MARKETPLACE_ALL,
@@ -64,6 +65,7 @@ from ..config.catalogs import (
 )
 from .helpers import MGS_TAG
 from .helpers.dialogs import Dialogs
+from .lobby.queues import queues
 from .multiplayer.classes import MultiplayerClasses
 
 
@@ -191,6 +193,9 @@ execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_ALL} run functi
 execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_FAV_ONLY} run function {ns}:v{version}/multiplayer/marketplace/browse_fav_only
 execute if score @s {ns}.player.config matches {TRIG_MARKETPLACE_LIKES} run function {ns}:v{version}/multiplayer/marketplace/browse_likes
 execute if score @s {ns}.player.config matches {TRIG_MY_LOADOUTS_FAV_ONLY} run function {ns}:v{version}/multiplayer/my_loadouts/browse_fav_only
+# Public lobby.
+execute if score @s {ns}.player.config matches {TRIG_LOBBY_LEAVE} run function {ns}:v{version}/lobby/send_home
+{"".join(f'execute if score @s {ns}.player.config matches {TRIG_LOBBY_LEAVE + queue.queue_id} run function {ns}:v{version}/lobby/{queue.mode}/join{chr(10)}' for queue in queues())}
 
 function {ns}:v{version}/multiplayer/editor/save_state with storage {ns}:temp
 
@@ -219,6 +224,7 @@ function {ns}:v{version}/player/config/menu
 	## Built per player, so toggle states show live; opened by /trigger set 1.
 	write_versioned_function("player/config/menu", f"""
 data modify storage {ns}:temp dialog set value {{type:"minecraft:multi_action",title:["","🎮 ",{{text:"Player Settings",color:"gold",bold:true}}],body:[{{type:"minecraft:plain_message",contents:{{text:"Toggle your personal settings","color":"gray"}}}}],actions:[],columns:1,pause:false,after_action:"none",exit_action:{Dialogs.close_done_snbt()}}}
+execute if score #public_lobby {ns}.config matches 1 run function {ns}:v{version}/lobby/menu_buttons
 
 execute unless score @s {ns}.player.hitmarker matches 0 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"ON ✔",color:"green"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}
 execute if score @s {ns}.player.hitmarker matches 0 run data modify storage {ns}:temp dialog.actions append value {{label:["",{{text:"Hitmarker Sound: "}},{{text:"OFF ✘",color:"red"}}],tooltip:{{text:"Toggle hitmarker sound on entity hit"}},action:{{type:"run_command",command:"/trigger {ns}.player.config set 2"}}}}

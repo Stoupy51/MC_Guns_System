@@ -72,6 +72,9 @@ def write_config_menu() -> None:
 		Dialogs.dialog_show_btn(f"{ns}:config/damage_debug", "Damage Debug", "Broadcast every hit's damage to chat", "yellow"),
 		Dialogs.dialog_run_btn("🏠 Set Lobby Here", f"/function {ns}:v{version}/lobby/set", "Players return here, with this rotation and dimension, when their game ends", "green"),
 		Dialogs.dialog_run_btn("🏠 Clear Lobby", f"/function {ns}:v{version}/lobby/clear", "Players stay where their game ends", "red"),
+		Dialogs.dialog_run_btn("🌐 Enable Public Lobby", f"/function {ns}:v{version}/lobby/public/enable", "Players join a mode from the lobby, vote for its game and map, and play with no operator", "green"),
+		Dialogs.dialog_run_btn("🌐 Disable Public Lobby", f"/function {ns}:v{version}/lobby/public/disable", "Games are started by operators again; queues and votes are cleared", "red"),
+		Dialogs.dialog_run_btn("📋 Place Controls Display", f"/function {ns}:v{version}/lobby/controls/place", "A text display of the controls, with each reader's own keys, where you stand", "aqua"),
 	])
 	register_category("config/personal", "⚡ Personal Cheats", [
 		Dialogs.dialog_show_btn(f"{ns}:config/instant_kill", "Instant Kill", "One-shot kills for a duration (self only)", "red"),

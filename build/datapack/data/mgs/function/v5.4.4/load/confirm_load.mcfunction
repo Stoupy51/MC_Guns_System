@@ -727,6 +727,11 @@ data remove storage mgs:temp _inf_map
 scoreboard objectives add mgs.ed.session dummy
 scoreboard players add #ed_session mgs.data 0
 
+scoreboard objectives add mgs.lobby.queue dummy
+scoreboard objectives add mgs.lobby.choice dummy
+scoreboard objectives add mgs.lobby.vote trigger
+scoreboard objectives add mgs.lobby.seen dummy
+
 # Set scoreboard constants for mgs.data
 scoreboard players set #1 mgs.data 1
 scoreboard players set #2 mgs.data 2

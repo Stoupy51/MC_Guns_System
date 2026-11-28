@@ -58,3 +58,5 @@ scoreboard players operation #ed_sweep mgs.data = #total_tick mgs.data
 scoreboard players operation #ed_sweep mgs.data %= #20 mgs.data
 execute if score #ed_sweep mgs.data matches 0 run function mgs:v5.4.4/maps/editor/sweep
 
+execute if score #public_lobby mgs.config matches 1 run function mgs:v5.4.4/lobby/tick
+

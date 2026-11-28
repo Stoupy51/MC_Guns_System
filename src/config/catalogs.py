@@ -271,6 +271,8 @@ TRIG_LEADERBOARDS             = 1630
 """ Leaderboards menu; + 1 Multiplayer level, + 2 Zombies level, + 3 Zombies maps, + 4 Missions maps. """
 TRIG_CLOSE                    = 1640
 """ Runs nothing, so the dialog it was clicked from closes, as after any trigger that shows no dialog. """
+TRIG_LOBBY_LEAVE              = 1650
+""" Public lobby: leave the queue and any game, back to the lobby. + queue id (1 to 3) joins that mode's queue. """
 TRIG_LB_MI_MAP_BASE           = 2000
 """ + map index -> that Missions map's leaderboard. """
 TRIG_LB_ZB_MAP_BASE           = 3000

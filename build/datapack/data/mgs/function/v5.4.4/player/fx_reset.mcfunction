@@ -13,6 +13,7 @@
 #			mgs:v5.4.4/multiplayer/stop [ as @a[scores={mgs.mp.in_game=1}] ]
 #			mgs:v5.4.4/missions/start [ as @a[scores={mgs.mi.in_game=1}] ]
 #			mgs:v5.4.4/missions/stop [ as @a[scores={mgs.mi.in_game=1}] ]
+#			mgs:v5.4.4/lobby/arrive
 #
 
 scoreboard players set #hurt_was mgs.data 0

@@ -7,6 +7,8 @@
 #			mgs:v5.4.4/dialog/close_then
 #
 
+execute if score #public_lobby mgs.config matches 1 unless score @s mgs.lobby.seen = #now mgs.lobby.seen run function mgs:v5.4.4/lobby/login
+
 execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{coord_stick:true}}] run function mgs:v5.4.4/utils/coord_stick
 
 execute unless score @s mgs.mp.pid matches 1.. run function mgs:v5.4.4/multiplayer/assign_pid

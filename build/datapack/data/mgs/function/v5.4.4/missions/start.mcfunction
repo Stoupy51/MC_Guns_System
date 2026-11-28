@@ -2,6 +2,7 @@
 #> mgs:v5.4.4/missions/start
 #
 # @within	mgs:v5.4.4/dialog/close_then
+#			mgs:v5.4.4/lobby/missions/launch [ as @r[scores={mgs.lobby.queue=3}] ]
 #
 
 execute unless score #in_missions_map mgs.data matches 1 run return run function mgs:v5.4.4/shared/enter_map {mode:"missions",fn:"mgs:v5.4.4/missions/start"}

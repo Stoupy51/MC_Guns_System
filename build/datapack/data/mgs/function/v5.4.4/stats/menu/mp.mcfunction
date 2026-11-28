@@ -5,7 +5,8 @@
 #			mgs:v5.4.4/stats/menu/view
 #
 
-data modify storage mgs:temp _sv.d set from storage mgs:temp _sv.p.mp
+data modify storage mgs:temp _sv.d set value {games:0,wins:0,losses:0,kills:0,deaths:0,headshots:0,shots:0,hits:0,captures:0,plants:0,defuses:0,objectives:0,time:0,ffa_games:0,ffa_wins:0,tdm_games:0,tdm_wins:0,dom_games:0,dom_wins:0,hp_games:0,hp_wins:0,snd_games:0,snd_wins:0,demo_games:0,demo_wins:0}
+data modify storage mgs:temp _sv.d merge from storage mgs:temp _sv.p.mp
 data modify storage mgs:temp _sv.d.name set from storage mgs:temp _sv.p.name
 data modify storage mgs:temp _sv.d.i set from storage mgs:temp _sv.i
 execute store result score #st_t mgs.data run data get storage mgs:temp _sv.d.time

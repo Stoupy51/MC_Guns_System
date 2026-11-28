@@ -14,13 +14,6 @@ def write_missions_stop() -> None:
 	write_versioned_function("missions/stop", f"""
 data modify storage {ns}:missions game.state set value "lobby"
 schedule clear {ns}:v{version}/missions/end_prep
-execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:movement_speed base reset
-execute as @a[scores={{{ns}.mi.in_game=1}}] run attribute @s minecraft:jump_strength base reset
-effect clear @a[scores={{{ns}.mi.in_game=1}}] darkness
-effect clear @a[scores={{{ns}.mi.in_game=1}}] blindness
-effect clear @a[scores={{{ns}.mi.in_game=1}}] night_vision
-execute as @a[scores={{{ns}.mi.in_game=1}},gamemode=spectator] run gamemode adventure @s
-clear @a[scores={{{ns}.mi.in_game=1}}] compass[custom_data~{{{ns}:{{compass:true}}}}]
 
 kill @e[tag={ns}.mission_enemy]
 kill @e[tag={ns}.missions_entity]
@@ -33,10 +26,7 @@ function #{ns}:missions/on_mission_end
 
 tellraw @a[scores={{{ns}.mi.in_game=1}}] [{MGS_TAG},{{"text":"Mission ended.","color":"red"}}]
 
-execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"missions",script:"leave"}}
-execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/lobby/return
-
-scoreboard players set @a[scores={{{ns}.mi.in_game=1}}] {ns}.mp.team 0
+execute as @a[scores={{{ns}.mi.in_game=1}}] run function {ns}:v{version}/missions/reset_player
 scoreboard players set @a {ns}.mi.in_game 0
 scoreboard players set #mi_timer {ns}.data 0
 scoreboard players set #mi_total_enemies {ns}.data 0
@@ -44,6 +34,21 @@ scoreboard players set #mi_has_boundary {ns}.data 0
 scoreboard players set @a {ns}.mi.kills 0
 scoreboard players set @a {ns}.mi.deaths 0
 tag @a[tag={ns}.give_class_menu] remove {ns}.give_class_menu
+""")
+
+	## Run as a player of the mission, at stop or when they go back to the lobby.
+	write_versioned_function("missions/reset_player", f"""
+attribute @s minecraft:movement_speed base reset
+attribute @s minecraft:jump_strength base reset
+effect clear @s darkness
+effect clear @s blindness
+effect clear @s night_vision
+gamemode adventure @s[gamemode=spectator]
+clear @s compass[custom_data~{{{ns}:{{compass:true}}}}]
+function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"missions",script:"leave"}}
+function {ns}:v{version}/lobby/return
+scoreboard players set @s {ns}.mp.team 0
+scoreboard players set @s {ns}.mi.in_game 0
 """)
 
 	## Late joiners.

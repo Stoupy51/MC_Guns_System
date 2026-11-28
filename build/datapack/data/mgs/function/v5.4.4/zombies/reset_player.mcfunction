@@ -4,6 +4,7 @@
 # @within	mgs:v5.4.4/dialog/close_then
 #			mgs:v5.4.4/zombies/stop [ as @a[scores={mgs.zb.in_game=1}] ]
 #			mgs:v5.4.4/zombies/clear_stale_player
+#			mgs:v5.4.4/lobby/zombies/leave
 #
 
 attribute @s minecraft:max_health base reset

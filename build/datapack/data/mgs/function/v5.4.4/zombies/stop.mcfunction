@@ -5,6 +5,8 @@
 #			mgs:v5.4.4/zombies/game_over 100t [ scheduled ]
 #			mgs:v5.4.4/zombies/restart
 #			mgs:v5.4.4/zombies/save/save
+#			mgs:v5.4.4/lobby/zombies/leave
+#			mgs:v5.4.4/lobby/zombies/second
 #
 
 execute unless score #in_zombies_map mgs.data matches 1 run return run function mgs:v5.4.4/shared/enter_map {mode:"zombies",fn:"mgs:v5.4.4/zombies/stop"}

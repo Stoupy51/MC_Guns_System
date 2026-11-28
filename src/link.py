@@ -3,6 +3,7 @@
 from stewbeet import Context, official_lib_used
 
 from .functional.core import main as main_core
+from .functional.lobby import main as main_lobby
 from .functional.main import main as main_datapack
 from .functional.map_editor import generate_map_editor
 from .functional.missions import main as main_missions
@@ -34,6 +35,7 @@ def beet_default(ctx: Context) -> None:
 	main_missions()
 	generate_stats()        # After the three modes: it appends to their award functions and end-of-game tags
 	generate_map_editor()  # Generic across all three modes
+	main_lobby()
 	official_lib_used("bs.dump")
 
 	# 3D renders, excluding _zoom variants

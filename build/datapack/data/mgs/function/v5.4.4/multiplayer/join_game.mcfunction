@@ -4,6 +4,7 @@
 # @within	mgs:v5.4.4/dialog/close_then
 #			mgs:v5.4.4/players/mp_to_red
 #			mgs:v5.4.4/players/mp_to_blue
+#			mgs:v5.4.4/lobby/multiplayer/second [ as @a[scores={mgs.lobby.queue=1}] ]
 #
 
 execute unless score #in_multiplayer_map mgs.data matches 1 run return run function mgs:v5.4.4/shared/enter_map {mode:"multiplayer",fn:"mgs:v5.4.4/multiplayer/join_game"}
