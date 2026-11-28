@@ -17,7 +17,14 @@ def generate_multiplayer_dimension() -> None:
 	Mem.ctx.data[f"{ns}:multiplayer"] = WorldClock({})
 	Mem.ctx.data[f"{ns}:multiplayer"] = DimensionType({
 		"ambient_light": 0.0,
-		"attributes": {},
+		"attributes": {
+			"minecraft:gameplay/monsters_burn": False,
+			"minecraft:visual/ambient_light_color": "#0a0a0a",
+			"minecraft:visual/cloud_color": "#ccffffff",
+			"minecraft:visual/cloud_height": 192.33,
+			"minecraft:visual/fog_color": "#c0d8ff",
+			"minecraft:visual/sky_color": "#78a7ff"
+		},
 		"coordinate_scale": 1.0,
 		"default_clock": f"{ns}:multiplayer",
 		"has_ceiling": False,
@@ -34,7 +41,7 @@ def generate_multiplayer_dimension() -> None:
 		"type": f"{ns}:multiplayer",
 		"generator": {
 			"type": "minecraft:flat",
-			"settings": {"biome": "minecraft:the_void", "layers": [], "lakes": False, "features": False, "structure_overrides": []},
+			"settings": {"biome": "minecraft:plains", "layers": [], "lakes": False, "features": False, "structure_overrides": []},
 		},
 	})
 

@@ -68,6 +68,7 @@ def beet_default(ctx: Context) -> None:
 	# The order matters.
 	main_items()
 	add_class_menu(ns)
+	add_main_menu(ns)
 
 	for item in Mem.definitions:
 		obj = Item.from_id(item)
@@ -108,6 +109,22 @@ def add_class_menu(ns: str) -> None:
 			"rarity": "common",
 			"item_name": [{"text": "Class Menu", "color": "gold", "italic": False}],
 			"item_model": "minecraft:nether_star",
+		},
+	)
+
+
+def add_main_menu(ns: str) -> None:
+	""" Register the lobby item opening the menu of the G key. """
+	Item(
+		id="main_menu",
+		base_item="minecraft:warped_fungus_on_a_stick",
+		components={
+			"max_stack_size": 1,
+			"custom_data": {ns: {"main_menu": True}},
+			"rarity": "common",
+			"item_name": [{"text": "Menu", "color": "green", "italic": False}],
+			"lore": [[{"text": "Right click to open the menu, like the G key", "color": "gray", "italic": False}]],
+			"item_model": "minecraft:enchanted_book",
 		},
 	)
 

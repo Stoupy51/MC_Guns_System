@@ -14,7 +14,7 @@ MIDNIGHT_ATTRIBUTES: dict[str, object] = {
 	"minecraft:visual/sky_color": "#000000",
 	"minecraft:visual/fog_color": "#0b0d16",
 	"minecraft:visual/cloud_color": "#cc191926",
-	"minecraft:visual/sky_light_color": "#7a7aff",
+	"minecraft:visual/sky_light_color": "#2d2d5f",
 	"minecraft:visual/sky_light_factor": 0.24,
 	"minecraft:visual/star_brightness": 0.5,
 	"minecraft:visual/sun_angle": 180.0,

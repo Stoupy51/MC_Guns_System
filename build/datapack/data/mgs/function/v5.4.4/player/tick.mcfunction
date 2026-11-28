@@ -109,6 +109,7 @@ execute if data storage mgs:zombies game{state:"active"} unless score #zb_freeze
 execute if data storage mgs:zombies game{state:"active"} unless score #zb_freeze mgs.data matches 1.. if score @s mgs.zb.in_game matches 1.. if score @s mgs.zb.dw_timer matches 1.. run function mgs:v5.4.4/zombies/perks/dying_wish_tick
 
 execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{class_menu:true}}] run function mgs:v5.4.4/multiplayer/select_class
+execute if score @s mgs.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{mgs:{main_menu:true}}] run function mgs:v5.4.4/player/config/menu
 scoreboard players set @s mgs.class_menu 0
 
 # death_count comes from the deathCount criterion.

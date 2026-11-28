@@ -1,0 +1,50 @@
+{
+	"pools": [
+		{
+			"rolls": 1,
+			"entries": [
+				{
+					"type": "minecraft:item",
+					"name": "minecraft:warped_fungus_on_a_stick",
+					"modifier": [
+						{
+							"type": "minecraft:set_components",
+							"components": {
+								"minecraft:max_stack_size": 1,
+								"minecraft:custom_data": {
+									"mgs": {
+										"main_menu": true
+									},
+									"smithed": {
+										"id": "mgs:main_menu",
+										"origin": "mgs",
+										"ignore": {"functionality": true,"crafting": true}
+									}
+								},
+								"minecraft:rarity": "common",
+								"minecraft:item_name": [
+									{
+										"translate": "mgs.menu","fallback": "Menu",
+										"color": "green",
+										"italic": false
+									}
+								],
+								"minecraft:lore": [
+									[
+										{"translate": "mgs.right_click_to_open_the_menu_like_the_g_key","fallback": "Right click to open the menu, like the G key","color": "gray","italic": false}
+									],
+									[
+										"",
+										{"text": "ꀁ","color": "white","italic": false,"font": "mgs:tooltip"},
+										[{"text":"뀁","italic": false,"color": "white","font": "mgs:tooltip"}, {"translate": "mgs.mc_guns_system","fallback": "MC Guns System"}]
+									]
+								],
+								"minecraft:item_model": "minecraft:enchanted_book"
+							}
+						}
+					]
+				}
+			]
+		}
+	]
+}

@@ -35,6 +35,7 @@ scoreboard objectives add {ns}.class_menu minecraft.used:minecraft.warped_fungus
 
 	write_versioned_function("player/tick", f"""
 execute if score @s {ns}.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{class_menu:true}}}}] run function {ns}:v{version}/multiplayer/select_class
+execute if score @s {ns}.class_menu matches 1.. if items entity @s weapon.mainhand *[custom_data~{{{ns}:{{main_menu:true}}}}] run function {ns}:v{version}/player/config/menu
 scoreboard players set @s {ns}.class_menu 0
 """)
 

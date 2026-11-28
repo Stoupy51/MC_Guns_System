@@ -1,7 +1,10 @@
 
 #> mgs:v5.4.4/player/config/menu
 #
-# @within	mgs:v5.4.4/dialog/close_then
+# @executed	as @e[type=player,sort=random] & at @s
+#
+# @within	mgs:v5.4.4/player/tick
+#			mgs:v5.4.4/dialog/close_then
 #			mgs:v5.4.4/player/config/process
 #			mgs:v5.4.4/player/config/toggle_hitmarker
 #			mgs:v5.4.4/player/config/toggle_damage_debug
