@@ -67,6 +67,7 @@ execute if score @s {ns}.special.quick_swap matches 1.. run function {ns}:v{vers
 # As an expiry tick.
 scoreboard players operation #cooldown {ns}.data += #total_tick {ns}.data
 scoreboard players operation @s {ns}.cooldown = #cooldown {ns}.data
+scoreboard players operation @s {ns}.zoom_ready = #cooldown {ns}.data
 
 function {ns}:v{version}/switch/force_switch_animation
 

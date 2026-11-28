@@ -20,9 +20,9 @@ execute unless data storage {ns}:gun all.gun run return run function {ns}:v{vers
 # Grenades cannot aim, but still get the movement crosshair.
 execute if data storage {ns}:gun all.stats.grenade_type run return run function {ns}:v{version}/zoom/crosshair_spread
 
-# No zoom while reloading.
+# No zoom while reloading, nor while the weapon is still being raised: the scope lens would show before the model reaches the centre.
 scoreboard players set #is_sneaking {ns}.data 0
-execute if predicate {ns}:v{version}/is_sneaking unless entity @s[tag={ns}.reloading] run scoreboard players set #is_sneaking {ns}.data 1
+execute if predicate {ns}:v{version}/is_sneaking unless entity @s[tag={ns}.reloading] unless score @s {ns}.zoom_ready > #total_tick {ns}.data run scoreboard players set #is_sneaking {ns}.data 1
 
 execute if data storage {ns}:gun all.stats.{IS_ZOOM} if score #is_sneaking {ns}.data matches 0 run return run function {ns}:v{version}/zoom/remove
 

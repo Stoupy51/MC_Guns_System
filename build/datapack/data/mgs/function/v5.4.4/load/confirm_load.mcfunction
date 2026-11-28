@@ -29,6 +29,9 @@ scoreboard objectives add mgs.dropped minecraft.custom:minecraft.drop
 # Expiry tick before the next shot.
 scoreboard objectives add mgs.cooldown dummy
 
+# Expiry tick of the weapon raise after a switch, before which aiming waits.
+scoreboard objectives add mgs.zoom_ready dummy
+
 # Was zooming, so the slowness can be removed.
 scoreboard objectives add mgs.zoom dummy
 

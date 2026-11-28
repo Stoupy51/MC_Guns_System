@@ -139,7 +139,9 @@ function {path}/welcome
 		f'"click_event":{{"action":"run_command","command":"/trigger {ns}.player.config set {TRIG_LOBBY_LEAVE}"}},'
 		f'"extra":["[🏠 ",{{"text":"Leave the queue"}},"]"]}}'
 	)
+	counts: str = "\n".join(f"execute store result score #lv_{queue.prefix}_count {ns}.data if entity {queue.members}" for queue in all_queues)
 	write_versioned_function("lobby/welcome", f"""
+{counts}
 tellraw @s ["",{MGS_TAG},{{"text":"Play: ","color":"gray"}},{'," ",'.join(mode_button(queue) for queue in all_queues)}]
 execute if score @s {ns}.lobby.queue matches 1.. run tellraw @s ["",{MGS_TAG},{{"text":"You stay in your queue for the next game. ","color":"gray"}},{leave_button}]
 tellraw @s ["",{MGS_TAG},{{"text":"Menu, class and stats: ","color":"gray"}},{{"keybind":"key.quickActions","color":"yellow"}}]

@@ -23,6 +23,7 @@ execute if score @s mgs.special.quick_swap matches 1.. run function mgs:v5.4.4/s
 # As an expiry tick.
 scoreboard players operation #cooldown mgs.data += #total_tick mgs.data
 scoreboard players operation @s mgs.cooldown = #cooldown mgs.data
+scoreboard players operation @s mgs.zoom_ready = #cooldown mgs.data
 
 function mgs:v5.4.4/switch/force_switch_animation
 

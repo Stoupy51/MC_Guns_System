@@ -16,9 +16,9 @@ execute unless data storage mgs:gun all.gun run return run function mgs:v5.4.4/z
 # Grenades cannot aim, but still get the movement crosshair.
 execute if data storage mgs:gun all.stats.grenade_type run return run function mgs:v5.4.4/zoom/crosshair_spread
 
-# No zoom while reloading.
+# No zoom while reloading, nor while the weapon is still being raised: the scope lens would show before the model reaches the centre.
 scoreboard players set #is_sneaking mgs.data 0
-execute if predicate mgs:v5.4.4/is_sneaking unless entity @s[tag=mgs.reloading] run scoreboard players set #is_sneaking mgs.data 1
+execute if predicate mgs:v5.4.4/is_sneaking unless entity @s[tag=mgs.reloading] unless score @s mgs.zoom_ready > #total_tick mgs.data run scoreboard players set #is_sneaking mgs.data 1
 
 execute if data storage mgs:gun all.stats.is_zoom if score #is_sneaking mgs.data matches 0 run return run function mgs:v5.4.4/zoom/remove
 
