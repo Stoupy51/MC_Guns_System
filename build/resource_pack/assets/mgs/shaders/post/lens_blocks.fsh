@@ -2,6 +2,7 @@
 #extension GL_ARB_separate_shader_objects : require
 
 #define GRID 32
+#define MARKER_MAX (128.5 / 255.0)
 
 // The markers are looked for in a centred square three quarters of the screen high, cut into GRID x GRID blocks.
 int lens_block(ivec2 inSize) {
@@ -32,7 +33,7 @@ void main() {
         for (int x = 0; x < block; x++) {
             vec3 color = texelFetch(InSampler, start + ivec2(x, y), 0).rgb;
             // The floor keeps the scope's own near-black shading from passing for a marker.
-            if (color.r == 0.0 && color[3 - channel] == 0.0 && color[channel] >= 4.0 / 255.0) {
+            if (color.r == 0.0 && color[3 - channel] == 0.0 && color[channel] >= 4.0 / 255.0 && color[channel] <= MARKER_MAX) {
                 sum += vec2(x, y) + 0.5;
                 count += 1.0;
             }

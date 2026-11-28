@@ -2,6 +2,7 @@
 #extension GL_ARB_separate_shader_objects : require
 
 #define GRID 32
+#define MARKER_MAX (128.5 / 255.0)
 
 // The markers are looked for in a centred square three quarters of the screen high, cut into GRID x GRID blocks.
 int lens_block(ivec2 inSize) {

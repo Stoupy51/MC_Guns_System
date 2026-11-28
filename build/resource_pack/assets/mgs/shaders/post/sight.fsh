@@ -3,6 +3,7 @@
 
 #define MARKER_SPAN 0.5625
 #define MARKER_TEXELS 16.0
+#define MARKER_MAX (128.5 / 255.0)
 #define VIGNETTE_START 0.55
 
 #include <minecraft:globals.glsl>
@@ -61,7 +62,8 @@ vec4 textureBicubic(sampler2D samp, vec2 texCoords, vec2 texSize) {
 }
 
 bool is_marker(vec3 color) {
-    return color.r == 0.0 && (color.g == 0.0) != (color.b == 0.0) && max(color.g, color.b) >= 4.0 / 255.0;
+    float value = max(color.g, color.b);
+    return color.r == 0.0 && (color.g == 0.0) != (color.b == 0.0) && value >= 4.0 / 255.0 && value <= MARKER_MAX;
 }
 
 vec2 unpack_marker(int marker) {

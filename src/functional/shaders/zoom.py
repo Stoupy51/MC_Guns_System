@@ -6,7 +6,7 @@ A removed chain stops rendering on the frame the packet lands, so it can never a
 The zoomed models carry no reticle: a lens that magnifies the frame would magnify a reticle drawn on the model too, and its bobbing with it.
 Their reticle faces sample `sight_marker` instead, transparent but for a blue texel and a green one on a diagonal of the marker quad,
 inside the opening, where the lens covers them, yet out of the small centre the lens magnifies.
-Lighting only scales a colour, so both keep two channels at exactly 0 on screen: two passes reduce each to its centroid,
+Lighting only darkens a colour, so both keep two channels at exactly 0 on screen and the third at most the texel's: two passes reduce each to its centroid,
 and the shader draws the reticle, from `textures/effect/reticle/<sight>.png`, in the square they span, with the lens centred on it.
 A shader pack (Iris) lights and grades the markers past recognition, so until they are seen the square is the one the aimed model has at rest.
 """
@@ -97,6 +97,10 @@ MARKER_TEXELS: int = 16
 MARKER_INSET: int = 3
 """ Texels between a corner of the region and its marker: the corners are behind the scope tube. """
 
+MARKER_VALUE: int = 128
+""" Lit channel of a marker texel. It still reads 6 at light level 0, above the search floor of 4,
+and no lighting raises it, which rejects unlit pure colours such as the hitbox arrows of F3+B, drawn at (0, 0, 255). """
+
 CUTOUT_ALPHA: int = 26
 """ The item pipeline discards a texel under this alpha, so the reticle textures drop them too. """
 
@@ -108,6 +112,7 @@ LENS_CENTRE_CLEAR: int = 0x7F7F7F7F
 
 LENS_SEARCH_GLSL: str = f"""
 #define GRID {LENS_GRID}
+#define MARKER_MAX ({MARKER_VALUE}.5 / 255.0)
 
 // The markers are looked for in a centred square three quarters of the screen high, cut into GRID x GRID blocks.
 int lens_block(ivec2 inSize) {{
@@ -141,7 +146,7 @@ void main() {
         for (int x = 0; x < block; x++) {
             vec3 color = texelFetch(InSampler, start + ivec2(x, y), 0).rgb;
             // The floor keeps the scope's own near-black shading from passing for a marker.
-            if (color.r == 0.0 && color[3 - channel] == 0.0 && color[channel] >= 4.0 / 255.0) {
+            if (color.r == 0.0 && color[3 - channel] == 0.0 && color[channel] >= 4.0 / 255.0 && color[channel] <= MARKER_MAX) {
                 sum += vec2(x, y) + 0.5;
                 count += 1.0;
             }
@@ -210,6 +215,7 @@ void main() {
 SIGHT_FSH: str = POST_SHADER_HEADER + f"""
 #define MARKER_SPAN {(MARKER_TEXELS - 1 - 2 * MARKER_INSET) / MARKER_TEXELS}
 #define MARKER_TEXELS {MARKER_TEXELS}.0
+#define MARKER_MAX ({MARKER_VALUE}.5 / 255.0)
 #define VIGNETTE_START {VIGNETTE_START}
 """ + """
 #include <minecraft:globals.glsl>
@@ -268,7 +274,8 @@ vec4 textureBicubic(sampler2D samp, vec2 texCoords, vec2 texSize) {
 }
 
 bool is_marker(vec3 color) {
-    return color.r == 0.0 && (color.g == 0.0) != (color.b == 0.0) && max(color.g, color.b) >= 4.0 / 255.0;
+    float value = max(color.g, color.b);
+    return color.r == 0.0 && (color.g == 0.0) != (color.b == 0.0) && value >= 4.0 / 255.0 && value <= MARKER_MAX;
 }
 
 vec2 unpack_marker(int marker) {
@@ -375,8 +382,8 @@ def marker_texture() -> Image.Image:
 	for sight in SIGHTS:
 		left, top = sight.column * MARKER_TEXELS + MARKER_INSET, sight.marker_row * MARKER_TEXELS + MARKER_INSET
 		far: int = MARKER_TEXELS - 1 - 2 * MARKER_INSET
-		image.putpixel((left, top), (0, 0, 48, 255))
-		image.putpixel((left + far, top + far), (0, 48, 0, 255))
+		image.putpixel((left, top), (0, 0, MARKER_VALUE, 255))
+		image.putpixel((left + far, top + far), (0, MARKER_VALUE, 0, 255))
 	return image
 
 
