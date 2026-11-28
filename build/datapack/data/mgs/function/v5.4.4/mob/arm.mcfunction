@@ -5,13 +5,24 @@
 #			mgs:v5.4.4/mob/default/on_new {entity:"$(entity)",level:$(level),active_time:$(active_time),sleep_time:$(sleep_time)}
 #			mgs:v5.4.4/zombies/mob/arm with storage mgs:temp _arm
 #
-# @args		entity (string)
-#			level (int)
+# @args		level (int)
+#			entity (string)
 #			active_time (int)
 #			sleep_time (int)
 #
 
 tag @s add mgs.armed
+$scoreboard players set #mob_level mgs.data $(level)
+execute if score #mob_level mgs.data matches 1 run scoreboard players set @s mgs.mob.reaction_time 20
+execute if score #mob_level mgs.data matches 2 run scoreboard players set @s mgs.mob.reaction_time 14
+execute if score #mob_level mgs.data matches 3 run scoreboard players set @s mgs.mob.reaction_time 8
+execute if score #mob_level mgs.data matches 4 run scoreboard players set @s mgs.mob.reaction_time 4
+execute if score #mob_level mgs.data matches 5 run scoreboard players set @s mgs.mob.reaction_time 2
+execute if score #mob_level mgs.data matches 1 run scoreboard players set @s mgs.mob.spread 400
+execute if score #mob_level mgs.data matches 2 run scoreboard players set @s mgs.mob.spread 300
+execute if score #mob_level mgs.data matches 3 run scoreboard players set @s mgs.mob.spread 200
+execute if score #mob_level mgs.data matches 4 run scoreboard players set @s mgs.mob.spread 100
+execute if score #mob_level mgs.data matches 5 run scoreboard players set @s mgs.mob.spread 0
 $data modify entity @s CustomName set value [{"text":"","color":"red"},"Armed ",{"translate":"entity.minecraft.$(entity)"}," [Lv.$(level)]"]
 data modify entity @s DeathLootTable set value "minecraft:empty"
 data modify entity @s drop_chances set value {mainhand:0.0f,offhand:0.0f,head:0.0f,chest:0.0f,legs:0.0f,feet:0.0f}

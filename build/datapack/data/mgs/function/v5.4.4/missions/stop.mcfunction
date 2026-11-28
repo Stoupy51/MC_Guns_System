@@ -3,7 +3,7 @@
 #
 # @within	mgs:v5.4.4/dialog/close_then
 #			mgs:v5.4.4/missions/end_prep
-#			mgs:v5.4.4/missions/victory
+#			mgs:v5.4.4/missions/victory 300t [ scheduled ]
 #			mgs:v5.4.4/lobby/missions/leave
 #			mgs:v5.4.4/lobby/missions/second
 #
@@ -12,6 +12,7 @@ execute unless score #in_missions_map mgs.data matches 1 run return run function
 
 data modify storage mgs:missions game.state set value "lobby"
 schedule clear mgs:v5.4.4/missions/end_prep
+schedule clear mgs:v5.4.4/missions/stop
 
 kill @e[tag=mgs.mission_enemy]
 kill @e[tag=mgs.missions_entity]

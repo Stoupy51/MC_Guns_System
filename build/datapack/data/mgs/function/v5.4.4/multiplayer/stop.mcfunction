@@ -15,7 +15,9 @@ function mgs:v5.4.4/multiplayer/kill_cam/cleanup
 # Map scripts only run during a match, so the leave script comes before the lobby state.
 execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.4.4/shared/maps/call_script_at_base {mode:"multiplayer",script:"leave"}
 
-data modify storage mgs:multiplayer game.state set value "lobby"
+# A match that ended by itself holds its players 15 s on the stats, and only the release opens the lobby.
+execute store success score #mp_hold mgs.data if data storage mgs:multiplayer game{state:"ended"}
+execute if score #mp_hold mgs.data matches 0 run data modify storage mgs:multiplayer game.state set value "lobby"
 scoreboard players set #mp_end_tick mgs.data 0
 schedule clear mgs:v5.4.4/multiplayer/end_prep
 
@@ -60,6 +62,6 @@ scoreboard objectives setdisplay sidebar.team.gold
 scoreboard objectives remove mgs.sidebar
 scoreboard objectives setdisplay list
 
-execute as @a[scores={mgs.mp.in_game=1}] run function mgs:v5.4.4/multiplayer/reset_player
-scoreboard players set #mp_has_boundary mgs.data 0
+execute if score #mp_hold mgs.data matches 1 run return run schedule function mgs:v5.4.4/multiplayer/release 300t
+function mgs:v5.4.4/multiplayer/release
 

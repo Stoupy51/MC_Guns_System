@@ -40,5 +40,7 @@ execute as @a[scores={mgs.mi.in_game=1}] run function mgs:v5.4.4/progression/mp/
 
 tellraw @a[scores={mgs.mi.in_game=1}] ""
 
-function mgs:v5.4.4/missions/stop
+# 15 s on the stats; only an "active" state ticks the game, so nothing runs meanwhile.
+data modify storage mgs:missions game.state set value "ended"
+schedule function mgs:v5.4.4/missions/stop 300t
 

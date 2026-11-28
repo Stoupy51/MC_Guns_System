@@ -14,6 +14,7 @@ def write_missions_stop() -> None:
 	write_versioned_function("missions/stop", f"""
 data modify storage {ns}:missions game.state set value "lobby"
 schedule clear {ns}:v{version}/missions/end_prep
+schedule clear {ns}:v{version}/missions/stop
 
 kill @e[tag={ns}.mission_enemy]
 kill @e[tag={ns}.missions_entity]

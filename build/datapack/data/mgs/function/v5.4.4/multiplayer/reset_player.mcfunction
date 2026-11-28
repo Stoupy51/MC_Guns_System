@@ -2,7 +2,7 @@
 #> mgs:v5.4.4/multiplayer/reset_player
 #
 # @within	mgs:v5.4.4/dialog/close_then
-#			mgs:v5.4.4/multiplayer/stop [ as @a[scores={mgs.mp.in_game=1}] ]
+#			mgs:v5.4.4/multiplayer/release [ as @a[scores={mgs.mp.in_game=1}] ]
 #			mgs:v5.4.4/stats/login
 #			mgs:v5.4.4/lobby/multiplayer/leave
 #

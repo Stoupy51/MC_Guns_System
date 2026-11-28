@@ -19,6 +19,13 @@ from ..config.stats.keys import (
 	PROJECTILE_SPEED,
 )
 
+# Constants
+REACTION_TICKS: dict[int, int] = {1: 20, 2: 14, 3: 8, 4: 4, 5: 2}
+"""Ticks an armed mob waits between seeing its target and its first shot, by level."""
+
+SPREAD_TENTHS: dict[int, int] = {1: 400, 2: 300, 3: 200, 4: 100, 5: 0}
+"""Maximum aim error of an armed mob in tenths of a degree, by level. Level 5 never misses by aim."""
+
 
 # Functions
 def main() -> None:
@@ -32,6 +39,9 @@ scoreboard players add #armed_mob_count {ns}.data 0
 scoreboard objectives add {ns}.mob.timer dummy
 scoreboard objectives add {ns}.mob.active_time dummy
 scoreboard objectives add {ns}.mob.sleep_time dummy
+scoreboard objectives add {ns}.mob.reaction dummy
+scoreboard objectives add {ns}.mob.reaction_time dummy
+scoreboard objectives add {ns}.mob.spread dummy
 """)
 
 	write_versioned_function("mob/tick", f"""
@@ -66,6 +76,7 @@ execute if score #mob_has_target {ns}.data matches 0 if entity @p[distance=..64,
 execute if score #mob_near_target {ns}.data matches 1 run tag @p[distance=..64,gamemode=!spectator,gamemode=!creative] add {ns}.target
 scoreboard players operation #mob_has_target {ns}.data > #mob_near_target {ns}.data
 
+execute if score #mob_has_target {ns}.data matches 0 run tag @s remove {ns}.mob_engaged
 execute if score #mob_has_target {ns}.data matches 0 run return 0
 
 # From the mainhand equipment.
@@ -77,7 +88,10 @@ execute unless data storage {ns}:gun all.stats run return run tag @e[tag={ns}.ta
 # limit=1 skips the @n distance sort: only one entity carries the tag.
 scoreboard players set #can_see {ns}.data 0
 execute positioned as @e[tag={ns}.target,limit=1] store result score #can_see {ns}.data run function #bs.view:can_see_ata {{with:{{}}}}
-execute unless score #can_see {ns}.data matches 1 run return run tag @e[tag={ns}.target,limit=1] remove {ns}.target
+execute unless score #can_see {ns}.data matches 1 run return run function {ns}:v{version}/mob/lose_sight
+
+execute unless entity @s[tag={ns}.mob_engaged] run function {ns}:v{version}/mob/engage
+execute if score @s {ns}.mob.reaction matches 1.. run return run function {ns}:v{version}/mob/react
 
 # The damage and raycast system expects it.
 tag @s add {ns}.ticking
@@ -86,6 +100,21 @@ execute anchored eyes facing entity @e[tag={ns}.target,limit=1] feet run functio
 
 tag @e[tag={ns}.target,limit=1] remove {ns}.target
 tag @s remove {ns}.ticking
+""")
+
+	write_versioned_function("mob/lose_sight", f"""
+tag @e[tag={ns}.target,limit=1] remove {ns}.target
+tag @s remove {ns}.mob_engaged
+""")
+
+	write_versioned_function("mob/engage", f"""
+tag @s add {ns}.mob_engaged
+scoreboard players operation @s {ns}.mob.reaction = @s {ns}.mob.reaction_time
+""")
+
+	write_versioned_function("mob/react", f"""
+scoreboard players remove @s {ns}.mob.reaction 1
+tag @e[tag={ns}.target,limit=1] remove {ns}.target
 """)
 
 	write_versioned_function("mob/init", f"""
@@ -120,9 +149,14 @@ data modify storage {ns}:gun all set from entity @s equipment.mainhand.component
 
 	## Not for level 5 mobs.
 	write_versioned_function("mob/apply_inaccuracy", f"""
-# -20 to +20 degrees (-200..200 at 0.1).
-execute store result storage {ns}:temp _rot.yaw double 0.1 run random value -200..200
-execute store result storage {ns}:temp _rot.pitch double 0.1 run random value -200..200
+execute store result storage {ns}:temp _rot.max int 1 run scoreboard players get @s {ns}.mob.spread
+function {ns}:v{version}/mob/apply_random_offset with storage {ns}:temp _rot
+""")
+
+	# The spread is in tenths of a degree.
+	write_versioned_function("mob/apply_random_offset", f"""
+$execute store result storage {ns}:temp _rot.yaw double 0.1 run random value -$(max)..$(max)
+$execute store result storage {ns}:temp _rot.pitch double 0.1 run random value -$(max)..$(max)
 function {ns}:v{version}/mob/apply_rotation_offset with storage {ns}:temp _rot
 """)
 
@@ -182,8 +216,17 @@ execute if score #armed_mob_count {ns}.data matches 1.. if score #armed_mob_phas
 """)
 
 	## Everything but the gun, which Missions draws at random and zombie spawns may name. $(entity) is an id without namespace.
+	reaction_lines: str = "\n".join(
+		f"execute if score #mob_level {ns}.data matches {level} run scoreboard players set @s {ns}.mob.reaction_time {ticks}"
+		for level, ticks in REACTION_TICKS.items()
+	) + "\n" + "\n".join(
+		f"execute if score #mob_level {ns}.data matches {level} run scoreboard players set @s {ns}.mob.spread {tenths}"
+		for level, tenths in SPREAD_TENTHS.items()
+	)
 	write_versioned_function("mob/arm", f"""
 tag @s add {ns}.armed
+$scoreboard players set #mob_level {ns}.data $(level)
+{reaction_lines}
 $data modify entity @s CustomName set value [{{"text":"","color":"red"}},"Armed ",{{"translate":"entity.minecraft.$(entity)"}}," [Lv.$(level)]"]
 data modify entity @s DeathLootTable set value "minecraft:empty"
 data modify entity @s drop_chances set value {{mainhand:0.0f,offhand:0.0f,head:0.0f,chest:0.0f,legs:0.0f,feet:0.0f}}

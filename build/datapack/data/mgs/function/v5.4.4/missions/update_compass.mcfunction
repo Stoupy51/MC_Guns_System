@@ -13,6 +13,7 @@ execute at @n[tag=mgs.mission_enemy] summon minecraft:marker run function mgs:v5
 execute store result storage mgs:temp _compass.x int 1 run data get storage mgs:temp _probe_pos[0]
 execute store result storage mgs:temp _compass.y int 1 run data get storage mgs:temp _probe_pos[1]
 execute store result storage mgs:temp _compass.z int 1 run data get storage mgs:temp _probe_pos[2]
+data modify storage mgs:temp _compass.dimension set from entity @s Dimension
 
 function mgs:v5.4.4/missions/set_compass_target with storage mgs:temp _compass
 

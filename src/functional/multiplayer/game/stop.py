@@ -48,7 +48,9 @@ function {ns}:v{version}/multiplayer/kill_cam/cleanup
 # Map scripts only run during a match, so the leave script comes before the lobby state.
 execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/shared/maps/call_script_at_base {{mode:"multiplayer",script:"leave"}}
 
-data modify storage {ns}:multiplayer game.state set value "lobby"
+# A match that ended by itself holds its players 15 s on the stats, and only the release opens the lobby.
+execute store success score #mp_hold {ns}.data if data storage {ns}:multiplayer game{{state:"ended"}}
+execute if score #mp_hold {ns}.data matches 0 run data modify storage {ns}:multiplayer game.state set value "lobby"
 scoreboard players set #mp_end_tick {ns}.data 0
 schedule clear {ns}:v{version}/multiplayer/end_prep
 
@@ -73,6 +75,12 @@ scoreboard objectives setdisplay sidebar.team.gold
 scoreboard objectives remove {ns}.sidebar
 scoreboard objectives setdisplay list
 
+execute if score #mp_hold {ns}.data matches 1 run return run schedule function {ns}:v{version}/multiplayer/release 300t
+function {ns}:v{version}/multiplayer/release
+""")
+
+	write_versioned_function("multiplayer/release", f"""
+data modify storage {ns}:multiplayer game.state set value "lobby"
 execute as @a[scores={{{ns}.mp.in_game=1}}] run function {ns}:v{version}/multiplayer/reset_player
 scoreboard players set #mp_has_boundary {ns}.data 0
 """)

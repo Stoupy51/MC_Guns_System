@@ -191,6 +191,9 @@ scoreboard players add #armed_mob_count mgs.data 0
 scoreboard objectives add mgs.mob.timer dummy
 scoreboard objectives add mgs.mob.active_time dummy
 scoreboard objectives add mgs.mob.sleep_time dummy
+scoreboard objectives add mgs.mob.reaction dummy
+scoreboard objectives add mgs.mob.reaction_time dummy
+scoreboard objectives add mgs.mob.spread dummy
 
 # Shared vanilla teams
 

@@ -38,6 +38,7 @@ execute if score #mob_has_target mgs.data matches 0 if entity @p[distance=..64,g
 execute if score #mob_near_target mgs.data matches 1 run tag @p[distance=..64,gamemode=!spectator,gamemode=!creative] add mgs.target
 scoreboard players operation #mob_has_target mgs.data > #mob_near_target mgs.data
 
+execute if score #mob_has_target mgs.data matches 0 run tag @s remove mgs.mob_engaged
 execute if score #mob_has_target mgs.data matches 0 run return 0
 
 # From the mainhand equipment.
@@ -49,7 +50,10 @@ execute unless data storage mgs:gun all.stats run return run tag @e[tag=mgs.targ
 # limit=1 skips the @n distance sort: only one entity carries the tag.
 scoreboard players set #can_see mgs.data 0
 execute positioned as @e[tag=mgs.target,limit=1] store result score #can_see mgs.data run function #bs.view:can_see_ata {with:{}}
-execute unless score #can_see mgs.data matches 1 run return run tag @e[tag=mgs.target,limit=1] remove mgs.target
+execute unless score #can_see mgs.data matches 1 run return run function mgs:v5.4.4/mob/lose_sight
+
+execute unless entity @s[tag=mgs.mob_engaged] run function mgs:v5.4.4/mob/engage
+execute if score @s mgs.mob.reaction matches 1.. run return run function mgs:v5.4.4/mob/react
 
 # The damage and raycast system expects it.
 tag @s add mgs.ticking

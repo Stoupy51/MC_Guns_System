@@ -7,7 +7,8 @@
 # @args		x (unknown)
 #			y (unknown)
 #			z (unknown)
+#			dimension (unknown)
 #
 
-$item replace entity @s hotbar.3 with compass[lodestone_tracker={target:{pos:[I;$(x),$(y),$(z)],dimension:"minecraft:overworld"},tracked:false},custom_data={mgs:{compass:true}}]
+$item replace entity @s hotbar.3 with compass[lodestone_tracker={target:{pos:[I;$(x),$(y),$(z)],dimension:"$(dimension)"},tracked:false},custom_data={mgs:{compass:true}}]
 

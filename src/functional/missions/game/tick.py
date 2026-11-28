@@ -66,12 +66,13 @@ execute unless items entity @s hotbar.3 minecraft:compass run return fail
 execute store result storage {ns}:temp _compass.x int 1 run data get storage {ns}:temp _probe_pos[0]
 execute store result storage {ns}:temp _compass.y int 1 run data get storage {ns}:temp _probe_pos[1]
 execute store result storage {ns}:temp _compass.z int 1 run data get storage {ns}:temp _probe_pos[2]
+data modify storage {ns}:temp _compass.dimension set from entity @s Dimension
 
 function {ns}:v{version}/missions/set_compass_target with storage {ns}:temp _compass
 """)
 
 	write_versioned_function("missions/set_compass_target", f"""
-$item replace entity @s hotbar.3 with compass[lodestone_tracker={{target:{{pos:[I;$(x),$(y),$(z)],dimension:"minecraft:overworld"}},tracked:false}},custom_data={{{ns}:{{compass:true}}}}]
+$item replace entity @s hotbar.3 with compass[lodestone_tracker={{target:{{pos:[I;$(x),$(y),$(z)],dimension:"$(dimension)"}},tracked:false}},custom_data={{{ns}:{{compass:true}}}}]
 """)
 
 	write_versioned_function("missions/victory", f"""
@@ -104,6 +105,8 @@ execute as @a[scores={{{ns}.mi.in_game=1}}] run tellraw @a[scores={{{ns}.mi.in_g
 
 tellraw @a[scores={{{ns}.mi.in_game=1}}] ""
 
-function {ns}:v{version}/missions/stop
+# 15 s on the stats; only an "active" state ticks the game, so nothing runs meanwhile.
+data modify storage {ns}:missions game.state set value "ended"
+schedule function {ns}:v{version}/missions/stop 300t
 """)
 
